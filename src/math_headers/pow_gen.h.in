@@ -1,0 +1,6 @@
+//pow
+{scalar} pow_gen({scalar} a, {scalar} b){{return {powmath}(a, b);}}
+// Partial derivative of a^b with respect to a
+{scalar} derivative_da({scalar} a, {scalar} b) { return b * {powmath}(a, b - {scalar}(1));}
+// Partial derivative of a^b with respect to b
+{scalar} derivative_db({scalar} a, {scalar} b) { return {powmath}(a, b) * {powlog}(a);}

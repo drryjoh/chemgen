@@ -1,0 +1,20 @@
+	{scalar} arrhenius({scalar} A, {scalar} E, {scalar} B, {scalar} temperature) 
+	{
+		{scalar} pow_term = pow_gen(temperature, B);
+		{scalar} exp_term = pow_gen(temperature, B);
+
+		return multiply(A, 
+				        multiply(pow_gen(temperature,
+						       	         B),
+						         exp_gen(divide(-E,
+								               (R * temperature)))));
+	}
+	
+   {scalar} darrhenius_dtemperature({scalar} A, {scalar} E, {scalar} B, {scalar} temperature) 
+	{
+		return multiply(A, 
+				        dmultiply_db(pow_gen(temperature,
+						       	             B),
+						             exp_gen(divide(-E,
+								               (R * temperature)))));
+	}

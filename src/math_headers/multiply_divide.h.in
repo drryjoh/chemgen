@@ -1,0 +1,26 @@
+//scalar multiply/divides
+//multiply
+{scalar} multiply({scalar} a, {scalar} b){return a * b;}
+//derivatives
+{scalar} dmultiply_da({scalar} a, {scalar} b){return b;}
+{scalar} dmultiply_db({scalar} a, {scalar} b){return a;}
+//derivatives * increment
+{scalar} multiply_perturbation({scalar} a, {scalar} a_perturbation, {scalar} b, {scalar} b_perturbation){return a_perturbation * b + a * b_perturbation;}
+
+//pow
+{scalar} pow2({scalar} a){return {a * a;}
+{scalar} dpow2_da({scalar} a){return {2 * a;}
+
+//iverse
+{scalar} inv({scalar} a){return {scalar}(1)/a;}
+{scalar} dinv_da({scalar} a){return {scalar}(-1)/pow2(a);}
+{scalar} inv_perturbation({scalar} a, {scalar} a_perturbation){return {scalar}(-a_perturbation)/pow2(a);}
+
+//divide
+{scalar} divide({scalar} a, {scalar} b){return a / b;}
+//derivatives
+{scalar} ddivide_da({scalar} a, {scalar} b){return inv(b);}
+{scalar} ddivide_db({scalar} a, {scalar} b){return -a / pow2(b);}
+//derivatives * increment
+{scalar} divide_perturbation({scalar} a, {scalar} a_perturbation, {scalar} b, {scalar} b_perturbation){return a_perturbation * b + a * b_perturbation;}
+
