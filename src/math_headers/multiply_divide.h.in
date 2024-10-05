@@ -1,26 +1,26 @@
 //scalar multiply/divides
 //multiply
-{config.device_option} {config.scalar_function} multiply({config.scalar_parameter} a, {config.scalar_parameter} b) {config.const_option} {{return a * b;}}
+{device_option} {scalar_function} multiply({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return a * b;}}
 //derivatives
-{config.device_option} {config.scalar_function} dmultiply_da({config.scalar_parameter} a, {config.scalar_parameter} b) {config.const_option} {{return b;}}
-{config.device_option} {config.scalar_function} dmultiply_db({config.scalar_parameter} a, {config.scalar_parameter} b) {config.const_option} {{return a;}}
+{device_option} {scalar_function} dmultiply_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return b;}}
+{device_option} {scalar_function} dmultiply_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return a;}}
 //derivatives * increment
-{config.device_option} {config.scalar_function} multiply_chain({config.scalar_parameter} a, {config.scalar_parameter} a_perturbation, {config.scalar_parameter} b, {config.scalar_parameter} b_perturbation) {config.const_option} {{return a_perturbation * b + a * b_perturbation;}}
+{device_option} {scalar_function} multiply_chain({scalar_parameter} a, {scalar_parameter} a_perturbation, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{return a_perturbation * b + a * b_perturbation;}}
 
 //pow
-{config.device_option} {config.scalar_function} pow2({config.scalar_parameter} a) {config.const_option} {{return a * a;}}
-{config.device_option} {config.scalar_function} dpow2_da({config.scalar_parameter} a) {config.const_option} {{return {scalar_cast}(2) * a;}}
+{device_option} {scalar_function} pow2({scalar_parameter} a) {const_option} {{return a * a;}}
+{device_option} {scalar_function} dpow2_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(2) * a;}}
 
 //iverse
-{config.device_option} {config.scalar_function} inv({config.scalar_parameter} a) {config.const_option} {{return {scalar_cast}(1)/a;}}
-{config.device_option} {config.scalar_function} dinv_da({config.scalar_parameter} a) {config.const_option} {{return {scalar_cast}(-1)/pow2(a);}}
-{config.device_option} {config.scalar_function} inv_chain({config.scalar_parameter} a, {config.scalar_parameter} a_perturbation) {config.const_option} {{return {scalar}(-a_perturbation)/pow2(a);}}
+{device_option} {scalar_function} inv({scalar_parameter} a) {const_option} {{return {scalar_cast}(1)/a;}}
+{device_option} {scalar_function} dinv_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(-1)/pow2(a);}}
+{device_option} {scalar_function} inv_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return {scalar}(-a_perturbation)/pow2(a);}}
 
 //divide
-{config.device_option} {config.scalar_function} divide({config.scalar_parameter} a, {config.scalar_parameter} b) {config.const_option} {{return a / b;}}
+{device_option} {scalar_function} divide({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return a / b;}}
 //derivatives
-{config.device_option} {config.scalar_function} ddivide_da({config.scalar_parameter} a, {config.scalar_parameter} b) {config.const_option} {{return inv(b);}}
-{config.device_option} {config.scalar_function} ddivide_db({config.scalar_parameter} a, {config.scalar_parameter} b) {config.const_option} {{return -a / pow2(b);}}
+{device_option} {scalar_function} ddivide_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return inv(b);}}
+{device_option} {scalar_function} ddivide_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return -a / pow2(b);}}
 //derivatives * increment
-{config.device_option} {config.scalar_function} divide_chain({config.scalar_parameter} a, {config.scalar_parameter} a_perturbation, {config.scalar_parameter} b, {config.scalar_parameter} b_perturbation) {config.const_option} {{return a_perturbation * b + a * b_perturbation;}}
+{device_option} {scalar_function} divide_chain({scalar_parameter} a, {scalar_parameter} a_perturbation, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{return a_perturbation * b + a * b_perturbation;}}
 

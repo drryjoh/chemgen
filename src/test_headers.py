@@ -20,10 +20,9 @@ config = get_configuration()
 
 with f as file:
     content = file.read()
-
+content = content.strip()
+content = content.replace('\t', '    ')
 print(content)
-print(vars(config))
 new_content = content.format(**vars(config))
-#new_content  = textwrap.dedent(eval(f'f"""{content}"""')).strip()
 
 print(new_content)

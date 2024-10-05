@@ -1,26 +1,26 @@
-{config.device_option}
-{config.scalar_function}
-arrhenius({config.scalar_parameter} A, {config.scalar_parameter} E, {config.scalar_parameter} B, {config.scalar_parameter} temperature) {config.const_option}
+{device_option}
+{scalar_function}
+arrhenius({scalar_parameter} A, {scalar_parameter} E, {scalar_parameter} B, {scalar_parameter} temperature) {const_option}
 {{
-		{config.scalar} pow_term = pow_gen(temperature, B);
-		{config.scalar} exp_term = exp_gen(divide(-E, universal_gas_constant() * temperature));
+		{scalar} pow_term = pow_gen(temperature, B);
+		{scalar} exp_term = exp_gen(divide(-E, universal_gas_constant() * temperature));
 
 		return multiply(A,
 						multiply(pow_term,
 								 exp_term));
 }}
 
-{config.device_option}
-{config.scalar_function}
-darrhenius_dtemperature({config.scalar_parameter} A, {config.scalar_parameter} E, {config.scalar_parameter} B, {config.scalar_parameter} temperature) {config.const_option}
+{device_option}
+{scalar_function}
+darrhenius_dtemperature({scalar_parameter} A, {scalar_parameter} E, {scalar_parameter} B, {scalar_parameter} temperature) {const_option}
 {{
-		{config.scalar} pow_term = pow_gen(temperature, B);
-		{config.scalar} dpow_term_dtemperature = dpow_da(temperature, B);
+		{scalar} pow_term = pow_gen(temperature, B);
+		{scalar} dpow_term_dtemperature = dpow_da(temperature, B);
 
-		{config.scalar} exp_term =
+		{scalar} exp_term =
 			exp_gen(divide(-E,
 						   universal_gas_constant() * temperature));
-		{config.scalar} dexp_term_dtemperature =
+		{scalar} dexp_term_dtemperature =
 			exp_perturbation(divide(-E,
 									universal_gas_constant() * temperature),
 							 ddivide_db(-E,
