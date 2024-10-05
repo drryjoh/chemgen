@@ -1,6 +1,6 @@
 //pow
-{scalar} pow_gen({scalar} a, {scalar} b){{return {powmath}(a, b);}}
+{device_option} {scalar_function} pow_gen({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return {powmath}(a, b);}}
 // Partial derivative of a^b with respect to a
-{scalar} derivative_da({scalar} a, {scalar} b) { return b * {powmath}(a, b - {scalar}(1));}
+{device_option} {scalar_function} dpow_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{ return b * {powmath}(a, b - {scalar_cast}(1));}}
 // Partial derivative of a^b with respect to b
-{scalar} derivative_db({scalar} a, {scalar} b) { return {powmath}(a, b) * {powlog}(a);}
+{device_option} {scalar_function} dpow_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{ return {powmath}(a, b) * {logmath}(a);}}

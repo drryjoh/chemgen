@@ -1,20 +1,37 @@
-	{scalar} arrhenius({scalar} A, {scalar} E, {scalar} B, {scalar} temperature) 
+	{scalar} arrhenius({scalar_parameter} A, 
+	                   {scalar_parameter} E, 
+					   {scalar_parameter} B, 
+					   {scalar_parameter} temperature) {const_option}
 	{
 		{scalar} pow_term = pow_gen(temperature, B);
-		{scalar} exp_term = pow_gen(temperature, B);
+		{scalar} exp_term = exp_gen(divide(-E, universal_gas_constant() * temperature)); 
 
-		return multiply(A, 
-				        multiply(pow_gen(temperature,
-						       	         B),
-						         exp_gen(divide(-E,
-								               (R * temperature)))));
+		return 
+		multiply(A, 
+				 multiply(pow_term,
+						  exp_term));
 	}
 	
-   {scalar} darrhenius_dtemperature({scalar} A, {scalar} E, {scalar} B, {scalar} temperature) 
+	{scalar} darrhenius_dtemperature({scalar_parameter} A, 
+	                                 {scalar_parameter} E,
+									 {scalar_parameter} B,
+									 {scalar_parameter} temperature) {const_option}
 	{
+		{scalar} pow_term = pow_gen(temperature, B);
+		{scalar} dpow_term_dtemperature = dpow_da(temperature, B);
+
+		{scalar} exp_term = 
+		exp_gen(divide(-E, 
+		               universal_gas_constant() * temperature)); 
+		{scalar} dexp_term_dtemperature = 
+		exp_perturbation(divide(-E, 
+		                        universal_gas_constant() * temperature),
+		 				 ddivide_db(-E, 
+						            universal_gas_constant() * temperature)); 
+
 		return multiply(A, 
-				        dmultiply_db(pow_gen(temperature,
-						       	             B),
-						             exp_gen(divide(-E,
-								               (R * temperature)))));
+				        multiply_chain(pow_term,
+						               dpow_term_dtemperature,
+							           exp_term,
+								       dexp_term_dtemperature));
 	}
