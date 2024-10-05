@@ -1,6 +1,6 @@
 //exponent
-{device_option} {scalar_function} exp_gen({scalar_parameter} a) {const_option} {{return {expmath}(a);}}
+{config.device_option} {config.scalar_function} exp_gen({config.scalar_parameter} a) {config.const_option} {{return {config.expmath}(a);}}
 
 //derivatives
-{device_option} {scalar_function} dexp_da({scalar_parameter} a) {const_option} {{return exp_gen(a);}}
-{device_option} {scalar_function} exp_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return a_perturbation * {expmath}(a);}}
+{config.device_option} {config.scalar_function} dexp_da({config.scalar_parameter} a) {config.const_option} {{return exp_gen(a);}}
+{config.device_option} {config.scalar_function} exp_chain({config.scalar_parameter} a, {config.scalar_parameter} a_perturbation) {config.const_option} {{return a_perturbation * {config.expmath}(a);}}

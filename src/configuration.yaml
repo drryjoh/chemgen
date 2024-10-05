@@ -1,0 +1,8 @@
+decorators:
+  scalar: "double"
+  scalar_function: "double"
+  scalar_cast: "double"
+  scalar_parameter: "const double&"
+  const_option: "const"
+  device_option: ""
+

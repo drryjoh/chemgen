@@ -1,1 +1,1 @@
-{scalar} scale({scalar} A, {scalar} B) {{ return A * B;}}
+{config.scalar} scale({config.scalar} A, {config.scalar} B) {{ return A * B;}}
