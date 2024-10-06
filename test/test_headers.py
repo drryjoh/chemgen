@@ -2,6 +2,10 @@
 import yaml
 import textwrap
 from pathlib import Path
+import subprocess
+import sys
+import os
+
 
 class Config:
     pass
@@ -44,9 +48,8 @@ def write_formatted_code(code_directory, file_to_format, target_file = None, app
 
 def make_headers(code_directory, file_names, headers):
     for file in file_names:
-        headers.append(file)
+        headers.append(file.replace('.in',''))
         write_formatted_code(code_directory, file)
-    return headers
 
 def create_headers():
     code_directory = Path('src') / 'reaction_headers'
@@ -57,9 +60,66 @@ def create_headers():
     code_directory = Path('src') / 'math_headers'
     file_names = ['exp_gen.h.in', 'multiply_divide.h.in', 'pow_gen.h.in']
     make_headers(code_directory, file_names, headers)
+    return headers
+
+def run_command(command):
+    """Run a shell command and check for errors."""
+    try:
+        result = subprocess.run(command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(result.stdout.decode())  # Print standard output
+    except subprocess.CalledProcessError as e:
+        print(f"Error occurred while running: {command}")
+        print(e.stderr.decode())  # Print error output
+        sys.exit(1)  # Exit with error
+
+def compile_cpp_code(build_dir, source_files):
+    """Compile C++ code using g++ or other compilers."""
+    os.makedirs(build_dir, exist_ok=True)
+    
+    # Command to compile C++ code
+    compile_command = f"g++ -o {build_dir}/output_program {' '.join(source_files)}"
+    print(f"Compiling C++ files: {source_files}")
+    run_command(compile_command)
+
+def run_tests(build_dir):
+    """Run tests on the compiled binary."""
+    test_command = f"./{build_dir}/output_program"
+    print("Running tests...")
+    run_command(test_command)
+
+def compile_header_test():
+    # Define directories and C++ source files
+    build_directory = "build"
+    cpp_source_files = ["main.cpp"]
+
+    # Step 1: Compile the C++ code
+    compile_cpp_code(build_directory, cpp_source_files)
+
+    # Step 2: Run the tests
+    run_tests(build_directory)
+
+def create_header_cpp(headers):
+    with open('./main.cpp', 'w') as file: 
+        for header in headers:
+            file.write(f"#include \"{header}\"\n")
+        file.write("""
+#include <iostream>  // For printing the result to the console
+
+int main() {
+    // Call the arrhenius function with the specified parameters
+    double result = arrhenius(100, 1.3e6, 1.5, 1800);
+
+    // Output the result
+    std::cout << "Result of arrhenius(100, 1.3e6, 1.5, 1800): " << result << std::endl;
+
+    return 0;
+}
+            """)
 
 def main():
-    create_headers()
+    headers = create_headers()
+    create_header_cpp(headers)
+    compile_header_test()
 
 if __name__ == "__main__":
     main()
