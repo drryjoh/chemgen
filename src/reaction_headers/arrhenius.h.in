@@ -21,10 +21,10 @@ darrhenius_dtemperature({scalar_parameter} A, {scalar_parameter} E, {scalar_para
 			exp_gen(divide(-E,
 						   universal_gas_constant() * temperature));
 		{scalar} dexp_term_dtemperature =
-			exp_perturbation(divide(-E,
-									universal_gas_constant() * temperature),
-							 ddivide_db(-E,
-										universal_gas_constant() * temperature));
+			exp_chain(divide(-E,
+							 universal_gas_constant() * temperature),
+					  ddivide_db(-E,
+								 universal_gas_constant() * temperature));
 
 		return multiply(A,
 						multiply_chain(pow_term,

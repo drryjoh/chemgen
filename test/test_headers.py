@@ -52,13 +52,17 @@ def make_headers(code_directory, file_names, headers):
         write_formatted_code(code_directory, file)
 
 def create_headers():
-    code_directory = Path('src') / 'reaction_headers'
-    file_names = ['arrhenius.h.in']
+    code_directory = Path('src') / 'math_headers'
+    file_names = ['exp_gen.h.in', 'multiply_divide.h.in', 'pow_gen.h.in']
     headers = []
     make_headers(code_directory, file_names, headers)
 
-    code_directory = Path('src') / 'math_headers'
-    file_names = ['exp_gen.h.in', 'multiply_divide.h.in', 'pow_gen.h.in']
+    code_directory = Path('src') / 'thermophysics'
+    file_names = ['constants.h.in']
+    make_headers(code_directory, file_names, headers)
+
+    code_directory = Path('src') / 'reaction_headers'
+    file_names = ['arrhenius.h.in']
     make_headers(code_directory, file_names, headers)
     return headers
 
@@ -77,7 +81,7 @@ def compile_cpp_code(build_dir, source_files):
     os.makedirs(build_dir, exist_ok=True)
     
     # Command to compile C++ code
-    compile_command = f"g++ -o {build_dir}/output_program {' '.join(source_files)}"
+    compile_command = f"g++ -std=c++14 -o {build_dir}/output_program {' '.join(source_files)}"
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
 
@@ -100,6 +104,7 @@ def compile_header_test():
 
 def create_header_cpp(headers):
     with open('./main.cpp', 'w') as file: 
+        file.write("#include <cmath>\n")
         for header in headers:
             file.write(f"#include \"{header}\"\n")
         file.write("""

@@ -3,7 +3,7 @@ decorators:
   scalar_function: "double"
   scalar_cast: "double"
   scalar_parameter: "const double&"
-  const_option: "const"
+  const_option: ""
   device_option: ""
   expmath: "std::exp"
   powmath: "std::pow"
