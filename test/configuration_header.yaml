@@ -5,4 +5,7 @@ decorators:
   scalar_parameter: "const double&"
   const_option: "const"
   device_option: ""
+  expmath: "std::exp"
+  powmath: "std::pow"
+  logmath: "std::log"
 
