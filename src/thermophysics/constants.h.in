@@ -1,1 +1,1 @@
-{device_option} constexpr {scalar_function} universal_gas_constant() {const_option} {{return 8314.15;}}
+{device_option} {constexpr} {scalar_function} universal_gas_constant() {const_option} {{return {scalar_cast}(8314.15);}}
