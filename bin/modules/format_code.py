@@ -19,11 +19,12 @@ def get_text_to_format(code_directory, file_to_format):
     content = content.replace('\t', '    ')
     return content
 
-def write_formatted_code(code_directory, file_to_format, configuration = None, decorators = 'decorators', target_file = None, append = False):
+def write_formatted_code(code_directory, file_to_format, configuration = None, target_file = None, append = False):
     content = get_text_to_format(code_directory, file_to_format)
     
     if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators=decorators)
+        print("Warning this may cause compilation mismatch in decorators")
+        configuration = get_configuration("configuration.yaml")
     
     new_content = content.format(**vars(configuration))
     

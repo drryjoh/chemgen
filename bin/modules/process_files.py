@@ -5,9 +5,9 @@ from .arithmetic import *
 from .headers import *
 from .configuration import *
 
-def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = None, decorators = 'decorators'):
+def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = None):
     if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators=decorators)
+        configuration = get_configuration("configuration.yaml")
     forward_rate_array = []
     for species, coeff in reaction.reactants.items():
         stoichiometric_forward[species_names.index(species)] = coeff
@@ -28,9 +28,10 @@ def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_b
 
     return (forward_rate, backward_rate)
 
-def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index, configuration = None, decorators = 'decorators'):
+def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index, configuration = None):
     if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators=decorators)
+        print("Warning this may cause compilation mismatch in decorators")
+        configuration = get_configuration("configuration.yaml")
 
     for index in indexes_of_species_in_reaction: 
         formatted_text = "{scalar_cast}({stoichiometric_production}) * rate_of_progress_{reaction_index}".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)
@@ -78,9 +79,10 @@ def get_reaction_function(reaction_rates, reaction_calls, reaction, configuratio
         else:
             print(f"  Unknown reaction type: {reaction_type}")
 
-def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration = None, decorators = 'decorators'):
+def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration = None):
     if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators=decorators)
+        print("Warning this may cause compilation mismatch in decorators")
+        configuration = get_configuration("configuration.yaml")
     formatted_text = (
     "{scalar} rate_of_progress_{reaction_index} = {forward_rate} * forward_reaction_{reaction_index} "
     ";//- {backward_rate} * forward_reaction_{reaction_index}/equilibrium_constant_{reaction_index};"
@@ -100,9 +102,10 @@ def write_progress_rates(file, progress_rates):
         file.write(f"       {progress_rate}\n") 
     file.write("\n")
     
-def write_species_production(file, species_production_rates, configuration = None, decorators = 'decorators'):
+def write_species_production(file, species_production_rates, configuration = None):
     if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators=decorators)
+        print("Warning this may cause compilation mismatch in decorators")
+        configuration = get_configuration("configuration.yaml")
     for species_index, species_production in enumerate(species_production_rates):
         if species_production != '':
             file.write(f"    {configuration.source_element.format(i = species_index)} = {species_production};\n") 
@@ -112,7 +115,8 @@ def write_species_production(file, species_production_rates, configuration = Non
 
 def write_type_defs(file, n_species, configuration = None):
     if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators=decorators)
+        print("Warning this may cause compilation mismatch in decorators")
+        configuration = get_configuration("configuration.yaml")
     file.write("""
 const int n_species = {n_species};
 // Using alias for the array type (for example, an array of double values)
@@ -120,9 +124,10 @@ using Species = {species_typedef};
 """.format(**vars(configuration), n_species = int(n_species))
     )
 
-def write_start_of_source_function(file, configuration = None, decorators = 'decorators'):
+def write_start_of_source_function(file, configuration = None):
     if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators = decorators)
+        print("Warning this may cause compilation mismatch in decorators")
+        configuration = get_configuration("configuration.yaml")
     file.write("""
     {device_option}
     {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
@@ -156,14 +161,14 @@ def process_cantera_file(gas, configuration = None):
         # Print the reaction equation
         # print(f"Reaction {i + 1}: {reaction.equation}")
 
-        [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = configuration, decorators = 'decorators')
+        [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = configuration)
 
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
         
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index)
         
-        create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration, decorators = 'decorators')
+        create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration)
         
         get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index)
     
@@ -177,14 +182,14 @@ def process_cantera_file(gas, configuration = None):
         headers.append('reactions.h')
     
     with open('source.h','w') as file:
-        write_start_of_source_function(file, configuration=configuration, decorators = 'decorators')
+        write_start_of_source_function(file, configuration=configuration)
         write_reaction_calculations(file, reaction_calls)
         write_progress_rates(file, progress_rates)
-        write_species_production(file, species_production_texts, configuration = configuration, decorators = 'decorators')
+        write_species_production(file, species_production_texts, configuration = configuration)
         headers.append('source.h')
         write_end_of_function(file)
     
-    required_headers = create_headers(configuration = configuration, decorators = 'decorators')
+    required_headers = create_headers(configuration)
     return required_headers + headers
 
 

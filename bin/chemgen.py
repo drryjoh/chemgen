@@ -83,7 +83,7 @@ def main():
     headers = process_cantera_file(gas, configuration)
     if True: #replace with run time argument
         test_file = 'chemgen_test.cpp'
-        create_test(gas, headers, test_file, configuration, decorators = 'decorators')
+        create_test(gas, headers, test_file, configuration)
         compile_header_test(test_file)
 
 # Entry point

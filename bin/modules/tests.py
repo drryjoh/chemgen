@@ -66,7 +66,7 @@ def get_test_conditions():
     species_string  = ' '.join([f"{species['name']}:{species['MoleFraction']} " for species in species_list])
     return [temperature, pressure, species_string]
 
-def create_test(gas, headers, test_file, configuration, decorators = 'decorators'):
+def create_test(gas, headers, test_file, configuration):
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")

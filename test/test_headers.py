@@ -11,7 +11,7 @@ import glob
 class Config:
     pass
 
-def get_configuration(configuration_filename='configuration_header.yaml', decorators = 'decorators'):
+def get_configuration(configuration_filename='configuration_header.yaml'):
     with open(configuration_filename, 'r') as file:
         configuration = yaml.safe_load(file)
     # Create an instance of Config and set attributes dynamically
@@ -35,9 +35,9 @@ def get_text_to_format(code_directory, file_to_format):
     content = content.replace('\t', '    ')
     return content
 
-def write_formatted_code(code_directory, file_to_format, decorators = 'decorators', target_file = None, append = True):
+def write_formatted_code(code_directory, file_to_format, target_file = None, append = True):
     content = get_text_to_format(code_directory, file_to_format)
-    configuration = get_configuration("configuration_header.yaml", decorators=decorators)
+    configuration = get_configuration("configuration_header.yaml")
     new_content = content.format(**vars(configuration))
     
     if target_file == None:
@@ -50,7 +50,7 @@ def write_formatted_code(code_directory, file_to_format, decorators = 'decorator
         with open(target_file, 'w') as file:
             file.write(new_content)      
 
-def make_headers(code_directory, file_names, headers, decorators = 'decorators'):
+def make_headers(code_directory, file_names, headers):
     for file in file_names:
         headers.append(file.replace('.in',''))
         write_formatted_code(code_directory, file, decorators)
@@ -106,8 +106,8 @@ def compile_header_test():
     # Step 2: Run the tests
     run_tests(build_directory)
 
-def create_header_cpp(headers, decorators = 'decorators'):
-    configuration = get_configuration("configuration_header.yaml", decorators=decorators)
+def create_header_cpp(headers):
+    configuration = get_configuration("configuration_header.yaml")
     with open('./main.cpp', 'w') as file: 
         file.write("#include <cmath>\n")
         for header in headers:
@@ -149,8 +149,8 @@ def main():
     decorators_to_test = ['decorators','decorators_float']
     for decorators in decorators_to_test:
         clear_files('./')
-        headers = create_headers(decorators = decorators)
-        create_header_cpp(headers, decorators = decorators)
+        headers = create_headers()
+        create_header_cpp(headers)
         compile_header_test()
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ from pathlib import Path
 class Config:
     pass
 
-def get_configuration(configuration_filename='configuration.yaml', decorators = 'decorators'):
+def get_configuration(configuration_filename = 'configuration.yaml', decorators = 'decorators'):
     config_path = Path(configuration_filename)
     
     if config_path.exists():
