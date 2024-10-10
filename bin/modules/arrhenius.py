@@ -1,10 +1,10 @@
-def arrhenius_text(i, A, B, E, config = None):
-    if config == None:
+def arrhenius_text(i, A, B, E, configuration = None):
+    if configuration == None:
         return f"auto reaction_{i}(const auto& temperature) const {{ return arrhenius({A}, {B}, {E}, temperature)}}"
     else:
         return_text = "{device_option} {scalar_function} reaction_{i}({scalar_parameter} temperature) {const_option} {{ return arrhenius({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature);}}"
-        return return_text.format(**vars(config), i = i, A = A, E = E, B = B)
+        return return_text.format(**vars(configuration), i = i, A = A, E = E, B = B)
 
-def darrhenius_text(i, A, B, E, config = None):
-    if config == None:
+def darrhenius_text(i, A, B, E, configuration = None):
+    if configuration == None:
         return f"auto dreaction_dtemperature_{i}(const double& temperature) const {{ return darrhenius_dtemperature({A}, {B}, {E}, temperature)}}"

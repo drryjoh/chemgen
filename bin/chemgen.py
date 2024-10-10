@@ -76,8 +76,8 @@ def main():
     # Call process_file with the correct paths
     generate_code(chemical_mechanism, destination_folder)
     gas = ct.Solution(chemical_mechanism)
-    config = get_configuration(configuration_filename='configuration.yaml')
-    process_cantera_file(gas, config)
+    configuration = get_configuration(configuration_filename='configuration.yaml')
+    process_cantera_file(gas, configuration)
 
 # Entry point
 if __name__ == "__main__":

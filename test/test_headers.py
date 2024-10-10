@@ -13,7 +13,7 @@ class Config:
 
 def get_configuration(configuration_filename='configuration_header.yaml', decorators = 'decorators'):
     with open(configuration_filename, 'r') as file:
-        config = yaml.safe_load(file)
+        configuration = yaml.safe_load(file)
     # Create an instance of Config and set attributes dynamically
     config_obj = Config()
     for key, value in config[decorators].items():
@@ -37,8 +37,8 @@ def get_text_to_format(code_directory, file_to_format):
 
 def write_formatted_code(code_directory, file_to_format, decorators = 'decorators', target_file = None, append = True):
     content = get_text_to_format(code_directory, file_to_format)
-    config = get_configuration("configuration_header.yaml", decorators=decorators)
-    new_content = content.format(**vars(config))
+    configuration = get_configuration("configuration_header.yaml", decorators=decorators)
+    new_content = content.format(**vars(configuration))
     
     if target_file == None:
         target_file = file_to_format.replace('.in','')
@@ -107,7 +107,7 @@ def compile_header_test():
     run_tests(build_directory)
 
 def create_header_cpp(headers, decorators = 'decorators'):
-    config = get_configuration("configuration_header.yaml", decorators=decorators)
+    configuration = get_configuration("configuration_header.yaml", decorators=decorators)
     with open('./main.cpp', 'w') as file: 
         file.write("#include <cmath>\n")
         for header in headers:
@@ -127,7 +127,7 @@ int main() {{
     return 0;
 }}
             """
-        file.write(content.format(**vars(config)))
+        file.write(content.format(**vars(configuration)))
 
 def clear_files(directory):
     # Find all .cpp and .h files in the directory (and optionally subdirectories)
