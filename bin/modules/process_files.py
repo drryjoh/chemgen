@@ -105,7 +105,7 @@ def write_species_production(file, species_production_rates, configuration = Non
         configuration = get_configuration("configuration.yaml", decorators=decorators)
     for species_index, species_production in enumerate(species_production_rates):
         if species_production != '':
-            file.write(f"    {configuration.scalar} source_{species_index} = {species_production};\n") 
+            file.write(f"    {configuration.source_element.format(i = species_index)} = {species_production};\n") 
         else:
             file.write(f"    //source_{species_index} has no production term\n")
     file.write("\n")
@@ -125,17 +125,9 @@ def write_start_of_source_function(file, configuration = None, decorators = 'dec
         configuration = get_configuration("configuration.yaml", decorators = decorators)
     file.write("""
     {device_option}
-    {scalar_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
+    {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
     {{
-""".format(**vars(configuration)))
-
-def write_start_of_source_function(file, configuration = None, decorators = 'decorators'):
-    if configuration == None:
-        configuration = get_configuration("configuration.yaml", decorators = decorators)
-    file.write("""
-    {device_option}
-    {scalar_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
-    {{
+        Species net_production_rates = {{0.0}};
 """.format(**vars(configuration)))
 
 def write_reaction_calculations(file, reaction_calls):
@@ -143,7 +135,7 @@ def write_reaction_calculations(file, reaction_calls):
         file.write(f"       {reaction_call}")
 
 def write_end_of_function(file):
-    file.write("\n    }")
+    file.write("        return net_production_rates;\n    }")
 
 def process_cantera_file(gas, configuration = None):
     species_names  = gas.species_names
@@ -193,6 +185,6 @@ def process_cantera_file(gas, configuration = None):
         write_end_of_function(file)
     
     required_headers = create_headers(configuration = configuration, decorators = 'decorators')
-    return headers + required_headers
+    return required_headers + headers
 
 

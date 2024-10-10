@@ -4,7 +4,7 @@ from pathlib import Path
 class Config:
     pass
 
-def get_configuration(configuration_filename='configuration_header.yaml', decorators = 'decorators'):
+def get_configuration(configuration_filename='configuration.yaml', decorators = 'decorators'):
     config_path = Path(configuration_filename)
     
     if config_path.exists():
@@ -16,10 +16,13 @@ def get_configuration(configuration_filename='configuration_header.yaml', decora
             configuration = yaml.safe_load(file)
     # Create an instance of Config and set attributes dynamically
     config_obj = Config()
+    #print(configuration)
+    print(decorators)
     for key, value in configuration[decorators].items():
         setattr(config_obj, key, value)
     
     print("** decorators used **")
+    
     for key, value in vars(config_obj).items():
         print(f"{key}: {value}")
     return config_obj 
@@ -28,4 +31,5 @@ def get_default_configuration():
     current_dir = Path(__file__).resolve().parent
     configuration_filename = current_dir.parent/ 'configuration.yaml'
     print("** No configuration file detected, using decorators defaults in /bin/configuration.yaml **")
+
     return configuration_filename

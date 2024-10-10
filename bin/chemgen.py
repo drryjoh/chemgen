@@ -9,6 +9,7 @@ from pathlib import Path
 from modules.process_files import *
 from modules.configuration import *
 from modules.headers import *
+from modules.tests import *
 
 def find_chemical_mechanism(file_name):
     # Get the path to the current script (chemgen.py)
@@ -51,26 +52,6 @@ def generate_code(chemical_mechanism, destination_folder):
 
     print(f"File '{chemical_mechanism}' has been copied to '{destination_path}'.")
 
-def make_test(headers, configuration):
-    with open('chemgen.cpp', 'w') as file:
-        write_headers(file, headers)
-        content = """
-#include <iostream>  // For printing the result to the console
-
-int main() {{
-    // Call the arrhenius function with the specified parameters
-    {scalar} result = source({scalar_cast}(100),  {scalar_cast}(1.5), {scalar_cast}(1.3e6), {scalar_cast}(1800));
-    {scalar} dresult_dtemperature = darrhenius_dtemperature({scalar_cast}(100), {scalar_cast}(1.5), {scalar_cast}(1.3e6),  {scalar_cast}(1800));
-
-    // Output the result
-    std::cout << "Result of arrhenius(100, 1.3e6, 1.5, 1800): " << result << std::endl;
-    std::cout << "Result of darrhenius_dtemperature(100, 1.3e6, 1.5, 1800): " << dresult_dtemperature << std::endl;
-
-    return 0;
-}}
-            """.format(**vars(configuration))
-        file.write(content)
-
 # Define functions or classes here
 def main():
     """
@@ -100,8 +81,10 @@ def main():
     configuration = get_configuration(configuration_filename='configuration.yaml')
 
     headers = process_cantera_file(gas, configuration)
-    if True:
-        make_test(headers, configuration)
+    if True: #replace with run time argument
+        test_file = 'chemgen_test.cpp'
+        create_test(gas, headers, test_file, configuration, decorators = 'decorators')
+        compile_header_test(test_file)
 
 # Entry point
 if __name__ == "__main__":
