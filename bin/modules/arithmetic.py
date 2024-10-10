@@ -1,0 +1,24 @@
+import math
+
+def is_integer_to_precision(x, tol=1e-9):
+    """
+    Check if the floating-point number x is an integer to machine precision.
+    
+    Parameters:
+    - x: The floating-point number to check.
+    - tol: The tolerance for checking. Default is 1e-9, which is suitable for many cases.
+    
+    Returns:
+    - True if x is close to an integer, False otherwise.
+    """
+    return math.isclose(x, round(x), abs_tol=tol)
+
+def raise_to_power(raise_to, power):
+    if is_integer_to_precision(power, 1e-6):
+        power_integer = int(power)
+        if power_integer == 1:
+            return raise_to
+        else:
+            return f"pow{power_integer}({raise_to})"
+    else:
+        return f"pow({raise_to}, {power})"

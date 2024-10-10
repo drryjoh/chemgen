@@ -117,8 +117,8 @@ def create_header_cpp(headers, decorators = 'decorators'):
 
 int main() {{
     // Call the arrhenius function with the specified parameters
-    {scalar} result = arrhenius({scalar_cast}(100), {scalar_cast}(1.3e6), {scalar_cast}(1.5), {scalar_cast}(1800));
-    {scalar} dresult_dtemperature = darrhenius_dtemperature({scalar_cast}(100), {scalar_cast}(1.3e6), {scalar_cast}(1.5), {scalar_cast}(1800));
+    {scalar} result = arrhenius({scalar_cast}(100),  {scalar_cast}(1.5), {scalar_cast}(1.3e6), {scalar_cast}(1800));
+    {scalar} dresult_dtemperature = darrhenius_dtemperature({scalar_cast}(100), {scalar_cast}(1.5), {scalar_cast}(1.3e6),  {scalar_cast}(1800));
 
     // Output the result
     std::cout << "Result of arrhenius(100, 1.3e6, 1.5, 1800): " << result << std::endl;
