@@ -19,7 +19,7 @@ def get_text_to_format(code_directory, file_to_format):
     content = content.replace('\t', '    ')
     return content
 
-def write_formatted_code(code_directory, file_to_format, configuration = None, decorators = 'decorators', target_file = None, append = True):
+def write_formatted_code(code_directory, file_to_format, configuration = None, decorators = 'decorators', target_file = None, append = False):
     content = get_text_to_format(code_directory, file_to_format)
     
     if configuration == None:

@@ -8,6 +8,10 @@ import os
 import glob
 from .format_code import *
 
+def write_headers(file, headers):
+    for header in headers:
+        file.write(f"#include \"{header}\"\n")
+
 def make_headers(code_directory, file_names, headers, configuration = None, decorators = 'decorators'):
     for file in file_names:
         headers.append(file.replace('.in',''))

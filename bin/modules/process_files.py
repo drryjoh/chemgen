@@ -3,37 +3,49 @@ import numpy as np
 from .arrhenius import *
 from .arithmetic import *
 from .headers import *
+from .configuration import *
 
-def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names):
+def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = None, decorators = 'decorators'):
+    if configuration == None:
+        configuration = get_configuration("configuration.yaml", decorators=decorators)
     forward_rate_array = []
     for species, coeff in reaction.reactants.items():
         stoichiometric_forward[species_names.index(species)] = coeff
-        forward_rate_array.append(raise_to_power(f"C{species_names.index(species)}", coeff))
+        species_index = species_names.index(species)
+        species_element_i  = configuration.species_element.format(i = species_index)
+        forward_rate_array.append(raise_to_power(species_element_i, coeff))
         indexes_of_species_in_reaction.append(species_names.index(species))
     forward_rate = ' * '.join(forward_rate_array)
 
     backward_rate_array = []
     for species, coeff in reaction.products.items():
         stoichiometric_backward[species_names.index(species)] = coeff
-        backward_rate_array.append(raise_to_power(f"C{species_names.index(species)}", coeff))
+        species_index = species_names.index(species)
+        species_element_i  = configuration.species_element.format(i = species_index)
+        backward_rate_array.append(raise_to_power(species_element_i, coeff))
         indexes_of_species_in_reaction.append(species_names.index(species))
     backward_rate = ' * '.join(backward_rate_array)
 
     return (forward_rate, backward_rate)
 
-def accrue_species_produciton(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts)
-    for index in indexes_of_species_in_reaction: 
-        if species_production_texts[index] == '':
-            species_production_texts[index] = f"{stoichiometric_production[index]} * rate_of_progress_{i}"
-        else:
-            species_production_texts[index] = ' + '.join([species_production_texts[index], f"{stoichiometric_production[index]} * rate_of_progress_{i}"])
+def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index, configuration = None, decorators = 'decorators'):
+    if configuration == None:
+        configuration = get_configuration("configuration.yaml", decorators=decorators)
 
-def get_reaction_function(reaction_rates, reaction, configuration):
+    for index in indexes_of_species_in_reaction: 
+        formatted_text = "{scalar_cast}({stoichiometric_production}) * rate_of_progress_{reaction_index}".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)
+        if species_production_texts[index] == '':
+            species_production_texts[index] = formatted_text
+        else:
+            species_production_texts[index] = ' + '.join([species_production_texts[index], formatted_text])
+
+def get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index):
         if isinstance(reaction, ct.Reaction):
             print(f"  Arrhenius Parameters: A = {reaction.rate.pre_exponential_factor}, "
                 f"b = {reaction.rate.temperature_exponent}, "
                 f"Ea = {reaction.rate.activation_energy}")
-            reaction_rates[i] = arrhenius_text(i, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, configuration)
+            reaction_rates[reaction_index] = arrhenius_text(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, configuration)
+            reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(temperature);\n".format(**vars(configuration),reaction_index = reaction_index)
         
         elif isinstance(reaction, ct.ThreeBodyReaction):
             print(f"  Arrhenius Parameters (3-body reaction): A = {reaction.rate.pre_exponential_factor}, "
@@ -66,16 +78,84 @@ def get_reaction_function(reaction_rates, reaction, configuration):
         else:
             print(f"  Unknown reaction type: {reaction_type}")
 
+def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration = None, decorators = 'decorators'):
+    if configuration == None:
+        configuration = get_configuration("configuration.yaml", decorators=decorators)
+    formatted_text = (
+    "{scalar} rate_of_progress_{reaction_index} = {forward_rate} * forward_reaction_{reaction_index} "
+    ";//- {backward_rate} * forward_reaction_{reaction_index}/equilibrium_constant_{reaction_index};"
+    .format(reaction_index=reaction_index, 
+            forward_rate=forward_rate, 
+            backward_rate=backward_rate, 
+            **vars(configuration)))
+
+    progress_rates[reaction_index] = formatted_text
+
+def write_reaction_rates(file, reaction_rates):
+    for reaction in reaction_rates:
+        file.write(f"    {reaction}\n")
+
+def write_progress_rates(file, progress_rates):
+    for progress_rate in progress_rates:
+        file.write(f"       {progress_rate}\n") 
+    file.write("\n")
+    
+def write_species_production(file, species_production_rates, configuration = None, decorators = 'decorators'):
+    if configuration == None:
+        configuration = get_configuration("configuration.yaml", decorators=decorators)
+    for species_index, species_production in enumerate(species_production_rates):
+        if species_production != '':
+            file.write(f"    {configuration.scalar} source_{species_index} = {species_production};\n") 
+        else:
+            file.write(f"    //source_{species_index} has no production term\n")
+    file.write("\n")
+
+def write_type_defs(file, n_species, configuration = None):
+    if configuration == None:
+        configuration = get_configuration("configuration.yaml", decorators=decorators)
+    file.write("""
+const int n_species = {n_species};
+// Using alias for the array type (for example, an array of double values)
+using Species = {species_typedef};
+""".format(**vars(configuration), n_species = int(n_species))
+    )
+
+def write_start_of_source_function(file, configuration = None, decorators = 'decorators'):
+    if configuration == None:
+        configuration = get_configuration("configuration.yaml", decorators = decorators)
+    file.write("""
+    {device_option}
+    {scalar_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
+    {{
+""".format(**vars(configuration)))
+
+def write_start_of_source_function(file, configuration = None, decorators = 'decorators'):
+    if configuration == None:
+        configuration = get_configuration("configuration.yaml", decorators = decorators)
+    file.write("""
+    {device_option}
+    {scalar_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
+    {{
+""".format(**vars(configuration)))
+
+def write_reaction_calculations(file, reaction_calls):
+    for reaction_index, reaction_call in enumerate(reaction_calls):
+        file.write(f"       {reaction_call}")
+
+def write_end_of_function(file):
+    file.write("\n    }")
+
 def process_cantera_file(gas, configuration = None):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_jacobian = [[''] * (gas.n_species + 1)] * (gas.n_species + 1)
     reaction_rates = [''] * gas.n_reactions
+    reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
 
     # Loop through all reactions
-    for i in range(gas.n_reactions):
-        reaction = gas.reaction(i)
+    for reaction_index in range(gas.n_reactions):
+        reaction = gas.reaction(reaction_index)
         stoichiometric_production = np.zeros(len(species_names))
         stoichiometric_forward = np.zeros(len(species_names))
         stoichiometric_backward = np.zeros(len(species_names))
@@ -84,21 +164,35 @@ def process_cantera_file(gas, configuration = None):
         # Print the reaction equation
         # print(f"Reaction {i + 1}: {reaction.equation}")
 
-        [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names)
+        [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = configuration, decorators = 'decorators')
 
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
-        progress_rates[i] = f"rate_of_progress_{i} = {forward_rate} * r{i} - {backward_rate} * r{i}/equilibrium_constant_{i}"
-
-        accrue_species_produciton(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts)
-
-        get_reaction_function(reaction_rates, reaction, configuration)
         
-        print()  # Add a blank line for better readability
-    #write_reaction_rates(reaction_rates)
-    #print(species_production_texts)
-    #write_progress_rates(progress_rates)
-    print(species_production_texts)
-    clear_headers('./')
-    create_headers(configuration = configuration)
+        accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index)
+        
+        create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration, decorators = 'decorators')
+        
+        get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index)
+    
+    headers = []
+    with open('types_inl.h','w') as file:
+        write_type_defs(file, gas.n_species, configuration = configuration)
+        headers.append('types_inl.h')
+
+    with open('reactions.h','w') as file:
+        write_reaction_rates(file, reaction_rates)
+        headers.append('reactions.h')
+    
+    with open('source.h','w') as file:
+        write_start_of_source_function(file, configuration=configuration, decorators = 'decorators')
+        write_reaction_calculations(file, reaction_calls)
+        write_progress_rates(file, progress_rates)
+        write_species_production(file, species_production_texts, configuration = configuration, decorators = 'decorators')
+        headers.append('source.h')
+        write_end_of_function(file)
+    
+    required_headers = create_headers(configuration = configuration, decorators = 'decorators')
+    return headers + required_headers
+
 
