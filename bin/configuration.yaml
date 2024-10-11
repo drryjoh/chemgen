@@ -13,10 +13,15 @@ decorators:
   const_option: ""
   constexpr: "constexpr"
   device_option: ""
-  device_sum: "std::accumulate"
   expmath: "std::exp"
   powmath: "std::pow"
   logmath: "std::log"
+  device_sum: "std::accumulate(a.begin(), a.end(), {scalar_cast}(0.0))"
+  device_fill: "std::fill(b.begin(), b.end(), a)"
+  device_transform: "std::transform(b.begin(), b.end(), c.begin(), [&a]({scalar} s) {{ return a * s; }});"
+  sum: "sum_gen"
+  fill: "fill_gen"
+  scale: "scale_gen"
 
 decorators_float:
   scalar: "float"

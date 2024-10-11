@@ -95,10 +95,13 @@ int main() {{
     {concentration_test}
     {scalar} temperature =  {temperature};
     {species} result = source(species, temperature);
+    {scalar} pressure_return = pressure(species, temperature);
 
     // Output the result
     std::cout << "Source test result:  " << result << std::endl;
     std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
+    
+    std::cout << "Pressure: " <<pressure_return<<std::endl;
 
     return 0;
 }}

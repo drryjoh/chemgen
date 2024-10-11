@@ -66,6 +66,11 @@ def main():
     gas = ct.Solution(chemical_mechanism)
     configuration = get_configuration(configuration_filename='configuration.yaml')
     headers = process_cantera_file(gas, configuration)
+    print("***headers***")
+
+    if "types_inl.h" in headers:
+        headers.remove("types_inl.h")
+        headers.insert(0,"types_inl.h")
     
     if True: #replace with run time argument
         test_file = 'chemgen_test.cpp'

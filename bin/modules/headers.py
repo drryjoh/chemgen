@@ -19,12 +19,12 @@ def make_headers(code_directory, file_names, headers, configuration = None):
 
 def create_headers(configuration):
     code_directory = Path('src') / 'math_headers'
-    file_names = ['exp_gen.h.in', 'multiply_divide.h.in', 'pow_gen.h.in']
+    file_names = ['exp_gen.h.in', 'multiply_divide.h.in', 'pow_gen.h.in','array_handling.h.in']
     headers = []
     make_headers(code_directory, file_names, headers, configuration = configuration)
 
     code_directory = Path('src') / 'thermophysics'
-    file_names = ['constants.h.in']
+    file_names = ['constants.h.in',"thermally_perfect.h.in"]
     make_headers(code_directory, file_names, headers, configuration = configuration)
 
     code_directory = Path('src') / 'reaction_headers'

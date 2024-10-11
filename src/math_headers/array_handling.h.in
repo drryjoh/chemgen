@@ -1,2 +1,19 @@
 #include <numeric>  // For std::accumulate
-{device_option} {scalar_function} sum_gen({species_parameter} a) {const_option} {{return {device_sum}(a.begin(), a.end(), {scalar_cast}(0.0));}}
+{device_option} {scalar_function} 
+sum_gen({species_parameter} a) {const_option} {{return {device_sum_inl};}}
+
+{device_option} {species_function} 
+fill_gen({scalar_parameter} a) {const_option}
+{{
+    Species b{{}};  // Create an empty array
+    {device_fill_inl};  // Fill it with 'value'
+    return b;  // Return the filled array
+}}
+
+{device_option} {species_function} 
+scale_gen({scalar_parameter} a, {species_parameter} b) {const_option}
+{{
+    {species} c;
+    {device_transform_inl}
+    return c;
+}}
