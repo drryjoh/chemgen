@@ -69,6 +69,7 @@ def get_test_conditions():
 def create_test(gas, headers, test_file, configuration):
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
+        file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
         write_headers(file, headers)
         [temperature, pressure, species_string] = get_test_conditions()
