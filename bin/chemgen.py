@@ -39,19 +39,6 @@ def find_chemical_mechanism(file_name):
     print(f"Error: The file '{file_name}' does not exist.")
     return None
 
-def generate_code(chemical_mechanism, destination_folder):
-    """
-    Function to process the file.
-    """
-    
-    # Remove the 'yaml' extension from the chemical mechanism file name
-    chemical_mechanism_name = chemical_mechanism.stem
-
-    destination_path = destination_folder / chemical_mechanism.name
-    shutil.copy(chemical_mechanism, destination_path)
-
-    print(f"File '{chemical_mechanism}' has been copied to '{destination_path}'.")
-
 # Define functions or classes here
 def main():
     """
@@ -75,12 +62,11 @@ def main():
     # Core logic of the script
     print(f"Processing file: {args.chemical_mechanism}")
     
-    # Call process_file with the correct paths
-    generate_code(chemical_mechanism, destination_folder)
+
     gas = ct.Solution(chemical_mechanism)
     configuration = get_configuration(configuration_filename='configuration.yaml')
-
     headers = process_cantera_file(gas, configuration)
+    
     if True: #replace with run time argument
         test_file = 'chemgen_test.cpp'
         create_test(gas, headers, test_file, configuration)

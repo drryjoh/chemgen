@@ -13,6 +13,7 @@ decorators:
   const_option: ""
   constexpr: "constexpr"
   device_option: ""
+  device_sum: "std::accumulate"
   expmath: "std::exp"
   powmath: "std::pow"
   logmath: "std::log"

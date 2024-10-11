@@ -132,7 +132,7 @@ def write_start_of_source_function(file, configuration = None):
     {device_option}
     {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
     {{
-        Species net_production_rates = {{0.0}};
+        Species net_production_rates = {{{scalar_cast}(0)}};
 """.format(**vars(configuration)))
 
 def write_reaction_calculations(file, reaction_calls):

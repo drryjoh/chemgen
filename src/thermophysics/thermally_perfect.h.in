@@ -1,0 +1,20 @@
+{device_option} {scalar_function} 
+pressure({species_parameter} species, 
+         {scalar_parameter} temperature) {const_option} 
+{{
+    return universal_gas_constant() * temperature * sum_gen(species);
+}}
+
+{device_option} {scalar_function} 
+dpressure_dtemperature({species_parameter} species, 
+                       {scalar_parameter} temperature) {const_option} 
+{{
+    return universal_gas_constant() * sum_gen(species);
+}}
+
+{device_option} {species_function} 
+dpressure_dspecies({species_parameter} species, 
+                   {scalar_parameter} temperature) {const_option} 
+{{
+    return universal_gas_constant() * sum_gen(species);
+}}

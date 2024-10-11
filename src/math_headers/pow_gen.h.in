@@ -4,3 +4,11 @@
 {device_option} {scalar_function} dpow_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{ return b * {powmath}(a, b - {scalar_cast}(1));}}
 // Partial derivative of a^b with respect to b
 {device_option} {scalar_function} dpow_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{ return {powmath}(a, b) * {logmath}(a);}}
+
+//simple pow
+{device_option} {scalar_function} pow_gen2({scalar_parameter} a) {const_option} {{ return a * a;}}
+{device_option} {scalar_function} dpow_gen2_da({scalar_parameter} a) {const_option} {{ return {scalar_cast}(2) * a;}}
+{device_option} {scalar_function} pow_gen3({scalar_parameter} a) {const_option} {{ return a * a * a;}}
+{device_option} {scalar_function} dpow_gen3_da({scalar_parameter} a) {const_option} {{ return {scalar_cast}(3) * a * a;}}
+{device_option} {scalar_function} pow_gen4({scalar_parameter} a) {const_option} {{ return a * a * a * a;}}
+{device_option} {scalar_function} dpow_gen4_da({scalar_parameter} a) {const_option} {{ return {scalar_cast}(4) * a * a * a;}}

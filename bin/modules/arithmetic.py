@@ -19,6 +19,6 @@ def raise_to_power(raise_to, power):
         if power_integer == 1:
             return raise_to
         else:
-            return f"pow{power_integer}({raise_to})"
+            return f"pow_gen{power_integer}({raise_to})"
     else:
-        return f"pow({raise_to}, {power})"
+        return f"pow_gen({raise_to}, {power})"
