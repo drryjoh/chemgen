@@ -4,6 +4,8 @@ from .arrhenius import *
 from .arithmetic import *
 from .headers import *
 from .configuration import *
+from .thermo_chemistry import *
+from .write import *
 
 def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = None):
     if configuration == None:
@@ -93,55 +95,6 @@ def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backw
 
     progress_rates[reaction_index] = formatted_text
 
-def write_reaction_rates(file, reaction_rates):
-    for reaction in reaction_rates:
-        file.write(f"    {reaction}\n")
-
-def write_progress_rates(file, progress_rates):
-    for progress_rate in progress_rates:
-        file.write(f"       {progress_rate}\n") 
-    file.write("\n")
-    
-def write_species_production(file, species_production_rates, configuration = None):
-    if configuration == None:
-        print("Warning this may cause compilation mismatch in decorators")
-        configuration = get_configuration("configuration.yaml")
-    for species_index, species_production in enumerate(species_production_rates):
-        if species_production != '':
-            file.write(f"    {configuration.source_element.format(i = species_index)} = {species_production};\n") 
-        else:
-            file.write(f"    //source_{species_index} has no production term\n")
-    file.write("\n")
-
-def write_type_defs(file, n_species, configuration = None):
-    if configuration == None:
-        print("Warning this may cause compilation mismatch in decorators")
-        configuration = get_configuration("configuration.yaml")
-    file.write("""
-const int n_species = {n_species};
-// Using alias for the array type (for example, an array of double values)
-using Species = {species_typedef};
-""".format(**vars(configuration), n_species = int(n_species))
-    )
-
-def write_start_of_source_function(file, configuration = None):
-    if configuration == None:
-        print("Warning this may cause compilation mismatch in decorators")
-        configuration = get_configuration("configuration.yaml")
-    file.write("""
-    {device_option}
-    {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
-    {{
-        Species net_production_rates = {{{scalar_cast}(0)}};
-""".format(**vars(configuration)))
-
-def write_reaction_calculations(file, reaction_calls):
-    for reaction_index, reaction_call in enumerate(reaction_calls):
-        file.write(f"       {reaction_call}")
-
-def write_end_of_function(file):
-    file.write("        return net_production_rates;\n    }")
-
 def process_cantera_file(gas, configuration = None):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
@@ -149,6 +102,7 @@ def process_cantera_file(gas, configuration = None):
     reaction_rates = [''] * gas.n_reactions
     reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
+    thermo_txt = thermo_fit_text(polyfit_thermodynamics(gas), configuration)
 
     # Loop through all reactions
     for reaction_index in range(gas.n_reactions):
@@ -177,6 +131,10 @@ def process_cantera_file(gas, configuration = None):
         write_type_defs(file, gas.n_species, configuration = configuration)
         headers.append('types_inl.h')
 
+    with open('thermotransport_fits.h','w') as file:
+        write_thermo_transport_fit(file, thermo_txt, configuration = configuration)
+        headers.append('thermotransport_fits.h')
+    
     with open('reactions.h','w') as file:
         write_reaction_rates(file, reaction_rates)
         headers.append('reactions.h')

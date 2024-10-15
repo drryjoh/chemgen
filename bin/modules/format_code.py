@@ -25,7 +25,6 @@ def write_formatted_code(code_directory, file_to_format, configuration = None, t
     if configuration == None:
         print("Warning this may cause compilation mismatch in decorators")
         configuration = get_configuration("configuration.yaml")
-    print(content)
     new_content = content.format(**vars(configuration))
     
     if target_file == None:

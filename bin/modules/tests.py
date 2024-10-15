@@ -1,5 +1,6 @@
 from .configuration import *
 from .headers import *
+import cantera as ct
 
 def run_command(command):
     """Run a shell command and check for errors."""
@@ -100,10 +101,19 @@ int main() {{
     // Output the result
     std::cout << "Source test result:  " << result << std::endl;
     std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
+
+    std::cout << "Cantera species cps: " <<"{cantera_species_cp}"<<std::endl;
+    std::cout << "Chemgen species cps: " << thermo_fit(temperature) <<std::endl;
     
-    std::cout << "Pressure: " <<pressure_return<<std::endl;
+    std::cout << "Pressure: " <<pressure_return <<std::endl;
+    std::cout << "Temperature Monomial at 300           : " <<temperature_monomial({scalar_cast}(300)) <<std::endl;
+    std::cout << "Temperature Monomial Derivative at 300: " <<dtemperature_monomial_dtemperature({scalar_cast}(300)) <<std::endl;
 
     return 0;
 }}
             """
-        file.write(content.format(**vars(configuration), concentration_test = concentration_test, temperature = temperature, cantera_net_production_rates = ' '.join([f"{npr}" for npr in gas.net_production_rates])))
+        file.write(content.format(**vars(configuration), 
+        concentration_test = concentration_test, 
+        temperature = temperature, 
+        cantera_net_production_rates = ' '.join([f"{npr}" for npr in gas.net_production_rates]),
+        cantera_species_cp = ' '.join([f"{scp}" for scp in gas.standard_cp_R * ct.gas_constant / gas.molecular_weights])))

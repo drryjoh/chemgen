@@ -21,17 +21,10 @@ def get_configuration(configuration_filename = 'configuration.yaml', decorators 
             configuration = yaml.safe_load(file)
     # Create an instance of Config and set attributes dynamically
     config_obj = Config()
-    #print(configuration)
-    print(decorators)
     for key, value in configuration[decorators].items():
         setattr(config_obj, key, value)
     
     add_derived_attributes(config_obj)
-    
-    print("** decorators used **")
-    
-    for key, value in vars(config_obj).items():
-        print(f"{key}: {value}")
     return config_obj 
 
 def get_default_configuration():
