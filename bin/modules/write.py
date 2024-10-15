@@ -29,8 +29,11 @@ const {index} n_order_thermo = {n_thermo_order} + 1;
 // Using alias for the array type (for example, an array of double values)
 using Species = {species_typedef};
 using TemperatureMonomial = {temperature_monomial_typedef};
+using TemperatureEnergyMonomial = {temperature_energy_monomial_typedef};
 
-""".format(**vars(configuration), n_species = int(n_species))
+""".format(**vars(configuration), 
+n_species = int(n_species), 
+temperature_energy_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 1"))
     )
 
 def write_start_of_source_function(file, configuration = None):
@@ -51,20 +54,38 @@ def write_reaction_calculations(file, reaction_calls):
 def write_end_of_function(file):
     file.write("        return net_production_rates;\n    }")
 
-def write_thermo_transport_fit(file, thermo_fit_text, configuration):
+def write_thermo_transport_fit(file, name, thermo_fit_text, configuration):
     content ="""
 {device_option}
 {species_function} 
-thermo_fit({temperature_monomial_parameter} temperature_monomial_sequence) {const_option} 
+{name}({temperature_monomial_parameter} temperature_monomial_sequence) {const_option} 
 {{
 {thermo_fit}
 }}
 
 {device_option}
 {species_function} 
-thermo_fit({scalar_parameter} temperature) {const_option} 
+{name}({scalar_parameter} temperature) {const_option} 
 {{
-    return thermo_fit(temperature_monomial(temperature));
+    return {name}(temperature_monomial(temperature));
 }}
-    """.format(**vars(configuration), thermo_fit = thermo_fit_text)
+    """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
+    file.write(content)
+
+def write_energy_thermo_transport_fit(file, name, thermo_fit_text, configuration):
+    content ="""
+{device_option}
+{species_function} 
+{name}({temperature_energy_monomial_parameter} temperature_energy_monomial_sequence) {const_option} 
+{{
+{thermo_fit}
+}}
+
+{device_option}
+{species_function} 
+{name}({scalar_parameter} temperature) {const_option} 
+{{
+    return {name}(temperature_energy_monomial(temperature));
+}}
+    """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)

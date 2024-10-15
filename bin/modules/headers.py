@@ -12,7 +12,7 @@ def write_headers(file, headers):
     for header in headers:
         file.write(f"#include \"{header}\"\n")
 
-def make_headers(code_directory, file_names, headers, configuration = None):
+def make_headers(code_directory, file_names, headers, configuration):
     for file in file_names:
         headers.append(file.replace('.in',''))
         write_formatted_code(code_directory, file, configuration = configuration)

@@ -1,4 +1,4 @@
-//Thermo-fits
+//Thermo-fits specific heat 
 {device_option}
 {temperature_monomial_function} 
 temperature_monomial({scalar_parameter} temperature) {const_option} 
@@ -35,7 +35,7 @@ dtemperature_monomial_dtemperature({scalar_parameter} temperature) {const_option
 
 {device_option}
 {scalar_function} 
-contract({temperature_monomial_parameter} temperature_monomial, {temperature_monomial} coefficients) {const_option} 
+contract({temperature_monomial_parameter} temperature_monomial, {temperature_monomial_parameter} coefficients) {const_option} 
 {{
     {scalar} fit = {scalar_cast}(0);
     for ({index} i = 0; i < n_order_thermo; ++i)
@@ -46,6 +46,53 @@ contract({temperature_monomial_parameter} temperature_monomial, {temperature_mon
     return fit;
 }}
 
+//thermo fits energy
+{device_option}
+{temperature_energy_monomial_function} 
+temperature_energy_monomial({scalar_parameter} temperature) {const_option} 
+{{
+    {temperature_energy_monomial} temperature_energy_monomial_sequence_ = {{}};
+    temperature_energy_monomial_sequence_[0] = 1.0; // The first term is always 1
+
+    // Horner's method: Start with 1 and multiply progressively by T
+    for ({index} i = 1; i < n_order_thermo + 1; ++i)
+    {{
+        temperature_energy_monomial_sequence_[i] = temperature_energy_monomial_sequence_[i - 1] * temperature;  // T^i = T^(i-1) * T
+    }}
+    
+    return temperature_energy_monomial_sequence_;
+}}
+
+{device_option}
+{temperature_energy_monomial_function} 
+dtemperature_energy_monomial_dtemperature({scalar_parameter} temperature) {const_option} 
+{{
+    {temperature_energy_monomial} temperature_energy_monomial_derivative_ = {{}};
+    {temperature_energy_monomial} temperature_energy_monomial_ = temperature_energy_monomial(temperature);
+    temperature_energy_monomial_derivative_[0] = 0.0; // The derivative of T^0 (constant 1) is 0
+
+
+    // Derivative of Horner's method: Start with 1 and multiply progressively by T
+    for ({index} i = 1; i < n_order_thermo + 1; ++i) 
+    {{
+        temperature_energy_monomial_derivative_[i] = i * temperature_energy_monomial_[i - 1]; // i * T^(i-1)
+    }}
+    
+    return temperature_energy_monomial_derivative_;
+}}
+
+{device_option}
+{scalar_function} 
+contract({temperature_energy_monomial_parameter} temperature_energy_monomial, {temperature_energy_monomial_parameter} coefficients) {const_option} 
+{{
+    {scalar} fit = {scalar_cast}(0);
+    for ({index} i = 0; i < n_order_thermo; ++i)
+    {{
+        fit += temperature_energy_monomial[i] * coefficients[i];
+    }}
+    
+    return fit;
+}}
 
 //Pressure
 {device_option}

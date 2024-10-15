@@ -95,14 +95,14 @@ def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backw
 
     progress_rates[reaction_index] = formatted_text
 
-def process_cantera_file(gas, configuration = None):
+def process_cantera_file(gas, configuration):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_jacobian = [[''] * (gas.n_species + 1)] * (gas.n_species + 1)
     reaction_rates = [''] * gas.n_reactions
     reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
-    thermo_txt = thermo_fit_text(polyfit_thermodynamics(gas), configuration)
+    [thermo_names, thermo_fits, thermo_types] = polyfit_thermodynamics(gas, configuration, order = int("{n_thermo_order}".format(**vars(configuration))))
 
     # Loop through all reactions
     for reaction_index in range(gas.n_reactions):
@@ -132,7 +132,11 @@ def process_cantera_file(gas, configuration = None):
         headers.append('types_inl.h')
 
     with open('thermotransport_fits.h','w') as file:
-        write_thermo_transport_fit(file, thermo_txt, configuration = configuration)
+        for name, thermo_fit, thermo_type in zip(thermo_names, thermo_fits, thermo_types):
+            if thermo_type == "energy":
+                write_energy_thermo_transport_fit(file, name, thermo_fit, configuration = configuration)
+            else:
+                write_thermo_transport_fit(file, name, thermo_fit,  configuration = configuration)
         headers.append('thermotransport_fits.h')
     
     with open('reactions.h','w') as file:

@@ -77,7 +77,8 @@ def create_test(gas, headers, test_file, configuration):
         gas.TPX = temperature, pressure, species_string
         concentrations = gas.concentrations
         concentration_test = '{species} species  = {{{array}}};'.format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
-        
+        enthalpies = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights
+
         content = """
 // Overload << operator for std::array
 template <typename T, std::size_t N>
@@ -103,10 +104,15 @@ int main() {{
     std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
 
     std::cout << "Cantera species cps: " <<"{cantera_species_cp}"<<std::endl;
-    std::cout << "Chemgen species cps: " << thermo_fit(temperature) <<std::endl;
+    std::cout << "Chemgen species cps: " << species_specific_heat_constant_pressure_mass_specific(temperature) <<std::endl;
+
+    std::cout << "Cantera species enthalpies: " <<"{cantera_species_enthalpy}"<<std::endl;
+    std::cout << "Chemgen species enthalpies: " << species_enthalpy_mass_specific(temperature) <<std::endl;
     
     std::cout << "Pressure: " <<pressure_return <<std::endl;
     std::cout << "Temperature Monomial at 300           : " <<temperature_monomial({scalar_cast}(300)) <<std::endl;
+    std::cout << "Temperature Energy Monomial at 300           : " <<temperature_energy_monomial({scalar_cast}(300)) <<std::endl;
+
     std::cout << "Temperature Monomial Derivative at 300: " <<dtemperature_monomial_dtemperature({scalar_cast}(300)) <<std::endl;
 
     return 0;
@@ -116,4 +122,5 @@ int main() {{
         concentration_test = concentration_test, 
         temperature = temperature, 
         cantera_net_production_rates = ' '.join([f"{npr}" for npr in gas.net_production_rates]),
-        cantera_species_cp = ' '.join([f"{scp}" for scp in gas.standard_cp_R * ct.gas_constant / gas.molecular_weights])))
+        cantera_species_cp = ' '.join([f"{scp}" for scp in gas.standard_cp_R * ct.gas_constant / gas.molecular_weights]),
+        cantera_species_enthalpy = ' '.join([f"{enth}" for enth in enthalpies])))
