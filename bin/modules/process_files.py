@@ -112,9 +112,6 @@ def process_cantera_file(gas, configuration):
         stoichiometric_backward = np.zeros(len(species_names))
         indexes_of_species_in_reaction = []
 
-        # Print the reaction equation
-        # print(f"Reaction {i + 1}: {reaction.equation}")
-
         [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = configuration)
 
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 

@@ -86,7 +86,7 @@ dtemperature_energy_monomial_dtemperature({scalar_parameter} temperature) {const
 contract({temperature_energy_monomial_parameter} temperature_energy_monomial, {temperature_energy_monomial_parameter} coefficients) {const_option} 
 {{
     {scalar} fit = {scalar_cast}(0);
-    for ({index} i = 0; i < n_order_thermo; ++i)
+    for ({index} i = 0; i < n_order_thermo + 1; ++i)
     {{
         fit += temperature_energy_monomial[i] * coefficients[i];
     }}

@@ -1,6 +1,7 @@
 import numpy as np
 import cantera as ct
 
+
 pressure_reference = 101325.0
 
 def get_internal_energy_coefficients(gas, order, enthalpy_coefficients):
@@ -8,23 +9,46 @@ def get_internal_energy_coefficients(gas, order, enthalpy_coefficients):
     internal_internal_energy_coefficients[1,:] = enthalpy_coefficients[1,:] - ct.gas_constant/gas.molecular_weights
     return internal_internal_energy_coefficients
 
-def get_enthalpy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients):
-
-    enthalpy_coefficients = np.zeros([np.shape(specific_heat_constant_pressure_species_coefficients)[0]+1, np.shape(specific_heat_constant_pressure_species_coefficients)[1]]) 
+def check_against_temperature(gas, temperature_min, temperature_max, n_samples, enthalpy_coefficients, order):
+    import matplotlib.pyplot as plt
+    temperatures = np.linspace(temperature_min, temperature_max, n_samples)
+    h_exact = []
+    h_refit = []
+    h_exact = np.zeros([gas.n_species, n_samples])
+    h_fit = np.zeros([gas.n_species, n_samples])
+    for i, temperature in enumerate(temperatures):
+        gas.TP = temperature, pressure_reference
+        T_energy_monomial_sequence = np.power(gas.T, np.linspace(0., order + 1, num = order + 2))
+        href_exact = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights # J/kg
+        for k in range(gas.n_species):
+            h_exact[k,i] = href_exact[k]
+            h_fit[k,i] = np.sum(enthalpy_coefficients[:,k] * T_energy_monomial_sequence)
     for k in range(gas.n_species):
-        print(np.double(np.arange(1, np.shape(enthalpy_coefficients)[0])))
-        enthalpy_coefficients[1:, k] = specific_heat_constant_pressure_species_coefficients[:, k]/np.double(np.arange(1, np.shape(enthalpy_coefficients)[0]))
-    
+        plt.figure()
+        plt.plot(temperatures, h_exact[k,:],'-r')
+        plt.plot(temperatures, h_fit[k,:],'--k')
+    plt.show()
+
+def get_enthalpy_coefficients(gas, order, specific_heat_coefficients):
+    specific_heat_shape = np.shape(specific_heat_coefficients)
+    enthalpy_coefficients = np.zeros([specific_heat_shape[0]+1, specific_heat_shape[1]]) 
+
+    for i in range(order+1):
+        enthalpy_coefficients[i+1,:] = specific_heat_coefficients[i,:]/(i+1)
+
+    #assure that 298 matches
     Tref = 298.
     gas.TP = Tref, pressure_reference
-
     T_energy_monomial_sequence = np.power(gas.T, np.linspace(0., order + 1, num = order + 2))
-    print(T_energy_monomial_sequence)
-    href_polyfit = np.einsum('ij,i->j', enthalpy_coefficients, T_energy_monomial_sequence)
+
+    href_polyfit = []
+    for k in range(gas.n_species):
+        href_polyfit.append(np.sum(enthalpy_coefficients[:,k] * T_energy_monomial_sequence))
+    href_polyfit = np.array(href_polyfit)
     href_exact = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights # J/kg
-
     enthalpy_coefficients[0, :] = href_exact - href_polyfit
-
+    
+    check_against_temperature(gas, 200, 5000, 100, enthalpy_coefficients, order)
     return enthalpy_coefficients
 
 def get_specific_heat_constant_pressure_species_coefficients(gas, order, temperatures):
@@ -56,7 +80,6 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     #mass specific quantities (units/kg)
     specific_heat_constant_pressure_species_coefficients = get_specific_heat_constant_pressure_species_coefficients(gas, order, temperatures)
     enthalpy_coefficients = get_enthalpy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients)
-
     internal_internal_energy_coefficients = get_internal_energy_coefficients(gas, order, enthalpy_coefficients)
 
     species_specific_heat_text = thermo_fit_text("temperature_monomial_sequence", specific_heat_constant_pressure_species_coefficients, "specific heat", configuration)
@@ -64,8 +87,8 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     internal_internal_text =      thermo_fit_text("temperature_energy_monomial_sequence", internal_internal_energy_coefficients, "energy", configuration)
 
     return [["species_specific_heat_constant_pressure_mass_specific",
-    "species_internal_energy_mass_specific",
-    "species_enthalpy_mass_specific"],
+    "species_enthalpy_mass_specific",
+    "species_internal_energy_mass_specific"],
     [species_specific_heat_text,
     speices_enthalpy_text,
     internal_internal_text],
