@@ -77,8 +77,8 @@ def create_test(gas, headers, test_file, configuration):
         gas.TPX = temperature, pressure, species_string
         concentrations = gas.concentrations
         concentration_test = '{species} species  = {{{array}}};'.format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
-        gas.TPX = 298, pressure, species_string
         enthalpies = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights
+        energies = gas.standard_int_energies_RT * gas.T * ct.gas_constant/gas.molecular_weights
         gas.TPX = temperature, pressure, species_string
 
         content = """
@@ -109,8 +109,11 @@ int main() {{
     std::cout << "Chemgen species cps: " << species_specific_heat_constant_pressure_mass_specific(temperature) <<std::endl;
 
     std::cout << "Cantera species enthalpies: " <<"{cantera_species_enthalpy}"<<std::endl;
-    std::cout << "Chemgen species enthalpies: " << species_enthalpy_mass_specific({scalar_cast}(298)) <<std::endl;
-    
+    std::cout << "Chemgen species enthalpies: " << species_enthalpy_mass_specific(temperature) <<std::endl;
+
+    std::cout << "Cantera species internal energies: " <<"{cantera_species_energies}"<<std::endl;
+    std::cout << "Chemgen species internal energies: " << species_internal_energy_mass_specific(temperature) <<std::endl;
+
     std::cout << "Pressure: " <<pressure_return <<std::endl;
     std::cout << "Temperature Monomial at 300           : " <<temperature_monomial({scalar_cast}(300)) <<std::endl;
     std::cout << "Temperature Energy Monomial at 300           : " <<temperature_energy_monomial({scalar_cast}(300)) <<std::endl;
@@ -125,4 +128,5 @@ int main() {{
         temperature = temperature, 
         cantera_net_production_rates = ' '.join([f"{npr}" for npr in gas.net_production_rates]),
         cantera_species_cp = ' '.join([f"{scp}" for scp in gas.standard_cp_R * ct.gas_constant / gas.molecular_weights]),
-        cantera_species_enthalpy = ' '.join([f"{enth}" for enth in enthalpies])))
+        cantera_species_enthalpy = ' '.join([f"{enth}" for enth in enthalpies]),
+        cantera_species_energies = ' '.join([f"{energy}" for energy in energies])))
