@@ -89,3 +89,21 @@ def write_energy_thermo_transport_fit(file, name, thermo_fit_text, configuration
 }}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
+
+def write_entropy_thermo_transport_fit(file, name, thermo_fit_text, configuration):
+    content ="""
+{device_option}
+{species_function} 
+{name}({temperature_energy_monomial_parameter} temperature_entropy_monomial_sequence) {const_option} 
+{{
+{thermo_fit}
+}}
+
+{device_option}
+{species_function} 
+{name}({scalar_parameter} temperature) {const_option} 
+{{
+    return {name}(temperature_entropy_monomial(temperature));
+}}
+    """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
+    file.write(content)

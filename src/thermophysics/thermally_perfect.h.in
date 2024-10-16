@@ -94,6 +94,47 @@ contract({temperature_energy_monomial_parameter} temperature_energy_monomial, {t
     return fit;
 }}
 
+//entropy
+//thermo fits energy size is same, but ln(T) is at the end
+{device_option}
+{temperature_energy_monomial_function} 
+temperature_entropy_monomial({scalar_parameter} temperature) {const_option} 
+{{
+    {temperature_energy_monomial} temperature_energy_monomial_sequence_ = {{}};
+    temperature_energy_monomial_sequence_[0] = {scalar_cast}(1); // The first term is always 1
+    temperature_energy_monomial_sequence_[n_order_thermo] = {logmath}(temperature); // The first term is always 1
+
+    // Horner's method: Start with 1 and multiply progressively by T
+    for ({index} i = 1; i < n_order_thermo; ++i)
+    {{
+        temperature_energy_monomial_sequence_[i] = temperature_energy_monomial_sequence_[i - 1] * temperature;  // T^i = T^(i-1) * T
+    }}
+    
+    return temperature_energy_monomial_sequence_;
+}}
+
+{device_option}
+{temperature_energy_monomial_function} 
+dtemperature_entropy_monomial_dtemperature({scalar_parameter} temperature) {const_option} 
+{{
+    {temperature_energy_monomial} temperature_energy_monomial_derivative_ = {{}};
+    {temperature_energy_monomial} temperature_energy_monomial_ = temperature_entropy_monomial(temperature);
+    temperature_energy_monomial_derivative_[0] = 0.0; // The derivative of T^0 (constant 1) is 0
+    temperature_energy_monomial_derivative_[n_order_thermo] = inv(temperature); // derivative of ln(T)
+
+
+    // Derivative of Horner's method: Start with 1 and multiply progressively by T
+    for ({index} i = 1; i < n_order_thermo; ++i) 
+    {{
+        temperature_energy_monomial_derivative_[i] = i * temperature_energy_monomial_[i - 1]; // i * T^(i-1)
+    }}
+    
+    return temperature_energy_monomial_derivative_;
+}}
+
+//contract is the same for energy
+
+
 //Pressure
 {device_option}
 {scalar_function} 

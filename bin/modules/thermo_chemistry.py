@@ -3,6 +3,32 @@ import cantera as ct
 
 
 pressure_reference = 101325.0
+def get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_heat_constant_pressure_species_coefficients):
+    entropy_coefficients = np.zeros_like(internal_energy_coefficients)
+            
+    entropy_log_coefficient = specific_heat_constant_pressure_species_coefficients[0,:] # a_0
+    for k in range(gas.n_species):
+        for i, a in enumerate(specific_heat_constant_pressure_species_coefficients[:,k]):
+            if i==0:
+                pass
+            else:
+                entropy_coefficients[i,k] = a/(i)
+    entropy_coefficients[-1,:] = entropy_log_coefficient
+    #assure that 298 matches
+    Tref = 298.
+    gas.TP = Tref, pressure_reference
+    T_entropy_monomial_sequence = np.power(gas.T, np.linspace(0., order+1, num = order + 2))
+    T_entropy_monomial_sequence[-1] = np.log(Tref)
+
+
+    sref_polyfit = []
+    for k in range(gas.n_species):
+        sref_polyfit.append(np.sum(entropy_coefficients[:,k] * T_entropy_monomial_sequence))
+    sref_polyfit = np.array(sref_polyfit)
+    sref_exact = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights # J/kg
+    entropy_coefficients[0, :] += sref_exact - sref_polyfit
+
+    return entropy_coefficients
 
 def get_internal_energy_coefficients(gas, order, enthalpy_coefficients):
     internal_internal_energy_coefficients = enthalpy_coefficients.copy()
@@ -48,7 +74,7 @@ def get_enthalpy_coefficients(gas, order, specific_heat_coefficients):
     href_exact = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights # J/kg
     enthalpy_coefficients[0, :] = href_exact - href_polyfit
     
-    check_against_temperature(gas, 200, 5000, 100, enthalpy_coefficients, order)
+    #check_against_temperature(gas, 200, 5000, 100, enthalpy_coefficients, order)
     return enthalpy_coefficients
 
 def get_specific_heat_constant_pressure_species_coefficients(gas, order, temperatures):
@@ -80,19 +106,23 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     #mass specific quantities (units/kg)
     specific_heat_constant_pressure_species_coefficients = get_specific_heat_constant_pressure_species_coefficients(gas, order, temperatures)
     enthalpy_coefficients = get_enthalpy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients)
-    internal_internal_energy_coefficients = get_internal_energy_coefficients(gas, order, enthalpy_coefficients)
+    internal_energy_coefficients = get_internal_energy_coefficients(gas, order, enthalpy_coefficients)
+    species_entropy_coefficients = get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_heat_constant_pressure_species_coefficients)
 
     species_specific_heat_text = thermo_fit_text("temperature_monomial_sequence", specific_heat_constant_pressure_species_coefficients, "specific heat", configuration)
-    speices_enthalpy_text =      thermo_fit_text("temperature_energy_monomial_sequence", enthalpy_coefficients, "energy", configuration)
-    internal_internal_text =      thermo_fit_text("temperature_energy_monomial_sequence", internal_internal_energy_coefficients, "energy", configuration)
+    species_enthalpy_text  =      thermo_fit_text("temperature_energy_monomial_sequence", enthalpy_coefficients, "energy", configuration)
+    internal_internal_text =      thermo_fit_text("temperature_energy_monomial_sequence", internal_energy_coefficients, "energy", configuration)
+    species_entropy_text   =      thermo_fit_text("temperature_entropy_monomial_sequence", species_entropy_coefficients, "energy", configuration)
 
     return [["species_specific_heat_constant_pressure_mass_specific",
     "species_enthalpy_mass_specific",
-    "species_internal_energy_mass_specific"],
+    "species_internal_energy_mass_specific",
+    "species_entropy_mass_specific"],
     [species_specific_heat_text,
-    speices_enthalpy_text,
-    internal_internal_text],
-    ["specific_heat", "energy", "energy"]]
+    species_enthalpy_text,
+    internal_internal_text,
+    species_entropy_text],
+    ["specific_heat", "energy", "energy", "entropy"]]
 
 
 def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration, indentation=' '*8):

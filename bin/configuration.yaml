@@ -3,7 +3,7 @@ decorators:
   scalar_function: "double"
   scalar_cast: "double"
   scalar_parameter: "const double&"
-  n_thermo_order: "4"
+  n_thermo_order: "7"
   species_typedef: "std::array<double, n_species>"
   temperature_monomial_typedef: "std::array<double, n_order_thermo>"
   temperature_monomial_function: "TemperatureMonomial"
