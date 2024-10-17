@@ -36,7 +36,9 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         configuration = get_configuration("configuration.yaml")
 
     for index in indexes_of_species_in_reaction: 
-        formatted_text = "{scalar_cast}({stoichiometric_production}) * rate_of_progress_{reaction_index}".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)
+        formatted_text = "{scalar_cast}({stoichiometric_production}) * rate_of_progress_{reaction_index}".format(**vars(configuration), 
+        stoichiometric_production = stoichiometric_production[index], 
+        reaction_index = reaction_index)
         if species_production_texts[index] == '':
             species_production_texts[index] = formatted_text
         else:
@@ -86,14 +88,38 @@ def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backw
         print("Warning this may cause compilation mismatch in decorators")
         configuration = get_configuration("configuration.yaml")
     formatted_text = (
+    "{scalar} equilibrium_constant_{reaction_index} = {scalar_cast}(1);\n      "
     "{scalar} rate_of_progress_{reaction_index} = {forward_rate} * forward_reaction_{reaction_index} "
-    ";//- {backward_rate} * forward_reaction_{reaction_index}/equilibrium_constant_{reaction_index};"
+    "- {backward_rate} * forward_reaction_{reaction_index}/equilibrium_constant_{reaction_index};"
     .format(reaction_index=reaction_index, 
             forward_rate=forward_rate, 
             backward_rate=backward_rate, 
             **vars(configuration)))
 
     progress_rates[reaction_index] = formatted_text
+def create_equilibrium_constants(stoichiometric_production, indexes_of_species_in_reaction, configuration):
+    scalar_cast = "{scalar_cast}".format(**vars(configuration))
+    equilibrium_constant_elements = []
+    sum_stoichiometric_production = np.sum(stoichiometric_production)
+    
+    #pow(p_atm*inv(R*T),{power_integer})
+    power_term = ''
+    print(sum_stoichiometric_production.is_integer())
+    if sum_stoichiometric_production.is_integer():
+        power_integer = int(sum_stoichiometric_production)
+        if power_integer == -1:
+            power_term = 'inv_pressure_atmosphere() * universal_gas_constant() * temperature'
+        elif power_integer > 0:
+            raise_to_power("pressure_atmosphere() * inv_universal_gas_constant_temperature",power_integer)
+        else:
+            power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{power_integer})'
+    else:
+        power_term = 'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{scalar_cast}({sum_stoichiometric_production}))'
+    print(power_term)
+    for index in indexes_of_species_in_reaction:
+        equilibrium_constant_elements.append(f"{scalar_cast}({stoichiometric_production[index]}) * gibbs_free_energies[{index}]")
+    print("\nexp({gibbs_sum} * inv(universal_gas_constant()  * temperature)) * {power_term}\n".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"),
+    power_term=power_term))
 
 def process_cantera_file(gas, configuration):
     species_names  = gas.species_names
@@ -102,6 +128,7 @@ def process_cantera_file(gas, configuration):
     reaction_rates = [''] * gas.n_reactions
     reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
+    equilibrium_constants = [''] * gas.n_reactions
     [thermo_names, thermo_fits, thermo_types] = polyfit_thermodynamics(gas, configuration, order = int("{n_thermo_order}".format(**vars(configuration))))
 
     # Loop through all reactions
@@ -116,7 +143,8 @@ def process_cantera_file(gas, configuration):
 
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
-        
+        create_equilibrium_constants(stoichiometric_production, indexes_of_species_in_reaction, configuration)
+
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index)
         
         create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration)
