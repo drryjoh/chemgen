@@ -44,7 +44,8 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         else:
             species_production_texts[index] = ' + '.join([species_production_texts[index], formatted_text])
 
-def get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index):
+def get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration):
+        is_reversible[reaction_index] = reaction.reversible
         if isinstance(reaction, ct.Reaction):
             print(f"  Arrhenius Parameters: A = {reaction.rate.pre_exponential_factor}, "
                 f"b = {reaction.rate.temperature_exponent}, "
@@ -57,6 +58,8 @@ def get_reaction_function(reaction_rates, reaction_calls, reaction, configuratio
                 f"b = {reaction.rate.temperature_exponent}, "
                 f"Ea = {reaction.rate.activation_energy}")
             print(f"  Collision Partner Efficiencies: {reaction.efficiencies}")
+            requires_mixture_concentration[reaction_index] = True
+            reaction_rates[reaction_index] = three_body_text(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, configuration)
         
         elif isinstance(reaction, ct.FalloffReaction):
             print(f"  Arrhenius Parameters (high pressure limit): A = {reaction.high_rate.pre_exponential_factor}, "
@@ -83,21 +86,24 @@ def get_reaction_function(reaction_rates, reaction_calls, reaction, configuratio
         else:
             print(f"  Unknown reaction type: {reaction_type}")
 
-def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration = None):
-    if configuration == None:
-        print("Warning this may cause compilation mismatch in decorators")
-        configuration = get_configuration("configuration.yaml")
-    formatted_text = (
-    "{scalar} equilibrium_constant_{reaction_index} = {scalar_cast}(1);\n      "
-    "{scalar} rate_of_progress_{reaction_index} = {forward_rate} * forward_reaction_{reaction_index} "
-    "- {backward_rate} * forward_reaction_{reaction_index}/equilibrium_constant_{reaction_index};"
-    .format(reaction_index=reaction_index, 
-            forward_rate=forward_rate, 
-            backward_rate=backward_rate, 
-            **vars(configuration)))
+def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, is_reversible, configuration):
+    if is_reversible[reaction_index]:
+        formatted_text = (
+        "{scalar} rate_of_progress_{reaction_index} = {forward_rate} * forward_reaction_{reaction_index} "
+        "- {backward_rate} * forward_reaction_{reaction_index}/equilibrium_constant_{reaction_index};"
+        .format(reaction_index=reaction_index, 
+                forward_rate=forward_rate, 
+                backward_rate=backward_rate, 
+                **vars(configuration)))
+    else:
+        formatted_text = (
+        "{scalar} rate_of_progress_{reaction_index} = {forward_rate} * forward_reaction_{reaction_index};"
+        .format(reaction_index=reaction_index, 
+                forward_rate=forward_rate,
+                **vars(configuration)))
 
     progress_rates[reaction_index] = formatted_text
-def create_equilibrium_constants(stoichiometric_production, indexes_of_species_in_reaction, configuration):
+def create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration):
     scalar_cast = "{scalar_cast}".format(**vars(configuration))
     equilibrium_constant_elements = []
     sum_stoichiometric_production = np.sum(stoichiometric_production)
@@ -107,19 +113,22 @@ def create_equilibrium_constants(stoichiometric_production, indexes_of_species_i
     print(sum_stoichiometric_production.is_integer())
     if sum_stoichiometric_production.is_integer():
         power_integer = int(sum_stoichiometric_production)
-        if power_integer == -1:
-            power_term = 'inv_pressure_atmosphere() * universal_gas_constant() * temperature'
+        print(power_integer)
+        if power_integer < 0:
+            power_term = raise_to_power('inv_pressure_atmosphere() * universal_gas_constant() * temperature', np.abs(power_integer))
         elif power_integer > 0:
-            raise_to_power("pressure_atmosphere() * inv_universal_gas_constant_temperature",power_integer)
+            power_term = raise_to_power("pressure_atmosphere() * inv_universal_gas_constant_temperature",power_integer)
+        elif power_integer == 0:
+            power_term = f"{scalar_cast}(1.0)"
         else:
             power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{power_integer})'
     else:
-        power_term = 'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{scalar_cast}({sum_stoichiometric_production}))'
+        power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{scalar_cast}({sum_stoichiometric_production}))'
     print(power_term)
     for index in indexes_of_species_in_reaction:
         equilibrium_constant_elements.append(f"{scalar_cast}({stoichiometric_production[index]}) * gibbs_free_energies[{index}]")
-    print("\nexp({gibbs_sum} * inv(universal_gas_constant()  * temperature)) * {power_term}\n".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"),
-    power_term=power_term))
+    equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"),
+    power_term=power_term)
 
 def process_cantera_file(gas, configuration):
     species_names  = gas.species_names
@@ -129,6 +138,9 @@ def process_cantera_file(gas, configuration):
     reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
     equilibrium_constants = [''] * gas.n_reactions
+    is_reversible  = [False] * gas.n_reactions
+    requires_mixture_concentration = [False] * gas.n_reactions
+
     [thermo_names, thermo_fits, thermo_types] = polyfit_thermodynamics(gas, configuration, order = int("{n_thermo_order}".format(**vars(configuration))))
 
     # Loop through all reactions
@@ -140,20 +152,21 @@ def process_cantera_file(gas, configuration):
         indexes_of_species_in_reaction = []
 
         [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = configuration)
+        print(f"{reaction_index} here")
+        print(stoichiometric_backward)
+        print(stoichiometric_forward)
 
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
-        create_equilibrium_constants(stoichiometric_production, indexes_of_species_in_reaction, configuration)
+        create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration)
 
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index)
-        
-        create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, configuration)
-        
-        get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index)
+        get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration)
+        create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, is_reversible, configuration)
     
     headers = []
     with open('types_inl.h','w') as file:
-        write_type_defs(file, gas.n_species, configuration = configuration)
+        write_type_defs(file, gas, configuration = configuration)
         headers.append('types_inl.h')
 
     with open('thermotransport_fits.h','w') as file:
@@ -173,9 +186,10 @@ def process_cantera_file(gas, configuration):
         headers.append('reactions.h')
     
     with open('source.h','w') as file:
+        write_equilibrium_constants(file, equilibrium_constants, configuration)
         write_start_of_source_function(file, configuration=configuration)
         write_reaction_calculations(file, reaction_calls)
-        write_progress_rates(file, progress_rates)
+        write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
         write_species_production(file, species_production_texts, configuration = configuration)
         headers.append('source.h')
         write_end_of_function(file)

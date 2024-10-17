@@ -101,6 +101,6 @@ reactions:
 - equation: 2 H2 + O2 <=> 2 H2O  # Reaction 1
   rate-constant: {A: 1.0399e+14, b: 0.0, Ea: 1.531e+04}
   duplicate: true
-- equation: 2 H2 + O2 <=> 2 H2O  # Reaction 1
+- equation: 2 H2 + O2 => 2 H2O  # Reaction 1
   rate-constant: {A: 5.0399e+18, b: 1.5, Ea: 1.531e+07}
   duplicate: true

@@ -4,7 +4,7 @@ decorators:
   scalar_cast: "double"
   scalar_parameter: "const double&"
   n_thermo_order: "7"
-  species_typedef: "std::array<double, n_species>"
+  
 
   temperature_monomial_typedef: "std::array<double, n_order_thermo>"
   temperature_monomial_function: "TemperatureMonomial"
@@ -20,11 +20,21 @@ decorators:
   temperature_gibbs_monomial_parameter: "const TemperatureGibbsMonomial&"
 
   index: "int"
+
+  species_typedef: "std::array<double, n_species>"
   species: "Species"
   species_function: "Species"
   species_cast: "Species"
   species_parameter: "const Species&"
   species_element: "species[{i}]"
+
+  reactions_typedef: "std::array<double, n_reactions>"
+  reactions: "Reactions"
+  reactions_function: "Reactions"
+  reactions_cast: "Reactions"
+  reactions_parameter: "const Reactions&"
+  reactions_element: "reactions[{i}]"
+
   source_element: "net_production_rates[{i}]"
   const_option: ""
   constexpr: "constexpr"

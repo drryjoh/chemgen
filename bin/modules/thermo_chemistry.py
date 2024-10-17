@@ -17,6 +17,10 @@ def get_gibbs_energy_coefficients(gas, order, specific_heat_coefficients, enthal
 
     gibbs_energy_coefficients[-1, :] = -specific_heat_coefficients[0,:] #TlnT term
 
+    for k in range(gas.n_species):
+        gibbs_energy_coefficients[:,k]  = gibbs_energy_coefficients[:,k] * gas.molecular_weights[k]
+
+
     return gibbs_energy_coefficients
 
 
@@ -137,7 +141,7 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     "species_enthalpy_mass_specific",
     "species_internal_energy_mass_specific",
     "species_entropy_mass_specific",
-    "species_gibbs_energy_mass_specific"],
+    "species_gibbs_energy_mole_specific"],
     [species_specific_heat_text,
     species_enthalpy_text,
     internal_internal_text,
