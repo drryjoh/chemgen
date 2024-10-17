@@ -74,7 +74,7 @@ def main():
     
     if True: #replace with run time argument
         test_file = 'chemgen_test.cpp'
-        create_test(gas, headers, test_file, configuration)
+        create_test(gas, args.chemical_mechanism, headers, test_file, configuration)
         compile_header_test(test_file)
 
 # Entry point

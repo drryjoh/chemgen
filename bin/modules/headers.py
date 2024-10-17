@@ -28,7 +28,7 @@ def create_headers(configuration):
     make_headers(code_directory, file_names, headers, configuration = configuration)
 
     code_directory = Path('src') / 'reaction_headers'
-    file_names = ['arrhenius.h.in']
+    file_names = ['arrhenius.h.in', 'third_body.h.in']
     make_headers(code_directory, file_names, headers, configuration = configuration)
     return headers
 

@@ -60,7 +60,6 @@ def write_start_of_source_function(file, configuration = None):
 def write_equilibrium_constants(file, equilibrium_constants, configuration):
     equilibrium_constant_evaluations = ''
     indentation=' '*8
-    print(equilibrium_constants)
     for i, equilibrium_constant_i in enumerate(equilibrium_constants):
         equilibrium_constant_evaluations += f"{indentation}equilibrium_constants[{i}] = {equilibrium_constant_i};\n"
     file.write("""

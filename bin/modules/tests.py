@@ -39,19 +39,24 @@ def compile_header_test(test_file):
     # Step 2: Run the tests
     run_tests(build_directory)
 
-def get_test_conditions():
+def get_test_conditions(chemical_mechanism):
     config_path = Path('test_configuration.yaml')
-    
+    if "simple_tb" in chemical_mechanism:
+        print("**simple TB**")
+        test_file = 'test_tb_configuration.yaml'
+    else:
+        test_file = 'test_configuration.yaml'
+    config_path = Path(test_file)
     if config_path.exists():
         with config_path.open('r') as file:
             configuration = yaml.safe_load(file)
     else:
         current_dir = Path(__file__).resolve().parent
-        configuration_filename = current_dir.parent.parent/ 'test/test_configuration.yaml'
+        configuration_filename = current_dir.parent.parent/ 'test/{0}'.format(test_file)
         print("**Test file test_configuration.yaml not found using /test/test_configuration.yaml **")
         with open(configuration_filename, 'r') as file:
             configuration = yaml.safe_load(file)
-
+    print(config_path)
     # Extract values from the parsed YAML data
     temperature = configuration['test_conditions']['temperature']
     pressure = configuration['test_conditions']['pressure']
@@ -68,13 +73,13 @@ def get_test_conditions():
     species_string  = ' '.join([f"{species['name']}:{species['MoleFraction']} " for species in species_list])
     return [temperature, pressure, species_string]
 
-def create_test(gas, headers, test_file, configuration):
+def create_test(gas, chemical_mechanism, headers, test_file, configuration):
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
         write_headers(file, headers)
-        [temperature, pressure, species_string] = get_test_conditions()
+        [temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
         gas.TPX = temperature, pressure, species_string
         concentrations = gas.concentrations
         concentration_test = '{species} species  = {{{array}}};'.format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
