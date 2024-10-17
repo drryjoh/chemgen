@@ -134,6 +134,8 @@ def process_cantera_file(gas, configuration):
                 write_energy_thermo_transport_fit(file, name, thermo_fit, configuration = configuration)
             elif thermo_type == "entropy":
                 write_entropy_thermo_transport_fit(file, name, thermo_fit, configuration = configuration)
+            elif thermo_type == "gibbs":
+                write_gibbs_thermo_transport_fit(file, name, thermo_fit, configuration = configuration)
             else:
                 write_thermo_transport_fit(file, name, thermo_fit,  configuration = configuration)
         headers.append('thermotransport_fits.h')

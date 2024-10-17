@@ -30,10 +30,12 @@ const {index} n_order_thermo = {n_thermo_order} + 1;
 using Species = {species_typedef};
 using TemperatureMonomial = {temperature_monomial_typedef};
 using TemperatureEnergyMonomial = {temperature_energy_monomial_typedef};
+using TemperatureGibbsMonomial = {temperature_gibbs_monomial_typedef};
 
 """.format(**vars(configuration), 
 n_species = int(n_species), 
-temperature_energy_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 1"))
+temperature_energy_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 1"),
+temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 2"))
     )
 
 def write_start_of_source_function(file, configuration = None):
@@ -104,6 +106,24 @@ def write_entropy_thermo_transport_fit(file, name, thermo_fit_text, configuratio
 {name}({scalar_parameter} temperature) {const_option} 
 {{
     return {name}(temperature_entropy_monomial(temperature));
+}}
+    """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
+    file.write(content)
+
+def write_gibbs_thermo_transport_fit(file, name, thermo_fit_text, configuration):
+    content ="""
+{device_option}
+{species_function} 
+{name}({temperature_gibbs_monomial_parameter} temperature_gibbs_monomial_sequence) {const_option} 
+{{
+{thermo_fit}
+}}
+
+{device_option}
+{species_function} 
+{name}({scalar_parameter} temperature) {const_option} 
+{{
+    return {name}(temperature_gibbs_monomial(temperature));
 }}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)

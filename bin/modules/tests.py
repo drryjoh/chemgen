@@ -80,6 +80,7 @@ def create_test(gas, headers, test_file, configuration):
         enthalpies = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights
         entropies = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights
         energies = gas.standard_int_energies_RT * gas.T * ct.gas_constant/gas.molecular_weights
+        gibbs = gas.standard_gibbs_RT * gas.T * ct.gas_constant/gas.molecular_weights
         gas.TPX = temperature, pressure, species_string
 
         content = """
@@ -118,10 +119,16 @@ int main() {{
     std::cout << "Cantera species internal entropies: " <<"{cantera_species_entropy}"<<std::endl;
     std::cout << "Chemgen species internal entropies: " << species_entropy_mass_specific(temperature) <<std::endl;
 
+    std::cout << "Cantera species gibbs energy: " <<"{cantera_species_gibbs}"<<std::endl;
+    std::cout << "Chemgen species gibbs energy: " << species_gibbs_energy_mass_specific(temperature) <<std::endl;
+    std::cout << "Chemgen species gibbs energy direct: " << species_enthalpy_mass_specific(temperature) - scale_gen(temperature, species_entropy_mass_specific(temperature)) <<std::endl;
+
     std::cout << "Pressure: " <<pressure_return <<std::endl;
     std::cout << "Temperature Monomial at 300           : " <<temperature_monomial({scalar_cast}(300)) <<std::endl;
     std::cout << "Temperature Energy Monomial at 300           : " <<temperature_energy_monomial({scalar_cast}(300)) <<std::endl;
     std::cout << "Temperature Entropy Monomial at 300           : " <<temperature_entropy_monomial({scalar_cast}(300)) <<std::endl;
+    std::cout << "Temperature Gibbs Monomial at 300           : " <<temperature_gibbs_monomial({scalar_cast}(300)) <<std::endl;
+    
 
     std::cout << "Temperature Monomial Derivative at 300: " <<dtemperature_monomial_dtemperature({scalar_cast}(300)) <<std::endl;
 
@@ -135,4 +142,5 @@ int main() {{
         cantera_species_cp = ' '.join([f"{scp}" for scp in gas.standard_cp_R * ct.gas_constant / gas.molecular_weights]),
         cantera_species_enthalpy = ' '.join([f"{enth}" for enth in enthalpies]),
         cantera_species_entropy = ' '.join([f"{ent}" for ent in entropies]),
-        cantera_species_energies = ' '.join([f"{energy}" for energy in energies])))
+        cantera_species_energies = ' '.join([f"{energy}" for energy in energies]),
+        cantera_species_gibbs = ' '.join([f"{gibb}" for gibb in gibbs])))

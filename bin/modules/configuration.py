@@ -8,6 +8,7 @@ def add_derived_attributes(config_obj):
     setattr(config_obj, "device_sum_inl",  "{device_sum}".format(**vars(config_obj)).format(**vars(config_obj)))
     setattr(config_obj, "device_fill_inl", "{device_fill}".format(**vars(config_obj)).format(**vars(config_obj)))
     setattr(config_obj, "device_transform_inl", "{device_transform}".format(**vars(config_obj)).format(**vars(config_obj)))
+    setattr(config_obj, "device_element_sum_inl", "{device_element_sum}".format(**vars(config_obj)).format(**vars(config_obj)))
 
 def get_configuration(configuration_filename = 'configuration.yaml', decorators = 'decorators'):
     config_path = Path(configuration_filename)

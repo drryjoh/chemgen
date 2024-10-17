@@ -1,19 +1,37 @@
 #include <numeric>  // For std::accumulate
 {device_option} {scalar_function} 
-sum_gen({species_parameter} a) {const_option} {{return {device_sum_inl};}}
+sum_gen({species_parameter} a_s) {const_option} {{return {device_sum_inl};}}
 
 {device_option} {species_function} 
 fill_gen({scalar_parameter} a) {const_option}
 {{
-    Species b{{}};  // Create an empty array
+    Species b_s{{}};  // Create an empty array
     {device_fill_inl};  // Fill it with 'value'
-    return b;  // Return the filled array
+    return b_s;  // Return the filled array
 }}
 
 {device_option} {species_function} 
-scale_gen({scalar_parameter} a, {species_parameter} b) {const_option}
+scale_gen({scalar_parameter} a, {species_parameter} b_s) {const_option}
 {{
-    {species} c;
+    {species} c_s;
     {device_transform_inl}
-    return c;
+    return c_s;
+}}
+
+
+{device_option} {species_function} 
+operator+({species_parameter} a_s, {species_parameter} b_s) {const_option}
+{{
+    {species} c_s;
+    {device_element_sum_inl}
+    return c_s;
+}}
+
+{device_option} {species_function} 
+operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_option}
+{{
+    {species} c_s;
+    {species} b_s = scale_gen({scalar_cast}(-1.0), b_s_positive);
+    {device_element_sum_inl}
+    return c_s;
 }}

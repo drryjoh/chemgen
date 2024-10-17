@@ -131,9 +131,58 @@ dtemperature_entropy_monomial_dtemperature({scalar_parameter} temperature) {cons
     
     return temperature_energy_monomial_derivative_;
 }}
-
 //contract is the same for energy
 
+
+{device_option}
+{temperature_gibbs_monomial_function} 
+temperature_gibbs_monomial({scalar_parameter} temperature) {const_option} 
+{{
+    {temperature_gibbs_monomial} temperature_gibbs_monomial_sequence_ = {{}};
+    temperature_gibbs_monomial_sequence_[0] = {scalar_cast}(1); // The first term is always 1
+    temperature_gibbs_monomial_sequence_[n_order_thermo + 1] = multiply(temperature, {logmath}(temperature)); // The first term is always 1
+
+    // Horner's method: Start with 1 and multiply progressively by T
+    for ({index} i = 1; i <= n_order_thermo; ++i)
+    {{
+        temperature_gibbs_monomial_sequence_[i] = temperature_gibbs_monomial_sequence_[i - 1] * temperature;  // T^i = T^(i-1) * T
+    }}
+    
+    return temperature_gibbs_monomial_sequence_;
+}}
+
+{device_option}
+{temperature_gibbs_monomial_function} 
+dtemperature_gibbs_monomial_dtemperature({scalar_parameter} temperature) {const_option} 
+{{
+    {temperature_gibbs_monomial} temperature_gibbs_monomial_derivative_ = {{}};
+    {temperature_gibbs_monomial} temperature_gibbs_monomial_ = temperature_gibbs_monomial(temperature);
+    temperature_gibbs_monomial_derivative_[0] = 0.0; // The derivative of T^0 (constant 1) is 0
+    temperature_gibbs_monomial_derivative_[n_order_thermo + 1] = 
+    multiply_chain(temperature, {scalar_cast}(1), {logmath}(temperature), inv(temperature)); 
+
+
+    // Derivative of Horner's method: Start with 1 and multiply progressively by T
+    for ({index} i = 1; i <= n_order_thermo; ++i) 
+    {{
+        temperature_gibbs_monomial_derivative_[i] = i * temperature_gibbs_monomial_[i - 1]; // i * T^(i-1)
+    }}
+    
+    return temperature_gibbs_monomial_derivative_;
+}}
+
+{device_option}
+{scalar_function} 
+contract({temperature_gibbs_monomial_parameter} temperature_gibbs_monomial, {temperature_gibbs_monomial_parameter} coefficients) {const_option} 
+{{
+    {scalar} fit = {scalar_cast}(0);
+    for ({index} i = 0; i < n_order_thermo + 2; ++i)
+    {{
+        fit += temperature_gibbs_monomial[i] * coefficients[i];
+    }}
+    
+    return fit;
+}}
 
 //Pressure
 {device_option}

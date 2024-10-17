@@ -3057,7 +3057,7 @@ literal "false"
 \begin_inset Formula $c_{p,i}$
 \end_inset
 
- to arbitrary oder.
+ to arbitrary order.
  Thus,
  in order to establish consistent thermodynamics the identity for internal energy must be satisfied from Equation
 \begin_inset space ~
@@ -3075,28 +3075,67 @@ nolink "false"
 \end_inset
 
 ,
- 
-\begin_inset Formula $u_{i}$
-\end_inset
+ thus the following relationships are used with pre-computed coefficients,
+\end_layout
 
- is calculated as
+\begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-u_{i}=b_{i0}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k},\label{eq:internal-energy-polynomial}
+h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}\label{eq:internal-energy-polynomial}
 \end{equation}
 
 \end_inset
 
-where 
-\begin_inset Formula $b_{i0}$
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k},\label{eq:internal-energy-polynomial-1}
+\end{equation}
+
 \end_inset
 
- is the integration constant and
+Here we target 
+\begin_inset Formula $h_{i}(T=298\text{K})$
+\end_inset
+
+ as a standard enthalpy that can be obtained from the existing NASA coefficients or from utilizing any number of thermodynamics packages,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+h_{\text{ref},i}=h_{i}(T=298\text{K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1},\label{eq:internal-energy-polynomial-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \[
 b_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k\geqq1\\
+h_{\text{ref},i}, & k=0.
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+c_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k>1\\
-a_{i0}-R_{i}, & k=1.
+a_{i,0}-R & k=1\\
+h_{\text{ref},i}, & k=0.
 \end{cases}
 \]
 
@@ -3109,7 +3148,7 @@ This integration requires two monomial sequences for temperature,
 
 ,
  
-\begin_inset Formula $\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
+\begin_inset Formula $\boldsymbol{T}_{n_{p}}=\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
 \end_inset
 
  and one to the power 
@@ -3117,14 +3156,12 @@ This integration requires two monomial sequences for temperature,
 \end_inset
 
 ,
-\begin_inset Formula $\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$
+ 
+\begin_inset Formula $\boldsymbol{T}_{n_{p}+1}=\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$
 \end_inset
 
- which can then be simply contracted with the respective array of coefficients
-\end_layout
-
-\begin_layout Standard
-
+ which can then be simply contracted with the respective array of coefficients,
+ for example 
 \end_layout
 
 \begin_layout Standard
@@ -3167,7 +3204,97 @@ where
 \end_inset
 
  is the partial pressure.
- 
+ The 
+\begin_inset Formula $R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}}$
+\end_inset
+
+ which accounts when the gas is not at atmospheric pressure conditions will be utilized in mixture averaged calculations covered later;
+ the term depends on concentration as well as temperature and can be addressed downstream of these thermodynamic relations.
+ Focusing then on using the Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:specific_heat_polynomial"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ a polynomial for 
+\begin_inset Formula $s_{i}^{o}$
+\end_inset
+
+ entropy quantity is thus
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+s_{i}^{o}=s_{\mathrm{ref},i}^{o}+a_{o}\ln T+\sum_{k=1}^{n_{p}}\frac{a_{ik}}{k}T^{k}=a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k},\label{eq:internal-energy-polynomial-1-2}
+\end{equation}
+
+\end_inset
+
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+d_{ik}=\begin{cases}
+\frac{a_{i,k}}{k}, & k\geq1\\
+s_{\mathrm{ref},i}^{o} & k=0.
+\end{cases}
+\]
+
+\end_inset
+
+Finally the Gibbs free energy per species is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}\right)T=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}T\ln T+\sum_{k=1}^{n_{p}+1}d_{i,k-1}T^{k}\right)\label{eq:internal-energy-polynomial-1-2-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+g_{i}=b_{i0}-a_{io}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}}T^{n_{p}+1}\label{eq:internal-energy-polynomial-1-2-1-2}
+\end{equation}
+
+\end_inset
+
+Which can be represented like the entropy fit as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}\label{eq:internal-energy-polynomial-1-2-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Formula $s_{i}$
 \end_inset
 
@@ -3244,6 +3371,288 @@ nolink "false"
 
 .
  
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Thermodynamic Quantity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Coefficient Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Species specific heat at 
+\end_layout
+
+\begin_layout Plain Layout
+constant pressure,
+ 
+\begin_inset Formula $c_{p,i}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Re-fit from existing data
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Species specific enthalpy,
+ 
+\begin_inset Formula $h_{i}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $h_{i}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $b_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k\geqq1\\
+h_{\text{ref},i}, & k=0
+\end{cases}$
+\end_inset
+
+;
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $h_{\text{ref},i}=h_{i}(T=298)-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Species specific internal energy,
+ 
+\begin_inset Formula $u_{i}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $u_{i}=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $c_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k>1\\
+a_{i,0}-R & k=1\\
+h_{\text{ref},i}, & k=0.
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Species specific entropy
+\end_layout
+
+\begin_layout Plain Layout
+at reference pressure,
+ 
+\begin_inset Formula $s_{i}^{o}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $s_{i}^{o}=a_{o}\ln T+\sum_{k=0}^{n_{p}+1}d_{ik}T^{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $d_{ik}=\begin{cases}
+\frac{a_{i,k}}{k}, & k\geq1\\
+s_{\mathrm{ref},i}^{o} & k=0.
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Species specific Gibbs
+\end_layout
+
+\begin_layout Plain Layout
+free energy,
+ 
+\begin_inset Formula $g_{i}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $g_{i}=-a_{i0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $f_{ik}=\begin{cases}
+\left(\frac{1}{k}-\frac{1}{k-1}\right)a_{i,k-1} & n_{p}+1>k>1\\
+a_{i,0}-s_{\mathrm{ref},i}^{o} & k=1\\
+h_{\text{ref},i} & k=0.
+\end{cases}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The derivatives of these thermodynamics quantities are straightforward and summarized in the table below.
 \end_layout
 
 \begin_layout Subsection

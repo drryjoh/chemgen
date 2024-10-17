@@ -3,6 +3,23 @@ import cantera as ct
 
 
 pressure_reference = 101325.0
+def get_gibbs_energy_coefficients(gas, order, specific_heat_coefficients, enthalpy_coefficients, entropy_coefficients):
+    specific_heat_shape = np.shape(specific_heat_coefficients)
+    gibbs_energy_coefficients = np.zeros([specific_heat_shape[0] + 2, specific_heat_shape[1]])
+
+    h_ref = enthalpy_coefficients[0,:]
+    s_ref = entropy_coefficients[0, :]
+
+    gibbs_energy_coefficients[0, :] = h_ref
+    gibbs_energy_coefficients[1, :] =  specific_heat_coefficients[0,:] - s_ref
+    for k in range(2, order+1):
+        gibbs_energy_coefficients[k, :] = (1/k - 1/(k-1)) * specific_heat_coefficients[k-1,:]
+
+    gibbs_energy_coefficients[-1, :] = -specific_heat_coefficients[0,:] #TlnT term
+
+    return gibbs_energy_coefficients
+
+
 def get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_heat_constant_pressure_species_coefficients):
     entropy_coefficients = np.zeros_like(internal_energy_coefficients)
             
@@ -59,8 +76,8 @@ def get_enthalpy_coefficients(gas, order, specific_heat_coefficients):
     specific_heat_shape = np.shape(specific_heat_coefficients)
     enthalpy_coefficients = np.zeros([specific_heat_shape[0]+1, specific_heat_shape[1]]) 
 
-    for i in range(order+1):
-        enthalpy_coefficients[i+1,:] = specific_heat_coefficients[i,:]/(i+1)
+    for i in range(1,order+1):
+        enthalpy_coefficients[i,:] = specific_heat_coefficients[i-1,:]/(i)
 
     #assure that 298 matches
     Tref = 298.
@@ -108,21 +125,25 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     enthalpy_coefficients = get_enthalpy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients)
     internal_energy_coefficients = get_internal_energy_coefficients(gas, order, enthalpy_coefficients)
     species_entropy_coefficients = get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_heat_constant_pressure_species_coefficients)
+    gibbs_energy_coefficients = get_gibbs_energy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients, enthalpy_coefficients, species_entropy_coefficients)
 
-    species_specific_heat_text = thermo_fit_text("temperature_monomial_sequence", specific_heat_constant_pressure_species_coefficients, "specific heat", configuration)
+    species_specific_heat_text = thermo_fit_text("temperature_monomial_sequence", specific_heat_constant_pressure_species_coefficients, "default", configuration)
     species_enthalpy_text  =      thermo_fit_text("temperature_energy_monomial_sequence", enthalpy_coefficients, "energy", configuration)
     internal_internal_text =      thermo_fit_text("temperature_energy_monomial_sequence", internal_energy_coefficients, "energy", configuration)
     species_entropy_text   =      thermo_fit_text("temperature_entropy_monomial_sequence", species_entropy_coefficients, "energy", configuration)
+    gibbs_energy_text   =      thermo_fit_text("temperature_gibbs_monomial_sequence", gibbs_energy_coefficients, "gibbs", configuration)
 
     return [["species_specific_heat_constant_pressure_mass_specific",
     "species_enthalpy_mass_specific",
     "species_internal_energy_mass_specific",
-    "species_entropy_mass_specific"],
+    "species_entropy_mass_specific",
+    "species_gibbs_energy_mass_specific"],
     [species_specific_heat_text,
     species_enthalpy_text,
     internal_internal_text,
-    species_entropy_text],
-    ["specific_heat", "energy", "energy", "entropy"]]
+    species_entropy_text,
+    gibbs_energy_text],
+    ["specific_heat", "energy", "energy", "entropy", "gibbs"]]
 
 
 def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration, indentation=' '*8):
@@ -137,7 +158,7 @@ def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration,
         content_array.append("{indentation}contract({contract_variable}, {temperature_monomial_type}{{{coefficients_k}}})".format(indentation = indentation,
         **vars(configuration),
         contract_variable = contract_variable,
-        temperature_monomial_type = "{temperature_energy_monomial}".format(**vars(configuration)) if thermo_type == "energy" else "{temperature_monomial}".format(**vars(configuration)),
+        temperature_monomial_type = "{temperature_monomial}".format(**vars(configuration)) if thermo_type == "default" else f"{{temperature_{thermo_type}_monomial}}".format(**vars(configuration)) , 
         coefficients_k = coefficients_k))
 
     content += '{indentation}{species}{{\n'.format(**vars(configuration), indentation = indentation) + ',\n'.join(content_array)+'};\n'
