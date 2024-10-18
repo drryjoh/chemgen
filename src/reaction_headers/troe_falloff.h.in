@@ -106,10 +106,10 @@ df_troe_dtemperature({scalar_parameter} alpha,
 {device_option}
 {scalar_function}
 falloff_troe({scalar_parameter} A_low,  //constant
-             {scalar_parameter} A_high, //constant
-             {scalar_parameter} B_low,  //constant
-             {scalar_parameter} B_high, //constant
+             {scalar_parameter} B_low, //constant
              {scalar_parameter} E_low,  //constant
+             {scalar_parameter} A_high, //constant
+             {scalar_parameter} B_high,  //constant
              {scalar_parameter} E_high, //constant
              {scalar_parameter} alpha,//constant
              {scalar_parameter} T1,//constant
@@ -138,10 +138,10 @@ falloff_troe({scalar_parameter} A_low,  //constant
 {device_option}
 {scalar_function}
 dfalloff_troe_temperature({scalar_parameter} A_low,  //constant
-                          {scalar_parameter} A_high, //constant
-                          {scalar_parameter} B_low,  //constant
-                          {scalar_parameter} B_high, //constant
+                          {scalar_parameter} B_low, //constant
                           {scalar_parameter} E_low,  //constant
+                          {scalar_parameter} A_high, //constant
+                          {scalar_parameter} B_high,  //constant
                           {scalar_parameter} E_high, //constant
                           {scalar_parameter} alpha,//constant
                           {scalar_parameter} T1,//constant

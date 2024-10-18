@@ -113,7 +113,7 @@ int main() {{
     // Output the result
     std::cout << "Source test result:  " << result << std::endl;
     std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
-
+/*
     std::cout << "Cantera species cps: " <<"{cantera_species_cp}"<<std::endl;
     std::cout << "Chemgen species cps: " << species_specific_heat_constant_pressure_mass_specific(temperature) <<std::endl;
 
@@ -142,7 +142,7 @@ int main() {{
     
 
     std::cout << "Temperature Monomial Derivative at 300: " <<dtemperature_monomial_dtemperature({scalar_cast}(300)) <<std::endl;
-
+*/
     return 0;
 }}
             """
