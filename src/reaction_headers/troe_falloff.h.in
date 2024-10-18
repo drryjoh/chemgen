@@ -44,12 +44,12 @@ f_troe({scalar_parameter} alpha,
         {scalar} d = {scalar_cast}(0.14);
 
         {scalar} a = log_Pr + c;
-        {scalar} b = n - d * (log_Pr +c);
+        {scalar} b = n - d * (log_Pr + c);
 
         {scalar} Pr_factor = inv({scalar_cast}(1) + pow_gen2(divide(a, b)));
         
         return
-        exp_gen(multiply(log_gen(f_cent_), Pr_factor));
+        exp_gen(multiply(log_f_cent_, Pr_factor));
 }}
 
 {device_option}
@@ -125,14 +125,19 @@ falloff_troe({scalar_parameter} A_low,  //constant
         divide(multiply(k_low,
                         mixture_concentration),
                k_high);
-        
+        std::cout << Pr << std::endl;
+        std::cout << k_low << std::endl;
+        std::cout << k_high << std::endl;
+        std::cout << f_troe(alpha, T1, T2, T3, temperature, Pr) << std::endl;
         {scalar} inv_one_p_Pr = inv({scalar_cast}(1)+Pr);
         {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
 
-		return 
+		{scalar} return_value = 
         multiply(multiply(k_high,
 						  Pr_inv_one_p_Pr),
                  f_troe(alpha, T1, T2, T3, temperature, Pr));
+        std::cout << return_value << std::endl;
+        return return_value;
 }}
 
 {device_option}
