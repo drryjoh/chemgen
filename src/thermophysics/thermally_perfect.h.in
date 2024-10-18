@@ -184,6 +184,14 @@ contract({temperature_gibbs_monomial_parameter} temperature_gibbs_monomial, {tem
     return fit;
 }}
 
+//mixture concentration
+{device_option}
+{scalar_function} 
+mixture_concentration({species_parameter} species) {const_option} 
+{{
+    return {sum}(species);
+}}
+
 //Pressure
 {device_option}
 {scalar_function} 

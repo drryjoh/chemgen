@@ -1,0 +1,15 @@
+{device_option}
+{scalar_function}
+third_body({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature, {scalar_parameter} mixture_concentration) {const_option}
+{{
+		return multiply(mixture_concentration,
+						arrhenius(A,B,E,temperature));
+}}
+
+{device_option}
+{scalar_function}
+dthird_body_dtemperature({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature, {scalar_parameter} mixture_concentration) {const_option}
+{{
+		return multiply(mixture_concentration,
+						darrhenius_dtemperature(A,B,E,temperature));
+}}

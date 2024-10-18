@@ -15,21 +15,21 @@ def write_headers(file, headers):
 def make_headers(code_directory, file_names, headers, configuration):
     for file in file_names:
         headers.append(file.replace('.in',''))
-        write_formatted_code(code_directory, file, configuration = configuration)
+        write_formatted_code(code_directory, file, configuration)
 
 def create_headers(configuration):
     code_directory = Path('src') / 'math_headers'
-    file_names = ['exp_gen.h.in', 'multiply_divide.h.in', 'pow_gen.h.in','array_handling.h.in']
+    file_names = ['multiply_divide.h.in', 'pow_gen.h.in','exp_gen.h.in', 'array_handling.h.in']
     headers = []
-    make_headers(code_directory, file_names, headers, configuration = configuration)
+    make_headers(code_directory, file_names, headers, configuration)
 
     code_directory = Path('src') / 'thermophysics'
     file_names = ['constants.h.in',"thermally_perfect.h.in"]
-    make_headers(code_directory, file_names, headers, configuration = configuration)
+    make_headers(code_directory, file_names, headers, configuration)
 
     code_directory = Path('src') / 'reaction_headers'
-    file_names = ['arrhenius.h.in', 'third_body.h.in']
-    make_headers(code_directory, file_names, headers, configuration = configuration)
+    file_names = ['arrhenius.h.in', 'third_body.h.in','troe_falloff.h.in']
+    make_headers(code_directory, file_names, headers, configuration)
     return headers
 
 def clear_headers(directory):

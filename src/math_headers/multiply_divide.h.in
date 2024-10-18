@@ -22,5 +22,5 @@
 {device_option} {scalar_function} ddivide_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return inv(b);}}
 {device_option} {scalar_function} ddivide_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return -a / pow2(b);}}
 //derivatives * increment
-{device_option} {scalar_function} divide_chain({scalar_parameter} a, {scalar_parameter} a_perturbation, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{return a_perturbation * b + a * b_perturbation;}}
+{device_option} {scalar_function} divide_chain({scalar_parameter} a, {scalar_parameter} a_perturbation, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{return a_perturbation / b + -a / pow2(b) * b_perturbation;}}
 

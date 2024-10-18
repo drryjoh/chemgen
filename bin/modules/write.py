@@ -10,7 +10,7 @@ def write_progress_rates(file, progress_rates, is_reversible, equilibrium_consta
         file.write(f"        {progress_rate}\n") 
     file.write("\n")
     
-def write_species_production(file, species_production_rates, configuration = None):
+def write_species_production(file, species_production_rates, configuration):
     if configuration == None:
         print("Warning this may cause compilation mismatch in decorators")
         configuration = get_configuration("configuration.yaml")
@@ -21,12 +21,9 @@ def write_species_production(file, species_production_rates, configuration = Non
             file.write(f"        //source_{species_index} has no production term\n")
     file.write("\n")
 
-def write_type_defs(file, gas, configuration = None):
+def write_type_defs(file, gas, configuration):
     n_species  = gas.n_species
     n_reactions  = gas.n_reactions
-    if configuration == None:
-        print("Warning this may cause compilation mismatch in decorators")
-        configuration = get_configuration("configuration.yaml")
     file.write("""
 const {index} n_species = {n_species};
 const {index} n_reactions = {n_reactions};
@@ -45,10 +42,7 @@ temperature_energy_monomial_typedef = "{temperature_monomial_typedef}".format(**
 temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 2"))
     )
 
-def write_start_of_source_function(file, configuration = None):
-    if configuration == None:
-        print("Warning this may cause compilation mismatch in decorators")
-        configuration = get_configuration("configuration.yaml")
+def write_start_of_source_function(file, configuration):
     file.write("""
     {device_option}
     {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 

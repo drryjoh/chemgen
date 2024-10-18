@@ -29,31 +29,29 @@ def process_cantera_file(gas, configuration):
         stoichiometric_backward = np.zeros(len(species_names))
         indexes_of_species_in_reaction = []
 
-        [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration = configuration)
-
+        [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration)
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
         create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration)
-
-        accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index)
-        get_reaction_function(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
+        accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index, configuration)
+        create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
         create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, is_reversible, configuration)
-    
+    #sys.exit("Exiting the program")
     headers = []
     with open('types_inl.h','w') as file:
-        write_type_defs(file, gas, configuration = configuration)
+        write_type_defs(file, gas, configuration)
         headers.append('types_inl.h')
 
     with open('thermotransport_fits.h','w') as file:
         for name, thermo_fit, thermo_type in zip(thermo_names, thermo_fits, thermo_types):
             if thermo_type == "energy":
-                write_energy_thermo_transport_fit(file, name, thermo_fit, configuration = configuration)
+                write_energy_thermo_transport_fit(file, name, thermo_fit, configuration)
             elif thermo_type == "entropy":
-                write_entropy_thermo_transport_fit(file, name, thermo_fit, configuration = configuration)
+                write_entropy_thermo_transport_fit(file, name, thermo_fit, configuration)
             elif thermo_type == "gibbs":
-                write_gibbs_thermo_transport_fit(file, name, thermo_fit, configuration = configuration)
+                write_gibbs_thermo_transport_fit(file, name, thermo_fit, configuration)
             else:
-                write_thermo_transport_fit(file, name, thermo_fit,  configuration = configuration)
+                write_thermo_transport_fit(file, name, thermo_fit,  configuration)
         headers.append('thermotransport_fits.h')
     
     with open('reactions.h','w') as file:
@@ -65,7 +63,7 @@ def process_cantera_file(gas, configuration):
         write_start_of_source_function(file, configuration=configuration)
         write_reaction_calculations(file, reaction_calls)
         write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
-        write_species_production(file, species_production_texts, configuration = configuration)
+        write_species_production(file, species_production_texts, configuration)
         headers.append('source.h')
         write_end_of_function(file)
     
