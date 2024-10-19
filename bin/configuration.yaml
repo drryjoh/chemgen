@@ -4,8 +4,7 @@ decorators:
   scalar_cast: "double"
   scalar_parameter: "const double&"
   n_thermo_order: "7"
-  
-
+  scalar_list: "std::array"
   temperature_monomial_typedef: "std::array<double, n_order_thermo>"
   temperature_monomial_function: "TemperatureMonomial"
   temperature_monomial: "TemperatureMonomial"

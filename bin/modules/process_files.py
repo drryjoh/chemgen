@@ -8,6 +8,7 @@ from .configuration import *
 from .thermo_chemistry import *
 from .write import *
 from .process_reactions import *
+from .write_source import *
 
 def process_cantera_file(gas, configuration):
     species_names  = gas.species_names
@@ -59,13 +60,9 @@ def process_cantera_file(gas, configuration):
         headers.append('reactions.h')
     
     with open('source.h','w') as file:
-        write_equilibrium_constants(file, equilibrium_constants, configuration)
-        write_start_of_source_function(file, configuration=configuration)
-        write_reaction_calculations(file, reaction_calls)
-        write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
-        write_species_production(file, species_production_texts, configuration)
-        headers.append('source.h')
-        write_end_of_function(file)
+        write_source_serial(file, equilibrium_constants, reaction_calls, 
+                            progress_rates, is_reversible, species_production_texts, 
+                            headers, configuration)
     
     required_headers = create_headers(configuration)
     return required_headers + headers
