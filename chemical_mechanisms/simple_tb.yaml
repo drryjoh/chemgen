@@ -96,3 +96,4 @@ reactions:
   type: three-body
   rate-constant: {A: 5.903e+27, b: -3.32, Ea: 1.208e+04}
   efficiencies: {H: 0.5, N2: 2.0, O: .75}
+  species: [H2O, H, O, N2]

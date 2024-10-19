@@ -1,0 +1,14 @@
+def get_mixture_concentration(efficiencies, species_names, configuration):
+    mixture_concentration_array = []
+
+    if not efficiencies:
+        efficiencies = {specie: 1.0 for specie in species_names}
+
+    for species_index, specie in enumerate(species_names):
+        if specie in efficiencies:
+            if efficiencies[specie] != 0:
+                mixture_concentration_array.append(f"{configuration.scalar_cast}({efficiencies[specie]})*{configuration.species_element.format(i = species_index)}")
+        else:
+            mixture_concentration_array.append(f"{configuration.scalar_cast}(1)*{configuration.species_element.format(i = species_index)}")
+
+    return ' + '.join(mixture_concentration_array)
