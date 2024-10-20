@@ -56,7 +56,6 @@ def get_test_conditions(chemical_mechanism):
         print("**Test file test_configuration.yaml not found using /test/test_configuration.yaml **")
         with open(configuration_filename, 'r') as file:
             configuration = yaml.safe_load(file)
-    print(config_path)
     # Extract values from the parsed YAML data
     temperature = configuration['test_conditions']['temperature']
     pressure = configuration['test_conditions']['pressure']

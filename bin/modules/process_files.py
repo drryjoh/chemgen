@@ -13,6 +13,7 @@ from .write_source import *
 def process_cantera_file(gas, configuration):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
+    species_production_function_texts = [''] * gas.n_species
     species_production_jacobian = [[''] * (gas.n_species + 1)] * (gas.n_species + 1)
     reaction_rates = [''] * gas.n_reactions
     reaction_calls = [''] * gas.n_reactions
@@ -34,9 +35,9 @@ def process_cantera_file(gas, configuration):
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
         create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration)
-        accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index, configuration)
+        accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, reaction_index, configuration)
         create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
-        create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, is_reversible, configuration)
+        create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration)
     #sys.exit("Exiting the program")
     headers = []
     with open('types_inl.h','w') as file:
@@ -63,6 +64,9 @@ def process_cantera_file(gas, configuration):
         write_source_serial(file, equilibrium_constants, reaction_calls, 
                             progress_rates, is_reversible, species_production_texts, 
                             headers, configuration)
+        #write_source_threaded(file, equilibrium_constants, reaction_calls, 
+        #                    progress_rates, is_reversible, species_production_function_texts, 
+        #                    headers, configuration)
     
     required_headers = create_headers(configuration)
     return required_headers + headers

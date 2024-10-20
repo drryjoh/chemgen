@@ -26,7 +26,7 @@ def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_b
 
     return (forward_rate, backward_rate)
 
-def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, reaction_index, configuration):
+def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, reaction_index, configuration):
     for index in indexes_of_species_in_reaction: 
         formatted_text = "{scalar_cast}({stoichiometric_production}) * rate_of_progress_{reaction_index}".format(**vars(configuration), 
         stoichiometric_production = stoichiometric_production[index], 
@@ -35,6 +35,16 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
             species_production_texts[index] = formatted_text
         else:
             species_production_texts[index] = ' + '.join([species_production_texts[index], formatted_text])
+    formatted_text = ''
+
+    for index in indexes_of_species_in_reaction: 
+        formatted_text = "{scalar_cast}({stoichiometric_production}) * progress_rates[{reaction_index}]".format(**vars(configuration), 
+        stoichiometric_production = stoichiometric_production[index], 
+        reaction_index = reaction_index)
+        if species_production_function_texts[index] == '':
+            species_production_function_texts[index] = formatted_text
+        else:
+            species_production_function_texts[index] = ' + '.join([species_production_texts[index], formatted_text])
 
 def create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names):
     is_reversible[reaction_index] = reaction.reversible
@@ -61,7 +71,7 @@ def create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction
     else:
         print(f"  Unknown reaction type: {reaction.reaction_type }")
 
-def create_rates_of_progress(progress_rates, reaction_index, forward_rate, backward_rate, is_reversible, configuration):
+def create_rates_of_progress(progress_rates, progress_rates_functions, reaction_index, forward_rate, backward_rate, is_reversible, configuration):
     if is_reversible[reaction_index]:
         formatted_text = (
         "{scalar} rate_of_progress_{reaction_index} = {forward_rate} * forward_reaction_{reaction_index} "
@@ -87,7 +97,6 @@ def create_equilibrium_constants(stoichiometric_production, reaction_index, inde
     power_term = ''
     if sum_stoichiometric_production.is_integer():
         power_integer = int(sum_stoichiometric_production)
-        print(power_integer)
         if power_integer < 0:
             power_term = raise_to_power('inv_pressure_atmosphere() * universal_gas_constant() * temperature', np.abs(power_integer))
         elif power_integer > 0:
@@ -99,6 +108,7 @@ def create_equilibrium_constants(stoichiometric_production, reaction_index, inde
     else:
         power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{scalar_cast}({sum_stoichiometric_production}))'
     for index in indexes_of_species_in_reaction:
-        equilibrium_constant_elements.append(f"{scalar_cast}({stoichiometric_production[index]}) * gibbs_free_energies[{index}]")
+        if stoichiometric_production[index] != 0:
+            equilibrium_constant_elements.append(f"{scalar_cast}({stoichiometric_production[index]}) * gibbs_free_energies[{index}]")
     equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"),
     power_term=power_term)

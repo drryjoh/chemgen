@@ -1,10 +1,8 @@
 from .reaction_utility import *
 
 def create_reaction_functions_and_calls_falloff(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names):
-    print(f"details for falloff reaction {reaction_index+1}")
     falloff_type = reaction.reaction_type
     if "Troe" in falloff_type:
-        print("Troe")
         create_reaction_functions_and_calls_troe(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
         
     '''
@@ -39,7 +37,6 @@ def create_reaction_functions_and_calls_troe(reaction_rates, reaction_calls, rea
         f"Ea = {reaction_rate.low_rate.activation_energy}")
     
     falloff_coeffs = reaction.rate.falloff_coeffs
-    print(falloff_coeffs)
     if len(falloff_coeffs) >3:
         [alpha, T3, T1, T2] = falloff_coeffs
     else:
@@ -51,7 +48,6 @@ def create_reaction_functions_and_calls_troe(reaction_rates, reaction_calls, rea
                                                alpha, T1, T2, T3,
                                                reaction.efficiencies, species_names,
                                                configuration)
-    print("hello!!!")
-    print(reaction_rates[reaction_index])
+                            
     reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(species, temperature);\n".format(**vars(configuration),reaction_index = reaction_index)    
 
