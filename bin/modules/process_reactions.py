@@ -44,7 +44,7 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         if species_production_function_texts[index] == '':
             species_production_function_texts[index] = formatted_text
         else:
-            species_production_function_texts[index] = ' + '.join([species_production_texts[index], formatted_text])
+            species_production_function_texts[index] = ' + '.join([species_production_function_texts[index], formatted_text])
 
 def create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names):
     is_reversible[reaction_index] = reaction.reversible

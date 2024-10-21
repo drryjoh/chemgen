@@ -59,9 +59,10 @@ def write_species_production(file, species_production_rates, configuration):
 def write_species_production_functions(file, species_production_rates, configuration):
     for species_index, species_production in enumerate(species_production_rates):
         if species_production != '':
-            file.write("{device_option} {scalar_function} progress_rate_{species_index}({reactions_parameter} progress_rates){{ return {species_production}}};\n".format(**vars(configuration), species_production = species_production, species_index = species_index)) 
+            file.write("{device_option} {scalar_function} production_rate_{species_index}({reactions_parameter} progress_rates){{ return {species_production};}};\n".format(**vars(configuration), species_production = species_production, species_index = species_index)) 
         else:
-            file.write(f"        //source_{species_index} has no production term\n")
+            file.write(f"//source_{species_index} has no production term\n")
+            file.write("{device_option} {scalar_function} production_rate_{species_index}({reactions_parameter} progress_rates){{ return {scalar_cast}(0);}};\n".format(**vars(configuration), species_production = species_production, species_index = species_index)) 
     file.write("\n")
 
 
@@ -82,9 +83,9 @@ def write_reaction_calculations_threaded(file, reaction_calls, configuration):
 def write_progress_rates_threaded(file, progress_rates, is_reversible, equilibrium_constants, configuration):
     for i, progress_rate in enumerate(progress_rates):
         if is_reversible[i]:
-            file.write("        {device_option}\n{scalar_function} production_rate_{i}({species_parameter} species, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} equilibrium_constant_{i} =  {equilibrium_constant}; return {progress_rate}}}\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
+            file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species, {scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature); {scalar} equilibrium_constant_{i} =  {equilibrium_constant}; return {progress_rate}}}".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
         else:
-            file.write("        {device_option}\n{scalar_function} production_rate_{i}({species_parameter} species, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{return {progress_rate}}}\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
+            file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species,{scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature); return {progress_rate}}}\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
     file.write("\n")
 
 def write_reaction_ttb_loop(file, array, pointer_list, parameters):
@@ -96,10 +97,40 @@ def write_reaction_ttb_loop(file, array, pointer_list, parameters):
     tbb::parallel_for(0, n_reactions, [&](int i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }});
+
+    """)
+
+def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
+    file.write(f"""
+    // Measure serial execution time
+    auto start_serial_{array} = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < n_reactions; ++i) {{
+        {array}[i] = {pointer_list}[i]({parameters});
+    }} 
+    auto end_serial_{array} = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
+
+    // Measure parallel execution time
+    auto start_parallel_{array} = std::chrono::high_resolution_clock::now();
+    int grain_size_{array} = 20; // Example grain size, adjust as needed
+    tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, grain_size_{array}),
+                    [&](const tbb::blocked_range<int>& r) {{
+        for (int i = r.begin(); i < r.end(); ++i) {{
+                {array}[i] = {pointer_list}[i]({parameters});
+        }}
+    }});
+    auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
+
+    // Output results
+    std::cout << "Serial execution time for reactions {array}: " << serial_time_{array}.count() << " seconds"<<std::endl;
+    std::cout << "Parallel execution time for reactions {array}: " << parallel_time_{array}.count() << " seconds"<<std::endl;
+
     """)
 
 def write_species_ttb_loop(file, array, pointer_list, parameters):
     file.write(f"""
+    
     for (int i = 0; i < n_species; ++i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }}
@@ -107,6 +138,31 @@ def write_species_ttb_loop(file, array, pointer_list, parameters):
     tbb::parallel_for(0, n_species, [&](int i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }});
+
+    """)
+
+def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters):
+    file.write(f"""
+    // Measure serial execution time
+    auto start_serial_{array} = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < n_species; ++i) {{
+        {array}[i] = {pointer_list}[i]({parameters});
+    }}    
+    auto end_serial_{array} = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
+
+    // Measure parallel execution time
+    auto start_parallel_{array} = std::chrono::high_resolution_clock::now();
+    tbb::parallel_for(0, n_species, [&](int i) {{
+        {array}[i] = {pointer_list}[i]({parameters});
+    }});
+    auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
+
+    // Output results
+    std::cout << \"Serial execution time for species_{array}: " << serial_time_{array}.count() << " seconds"<<std::endl;
+    std::cout << \"Parallel execution time for species_{array}: " << parallel_time_{array}.count() << " seconds"<<std::endl;
+
     """)
 
 def write_function_reactions_pointer_list(file, reaction_calls, configuration):
@@ -118,10 +174,17 @@ def write_function_reactions_pointer_list(file, reaction_calls, configuration):
 
 def write_function_progress_rates_pointer_list(file, reaction_calls, configuration):
     indentation = '        '
-    progress_rates_call_list = ','.join([f'\n{indentation}production_rate_{k}' for k in range(len(reaction_calls))])
+    progress_rates_call_list = ','.join([f'\n{indentation}progress_rate_{k}' for k in range(len(reaction_calls))])
     file.write("""
-        {scalar_list}<{scalar} (*)({species_parameter}, {species_parameter}, {scalar_parameter}), n_reactions> progress_rate_functions = {{{progress_rates_call_list}}};
+        {scalar_list}<{scalar} (*)({species_parameter}, {scalar_parameter}, {species_parameter}, {scalar_parameter}), n_reactions> progress_rate_functions = {{{progress_rates_call_list}}};
 """.format(**vars(configuration), progress_rates_call_list = progress_rates_call_list, n_reactions = len(reaction_calls)))
+
+def write_function_production_rates_pointer_list(file, species_production_function_texts, configuration):
+    indentation = '        '
+    progress_rates_call_list = ','.join([f'\n{indentation}production_rate_{k}' for k in range(len(species_production_function_texts))])
+    file.write("""
+        {scalar_list}<{scalar} (*)({reactions_parameter}), n_species> production_rate_functions = {{{progress_rates_call_list}}};
+""".format(**vars(configuration), progress_rates_call_list = progress_rates_call_list, n_species = len(species_production_function_texts)))
 
 def write_end_of_function(file):
     file.write("        return net_production_rates;\n    }")
@@ -149,9 +212,11 @@ def write_source_threaded(file, equilibrium_constants, reaction_calls,
     write_start_of_source_function_threaded(file, configuration)
     write_function_reactions_pointer_list(file, reaction_calls, configuration)
     write_function_progress_rates_pointer_list(file, reaction_calls, configuration)
-    write_reaction_ttb_loop(file, "reactions", "reaction_functions", "species, temperature")
-    write_reaction_ttb_loop(file, "progress_rates", "progress_rate_functions", "gibbs_free_energies, species, reactions[i]")
-    write_species_ttb_loop(file, "progress_rates", "progress_rate_functions", "gibbs_free_energies, species, reactions[i]")
+    write_function_production_rates_pointer_list(file, species_production_function_texts, configuration)
+    write_reaction_ttb_loop_with_timing(file, "reactions", "reaction_functions", "species, temperature")
+    write_reaction_ttb_loop_with_timing(file, "progress_rates", "progress_rate_functions", "species, temperature, gibbs_free_energies, reactions[i]")
+    write_species_ttb_loop_with_timing(file, "net_production_rates", "production_rate_functions", "progress_rates")
+    write_end_of_function(file)
     #write_reaction_calculations_threaded(file, reaction_calls)
     #write_progress_rates_threaded(file, progress_rates, is_reversible, equilibrium_constants, configuration)
     #write_species_production_threaded(file, species_production_texts, configuration)

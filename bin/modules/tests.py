@@ -17,7 +17,7 @@ def compile_cpp_code(build_dir, source_files):
     os.makedirs(build_dir, exist_ok=True)
     
     # Command to compile C++ code
-    compile_command = f"g++ -std=c++14 -o {build_dir}/output_program {' '.join(source_files)}"
+    compile_command = f"g++ -std=c++14 -ltbb -o {build_dir}/output_program {' '.join(source_files)}"
     print(compile_command)
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
@@ -77,6 +77,8 @@ def create_test(gas, chemical_mechanism, headers, test_file, configuration):
         file.write("#include <cmath>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
+        file.write("#include <tbb/tbb.h> // testing tbb\n")
+        file.write("#include <chrono>// testing timings\n")
         write_headers(file, headers)
         [temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
         gas.TPX = temperature, pressure, species_string
@@ -107,10 +109,12 @@ int main() {{
     {concentration_test}
     {scalar} temperature =  {temperature};
     {species} result = source(species, temperature);
+    {species} result_threaded = source_threaded(species, temperature);
     {scalar} pressure_return = pressure(species, temperature);
 
     // Output the result
     std::cout << "Source test result:  " << result << std::endl;
+    std::cout << "Source test result:  " << result_threaded << std::endl;
     std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
 /*
     std::cout << "Cantera species cps: " <<"{cantera_species_cp}"<<std::endl;
