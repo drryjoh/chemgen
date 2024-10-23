@@ -1,4 +1,4 @@
-from .reactions import *
+from .reactions.reactions import *
 from .arithmetic import *
 from .headers import *
 from .configuration import *

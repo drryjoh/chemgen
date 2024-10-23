@@ -116,7 +116,7 @@ def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
     tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, grain_size_{array}),
                     [&](const tbb::blocked_range<int>& r) {{
         for (int i = r.begin(); i < r.end(); ++i) {{
-                {array}[i] = {pointer_list}[i]({parameters});
+        {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
     auto end_parallel_{array} = std::chrono::high_resolution_clock::now();

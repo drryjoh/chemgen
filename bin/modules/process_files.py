@@ -1,7 +1,5 @@
 import cantera as ct
 import numpy as np
-from .arrhenius import *
-from .third_body import *
 from .arithmetic import *
 from .headers import *
 from .configuration import *
@@ -38,7 +36,7 @@ def process_cantera_file(gas, configuration):
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, reaction_index, configuration)
         create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration)
-    #sys.exit("Exiting the program")
+    
     headers = []
     with open('types_inl.h','w') as file:
         write_type_defs(file, gas, configuration)
