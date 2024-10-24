@@ -28,7 +28,7 @@ def create_headers(configuration):
     make_headers(code_directory, file_names, headers, configuration)
 
     code_directory = Path('src') / 'reaction_headers'
-    file_names = ['arrhenius.h.in', 'third_body.h.in','falloff_troe.h.in', 'falloff_lindemann.h.in']
+    file_names = ['arrhenius.h.in', 'third_body.h.in','falloff_troe.h.in', 'falloff_lindemann.h.in', 'pressure_dependent_arrhenius.h.in']
     make_headers(code_directory, file_names, headers, configuration)
     return headers
 

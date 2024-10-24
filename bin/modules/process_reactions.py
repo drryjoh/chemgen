@@ -4,6 +4,7 @@ from .headers import *
 from .configuration import *
 from .thermo_chemistry import *
 from .write import *
+import sys
 
 def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration):
     forward_rate_array = []
@@ -56,11 +57,7 @@ def create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction
         create_reaction_functions_and_calls_falloff(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
     
     elif reaction.reaction_type == "pressure-dependent-Arrhenius":
-        print("  PLOG Reaction with Rate Expressions:")
-        for P, rate in reaction.rates:
-            print(f"    At {P} Pa: A = {rate.pre_exponential_factor}, "
-                f"b = {rate.temperature_exponent}, "
-                f"Ea = {rate.activation_energy}")
+        create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
     
     elif reaction.reaction_type == "Chebyshev":
         print(f"  Chebyshev Reaction Coefficients:")
