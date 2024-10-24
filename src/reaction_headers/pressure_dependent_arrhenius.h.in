@@ -1,0 +1,23 @@
+
+{device_option}
+{scalar_function}
+log_arrhenius({scalar_parameter} log_A,
+              {scalar_parameter} B,
+              {scalar_parameter} E,
+			  {scalar_parameter} log_temperature,
+			  {scalar_parameter} inv_universal_gas_constant_temperature) {const_option}
+{{
+		return log_A + B * log_temperature - E * inv_universal_gas_constant_temperature;
+}}
+
+
+{device_option}
+{scalar_function} pressure_dependent_arrhenius({scalar_parameter} log_k1, 
+                                               {scalar_parameter} log_k2, 
+                                               {scalar_parameter} log_P,
+                                               {scalar_parameter} log_P1,
+                                               {scalar_parameter} log_P2) 
+{{
+    return  exp_gen(log_k1 + (log_k2 - log_k1) * (log_P - log_P1) / (log_P2 - log_P1));
+}}
+

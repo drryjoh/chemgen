@@ -1,60 +1,34 @@
+
 {device_option}
 {scalar_function}
-f_cent({scalar_parameter} alpha, 
-       {scalar_parameter} T1, 
-       {scalar_parameter} T2,
-       {scalar_parameter} T3,
-       {scalar_parameter} temperature) {const_option}
+f_sri({scalar_parameter} a, 
+      {scalar_parameter} b,
+      {scalar_parameter} c,
+      {scalar_parameter} d,
+      {scalar_parameter} e,
+      {scalar_parameter} temperature,
+      {scalar_parameter} Pr) {const_option}
 {{
-        return
-        ({scalar_cast}(1) - alpha) * exp_gen(-inv(T3) * temperature)
-        + alpha * exp_gen(-inv(T1) * temperature)
-        + exp_gen(-inv(temperature) * T2);
+    //F(T, P_r) = d \bigl[a \exp(-b/T) + \exp(-T/c)\bigr]^{1/(1+\log_{10}^2 P_r )} T^e
+    // Compute the inner part of the expression
+    {scalar} inner_expr = 
+    multiply(a, exp_gen(-divide(b, temperature))) + exp_gen(-divide(temperature, c));
+    
+    // Compute the exponent based on P_r
+    {scalar} exponent = inv(1.0 + exp_gen(std::log10(P_r), 2));
+    
+    // Compute the full expression
+    return 
+    multiply(pow_gen(inner_expr, 
+                     exponent),
+             pow_gen(T, 
+                     e));
+
 }}
 
 {device_option}
 {scalar_function}
-df_cent_dtemperature({scalar_parameter} alpha, 
-                     {scalar_parameter} T1, 
-                     {scalar_parameter} T2,
-                     {scalar_parameter} T3,
-                     {scalar_parameter} temperature) {const_option}
-{{
-        return
-        ({scalar_cast}(1) - alpha) * exp_chain(-inv(T3) * temperature, -inv(T3))
-        + alpha * exp_chain(-inv(T1) * temperature, -inv(T1))
-        + exp_chain(-inv(temperature) * T2, -dinv_da(temperature) * T2);
-}}
-
-{device_option}
-{scalar_function}
-f_troe({scalar_parameter} alpha, 
-       {scalar_parameter} T1, 
-       {scalar_parameter} T2,
-       {scalar_parameter} T3,
-       {scalar_parameter} temperature,
-       {scalar_parameter} Pr) {const_option}
-{{
-        {scalar} f_cent_ = f_cent(alpha, T1, T2, T3, temperature); 
-        {scalar} log_f_cent_ = log_gen(f_cent_);
-        {scalar} log_Pr = log_gen(Pr);
-
-        {scalar} c = {scalar_cast}(-0.4) + {scalar_cast}(-0.67) * log_f_cent_;
-        {scalar} n = {scalar_cast}(0.75) + {scalar_cast}(-1.27) * log_f_cent_;
-        {scalar} d = {scalar_cast}(0.14);
-
-        {scalar} a = log_Pr + c;
-        {scalar} b = n - d * (log_Pr + c);
-
-        {scalar} Pr_factor = inv({scalar_cast}(1) + pow_gen2(divide(a, b)));
-        
-        return
-        exp_gen(multiply(log_f_cent_, Pr_factor));
-}}
-
-{device_option}
-{scalar_function}
-df_troe_dtemperature({scalar_parameter} alpha, 
+df_sri_dtemperature({scalar_parameter} alpha, 
                      {scalar_parameter} T1, 
                      {scalar_parameter} T2,
                      {scalar_parameter} T3,
@@ -62,19 +36,19 @@ df_troe_dtemperature({scalar_parameter} alpha,
                      {scalar_parameter} Pr,
                      {scalar_parameter} dPr_dtemperature) {const_option}
 {{
-        {scalar} f_cent_ = f_cent(alpha, T1, T2, T3, temperature);
-        {scalar} df_cent_dtemperature_ = df_cent_dtemperature(alpha, T1, T2, T3, temperature);
+        {scalar} f_cent_sri_ = f_cent_sri(alpha, T1, T2, T3, temperature);
+        {scalar} df_cent_sri_dtemperature_ = df_cent_sri_dtemperature(alpha, T1, T2, T3, temperature);
 
-        {scalar} log_f_cent_ = log_gen(f_cent_);
-        {scalar} dlog_f_cent_dtemperature = log_chain(f_cent_, df_cent_dtemperature_);
+        {scalar} log_f_cent_sri_ = log_gen(f_cent_sri_);
+        {scalar} dlog_f_cent_sri_dtemperature = log_chain(f_cent_sri_, df_cent_sri_dtemperature_);
 
         {scalar} log_Pr = log_gen(Pr);
         {scalar} dlog_Pr_dtemperature = log_chain(Pr, dPr_dtemperature);
 
-        {scalar} c = {scalar_cast}(-0.4) + {scalar_cast}(-0.67) * log_f_cent_;
-        {scalar} dc_dtemperature = {scalar_cast}(-0.0) + {scalar_cast}(-0.67) * dlog_f_cent_dtemperature;
-        {scalar} n = {scalar_cast}(0.75) + {scalar_cast}(-1.27) * log_f_cent_;
-        {scalar} dn_dtemperature = {scalar_cast}(0.0) + {scalar_cast}(-1.27) * dlog_f_cent_dtemperature;
+        {scalar} c = {scalar_cast}(-0.4) + {scalar_cast}(-0.67) * log_f_cent_sri_;
+        {scalar} dc_dtemperature = {scalar_cast}(-0.0) + {scalar_cast}(-0.67) * dlog_f_cent_sri_dtemperature;
+        {scalar} n = {scalar_cast}(0.75) + {scalar_cast}(-1.27) * log_f_cent_sri_;
+        {scalar} dn_dtemperature = {scalar_cast}(0.0) + {scalar_cast}(-1.27) * dlog_f_cent_sri_dtemperature;
         {scalar} d = {scalar_cast}(0.14);
         {scalar} dd_dtemperature = {scalar_cast}(0.0);
 
@@ -94,10 +68,10 @@ df_troe_dtemperature({scalar_parameter} alpha,
                                                                  db_dtemperature)));
         
         return
-        exp_chain(multiply(log_f_cent_,
+        exp_chain(multiply(log_f_cent_sri_,
                            Pr_factor),
-                  multiply_chain(log_f_cent_,
-                                 dlog_f_cent_dtemperature,
+                  multiply_chain(log_f_cent_sri_,
+                                 dlog_f_cent_sri_dtemperature,
                                  Pr_factor,
                                  dPr_factor_dtemperature));
 }}
@@ -105,7 +79,7 @@ df_troe_dtemperature({scalar_parameter} alpha,
 
 {device_option}
 {scalar_function}
-falloff_troe({scalar_parameter} A_low,  //constant
+falloff_sri({scalar_parameter} A_low,  //constant
              {scalar_parameter} B_low, //constant
              {scalar_parameter} E_low,  //constant
              {scalar_parameter} A_high, //constant
@@ -131,14 +105,14 @@ falloff_troe({scalar_parameter} A_low,  //constant
 		{scalar} return_value = 
         multiply(multiply(k_high,
 						  Pr_inv_one_p_Pr),
-                 f_troe(alpha, T1, T2, T3, temperature, Pr));
+                 f_sri(alpha, T1, T2, T3, temperature, Pr));
 
         return return_value;
 }}
 
 {device_option}
 {scalar_function}
-dfalloff_troe_temperature({scalar_parameter} A_low,  //constant
+dfalloff_sri_temperature({scalar_parameter} A_low,  //constant
                           {scalar_parameter} B_low, //constant
                           {scalar_parameter} E_low,  //constant
                           {scalar_parameter} A_high, //constant
@@ -190,6 +164,6 @@ dfalloff_troe_temperature({scalar_parameter} A_low,  //constant
                                       dk_high_dtemperature,
 						              Pr_inv_one_p_Pr,
                                       dPr_inv_one_p_Pr_dtemperature),
-                       f_troe(alpha, T1, T2, T3, temperature, Pr),
-                       df_troe_dtemperature(alpha, T1, T2, T3, temperature, Pr, dPr_dtemperature));
+                       f_sri(alpha, T1, T2, T3, temperature, Pr),
+                       df_sri_dtemperature(alpha, T1, T2, T3, temperature, Pr, dPr_dtemperature));
 }}
