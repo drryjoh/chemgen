@@ -73,7 +73,7 @@ def main():
         headers.insert(0,"types_inl.h")
     
     if True: #replace with run time argument
-        test_file = 'chemgen_test.cpp'
+        test_file = 'chemgen.cpp'
         create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
         compile_header_test(test_file, configuration_file, destination_folder)
 

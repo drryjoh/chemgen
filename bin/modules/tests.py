@@ -81,7 +81,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <cmath>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
-        #file.write("#include <tbb/tbb.h> // testing tbb\n")
+        file.write("//#include <tbb/tbb.h> // testing tbb\n")
         file.write("#include <chrono>// testing timings\n")
         write_headers(file, headers)
         [temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
@@ -115,7 +115,6 @@ int main() {{
     
     auto start_parallel_pure_serial= std::chrono::high_resolution_clock::now();
     {species} result = source(species, temperature);
-    //{species} result_threaded = source_threaded(species, temperature);
     auto end_parallel_pure_serial = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> pure_serial_time = end_parallel_pure_serial- start_parallel_pure_serial;
     std::cout << "Pure serial calculation (no loop) " << pure_serial_time.count() << " seconds"<<std::endl;

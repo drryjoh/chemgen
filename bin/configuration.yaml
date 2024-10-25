@@ -52,7 +52,7 @@ decorators:
   scale: "scale_gen"
 
 build:
-  chemgen_smp: TBB
+  chemgen_smp: None 
   chemgen_optimized: O2
 
 decorators_double:

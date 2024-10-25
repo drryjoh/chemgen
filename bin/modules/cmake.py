@@ -16,14 +16,14 @@ set(CMAKE_CXX_FLAGS "-{config['build'].get('chemgen_optimized', 'O2')}")
 
 # Source files
 set(SOURCE_FILES
-    ${{CMAKE_SOURCE_DIR}}/src/main.cpp   # Add your source files here
+    ${{CMAKE_SOURCE_DIR}}/src/chemgen.cpp   # Add your source files here
 )
 
 # Set the output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${{CMAKE_BINARY_DIR}}/bin)
 
 # Add the executable
-add_executable(output_program ${{SOURCE_FILES}})
+add_executable(chemgen ${{SOURCE_FILES}})
 
 # Link libraries based on configuration
 """
@@ -32,7 +32,7 @@ add_executable(output_program ${{SOURCE_FILES}})
     if config['build'].get('chemgen_smp') == 'TBB':
         cmake_content += """\
 find_package(TBB REQUIRED)
-target_link_libraries(output_program PRIVATE TBB::tbb)
+target_link_libraries(chemgen PRIVATE TBB::tbb)
 """
 
     # Enable debugging flags if needed
