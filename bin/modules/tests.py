@@ -1,6 +1,9 @@
 from .configuration import *
 from .headers import *
 import cantera as ct
+from .cmake import *
+
+
 
 def run_command(command):
     """Run a shell command and check for errors."""
@@ -28,15 +31,15 @@ def run_tests(build_dir):
     print("Running tests...")
     run_command(test_command)
 
-def compile_header_test(test_file):
+def compile_header_test(test_file, configuration_file, destination_folder):
     # Define directories and C++ source files
-    build_directory = "build"
+    build_directory = destination_folder.parent
     cpp_source_files = [test_file]
-
-    # Step 1: Compile the C++ code
+    # generate cmake
+    generate_cmake_file(configuration_file, build_directory)
+    # Compile the C++ code
     compile_cpp_code(build_directory, cpp_source_files)
-
-    # Step 2: Run the tests
+    # Run the tests
     run_tests(build_directory)
 
 def get_test_conditions(chemical_mechanism):
@@ -72,12 +75,13 @@ def get_test_conditions(chemical_mechanism):
     species_string  = ' '.join([f"{species['name']}:{species['MoleFraction']} " for species in species_list])
     return [temperature, pressure, species_string]
 
-def create_test(gas, chemical_mechanism, headers, test_file, configuration):
+def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder):
+    test_file = destination_folder/test_file_name
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
-        file.write("#include <tbb/tbb.h> // testing tbb\n")
+        #file.write("#include <tbb/tbb.h> // testing tbb\n")
         file.write("#include <chrono>// testing timings\n")
         write_headers(file, headers)
         [temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
@@ -111,7 +115,7 @@ int main() {{
     
     auto start_parallel_pure_serial= std::chrono::high_resolution_clock::now();
     {species} result = source(species, temperature);
-    {species} result_threaded = source_threaded(species, temperature);
+    //{species} result_threaded = source_threaded(species, temperature);
     auto end_parallel_pure_serial = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> pure_serial_time = end_parallel_pure_serial- start_parallel_pure_serial;
     std::cout << "Pure serial calculation (no loop) " << pure_serial_time.count() << " seconds"<<std::endl;
@@ -121,7 +125,7 @@ int main() {{
 
     // Output the result
     std::cout << "Source test result:  " << result << std::endl;
-    std::cout << "Source test result:  " << result_threaded << std::endl;
+    //std::cout << "Source test result:  " << result_threaded << std::endl;
     std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
 /*
     std::cout << "Cantera species cps: " <<"{cantera_species_cp}"<<std::endl;

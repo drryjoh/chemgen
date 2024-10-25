@@ -19,9 +19,8 @@ def get_text_to_format(code_directory, file_to_format):
     content = content.replace('\t', '    ')
     return content
 
-def write_formatted_code(code_directory, file_to_format, configuration, target_file = None, append = False):
+def write_formatted_code(code_directory, file_to_format, configuration, destination_folder, target_file = None, append = False):
     content = get_text_to_format(code_directory, file_to_format)
-    print(file_to_format)
     try:
         new_content = content.format(**vars(configuration))
     except:
@@ -40,8 +39,8 @@ def write_formatted_code(code_directory, file_to_format, configuration, target_f
         target_file = file_to_format.replace('.in','')
 
     if append:
-        with open(target_file, 'a') as file:
+        with open(destination_folder/target_file, 'a') as file:
             file.write(new_content)
     else:
-        with open(target_file, 'w') as file:
+        with open(destination_folder/target_file, 'w') as file:
             file.write(new_content)      

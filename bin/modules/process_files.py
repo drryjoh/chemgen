@@ -8,7 +8,7 @@ from .write import *
 from .process_reactions import *
 from .write_source import *
 
-def process_cantera_file(gas, configuration):
+def process_cantera_file(gas, configuration, destination_folder):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
@@ -38,11 +38,11 @@ def process_cantera_file(gas, configuration):
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration)
     
     headers = []
-    with open('types_inl.h','w') as file:
+    with open(destination_folder/'types_inl.h','w') as file:
         write_type_defs(file, gas, configuration)
         headers.append('types_inl.h')
 
-    with open('thermotransport_fits.h','w') as file:
+    with open(destination_folder/'thermotransport_fits.h','w') as file:
         for name, thermo_fit, thermo_type in zip(thermo_names, thermo_fits, thermo_types):
             if thermo_type == "energy":
                 write_energy_thermo_transport_fit(file, name, thermo_fit, configuration)
@@ -54,19 +54,19 @@ def process_cantera_file(gas, configuration):
                 write_thermo_transport_fit(file, name, thermo_fit,  configuration)
         headers.append('thermotransport_fits.h')
     
-    with open('reactions.h','w') as file:
+    with open(destination_folder/'reactions.h','w') as file:
         write_reaction_rates(file, reaction_rates)
         headers.append('reactions.h')
     
-    with open('source.h','w') as file:
+    with open(destination_folder/'source.h','w') as file:
         write_source_serial(file, equilibrium_constants, reaction_calls, 
                             progress_rates, is_reversible, species_production_texts, 
                             headers, configuration)
-        write_source_threaded(file, equilibrium_constants, reaction_calls, 
-                            progress_rates, is_reversible, species_production_function_texts, 
-                            headers, configuration)
+        #write_source_threaded(file, equilibrium_constants, reaction_calls, 
+        #                    progress_rates, is_reversible, species_production_function_texts, 
+        #                    headers, configuration)
     
-    required_headers = create_headers(configuration)
+    required_headers = create_headers(configuration, destination_folder)
     return required_headers + headers
 
 

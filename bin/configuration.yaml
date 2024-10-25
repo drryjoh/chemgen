@@ -51,6 +51,10 @@ decorators:
   fill: "fill_gen"
   scale: "scale_gen"
 
+build:
+  chemgen_smp: TBB
+  chemgen_optimized: O2
+
 decorators_double:
   scalar: "double"
   scalar_function: "double"

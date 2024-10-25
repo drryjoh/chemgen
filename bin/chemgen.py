@@ -52,7 +52,7 @@ def main():
     
     # Convert arguments to Path objects
     chemical_mechanism = find_chemical_mechanism(args.chemical_mechanism)
-    destination_folder = Path(args.destination)
+    destination_folder = Path(args.destination)/'src'
     
     # Check if the destination folder exists, if not, create it
     if not destination_folder.exists():
@@ -64,8 +64,8 @@ def main():
     
 
     gas = ct.Solution(chemical_mechanism)
-    configuration = get_configuration(configuration_filename='configuration.yaml')
-    headers = process_cantera_file(gas, configuration)
+    [configuration, configuration_file] = get_configuration(configuration_filename='configuration.yaml')
+    headers = process_cantera_file(gas, configuration, destination_folder)
     print("***headers***")
 
     if "types_inl.h" in headers:
@@ -74,8 +74,8 @@ def main():
     
     if True: #replace with run time argument
         test_file = 'chemgen_test.cpp'
-        create_test(gas, args.chemical_mechanism, headers, test_file, configuration)
-        compile_header_test(test_file)
+        create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
+        compile_header_test(test_file, configuration_file, destination_folder)
 
 # Entry point
 if __name__ == "__main__":

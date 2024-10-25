@@ -26,7 +26,7 @@ def get_configuration(configuration_filename = 'configuration.yaml', decorators 
         setattr(config_obj, key, value)
     
     add_derived_attributes(config_obj)
-    return config_obj 
+    return [config_obj, configuration]
 
 def get_default_configuration():
     current_dir = Path(__file__).resolve().parent
