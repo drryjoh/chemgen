@@ -17,7 +17,7 @@ def compile_cpp_code(build_dir, source_files):
     os.makedirs(build_dir, exist_ok=True)
     
     # Command to compile C++ code
-    compile_command = f"g++ -std=c++14 -ltbb -o {build_dir}/output_program {' '.join(source_files)}"
+    compile_command = f"clang++ -std=c++17 -ltbb -O2 -o {build_dir}/output_program {' '.join(source_files)}"
     print(compile_command)
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
@@ -108,8 +108,15 @@ int main() {{
     // Call the arrhenius function with the specified parameters
     {concentration_test}
     {scalar} temperature =  {temperature};
+    
+    auto start_parallel_pure_serial= std::chrono::high_resolution_clock::now();
     {species} result = source(species, temperature);
     {species} result_threaded = source_threaded(species, temperature);
+    auto end_parallel_pure_serial = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> pure_serial_time = end_parallel_pure_serial- start_parallel_pure_serial;
+    std::cout << "Pure serial calculation (no loop) " << pure_serial_time.count() << " seconds"<<std::endl;
+
+    //{species} result_threaded = source_threaded(species, temperature);
     {scalar} pressure_return = pressure(species, temperature);
 
     // Output the result

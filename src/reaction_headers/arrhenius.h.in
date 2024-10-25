@@ -12,6 +12,16 @@ arrhenius({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {sca
 
 {device_option}
 {scalar_function}
+arrhenius({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature, {scalar_parameter} log_temperature) {const_option}
+{{
+
+		{scalar} exp_term = exp_gen(B * log_temperature + divide(-E, universal_gas_constant() * temperature));
+
+		return multiply(A, exp_term);
+}}
+
+{device_option}
+{scalar_function}
 darrhenius_dtemperature({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature) {const_option}
 {{
 		{scalar} pow_term = pow_gen(temperature, B);

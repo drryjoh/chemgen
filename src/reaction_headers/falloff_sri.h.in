@@ -1,4 +1,3 @@
-
 {device_option}
 {scalar_function}
 f_sri({scalar_parameter} a, 
@@ -9,88 +8,75 @@ f_sri({scalar_parameter} a,
       {scalar_parameter} temperature,
       {scalar_parameter} Pr) {const_option}
 {{
-    //F(T, P_r) = d \bigl[a \exp(-b/T) + \exp(-T/c)\bigr]^{1/(1+\log_{10}^2 P_r )} T^e
     // Compute the inner part of the expression
     {scalar} inner_expr = 
     multiply(a, exp_gen(-divide(b, temperature))) + exp_gen(-divide(temperature, c));
     
-    // Compute the exponent based on P_r
-    {scalar} exponent = inv(1.0 + exp_gen(std::log10(P_r), 2));
+    // Compute the exponent based on Pr
+    {scalar} exponent = inv(1.0 + pow_gen2(log10_gen(Pr)));
     
     // Compute the full expression
     return 
     multiply(pow_gen(inner_expr, 
                      exponent),
-             pow_gen(T, 
+             pow_gen(temperature, 
+                     e));
+}}
+
+{device_option}
+{scalar_function}
+df_sri_dtemperature({scalar_parameter} a, 
+                    {scalar_parameter} b,
+                    {scalar_parameter} c,
+                    {scalar_parameter} d,
+                    {scalar_parameter} e,
+                    {scalar_parameter} temperature,
+                    {scalar_parameter} Pr,
+                    {scalar_parameter} dPr_dtemperature) {const_option}
+{{
+    // Compute the inner part of the expression
+    {scalar} inner_expr = 
+    multiply(a, exp_gen(-divide(b, temperature))) + exp_gen(-divide(temperature, c));
+    
+    {scalar} dinner_expr_dtemperature = 
+    multiply(a, 
+             exp_chain(-divide(b, temperature),
+                       -ddivide_db(b, temperature))) 
+    + exp_chain(-divide(temperature, c),
+                -ddivide_da(temperature, c));
+    
+    // Compute the exponent based on Pr
+    {scalar} exponent = inv(1.0 + pow_gen2(log10_gen(Pr)));
+    {scalar} dexponent_dtemperature = 
+    inv_chain(1.0 + pow_gen2(log10_gen(Pr)),
+              pow_gen2_chain(log10_gen(Pr),
+                             log10_chain(Pr,
+                                         dPr_dtemperature)));
+    
+    // Compute the full expression
+    return 
+    multiply(pow_gen(inner_expr, 
+                     exponent),
+             pow_gen(temperature, 
                      e));
 
 }}
 
 {device_option}
 {scalar_function}
-df_sri_dtemperature({scalar_parameter} alpha, 
-                     {scalar_parameter} T1, 
-                     {scalar_parameter} T2,
-                     {scalar_parameter} T3,
-                     {scalar_parameter} temperature,
-                     {scalar_parameter} Pr,
-                     {scalar_parameter} dPr_dtemperature) {const_option}
-{{
-        {scalar} f_cent_sri_ = f_cent_sri(alpha, T1, T2, T3, temperature);
-        {scalar} df_cent_sri_dtemperature_ = df_cent_sri_dtemperature(alpha, T1, T2, T3, temperature);
-
-        {scalar} log_f_cent_sri_ = log_gen(f_cent_sri_);
-        {scalar} dlog_f_cent_sri_dtemperature = log_chain(f_cent_sri_, df_cent_sri_dtemperature_);
-
-        {scalar} log_Pr = log_gen(Pr);
-        {scalar} dlog_Pr_dtemperature = log_chain(Pr, dPr_dtemperature);
-
-        {scalar} c = {scalar_cast}(-0.4) + {scalar_cast}(-0.67) * log_f_cent_sri_;
-        {scalar} dc_dtemperature = {scalar_cast}(-0.0) + {scalar_cast}(-0.67) * dlog_f_cent_sri_dtemperature;
-        {scalar} n = {scalar_cast}(0.75) + {scalar_cast}(-1.27) * log_f_cent_sri_;
-        {scalar} dn_dtemperature = {scalar_cast}(0.0) + {scalar_cast}(-1.27) * dlog_f_cent_sri_dtemperature;
-        {scalar} d = {scalar_cast}(0.14);
-        {scalar} dd_dtemperature = {scalar_cast}(0.0);
-
-        {scalar} a = log_Pr + c;
-        {scalar} da_dtemperature = dlog_Pr_dtemperature + dc_dtemperature;
-
-        {scalar} b = n - d * (log_Pr +c);
-        {scalar} db_dtemperature = dn_dtemperature - d * (dlog_Pr_dtemperature + dc_dtemperature);
-
-        {scalar} Pr_factor = inv({scalar_cast}(1) + pow_gen2(divide(a, b)));
-        {scalar} dPr_factor_dtemperature = 
-        inv_chain({scalar_cast}(1) + pow_gen2(divide(a, b)),
-                                   + pow_gen2_chain(divide(a, b),
-                                                    divide_chain(a,
-                                                                 da_dtemperature,
-                                                                 b,
-                                                                 db_dtemperature)));
-        
-        return
-        exp_chain(multiply(log_f_cent_sri_,
-                           Pr_factor),
-                  multiply_chain(log_f_cent_sri_,
-                                 dlog_f_cent_sri_dtemperature,
-                                 Pr_factor,
-                                 dPr_factor_dtemperature));
-}}
-
-
-{device_option}
-{scalar_function}
 falloff_sri({scalar_parameter} A_low,  //constant
-             {scalar_parameter} B_low, //constant
-             {scalar_parameter} E_low,  //constant
-             {scalar_parameter} A_high, //constant
-             {scalar_parameter} B_high,  //constant
-             {scalar_parameter} E_high, //constant
-             {scalar_parameter} alpha,//constant
-             {scalar_parameter} T1,//constant
-             {scalar_parameter} T2,//constant
-             {scalar_parameter} T3,//constant
-             {scalar_parameter} temperature, 
-             {scalar_parameter} mixture_concentration) {const_option}
+            {scalar_parameter} B_low, //constant
+            {scalar_parameter} E_low,  //constant
+            {scalar_parameter} A_high, //constant
+            {scalar_parameter} B_high,  //constant
+            {scalar_parameter} E_high, //constant
+            {scalar_parameter} a, //constant
+            {scalar_parameter} b, //constant
+            {scalar_parameter} c, //constant
+            {scalar_parameter} d, //constant
+            {scalar_parameter} e,// constant
+            {scalar_parameter} temperature,
+            {scalar_parameter} mixture_concentration) {const_option}
 {{
         {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature);
         {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature);
@@ -105,7 +91,7 @@ falloff_sri({scalar_parameter} A_low,  //constant
 		{scalar} return_value = 
         multiply(multiply(k_high,
 						  Pr_inv_one_p_Pr),
-                 f_sri(alpha, T1, T2, T3, temperature, Pr));
+                 f_sri(a, b, c, d, e, temperature, Pr));
 
         return return_value;
 }}
@@ -118,10 +104,11 @@ dfalloff_sri_temperature({scalar_parameter} A_low,  //constant
                           {scalar_parameter} A_high, //constant
                           {scalar_parameter} B_high,  //constant
                           {scalar_parameter} E_high, //constant
-                          {scalar_parameter} alpha,//constant
-                          {scalar_parameter} T1,//constant
-                          {scalar_parameter} T2,//constant
-                          {scalar_parameter} T3,//constant
+                          {scalar_parameter} a, //constant
+                          {scalar_parameter} b, //constant
+                          {scalar_parameter} c, //constant
+                          {scalar_parameter} d, //constant
+                          {scalar_parameter} e,// constant
                           {scalar_parameter} temperature, 
                           {scalar_parameter} mixture_concentration) {const_option}
 {{
@@ -164,6 +151,6 @@ dfalloff_sri_temperature({scalar_parameter} A_low,  //constant
                                       dk_high_dtemperature,
 						              Pr_inv_one_p_Pr,
                                       dPr_inv_one_p_Pr_dtemperature),
-                       f_sri(alpha, T1, T2, T3, temperature, Pr),
-                       df_sri_dtemperature(alpha, T1, T2, T3, temperature, Pr, dPr_dtemperature));
+                       f_sri(a, b, c, d, e, temperature, Pr),
+                       df_sri_dtemperature(a, b, c, d, e, temperature, Pr, dPr_dtemperature));
 }}

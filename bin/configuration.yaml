@@ -3,7 +3,7 @@ decorators:
   scalar_function: "double"
   scalar_cast: "double"
   scalar_parameter: "const double&"
-  n_thermo_order: "12"
+  n_thermo_order: "7"
   scalar_list: "std::array"
   temperature_monomial_typedef: "std::array<double, n_order_thermo>"
   temperature_monomial_function: "TemperatureMonomial"
@@ -41,6 +41,8 @@ decorators:
   expmath: "std::exp"
   powmath: "std::pow"
   logmath: "std::log"
+  log10math: "std::log10"
+
   device_sum: "std::accumulate(a_s.begin(), a_s.end(), {scalar_cast}(0.0))"
   device_fill: "std::fill(b_s.begin(), b_s.end(), a)"
   device_transform: "std::transform(b_s.begin(), b_s.end(), c_s.begin(), [&a]({scalar} s) {{ return a * s; }});"
@@ -49,11 +51,11 @@ decorators:
   fill: "fill_gen"
   scale: "scale_gen"
 
-decorators_float:
-  scalar: "float"
-  scalar_function: "float"
-  scalar_cast: "float"
-  scalar_parameter: "const float&"
+decorators_double:
+  scalar: "double"
+  scalar_function: "double"
+  scalar_cast: "double"
+  scalar_parameter: "const double&"
   const_option: ""
   constexpr: "constexpr"
   device_option: ""
