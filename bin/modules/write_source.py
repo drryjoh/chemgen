@@ -25,7 +25,10 @@ def write_start_of_source_function(file, configuration):
         {species} net_production_rates = {{{scalar_cast}(0)}};
         {species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);
         {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);
-        {scalar} log_temperature = log_gen(temperature);\n""".format(**vars(configuration)))
+        {scalar} log_temperature = log_gen(temperature);
+        {scalar} pressure_ = pressure(species, temperature);
+        {scalar} mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;\n""".format(**vars(configuration)))
+        
 
 def write_start_of_source_function_threaded(file, configuration):
     file.write("""
@@ -38,7 +41,9 @@ def write_start_of_source_function_threaded(file, configuration):
         {reactions} progress_rates = {{}};
         {species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);
         {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);
-        {scalar} log_temperature = log_gen(temperature);\n""".format(**vars(configuration)))
+        {scalar} log_temperature = log_gen(temperature);
+        {scalar} pressure_ = pressure(species, temperature);
+        {scalar} mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;\n""".format(**vars(configuration)))
 
 def write_reaction_rates(file, reaction_rates):
     for reaction in reaction_rates:
@@ -76,12 +81,12 @@ def write_reaction_calculations(file, reaction_calls):
 def write_reaction_calculations_threaded(file, reaction_calls, configuration):
     for reaction_index, reaction_call in enumerate(reaction_calls):
         call = reaction_call.split('=')[1].replace('\n','')
-        file.write("{device_option}\n{scalar_function} reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature) {const_option} {{ return {call} }}".format(**vars(configuration), reaction_index = reaction_index, call = call ))
+        file.write("{device_option}\n{scalar_function} reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure_, {scalar_parameter} mixture_concentration) {const_option} {{ return {call} }}".format(**vars(configuration), reaction_index = reaction_index, call = call ))
 
 def write_reaction_calculations_threaded(file, reaction_calls, configuration):
     for reaction_index, reaction_call in enumerate(reaction_calls):
         call = reaction_call.split('=')[1].replace('\n','')
-        file.write("{device_option}\n{scalar_function} reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature) {const_option} {{ return {call} }}".format(**vars(configuration), reaction_index = reaction_index, call = call ))
+        file.write("{device_option}\n{scalar_function} reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure_, {scalar_parameter} mixture_concentration) {const_option} {{ return {call} }}".format(**vars(configuration), reaction_index = reaction_index, call = call ))
 
 def write_progress_rates_threaded(file, progress_rates, is_reversible, equilibrium_constants, configuration):
     for i, progress_rate in enumerate(progress_rates):
@@ -99,7 +104,7 @@ def write_reaction_ttb_loop(file, array, pointer_list, parameters):
 
     tbb::parallel_for(0, n_reactions, [&](int i) {{
         {array}[i] = {pointer_list}[i]({parameters});
-        }});
+    }});
 
     """)
 
@@ -125,7 +130,7 @@ def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
     auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, chunk_size), [&](const tbb::blocked_range<int>& r) {{
         for (int i = r.begin(); i < r.end(); ++i) {{
-            reactions[i] = reaction_functions[i](species, temperature, log_temperature);
+            {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
     auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
@@ -135,7 +140,7 @@ def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
     auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, chunk_size), [&](const tbb::blocked_range<int>& r) {{
         for (int i = r.begin(); i < r.end(); ++i) {{
-            reactions[i] = reaction_functions[i](species, temperature, log_temperature);
+            {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
     auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
@@ -184,7 +189,7 @@ def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters):
     auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_species, chunk_size), [&](const tbb::blocked_range<int>& r) {{
         for (int i = r.begin(); i < r.end(); ++i) {{
-            reactions[i] = reaction_functions[i](species, temperature, log_temperature);
+            {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
     auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
@@ -194,7 +199,7 @@ def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters):
     auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_species, chunk_size), [&](const tbb::blocked_range<int>& r) {{
         for (int i = r.begin(); i < r.end(); ++i) {{
-            reactions[i] = reaction_functions[i](species, temperature, log_temperature);
+            {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
     auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
@@ -211,7 +216,7 @@ def write_function_reactions_pointer_list(file, reaction_calls, configuration):
     indentation = '        '
     reaction_call_list = ','.join([f'\n{indentation}reaction_{k}' for k in range(len(reaction_calls))])
     file.write("""
-        {scalar_list}<{scalar} (*)({species_parameter}, {scalar_parameter}, {scalar_parameter}), n_reactions> reaction_functions = {{{reaction_call_list} }};
+        {scalar_list}<{scalar} (*)({species_parameter}, {scalar_parameter}, {scalar_parameter}, {scalar_parameter}, {scalar_parameter}), n_reactions> reaction_functions = {{{reaction_call_list} }};
 """.format(**vars(configuration), reaction_call_list = reaction_call_list, n_reactions = len(reaction_calls)))
 
 def write_function_progress_rates_pointer_list(file, reaction_calls, configuration):
@@ -255,12 +260,7 @@ def write_source_threaded(file, equilibrium_constants, reaction_calls,
     write_function_reactions_pointer_list(file, reaction_calls, configuration)
     write_function_progress_rates_pointer_list(file, reaction_calls, configuration)
     write_function_production_rates_pointer_list(file, species_production_function_texts, configuration)
-    write_reaction_ttb_loop_with_timing(file, "reactions", "reaction_functions", "species, temperature, log_temperature")
+    write_reaction_ttb_loop_with_timing(file, "reactions", "reaction_functions", "species, temperature, log_temperature, pressure_, mixture_concentration")
     write_reaction_ttb_loop_with_timing(file, "progress_rates", "progress_rate_functions", "species, temperature, gibbs_free_energies, reactions[i]")
     write_species_ttb_loop_with_timing(file, "net_production_rates", "production_rate_functions", "progress_rates")
     write_end_of_function(file)
-    #write_reaction_calculations_threaded(file, reaction_calls)
-    #write_progress_rates_threaded(file, progress_rates, is_reversible, equilibrium_constants, configuration)
-    #write_species_production_threaded(file, species_production_texts, configuration)
-    #headers.append('source.h')
-    #write_end_of_function_threaded(file)

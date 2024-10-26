@@ -2,7 +2,7 @@ from .reaction_utility import *
 
 def third_body_text(i, A, B, E, efficiencies, species_names, configuration):
     mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)
-    return_text = "{device_option}\n{scalar_function} call_forward_reaction_{i}({species_parameter} species, {scalar_parameter} temperature) {const_option} {{ return third_body({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, {mixture_concentration});}}"
+    return_text = "{device_option}\n{scalar_function} call_forward_reaction_{i}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option} {{ return third_body({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, log_temperature, {mixture_concentration});}}"
     return return_text.format(**vars(configuration), i = i, A = A, E = E, B = B, mixture_concentration = mixture_concentration)
 
 def dthird_body_dtemperature_text(i, A, B, E, configuration):
@@ -15,5 +15,5 @@ def create_reaction_functions_and_calls_third_body(reaction_rates, reaction_call
     print(f"  Collision Partner Efficiencies: {reaction.efficiencies}")
     requires_mixture_concentration[reaction_index] = True
     reaction_rates[reaction_index] = third_body_text(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, configuration)
-    reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(species, temperature);\n".format(**vars(configuration),reaction_index = reaction_index)
+    reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)
 

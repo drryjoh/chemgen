@@ -1,9 +1,9 @@
 {device_option}
 {scalar_function}
-third_body({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature, {scalar_parameter} mixture_concentration) {const_option}
+third_body({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option}
 {{
 		return multiply(mixture_concentration,
-						arrhenius(A,B,E,temperature));
+						arrhenius(A, B, E, temperature, log_temperature));
 }}
 
 {device_option}

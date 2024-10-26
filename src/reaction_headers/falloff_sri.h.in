@@ -76,10 +76,11 @@ falloff_sri({scalar_parameter} A_low,  //constant
             {scalar_parameter} d, //constant
             {scalar_parameter} e,// constant
             {scalar_parameter} temperature,
+            {scalar_parameter} log_temperature,
             {scalar_parameter} mixture_concentration) {const_option}
 {{
-        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature);
-        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature);
+        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature, log_temperature);
+        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature, log_temperature);
         
         {scalar} Pr = 
         divide(multiply(k_low,

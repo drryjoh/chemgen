@@ -62,9 +62,9 @@ def process_cantera_file(gas, configuration, destination_folder):
         write_source_serial(file, equilibrium_constants, reaction_calls, 
                             progress_rates, is_reversible, species_production_texts, 
                             headers, configuration)
-        #write_source_threaded(file, equilibrium_constants, reaction_calls, 
-        #                    progress_rates, is_reversible, species_production_function_texts, 
-        #                    headers, configuration)
+        write_source_threaded(file, equilibrium_constants, reaction_calls, 
+                            progress_rates, is_reversible, species_production_function_texts, 
+                            headers, configuration)
     
     required_headers = create_headers(configuration, destination_folder)
     return required_headers + headers
