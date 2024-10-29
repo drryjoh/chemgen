@@ -36,7 +36,7 @@ def write_start_of_source_function_threaded(file, configuration):
     {species_function} source_threaded({species_parameter} species, {scalar_parameter} temperature) {const_option} 
     {{
         {species} net_production_rates = {{{scalar_cast}(0)}};
-        int chunk_size = 0;
+        {index} chunk_size = 0;
         {reactions} reactions = {{}};
         {reactions} progress_rates = {{}};
         {species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);
@@ -90,23 +90,25 @@ def write_progress_rates_threaded(file, progress_rates, is_reversible, equilibri
             file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species,{scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature); return {progress_rate}}}\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
     file.write("\n")
 
-def write_reaction_ttb_loop(file, array, pointer_list, parameters):
+def write_reaction_ttb_loop(file, array, pointer_list, parameters, configuration):
+    index = "{index}".format(**vars(configuration))
     file.write(f"""
-    for (int i = 0; i < n_reactions; ++i) {{
+    for ({index} i = 0; i < n_reactions; ++i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }}
 
-    tbb::parallel_for(0, n_reactions, [&](int i) {{
+    tbb::parallel_for(0, n_reactions, [&]({index} i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }});
 
     """)
 
-def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
+def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters, configuration):
+    index = "{index}".format(**vars(configuration))
     file.write(f"""
     // Measure serial execution time
     auto start_serial_{array} = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < n_reactions; ++i) {{
+    for ({index} i = 0; i < n_reactions; ++i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }} 
     auto end_serial_{array} = std::chrono::high_resolution_clock::now();
@@ -114,7 +116,7 @@ def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
 
     // Measure parallel execution time
     auto start_parallel_{array} = std::chrono::high_resolution_clock::now();
-    tbb::parallel_for(0, n_reactions, [&](int i) {{
+    tbb::parallel_for(0, n_reactions, [&]({index} i) {{
         {array}[i] = {pointer_list}[i]({parameters});
         }});
     auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
@@ -123,7 +125,7 @@ def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
     chunk_size = 20;  // Starting chunk size
     auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, chunk_size), [&](const tbb::blocked_range<int>& r) {{
-        for (int i = r.begin(); i < r.end(); ++i) {{
+        for ({index} i = r.begin(); i < r.end(); ++i) {{
             {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
@@ -133,7 +135,7 @@ def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
     chunk_size = 100;  // Starting chunk size
     auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, chunk_size), [&](const tbb::blocked_range<int>& r) {{
-        for (int i = r.begin(); i < r.end(); ++i) {{
+        for ({index} i = r.begin(); i < r.end(); ++i) {{
             {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
@@ -148,24 +150,26 @@ def write_reaction_ttb_loop_with_timing(file, array, pointer_list, parameters):
 
     """)
 
-def write_species_ttb_loop(file, array, pointer_list, parameters):
+def write_species_ttb_loop(file, array, pointer_list, parameters, configuration):
+    index = "{index}".format(**vars(configuration))
     file.write(f"""
     
-    for (int i = 0; i < n_species; ++i) {{
+    for ({index} i = 0; i < n_species; ++i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }}
 
-    tbb::parallel_for(0, n_species, [&](int i) {{
+    tbb::parallel_for(0, n_species, [&]({index} i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }});
 
     """)
 
-def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters):
+def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters, configuration):
+    index = "{index}".format(**vars(configuration))
     file.write(f"""
     // Measure serial execution time
     auto start_serial_{array} = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < n_species; ++i) {{
+    for ({index} i = 0; i < n_species; ++i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }}    
     auto end_serial_{array} = std::chrono::high_resolution_clock::now();
@@ -173,7 +177,7 @@ def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters):
 
     // Measure parallel execution time
     auto start_parallel_{array} = std::chrono::high_resolution_clock::now();
-    tbb::parallel_for(0, n_species, [&](int i) {{
+    tbb::parallel_for(0, n_species, [&]({index} i) {{
         {array}[i] = {pointer_list}[i]({parameters});
     }});
     auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
@@ -182,7 +186,7 @@ def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters):
     chunk_size = 20;  // Starting chunk size
     auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_species, chunk_size), [&](const tbb::blocked_range<int>& r) {{
-        for (int i = r.begin(); i < r.end(); ++i) {{
+        for ({index} i = r.begin(); i < r.end(); ++i) {{
             {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
@@ -192,7 +196,7 @@ def write_species_ttb_loop_with_timing(file, array, pointer_list, parameters):
     chunk_size = 100;  // Starting chunk size
     auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
     tbb::parallel_for(tbb::blocked_range<int>(0, n_species, chunk_size), [&](const tbb::blocked_range<int>& r) {{
-        for (int i = r.begin(); i < r.end(); ++i) {{
+        for ({index} i = r.begin(); i < r.end(); ++i) {{
             {array}[i] = {pointer_list}[i]({parameters});
         }}
     }});
@@ -254,7 +258,7 @@ def write_source_threaded(file, equilibrium_constants, reaction_calls,
     write_function_reactions_pointer_list(file, reaction_calls, configuration)
     write_function_progress_rates_pointer_list(file, reaction_calls, configuration)
     write_function_production_rates_pointer_list(file, species_production_function_texts, configuration)
-    write_reaction_ttb_loop_with_timing(file, "reactions", "reaction_functions", "species, temperature, log_temperature, pressure_, mixture_concentration")
-    write_reaction_ttb_loop_with_timing(file, "progress_rates", "progress_rate_functions", "species, temperature, gibbs_free_energies, reactions[i]")
-    write_species_ttb_loop_with_timing(file, "net_production_rates", "production_rate_functions", "progress_rates")
+    write_reaction_ttb_loop_with_timing(file, "reactions", "reaction_functions", "species, temperature, log_temperature, pressure_, mixture_concentration", configuration)
+    write_reaction_ttb_loop_with_timing(file, "progress_rates", "progress_rate_functions", "species, temperature, gibbs_free_energies, reactions[i]", configuration)
+    write_species_ttb_loop_with_timing(file, "net_production_rates", "production_rate_functions", "progress_rates",configuration)
     write_end_of_function(file)

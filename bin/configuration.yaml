@@ -26,6 +26,8 @@ decorators:
   species_cast: "Species"
   species_parameter: "const Species&"
   species_element: "species[{i}]"
+  
+  arbitrary_element: "{name}[{{i}}]"
 
   reactions_typedef: "std::array<double, n_reactions>"
   reactions: "Reactions"
@@ -47,6 +49,7 @@ decorators:
   device_fill: "std::fill(b_s.begin(), b_s.end(), a)"
   device_transform: "std::transform(b_s.begin(), b_s.end(), c_s.begin(), [&a]({scalar} s) {{ return a * s; }});"
   device_element_sum: "std::transform(a_s.begin(), a_s.end(), b_s.begin(), c_s.begin(), []({scalar_parameter} a, {scalar_parameter} b) {{ return a + b; }});"
+  device_element_multiply: "std::transform(a_s.begin(), a_s.end(), b_s.begin(), c_s.begin(), []({scalar_parameter} a, {scalar_parameter} b) {{ return a * b; }});"
   sum: "sum_gen"
   fill: "fill_gen"
   scale: "scale_gen"

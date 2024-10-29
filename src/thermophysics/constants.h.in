@@ -1,3 +1,5 @@
 {device_option} {constexpr} {scalar_function} universal_gas_constant() {const_option} {{return {scalar_cast}(8314.46261815324);}}
 {device_option} {constexpr} {scalar_function} pressure_atmosphere() {const_option} {{return {scalar_cast}(101325.0);}}
 {device_option} {constexpr} {scalar_function} inv_pressure_atmosphere() {const_option} {{return {scalar_cast}(1)/{scalar_cast}(101325.0);}}
+#include "generated_constants.h"
+

@@ -82,7 +82,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <cmath>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
-        file.write("#include <tbb/tbb.h> // testing tbb\n")
+        file.write("//#include <tbb/tbb.h> // testing tbb\n")
         file.write("#include <chrono>// testing timings\n")
         write_headers(file, headers)
         [temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
@@ -112,40 +112,47 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
 int main() {{
     // Call the arrhenius function with the specified parameters
     {concentration_test}
-    {scalar} temperature =  {temperature};
+    {scalar} temperature_ =  {temperature};
     
     auto start_parallel_pure_serial= std::chrono::high_resolution_clock::now();
-    {species} result = source(species, temperature);
+    {species} result = source(species, temperature_);
     auto end_parallel_pure_serial = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> pure_serial_time = end_parallel_pure_serial- start_parallel_pure_serial;
     std::cout << "Pure serial calculation (no loop) " << pure_serial_time.count() << " seconds"<<std::endl;
 
-    {species} result_threaded = source_threaded(species, temperature);
-    {scalar} pressure_return = pressure(species, temperature);
-
+    //{species} result_threaded = source_threaded(species, temperature_);
+    {scalar} pressure_return = pressure(species, temperature_);
+    {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
+    std::cout << "temperature: " << temperature_<<std::endl;
+    for({index} i=0; i<10; ++i)
+    {{
+        std::cout << "temperature_ for "<< i <<" iterations: " << (temperature_ - temperature(int_energy, species, i)) / (temperature_)<<std::endl;
+    }}
     // Output the result
     std::cout << "Source test result:  " << result << std::endl;
-    std::cout << "Source test result:  " << result_threaded << std::endl;
+    //std::cout << "Source test result:  " << result_threaded << std::endl;
     std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
+    std::cout << "Cantera internal energy: " <<"{cantera_int_energy}"<<std::endl;
+    std::cout << "ChemGen internal energy: "<< int_energy <<std::endl;
 /*
     std::cout << "Cantera species cps: " <<"{cantera_species_cp}"<<std::endl;
-    std::cout << "Chemgen species cps: " << species_specific_heat_constant_pressure_mass_specific(temperature) <<std::endl;
+    std::cout << "Chemgen species cps: " << species_specific_heat_constant_pressure_mass_specific(temperature_) <<std::endl;
 
     std::cout << "Cantera species enthalpies: " <<"{cantera_species_enthalpy}"<<std::endl;
-    std::cout << "Chemgen species enthalpies: " << species_enthalpy_mass_specific(temperature) <<std::endl;
+    std::cout << "Chemgen species enthalpies: " << species_enthalpy_mass_specific(temperature_) <<std::endl;
 
     std::cout << "Cantera species internal energies: " <<"{cantera_species_energies}"<<std::endl;
-    std::cout << "Chemgen species internal energies: " << species_internal_energy_mass_specific(temperature) <<std::endl;
+    std::cout << "Chemgen species internal energies: " << species_internal_energy_mass_specific(temperature_) <<std::endl;
 
     std::cout << "Cantera species internal entropies: " <<"{cantera_species_entropy}"<<std::endl;
-    std::cout << "Chemgen species internal entropies: " << species_entropy_mass_specific(temperature) <<std::endl;
+    std::cout << "Chemgen species internal entropies: " << species_entropy_mass_specific(temperature_) <<std::endl;
 
     std::cout << "Cantera species gibbs energy: " <<"{cantera_species_gibbs}"<<std::endl;
-    std::cout << "Chemgen species gibbs energy: " << species_gibbs_energy_mole_specific(temperature) <<std::endl;
-    std::cout << "Chemgen species gibbs energy direct: " << species_enthalpy_mass_specific(temperature) - scale_gen(temperature, species_entropy_mass_specific(temperature)) <<std::endl;
+    std::cout << "Chemgen species gibbs energy: " << species_gibbs_energy_mole_specific(temperature_) <<std::endl;
+    std::cout << "Chemgen species gibbs energy direct: " << species_enthalpy_mass_specific(temperature_) - scale_gen(temperature_, species_entropy_mass_specific(temperature_)) <<std::endl;
 
     std::cout << "Cantera equilibrium constants: " <<"{equilibrium_constants}"<<std::endl;
-    std::cout << "Chemgen equilibrium constants: " << equilibrium_constants(temperature) <<std::endl;
+    std::cout << "Chemgen equilibrium constants: " << equilibrium_constants(temperature_) <<std::endl;
     
 
     std::cout << "Pressure: " <<pressure_return <<std::endl;
@@ -155,7 +162,7 @@ int main() {{
     std::cout << "Temperature Gibbs Monomial at 300           : " <<temperature_gibbs_monomial({scalar_cast}(300)) <<std::endl;
     
 
-    std::cout << "Temperature Monomial Derivative at 300: " <<dtemperature_monomial_dtemperature({scalar_cast}(300)) <<std::endl;
+    std::cout << "Temperature Monomial Derivative at 300: " <<dtemperature_monomial_dtemperature_({scalar_cast}(300)) <<std::endl;
 */
     return 0;
 }}
@@ -169,4 +176,5 @@ int main() {{
         cantera_species_entropy = ' '.join([f"{ent}" for ent in entropies]),
         cantera_species_energies = ' '.join([f"{energy}" for energy in energies]),
         cantera_species_gibbs = ' '.join([f"{gibb}" for gibb in gibbs]),
-        equilibrium_constants = ' '.join([f"{eqcon}" for eqcon in equilibrium_constants])))
+        equilibrium_constants = ' '.join([f"{eqcon}" for eqcon in equilibrium_constants]),
+        cantera_int_energy = gas.int_energy_mass * gas.density))

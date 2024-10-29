@@ -35,3 +35,11 @@ operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_opti
     {device_element_sum_inl}
     return c_s;
 }}
+
+{device_option} {species_function} 
+operator*({species_parameter} a_s, {species_parameter} b_s) {const_option}
+{{
+    {species} c_s;
+    {device_element_multiply_inl}
+    return c_s;
+}}

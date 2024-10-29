@@ -20,7 +20,7 @@ std::vector<double> source(const std::vector<double>& species, double temperatur
 
     // Parallel loop using TBB (Threading Building Blocks)
     tbb::parallel_for(tbb::blocked_range<int>(0, 43), [&](tbb::blocked_range<int>& r) {
-        for (int i = r.begin(); i != r.end(); ++i) {
+        for ({index} i = r.begin(); i != r.end(); ++i) {
             double forward_reaction = call_forward_reaction(i, species, temperature);
             // Perform the necessary computations here (similar to your original code)
             // Calculate equilibrium constants, rate of progress, etc.

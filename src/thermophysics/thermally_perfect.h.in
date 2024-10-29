@@ -102,7 +102,7 @@ temperature_entropy_monomial({scalar_parameter} temperature) {const_option}
 {{
     {temperature_energy_monomial} temperature_energy_monomial_sequence_ = {{}};
     temperature_energy_monomial_sequence_[0] = {scalar_cast}(1); // The first term is always 1
-    temperature_energy_monomial_sequence_[n_order_thermo] = {logmath}(temperature); // The first term is always 1
+    temperature_energy_monomial_sequence_[n_order_thermo] = {logmath}(temperature); 
 
     // Horner's method: Start with 1 and multiply progressively by T
     for ({index} i = 1; i < n_order_thermo; ++i)
@@ -184,6 +184,9 @@ contract({temperature_gibbs_monomial_parameter} temperature_gibbs_monomial, {tem
     return fit;
 }}
 
+#include "thermotransport_fits.h"
+//mixture quanities
+
 //mixture concentration
 {device_option}
 {scalar_function} 
@@ -215,4 +218,35 @@ dpressure_dspecies({species_parameter} species,
                    {scalar_parameter} temperature) {const_option} 
 {{
     return {scale}(universal_gas_constant(), {fill}(temperature));
+}}
+
+{device_option}
+{scalar} 
+internal_energy_volume_specific({species_parameter} species, 
+                                {scalar_parameter} temperature) {const_option} 
+{{
+    return  {sum}(species * molecular_weights() * species_internal_energy_mass_specific(temperature));
+}}
+
+{device_option}
+{scalar} 
+dinternal_energy_volume_specific_dtemperature({species_parameter} species, 
+                                              {scalar_parameter} temperature) {const_option} 
+{{
+    return  {sum}(species * molecular_weights() * species_internal_energy_mass_specific(dtemperature_energy_monomial_dtemperature(temperature)));
+}}
+
+{device_option}
+{scalar_function} 
+temperature({scalar_parameter} internal_energy, {species_parameter} species, {index} max_iterations) {const_option} 
+{{
+    {scalar} temperature_guess  = {scalar_cast}(500);
+    for({index} i=0; i < max_iterations; ++i)
+    {{
+        temperature_guess = 
+        temperature_guess - divide((internal_energy_volume_specific(species, temperature_guess) - internal_energy),
+                                   dinternal_energy_volume_specific_dtemperature(species, temperature_guess));
+    }}
+    
+    return temperature_guess;
 }}

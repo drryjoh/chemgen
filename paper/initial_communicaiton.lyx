@@ -3053,7 +3053,7 @@ literal "false"
 
 .
  For efficiency purposes,
- chemgen re-fits the polynomial for 
+ ChemGen re-fits the polynomial for 
 \begin_inset Formula $c_{p,i}$
 \end_inset
 
@@ -3081,7 +3081,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}\label{eq:internal-energy-polynomial}
+h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}\label{eq:entahlpy-polynomial}
 \end{equation}
 
 \end_inset
@@ -3092,7 +3092,7 @@ h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k},\label{eq:internal-energy-polynomial-1}
+u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k},\label{eq:internal-energy-polynomial}
 \end{equation}
 
 \end_inset
@@ -3107,7 +3107,7 @@ Here we target
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-h_{\text{ref},i}=h_{i}(T=298\text{K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1},\label{eq:internal-energy-polynomial-1-1}
+h_{\text{ref},i}=h_{i}(T=298\text{K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1},\label{eq:enthalpy-adjustment}
 \end{equation}
 
 \end_inset
@@ -3117,12 +3117,12 @@ h_{\text{ref},i}=h_{i}(T=298\text{K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(
 
 \begin_layout Standard
 \begin_inset Formula 
-\[
+\begin{equation}
 b_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k\geqq1\\
 h_{\text{ref},i}, & k=0.
-\end{cases}
-\]
+\end{cases}\label{eq:enthalpy_coeffs}
+\end{equation}
 
 \end_inset
 
@@ -3131,13 +3131,13 @@ h_{\text{ref},i}, & k=0.
 
 \begin_layout Standard
 \begin_inset Formula 
-\[
+\begin{equation}
 c_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k>1\\
 a_{i,0}-R & k=1\\
 h_{\text{ref},i}, & k=0.
-\end{cases}
-\]
+\end{cases}\label{eq:internal-energy-coeffs}
+\end{equation}
 
 \end_inset
 
@@ -3162,14 +3162,22 @@ This integration requires two monomial sequences for temperature,
 
  which can then be simply contracted with the respective array of coefficients,
  for example 
+\begin_inset Formula $u_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p}+1}\right>$
+\end_inset
+
+ where 
+\begin_inset Formula $\boldsymbol{C}_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 The mass-specific thermodynamic entropy of the mixture is defined as
 \begin_inset Formula 
-\[
-s=\sum_{i=1}^{n_{s}}Y_{i}s_{i},
-\]
+\begin{equation}
+s=\sum_{i=1}^{n_{s}}Y_{i}s_{i},\label{eq:entropy-mass-definition}
+\end{equation}
 
 \end_inset
 
@@ -3180,7 +3188,7 @@ with
  given by
 \begin_inset Formula 
 \begin{equation}
-s_{i}=s_{i}^{o}-R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}},\quad s_{i}^{o}=s_{\mathrm{ref},i}^{o}+\int_{T_{\mathrm{ref}}}^{T}\frac{c_{p,i}(\tau)}{\tau}d\tau,\label{eq:entropy}
+s_{i}=s_{i}^{o}-R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}},\quad s_{i}^{o}=s_{\mathrm{ref},i}^{o}+\int_{T_{\mathrm{ref}}}^{T}\frac{c_{p,i}(\tau)}{\tau}d\tau,\label{eq:species-entropy-definition}
 \end{equation}
 
 \end_inset
@@ -3235,7 +3243,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-s_{i}^{o}=s_{\mathrm{ref},i}^{o}+a_{o}\ln T+\sum_{k=1}^{n_{p}}\frac{a_{ik}}{k}T^{k}=a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k},\label{eq:internal-energy-polynomial-1-2}
+s_{i}^{o}=s_{\mathrm{ref},i}^{o}+a_{o}\ln T+\sum_{k=1}^{n_{p}}\frac{a_{ik}}{k}T^{k}=a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k},\label{eq:entropy_polynomial}
 \end{equation}
 
 \end_inset
@@ -3245,12 +3253,12 @@ where
 
 \begin_layout Standard
 \begin_inset Formula 
-\[
+\begin{equation}
 d_{ik}=\begin{cases}
 \frac{a_{i,k}}{k}, & k\geq1\\
 s_{\mathrm{ref},i}^{o} & k=0.
-\end{cases}
-\]
+\end{cases}\label{eq:entropy-coeffs}
+\end{equation}
 
 \end_inset
 
@@ -3260,7 +3268,7 @@ Finally the Gibbs free energy per species is
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}\right)T=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}T\ln T+\sum_{k=1}^{n_{p}+1}d_{i,k-1}T^{k}\right)\label{eq:internal-energy-polynomial-1-2-1}
+g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}\right)T=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}T\ln T+\sum_{k=1}^{n_{p}+1}d_{i,k-1}T^{k}\right)\label{eq:gibbs-deriviation}
 \end{equation}
 
 \end_inset
@@ -3271,7 +3279,7 @@ g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-g_{i}=b_{i0}-a_{io}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}}T^{n_{p}+1}\label{eq:internal-energy-polynomial-1-2-1-2}
+g_{i}=b_{i0}-a_{io}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}}T^{n_{p}+1}\label{eq:gibbs-reformatted}
 \end{equation}
 
 \end_inset
@@ -3282,12 +3290,52 @@ Which can be represented like the entropy fit as
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}\label{eq:internal-energy-polynomial-1-2-1-1}
+g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}\label{eq:gibbs-polynomial}
 \end{equation}
 
 \end_inset
 
+This gives two new temperature monomials additional elements,
+ one to the power 
+\begin_inset Formula $n_{p}$
+\end_inset
 
+ with a 
+\begin_inset Formula $\ln T$
+\end_inset
+
+,
+ 
+\begin_inset Formula $\boldsymbol{T}_{n_{p},\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}},\ln T\right)$
+\end_inset
+
+ and one to the power 
+\begin_inset Formula $n_{p}+1$
+\end_inset
+
+,
+ 
+\begin_inset Formula $\boldsymbol{T}_{n_{p}+1,T\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}+1},-T\ln T\right)$
+\end_inset
+
+ which can then be simply contracted with the respective array of coefficients,
+ 
+\begin_inset Formula $s_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p},\ln T}\right>$
+\end_inset
+
+ where 
+\begin_inset Formula $\boldsymbol{C}_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{0})$
+\end_inset
+
+ and 
+\begin_inset Formula $g_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p}+1,T\ln T}\right>$
+\end_inset
+
+ where 
+\begin_inset Formula $\boldsymbol{C}_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{0})$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3652,7 +3700,114 @@ h_{\text{ref},i} & k=0.
 \end_layout
 
 \begin_layout Standard
-The derivatives of these thermodynamics quantities are straightforward and summarized in the table below.
+Full differentiability will be the focus of future ChemGen releases,
+ however it is efficient utilize the Newton method to extract temperature from internal energy which requires its derivative.
+ Internal energy is typically part of a conserved state,
+ for instant a total energy formulation [cite Joh20] would have the conserved variable of total energy as:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\rho e_{t}=\rho u+\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k}
+\end{equation}
+
+\end_inset
+
+where the term 
+\begin_inset Formula $\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k}$
+\end_inset
+
+ can be computed from other conserved variables,
+ momentum 
+\begin_inset Formula $\rho v_{k}$
+\end_inset
+
+ and species 
+\begin_inset Formula $v_{k}=\frac{\rho v_{k}}{\sum W_{i}C_{i}}$
+\end_inset
+
+.
+ Thus one can directly compute the internal energy at any time:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+T_{n+1}=T_{n}-\frac{\rho u(T_{n})}{\frac{\partial\rho u(T_{n})}{\partial T}}
+\end{equation}
+
+\end_inset
+
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\rho u(T_{n})=\rho\sum_{i=1}^{n_{s}}Y_{i}u_{i}(T_{n})=\rho\sum_{i=1}^{n_{s}}\frac{W_{i}C_{i}}{\rho}u_{i}(T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p}+1}\right>
+\end{equation}
+
+\end_inset
+
+ and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\rho u(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<\boldsymbol{C}_{i},\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}\right>
+\end{equation}
+
+\end_inset
+
+with 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boldsymbol{C}_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})
+\end{equation}
+
+\end_inset
+
+and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}=\left(0,1,2T,\dots,\left(n_{p}+1\right)T^{n_{p}}\right)
+\end{equation}
+
+\end_inset
+
+In the iteration for temperature an optimization can be made considering that the species,
+ 
+\begin_inset Formula $C_{i}$
+\end_inset
+
+,
+ are frozen.
+ Starting with a guess value,
+ 
+\begin_inset Formula $T_{0}$
+\end_inset
+
+,
+ several iterations
 \end_layout
 
 \begin_layout Subsection
