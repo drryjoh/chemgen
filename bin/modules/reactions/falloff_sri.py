@@ -24,7 +24,7 @@ def create_reaction_functions_and_calls_sri(reaction_rates, reaction_calls, reac
                                                reaction.efficiencies, species_names,
                                                configuration)
                             
-    reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)    
+    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)    
 
 def sri_text(i, A_low, B_low, E_low, A_high, B_high, E_high, a, b, c, d, e, efficiencies, species_names, configuration):
     mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)

@@ -11,5 +11,5 @@ def create_reaction_functions_and_calls_arrhenius(reaction_rates, reaction_calls
             f"b = {reaction.rate.temperature_exponent}, "
             f"Ea = {reaction.rate.activation_energy}")
         reaction_rates[reaction_index] = arrhenius_text(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, configuration)
-        reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(temperature, log_temperature);\n".format(**vars(configuration),reaction_index = reaction_index)
+        reaction_calls[reaction_index] = "call_forward_reaction_{reaction_index}(temperature, log_temperature);\n".format(**vars(configuration),reaction_index = reaction_index)
 

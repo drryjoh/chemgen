@@ -15,5 +15,5 @@ def create_reaction_functions_and_calls_third_body(reaction_rates, reaction_call
     print(f"  Collision Partner Efficiencies: {reaction.efficiencies}")
     requires_mixture_concentration[reaction_index] = True
     reaction_rates[reaction_index] = third_body_text(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, configuration)
-    reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)
+    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)
 

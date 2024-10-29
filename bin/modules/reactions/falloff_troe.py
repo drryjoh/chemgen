@@ -21,7 +21,7 @@ def create_reaction_functions_and_calls_troe(reaction_rates, reaction_calls, rea
                                                reaction.efficiencies, species_names,
                                                configuration)
                             
-    reaction_calls[reaction_index] = "{scalar} forward_reaction_{reaction_index} = call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)    
+    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)    
 
 def troe_text(i, A_low, B_low, E_low, A_high, B_high, E_high, alpha, T1, T2, T3, efficiencies, species_names, configuration):
     mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)

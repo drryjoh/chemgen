@@ -74,19 +74,13 @@ def write_species_production_functions(file, species_production_rates, configura
     file.write("\n")
 
 
-def write_reaction_calculations(file, reaction_calls):
+def write_reaction_calculations(file, reaction_calls, configuration):
     for reaction_index, reaction_call in enumerate(reaction_calls):
-        file.write(f"        {reaction_call}")
+        file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
 
 def write_reaction_calculations_threaded(file, reaction_calls, configuration):
     for reaction_index, reaction_call in enumerate(reaction_calls):
-        call = reaction_call.split('=')[1].replace('\n','')
-        file.write("{device_option}\n{scalar_function} reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure_, {scalar_parameter} mixture_concentration) {const_option} {{ return {call} }}".format(**vars(configuration), reaction_index = reaction_index, call = call ))
-
-def write_reaction_calculations_threaded(file, reaction_calls, configuration):
-    for reaction_index, reaction_call in enumerate(reaction_calls):
-        call = reaction_call.split('=')[1].replace('\n','')
-        file.write("{device_option}\n{scalar_function} reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure_, {scalar_parameter} mixture_concentration) {const_option} {{ return {call} }}".format(**vars(configuration), reaction_index = reaction_index, call = call ))
+        file.write("{device_option}\n{scalar_function} reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure_, {scalar_parameter} mixture_concentration) {const_option} {{ return {call} }}".format(**vars(configuration), reaction_index = reaction_index, call = reaction_call ))
 
 def write_progress_rates_threaded(file, progress_rates, is_reversible, equilibrium_constants, configuration):
     for i, progress_rate in enumerate(progress_rates):
@@ -244,7 +238,7 @@ def write_source_serial(file, equilibrium_constants, reaction_calls,
     write_equilibrium_constants(file, equilibrium_constants, configuration)
     write_start_of_source_function(file, configuration)
     
-    write_reaction_calculations(file, reaction_calls)
+    write_reaction_calculations(file, reaction_calls, configuration)
     write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
     write_species_production(file, species_production_texts, configuration)
     headers.append('source.h')
