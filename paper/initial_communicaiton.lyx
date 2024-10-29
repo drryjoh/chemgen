@@ -98,7 +98,7 @@ theorems-std
 
 \begin_layout Title
 Chemgen:
- A Chemistry Code Generation Package for Computational Fluid Dynamics with Automatic Differentiation
+ Malleable Chemistry Code Generation with Applications to Large Scale Simulations
 \end_layout
 
 \begin_layout Standard
@@ -152,63 +152,7 @@ address{Stanford University}
 
 \begin_layout Abstract
 In this paper,
- we develop a fully conservative,
- positivity-preserving,
- and entropy-bounded discontinuous Galerkin scheme for simulating the multicomponent,
- chemically reacting,
- compressible Euler equations with complex thermodynamics.
- The proposed formulation is an extension of the fully conservative,
- high-order numerical method previously developed by Johnson and Kercher [
-\emph on
-J.
- Comput.
- Phys.
-\emph default
-,
- 423 (2020),
- 109826] that maintains pressure equilibrium between adjacent elements.
- In this first part of our two-part paper,
- we focus on the one-dimensional case.
- Our methodology is rooted in the minimum entropy principle satisfied by entropy solutions to the multicomponent,
- compressible Euler equations,
- which was proved by Gouasmi et al.
- [
-\emph on
-ESAIM:
- Math.
- Model.
- Numer.
- Anal.
-\emph default
-,
- 54 (2020),
- 373--389] for nonreacting flows.
- We first show that the minimum entropy principle holds in the reacting case as well.
- Next,
- we introduce the ingredients,
- including a simple linear-scaling limiter,
- required for the discrete solution to have nonnegative species concentrations,
- positive density,
- positive pressure,
- and bounded entropy.
- We also discuss how to retain the aforementioned ability to preserve pressure equilibrium between elements.
- Operator splitting is employed to handle stiff chemical reactions.
- To guarantee discrete satisfaction of the minimum entropy principle in the reaction step,
- we develop an entropy-stable discontinuous Galerkin method based on diagonal-norm summation-by-parts operators for solving ordinary differential equations.
- The developed formulation is used to compute canonical one-dimensional test cases,
- namely thermal-bubble advection,
- advection of a low-density Gaussian wave,
- multicomponent shock-tube flow,
- and a moving hydrogen-oxygen detonation wave with detailed chemistry.
- We demonstrate that the developed formulation can achieve optimal high-order convergence in smooth flows.
- Furthermore,
- we find that the enforcement of an entropy bound can considerably reduce the large-scale nonlinear instabilities that emerge when only the positivity property is enforced,
- to an even greater extent than in the monocomponent,
- calorically perfect case.
- Finally,
- mass,
- total energy,
- and atomic elements are shown to be discretely conserved.
+ we present....
 \end_layout
 
 \begin_layout Keywords
@@ -3701,9 +3645,10 @@ h_{\text{ref},i} & k=0.
 
 \begin_layout Standard
 Full differentiability will be the focus of future ChemGen releases,
- however it is efficient utilize the Newton method to extract temperature from internal energy which requires its derivative.
+ however it is efficient to utilize the Newton method to extract temperature from internal energy which requires its derivative.
  Internal energy is typically part of a conserved state,
- for instant a total energy formulation [cite Joh20] would have the conserved variable of total energy as:
+ for instance,
+ the total energy formulation as outlined above would have the conserved variable of total energy as:
 \end_layout
 
 \begin_layout Standard
@@ -3739,18 +3684,34 @@ where the term
 
 \end_inset
 
-
+Newton's method are extremely accurate once converged and can be quite efficient when using exact derivatives,
+ especially for scalar functions such as energy as a function of temperature,
+ which does not require the inversion of a matrix.
+ Included in ChemGen is a Newton iteration that is of the form
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-T_{n+1}=T_{n}-\frac{\rho u(T_{n})}{\frac{\partial\rho u(T_{n})}{\partial T}}
+T_{n+1}=T_{n}-\frac{\rho u(T_{n})}{\frac{\partial\rho u(T_{n})}{\partial T}}.\label{eq:netwon_iteration_temperature}
 \end{equation}
 
 \end_inset
 
-where
+where 
+\begin_inset Formula $T_{n}$
+\end_inset
+
+is the current guess (starting from 
+\begin_inset Formula $T_{0}$
+\end_inset
+
+ an initial prescribed guess) and 
+\begin_inset Formula $T_{n+1}$
+\end_inset
+
+ is the new guess.
+ Here the terms in the fraction are
 \end_layout
 
 \begin_layout Standard
@@ -3801,13 +3762,58 @@ In the iteration for temperature an optimization can be made considering that th
 
 ,
  are frozen.
- Starting with a guess value,
+ The coefficients can be pre-computed before the iterations to remove the need of extra contractions,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boldsymbol{C}_{i}^{\dagger}=(W_{i}C_{i}c_{i,0},W_{i}C_{i}c_{i,1},W_{i}C_{i}c_{i,2},\dots,W_{i}C_{i}c_{i,n_{p}+1})
+\end{equation}
+
+\end_inset
+
+which results in
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+T_{n+1}=T_{n}-\frac{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\boldsymbol{T}_{n_{p}+1}\right>}{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}\right>}
+\end{equation}
+
+\end_inset
+
+Starting with a guess value,
  
 \begin_inset Formula $T_{0}$
 \end_inset
 
 ,
- several iterations
+ a target tolerance of 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ can be used or a set number of iterations,
+ 
+\begin_inset Formula $n_{T}$
+\end_inset
+
+,
+ can be used to terminate the Newton iterations.
+ It's important to note that a target tolerance could cause small divergences in threaded process,
+ so keeping a set number of iterations would be ideal.
+ ChemGen generates both target tolerance and set number of iterations.
+ In general,
+ we have found in our past work that 
+\begin_inset Formula $n_{T}=3$
+\end_inset
+
+ is sufficient to be within 
+\begin_inset Formula $0.01$
+\end_inset
+
+ K for a variety of mechanisms.
 \end_layout
 
 \begin_layout Subsection

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (b0a8486, 2022-12-01)"
+   sodipodi:docname="on_going_drawing.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="1.664035"
+     inkscape:cx="294.46496"
+     inkscape:cy="269.22511"
+     inkscape:window-width="1635"
+     inkscape:window-height="798"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid29" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1236">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop1232" />
+      <stop
+         style="stop-color:#0060ff;stop-opacity:1;"
+         offset="1"
+         id="stop1234" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1236"
+       id="linearGradient1238"
+       x1="48.693186"
+       y1="58.046223"
+       x2="163.26858"
+       y2="58.046223"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:23.3399px;fill:url(#linearGradient1238);stroke-width:1.94499;fill-opacity:1"
+       x="47.75959"
+       y="65.421631"
+       id="text135"><tspan
+         sodipodi:role="line"
+         id="tspan133"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Mukta Mahee';-inkscape-font-specification:'Mukta Mahee';stroke-width:1.94499;fill-opacity:1;fill:url(#linearGradient1238)"
+         x="47.75959"
+         y="65.421631">CHEM   GEN</tspan></text>
+    <path
+       style="fill:#000000;stroke-width:0.264583"
+       d="m 108.47917,58.208333 3.96875,-5.291666 V 55.5625 l 5.29166,-10e-7 v -2.645833 l 3.96875,5.291667 L 117.73958,63.5 v -2.645833 l -5.29166,0 V 63.5 Z"
+       id="path357"
+       sodipodi:nodetypes="ccccccccccc" />
+  </g>
+</svg>
