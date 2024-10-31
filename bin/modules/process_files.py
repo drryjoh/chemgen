@@ -21,7 +21,6 @@ def process_cantera_file(gas, configuration, destination_folder):
     requires_mixture_concentration = [False] * gas.n_reactions  
     molecular_weights_string = ','.join(["{scalar_cast}({mw})".format(**vars(configuration), mw=mw) for mw in gas.molecular_weights])
     molecular_weights = f"{{{molecular_weights_string}}}"
-
     [thermo_names, thermo_fits, thermo_types] = polyfit_thermodynamics(gas, configuration, order = int("{n_thermo_order}".format(**vars(configuration))))
     # Loop through all reactions
     for reaction_index in range(gas.n_reactions):
@@ -34,11 +33,12 @@ def process_cantera_file(gas, configuration, destination_folder):
         [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration)
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
+
         create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration)
+
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, reaction_index, configuration)
         create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
-        create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration)
-    
+        create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
     headers = []
     with open(destination_folder/'types_inl.h','w') as file:
         write_type_defs(file, gas, configuration)
