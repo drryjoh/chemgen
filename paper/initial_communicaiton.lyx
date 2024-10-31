@@ -1650,7 +1650,7 @@ name "sec:Introduction"
 
 \begin_layout Standard
 Computational fluid dynamics (CFD) is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
- and analytical solutions cannot capture the desired flow characteristics.
+ and analytical solutions do not exist.
  The core function of CFD is to solve for conserved quantities,
  such as mass,
  momentum,
@@ -1664,7 +1664,7 @@ Computational fluid dynamics (CFD) is a widely recognized scientific and enginee
  stored at specific points within the domain,
  known as degrees of freedom (DoF).
  At each degree of freedom,
- the conserved variables are calculated based on the evolution of solutions dictated by the modeled conservation equations.
+ the conserved variables are calculated based on the evolution of the conservation variables dictated by the modeled conservation equations.
 \end_layout
 
 \begin_layout Standard
@@ -1681,7 +1681,7 @@ Developing robust CFD software is an accomplishment in itself,
  temporal integration techniques,
  and the development of robust boundary conditions.
  There is not one CFD software that seamlessly addresses all these diverse issues,
- giving rise to continued research into a variety of computational and numerical approaches to accelerate CFD while simultaneously model a fluid robustly.
+ giving rise to continued research into a variety of computational and numerical approaches to accelerate CFD while simultaneously modeling a fluid robustly.
  This gives rise to a family of CFD codes,
  ranging from experimental in-house codes for demonstrating new technologies,
  to established off-the-shelf softwares used for production level engineering simulations.
@@ -1713,7 +1713,7 @@ To model non-reacting phenomena,
 
  is the total state size.
  In many cases,
- existing non-reacting CFD software built around these five variables can be adapted for reactive flows by expanding the state to include species transport.
+ existing non-reacting CFD software built around these five variables can be adapted for chemically reacting flows by expanding the state to include chemical species.
  This adaptation involves extending the state size to encompass the chemical species necessary to model reactions,
  calculating their fluxes along with the original variables,
  and incorporating 
@@ -1751,9 +1751,11 @@ In order to adapt the most fundamental chemically reacting flow into an existing
 The thermodynamics must be updated to thermally perfect equation of state.
 
 \series default
- Most single component formulations utilize frozen gas dynamics,
- in that pressure can be directly related to internal energy.
- This is not the case for multicomponent and thus careful considerations need to be adapted in order to compute consistently between energy and relationships involving temperature.
+ Most single-component formulations assume frozen gas thermodynamics,
+ where pressure is directly related to internal energy.
+ However,
+ this assumption does not hold for multicomponent systems,
+ requiring careful adjustments to ensure consistent computations between energy and temperature and pressure dependent relationships.
 \begin_inset CommandInset label
 LatexCommand label
 name "enu:thermo"
@@ -1769,11 +1771,14 @@ name "enu:thermo"
 The ability to compute a source term.
  
 \series default
-The most simple CFD Navier Stokes models generally do not have a source term as they are not necessarily in the formulation.
- Momentum,
+The simplest CFD Navier-Stokes models typically do not include a source term,
+ as it is not inherently part of the formulation.
+ In these models,
+ momentum,
  energy,
- and mass do not have sources/sinks to remove them from the domain,
- rather the existing convected variables are convected and diffused.
+ and mass have no sources or sinks to add or remove them from the domain;
+ instead,
+ the conserved variables are transported and diffused.
 \begin_inset CommandInset label
 LatexCommand label
 name "enu:source"
@@ -1797,13 +1802,12 @@ Mixture based transport quantities,
 \end_layout
 
 \begin_layout Standard
-There exists a few approaches to achieve the ability to integrate these features.
- The approaches most familiar are:
+There are several approaches to integrate these features,
+ with the most common being:
 \end_layout
 
 \begin_layout Enumerate
-Find existing fortran code from offsets of early versions of Chemkin (cite) and Senkin (cite) and adapt it to the the target CFD.
- 
+Locate and adapt existing Fortran code from early versions of Chemkin (cite) or Senkin (cite) for the target CFD.
 \begin_inset CommandInset label
 LatexCommand label
 name "enu:chemkin"
@@ -1814,9 +1818,11 @@ name "enu:chemkin"
 \end_layout
 
 \begin_layout Enumerate
-Use the more the more widely adapted and opensource and maintained Cantera (cite),
- which can be utilized as third party library in C++ and Fotran source codes (as well as interpretive languages python and matlab).
- 
+Use the more widely adopted,
+ open-source,
+ and actively maintained Cantera (cite),
+ which can serve as a third-party library in C++ and Fortran source codes,
+ as well as in interpretive languages like Python and MATLAB.
 \begin_inset CommandInset label
 LatexCommand label
 name "enu:cantera"
@@ -1827,62 +1833,34 @@ name "enu:cantera"
 \end_layout
 
 \begin_layout Enumerate
-Manually code the new physical models,
- such as reactions for source terms,
- thermodynamics fits,
- and transport quantities
+Manually code new physical models,
+ such as source term reactions,
+ thermodynamic fits,
+ and transport properties.
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:manual"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Enumerate
-Utilize code generation which reads in the chemical mechanism and generates malleable source code in the desired format of the CFD software
+Use code generation tools to read the chemical mechanism and produce adaptable source code in the desired format for the CFD software.
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:software"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-1) and 2) are perfectly reasonable approaches for demonstration cases,
- however they can problematic.
- For 1) the existing Chemkin and Senkin routines may not easily adapt to the needs of the targeted CFD software,
- thus preventing scalability and making code maintenance difficult.
- For 2) the Cantera package is excellent for calculating properties (amongst other critical combustion scenarios) but it is a third party library where one would not have full control on the functions,
- rather the data would be shipped from the DoF to Cantera and back,
- therefore critical computational acceleration techniques may not be accessible.
- In addition,
- the use of a third party library such as Cantera can prevent working on targeted architectures that the developers may not have access to.
- For 3) the task can be cumbersome and solitary for the developers.
- The code produced by 3) would need a great deal of work from the ground up,
- the details of the models necessary are described below.
- The work presented here focuses on (4),
- a software tool that can generate source code that fits the existing ecosystem of the target CFD software.
-\end_layout
-
-\begin_layout Standard
-Code generation is not a new concept.
- In fact,
- there is a history of code generation for chemistry applications.
- Publicly accessible there exists two direct to gas phase combustion code generators:
- PyJac (https://github.com/SLACKHA/pyJac) and Pyrometheus (https://github.com/ecisneros8/PyPrometheus).
- PyJac focuses on generating analytical source term Jacobians with respect to a non-fluid based state which can be used to accelerate the the compute time to simulate the evolution of the chemical species.
- PyJac's last commit was 6 years ago.
- Pyrometheus generates either C++ header files or python files for gas phase combustion calculations with several on-the-fly optimizations for scalability to accelerate CFD on high performance computing systems.
- The last commit for Pyrometheus was 4 years ago,
- however,
- we are in touch with the developers and they are still actively developing Pyrometheus in a private github project.
-\end_layout
-
-\begin_layout Standard
-In this work we present the first iteration of ChemGen a software package that uses code generation to incorporate multispecies thermo dynamics and chemical kinetics into target C++ based CFD codes.
- The software makes use of 
-\emph on
-decorators
-\emph default
- which will be described in depth in section 3,
- but allow for the generated C++ code to integrate into a unique established software ecosystem.
- It also is malleable in how reaction rates can be calculated,
- in that they can be evaluated in pure serial,
- or capabilities for parallel execution can be utilized by adapting a few key write functions.
- ChemGen focuses on 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "enu:thermo"
+reference "enu:chemkin"
 plural "false"
 caps "false"
 noprefix "false"
@@ -1893,7 +1871,7 @@ nolink "false"
  and 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "enu:source"
+reference "enu:cantera"
 plural "false"
 caps "false"
 noprefix "false"
@@ -1901,22 +1879,137 @@ nolink "false"
 
 \end_inset
 
-.
- Future versions will focus on detailed transport calculations,
- providing full chemically reacting flow states,
- providing fast analytical jacobians in terms of full fluid dynamic states,
- and providing accessible and scalable solvers for chemical state evolution.
+ are reasonable choices for demonstration cases,
+ but they present certain challenges.
+ With 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:chemkin"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ the existing Chemkin and Senkin routines may not easily adapt to the specific requirements of the targeted CFD software,
+ which can limit scalability and complicate code maintenance.
+ For 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:cantera"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ although the package is excellent for property calculations and other critical combustion scenarios,
+ it is a third-party library,
+ limiting control over functions.
+ Data would need to be transferred back and forth between the CFD's degrees of freedom (DoF) and Cantera,
+ potentially restricting access to essential computational acceleration techniques.
+ Additionally,
+ relying on a third-party library like Cantera may hinder compatibility with targeted architectures that developers cannot directly access.Using 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:manual"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ can also be challenging;
+ it often requires extensive,
+ solitary work by developers,
+ as the necessary models would need to be built from scratch (further described in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:governing_equations"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+).
+ The focus of this work is 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:software"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ a tool that can generate source code compatible with the existing ecosystem of the target CFD software
 \end_layout
 
 \begin_layout Standard
-As The CFD algorithm can be simplified by solving the chemical mass action separately from the fluid transport.
- This approximation allows the chemical kinetics problem at each grid cell or vertex to be integrated independently over the specified time step size δt.
- At each element,
- the Ns mass fractions and enthalpy (or temperature) are solved as a system of Ns+1 stiff ordinary differential equations (ODEs).
- Even with the preceding simplification,
- the cost of solving the ODEs can be prohibitive.
- New algorithmic and computer science techniques such as massive parallel computing can significantly reduce the computational cost and are therefore of great interest to combustion simulation developers throughout the propulsion and power community.
- An alternative approach exploits the available 
+Code generation is a well-established concept,
+ with a history in chemistry applications.
+ There are two publicly available code generators focused on gas-phase combustion:
+ PyJac (https://github.com/SLACKHA/pyJac) and Pyrometheus (https://github.com/ecisneros8/PyPrometheus).
+ PyJac specializes in generating analytical source term Jacobians for non-fluid-based states,
+ which can be used to speed up the computation of chemical species evolution.
+ However,
+ PyJac's last public commit was six years ago.
+ Pyrometheus generates either C++ header files or Python files for gas-phase combustion calculations,
+ incorporating several on-the-fly optimizations to enhance scalability for high-performance computing in CFD.
+ Although Pyrometheus's last public commit was four years ago,
+ we are in contact with the developers,
+ who are actively working on a private GitHub project to continue Pyrometheus's development.
+ Mutation++?
+\end_layout
+
+\begin_layout Standard
+In this work,
+ we introduce the first iteration of ChemGen,
+ a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++ based CFD codes.
+ ChemGen utilizes decorators,
+ discussed in detail in Section 3,
+ to enable flexible C++ code generation tailored to existing software ecosystems.
+ It also offers versatility in reaction rate calculations,
+ allowing them to be evaluated in pure serial or adapted for parallel execution by modifying a few key functions.
+ ChemGen currently focuses on thermodynamic properties and source term generation.
+ Future versions will aim to incorporate detailed transport calculations,
+ provide fully chemically reacting flow states,
+ offer rapid analytical Jacobians for fluid dynamic states,
+ and deliver scalable solvers for chemical state evolution.
+\end_layout
+
+\begin_layout Standard
+This paper is organized as follows.
+ First,
+ we provide an in-depth background on high-performance computing in CFD,
+ focusing on how various computational architectures can accelerate CFD and how chemistry can be cohesively implemented.
+ Next,
+ we offer an overview of ChemGen’s current capabilities and its application within CFD software.
+ We then discuss the formulation in the context of compressible,
+ chemically reacting flows,
+ covering the thermodynamic relationships for multi-species fluids,
+ accepted reaction rate formulations,
+ and the creation of source terms.
+ Following this,
+ we introduce several publicly available C++ codes and the concept of decorators as implemented in ChemGen.
+\end_layout
+
+\begin_layout Standard
+We demonstrate ChemGen’s standalone code generation with examples showcasing its adaptability for distributed computing using MPI,
+ Thread Building Blocks (TBB),
+ and GPU-based threading,
+ with a discussion on its integration potential with existing CFD models.
+ Finally,
+ we illustrate the integration of a ChemGen-generated source term within the open-source CFD code NEKRS
 \end_layout
 
 \begin_layout Subsection
@@ -1931,8 +2024,23 @@ Background
 ChemGen Prospectus
 \end_layout
 
+\begin_layout Standard
+ODE:
+\end_layout
+
+\begin_layout Standard
+As The CFD algorithm can be simplified by solving the chemical mass action separately from the fluid transport.
+ This approximation allows the chemical kinetics problem at each grid cell or vertex to be integrated independently over the specified time step size δt.
+ At each element,
+ the Ns mass fractions and enthalpy (or temperature) are solved as a system of Ns+1 stiff ordinary differential equations (ODEs).
+ Even with the preceding simplification,
+ the cost of solving the ODEs can be prohibitive.
+ New algorithmic and computer science techniques such as massive parallel computing can significantly reduce the computational cost and are therefore of great interest to combustion simulation developers throughout the propulsion and power community.
+ An alternative approach exploits the available 
+\end_layout
+
 \begin_layout Section
-Governing equations
+Governing equations and Chemistry Models
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:governing_equations"
