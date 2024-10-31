@@ -97,8 +97,8 @@ theorems-std
 \begin_body
 
 \begin_layout Title
-Chemgen:
- Malleable Chemistry Code Generation with Applications to Large Scale Simulations
+ChemGen:
+ Malleable Chemistry Code Generation with Applications to High Performance Computational Fluid Dynamics
 \end_layout
 
 \begin_layout Standard
@@ -156,13 +156,11 @@ In this paper,
 \end_layout
 
 \begin_layout Keywords
-Discontinuous Galerkin method;
+Chemistry;
  Combustion;
  Detonation;
- Minimum entropy principle;
- Positivity-preserving;
- Entropy stability;
- Summation-by-parts
+ Code Generation;
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1651,372 +1649,274 @@ name "sec:Introduction"
 \end_layout
 
 \begin_layout Standard
-The discontinuous Galerkin (DG) method
-\begin_inset space ~
-\end_inset
+Computational fluid dynamics (CFD) is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
+ and analytical solutions cannot capture the desired flow characteristics.
+ The core function of CFD is to solve for conserved quantities,
+ such as mass,
+ momentum,
+ and energy that satisfy conservation equations in space and time across a defined domain.
+ This requires discretizing the conservation equations,
+ such as the Navier Stokes equations,
+ using methods such as the finite volume,
+ finite difference,
+ or finite element approaches.
+ CFD relies on large volumes of data to describe the fluid,
+ stored at specific points within the domain,
+ known as degrees of freedom (DoF).
+ At each degree of freedom,
+ the conserved variables are calculated based on the evolution of solutions dictated by the modeled conservation equations.
+\end_layout
 
+\begin_layout Standard
+Developing robust CFD software is an accomplishment in itself,
+ given the multitude of challenging computational and numerical issues.
+ The computational issues include efficient DoF communication in parallel,
+ adaptive physical modeling,
+ parallel computation,
+ and managing complex geometries.
+ Additionally,
+ there are significant numerical challenges,
+ such as stability-preserving methods,
+ flux representation strategies,
+ temporal integration techniques,
+ and the development of robust boundary conditions.
+ There is not one CFD software that seamlessly addresses all these diverse issues,
+ giving rise to continued research into a variety of computational and numerical approaches to accelerate CFD while simultaneously model a fluid robustly.
+ This gives rise to a family of CFD codes,
+ ranging from experimental in-house codes for demonstrating new technologies,
+ to established off-the-shelf softwares used for production level engineering simulations.
+\end_layout
 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Ree73,Bas97_2,Bas97,Coc98,Coc00"
-literal "true"
-
-\end_inset
-
- has recently gained considerable attention in the computational fluid dynamics community
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Wan13"
-literal "true"
-
-\end_inset
-
-.
- Several desirable properties,
- such as local conservation,
- arbitrarily high order of accuracy on unstructured grids,
- and suitability for heterogeneous computing systems,
- highlight its great potential to accurately and efficiently simulate complex fluid flows.
- However,
- it is well-known that nonlinear instabilities are easily introduced in underresolved regions and near flow-field discontinuities.
- This issue is exacerbated when realistic thermodynamics (e.g.,
- the thermally perfect gas model) and multispecies chemical reactions are incorporated.
+\begin_layout Standard
+To model non-reacting phenomena,
+ CFD focuses on the conservation variables related to mass,
+ momentum,
+ and energy of the fluid.
  For example,
- fully conservative schemes (not just the DG method) are known to generate spurious pressure oscillations in moving interface problems
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Abg88,Kar94,Abg96"
-literal "false"
-
-\end_inset
-
-.
- To remedy this issue,
- quasi-conservative methods are often employed,
- such as the double-flux scheme
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Abg01"
-literal "false"
-
-\end_inset
-
-,
- in which the equation of state is recast based on a calorically perfect gas model using frozen,
- elementwise-constant auxiliary variables.
- The double-flux method has been utilized in a number of studies involving DG simulations of multicomponent flows
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Bil11,Lv15,Ban20"
-literal "false"
-
-\end_inset
-
-.
- While effective at eliminating the aforementioned pressure oscillations,
- the double-flux approach violates energy conservation,
- which can be crucial for the prediction of shock speeds and locations,
- as well as heat release in combustion processes.
- As a compromise,
- Lv and Ihme
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lv15"
-literal "false"
-
-\end_inset
-
- proposed a hybrid double-flux strategy wherein a fully conservative method is employed at shocks.
-\end_layout
-
-\begin_layout Standard
-On the other hand,
- Johnson and Kercher recently proposed an explicit,
- fully conservative,
- high-order method that can maintain pressure equilibrium (in an approximate sense) in smooth flow regions or across material interfaces when the temperature is continuous
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Joh20_2"
-literal "false"
-
-\end_inset
-
-.
- This is done via (a) exact evaluation of the thermodynamics and (b) consistent calculation of the inviscid and viscous fluxes in a special manner,
- which is drastically simplified through a particular choice of nodal basis.
- It is worth noting that their proposed strategy is not limited to DG schemes,
- but can be applied to other numerical methods as well.
- Stiff chemical reactions were handled via operator splitting.
- Efficient and accurate integration of the chemical source terms was achieved via an 
-\begin_inset Formula $hp$
-\end_inset
-
--adaptive DG method for solving ordinary differential equations,
- termed 
-\emph on
-DGODE
-\emph default
-.
- Optimal high-order accuracy was demonstrated for smooth flows,
- and a suite of complex multicomponent reacting flows was computed.
- The high-order calculation of a three-dimensional reacting shear flow in the presence of a splitter plate did not require any additional stabilization.
- Also computed was a two-dimensional,
- moving detonation wave.
- Artificial viscosity was used to stabilize the shock fronts present in the solution.
- However,
- a very fine mesh was required to maintain robustness while achieving correct prediction of the cellular structures behind the shock,
- highlighting the difficulty of robustly and accurately simulating multidimensional detonation waves on coarse meshes,
- especially for high-order methods.
- Even if spurious pressure oscillations are sufficiently minimized,
- the wide range of complex flow features characterizing detonations is difficult to capture
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Dei03"
-literal "false"
-
-\end_inset
-
-.
- Such features include thin reaction zones,
- traveling pressure waves,
- shock-shock interactions,
- Kelvin-Helmholtz instabilities,
- vortical structures,
- and triple points.
- As previously discussed,
- underresolution of flow features induces instabilities that can cause solver divergence,
- and these instabilities may be amplified by the added nonlinearity of the variable thermodynamics,
- multicomponent flow,
- and stiff chemical reactions.
- Another difficulty associated with multicomponent flow is the frequent occurrence of negative species concentrations,
- especially since initial and boundary conditions often specify the mole fractions of certain species to be zero.
- Many reacting-flow solvers simply 
-\begin_inset Quotes eld
-\end_inset
-
-clip
-\begin_inset Quotes erd
-\end_inset
-
- negative concentrations to zero,
- which violates conservation and introduces low-order errors.
- 
-\end_layout
-
-\begin_layout Standard
-In light of the above,
- our primary objective in this study is to develop a positivity-preserving and entropy-bounded DG scheme for simulating the multicomponent,
- chemically reacting Euler equations with exact thermodynamics for mixtures of thermally perfect gases.
- Specifically,
- we build upon the aforementioned fully conservative high-order method that can maintain pressure equilibrium
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Joh20_2"
-literal "false"
-
-\end_inset
-
-.
- In this first part of our two-part paper,
- we focus on the one-dimensional case.
- The unique challenges posed by realistic thermodynamics and stiff chemical source terms are discussed and addressed.
- 
-\emph on
-Entropy-bounded
-\emph default
- in this context means that the specific thermodynamic entropy of the discrete solution is bounded from below,
- an idea rooted in the minimum entropy principle satisfied by entropy solutions to the compressible,
- multicomponent Euler equations.
- This principle was recently proved for the nonreacting case by Gouasmi et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Gou20"
-literal "false"
-
-\end_inset
-
-,
- which is an important prerequisite of this work.
- The developed formulation in general preserves order of accuracy for smooth solutions.
- Our main contributions are as follows:
-\end_layout
-
-\begin_layout Itemize
-A minimum entropy principle for the compressible,
- multicomponent,
- chemically reacting Euler equations is demonstrated,
- which follows naturally from the proof in
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Gou20"
-literal "false"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Itemize
-In a DG framework,
- we extend the fully conservative high-order discretization in
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Joh20_2"
-literal "false"
-
-\end_inset
-
- to be positivity-preserving and entropy-bounded.
- We also discuss a different local entropy bound that is less restrictive than that previously introduced in
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lv15_2"
-literal "false"
-
-\end_inset
-
- in the context of the monocomponent Euler equations.
-\end_layout
-
-\begin_layout Itemize
-To provably guarantee satisfaction of the minimum entropy principle in the temporal integration of stiff chemical source terms,
- we extend DGODE by developing an entropy-stable DGODE based on diagonal-norm summation-by-parts (SBP) operators.
- This involves deriving a new entropy-conservative two-point numerical state function (note that similar entropy-conservative numerical state functions were derived for the monocomponent Euler,
- shallow-water,
- and ideal magnetohydrodynamics equations by Friedrich et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Fri19"
-literal "false"
-
-\end_inset
-
- in the context of an entropy-stable space-time DG discretization).
- 
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-Constraints on the treatment of the chemical thermodynamics are discussed,
- as well as the advantages and disadvantages of relaxing said constraints.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-We employ the proposed entropy-bounded DG method to robustly and accurately compute a series of canonical one-dimensional test cases.
- Mass,
+ a three-dimensional compressible fluid simulation involves five primary continuum variables:
  energy,
- and atom conservation are maintained.
- The proposed formulation more effectively suppresses spurious oscillations than the positivity-preserving DG scheme (i.e.,
- an equivalent scheme but without the entropy bound enforced).
- In particular,
- we find that the relative benefit of enforcing an entropy bound is significantly greater in the multicomponent,
- thermally perfect setting than in monocomponent,
- calorically perfect setting.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Separator plain
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-In Part II
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Chi22_2"
-literal "false"
-
+ mass,
+ and a three-component momentum vector.
+ This gives 
+\begin_inset Formula $n_{y}=n_{c}=5$
 \end_inset
 
 ,
- we extend the entropy-bounded DG scheme to multiple dimensions on arbitrary elements.
- Our multidimensional extension is a further generalization of the multidimensional positivity-preserving/entropy-bounded schemes currently in the literature
-\begin_inset space ~
+ where 
+\begin_inset Formula $n_{c}$
+\end_inset
+
+ is the number of conserved non-reacting variables,
+ and 
+\begin_inset Formula $n_{y}$
+\end_inset
+
+ is the total state size.
+ In many cases,
+ existing non-reacting CFD software built around these five variables can be adapted for reactive flows by expanding the state to include species transport.
+ This adaptation involves extending the state size to encompass the chemical species necessary to model reactions,
+ calculating their fluxes along with the original variables,
+ and incorporating 
+\begin_inset Formula $n_{r}$
+\end_inset
+
+ chemical reactions.
+ This increases the state size to 
+\begin_inset Formula $n_{y}=n_{s}+n_{c}$
+\end_inset
+
+ ,
+ where 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+ represents the number of chemical species.
+ Detailed chemical mechanisms may involve hundreds of species and thousands of reactions,
+ typically with 
+\begin_inset Formula $n_{r}\approx5n_{s}$
+\end_inset
+
+.
+ The number of species increases with the complexity of the fuel,
+ for instance the ___ model for hydrogen is 10 chemical species with ## reactions and the __ model for JP-10 is ## species with ## reactions.
+\end_layout
+
+\begin_layout Standard
+In order to adapt the most fundamental chemically reacting flow into an existing single component CFD software three main features must be added:
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+The thermodynamics must be updated to thermally perfect equation of state.
+
+\series default
+ Most single component formulations utilize frozen gas dynamics,
+ in that pressure can be directly related to internal energy.
+ This is not the case for multicomponent and thus careful considerations need to be adapted in order to compute consistently between energy and relationships involving temperature.
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:thermo"
+
 \end_inset
 
 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha10,Zha12,Lv15_2,Jia18"
-literal "false"
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+The ability to compute a source term.
+ 
+\series default
+The most simple CFD Navier Stokes models generally do not have a source term as they are not necessarily in the formulation.
+ Momentum,
+ energy,
+ and mass do not have sources/sinks to remove them from the domain,
+ rather the existing convected variables are convected and diffused.
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:source"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+Multicomponent transport models.
+ 
+\series default
+Mixture based transport quantities,
+ such as viscosity and conductivity,
+ would need to be adapted to multicomponent mixture models.
+ In addition,
+ the diffusion of each species needs to be considered with a transport method as well.
+\end_layout
+
+\begin_layout Standard
+There exists a few approaches to achieve the ability to integrate these features.
+ The approaches most familiar are:
+\end_layout
+
+\begin_layout Enumerate
+Find existing fortran code from offsets of early versions of Chemkin (cite) and Senkin (cite) and adapt it to the the target CFD.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:chemkin"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Use the more the more widely adapted and opensource and maintained Cantera (cite),
+ which can be utilized as third party library in C++ and Fotran source codes (as well as interpretive languages python and matlab).
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:cantera"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Manually code the new physical models,
+ such as reactions for source terms,
+ thermodynamics fits,
+ and transport quantities
+\end_layout
+
+\begin_layout Enumerate
+Utilize code generation which reads in the chemical mechanism and generates malleable source code in the desired format of the CFD software
+\end_layout
+
+\begin_layout Standard
+1) and 2) are perfectly reasonable approaches for demonstration cases,
+ however they can problematic.
+ For 1) the existing Chemkin and Senkin routines may not easily adapt to the needs of the targeted CFD software,
+ thus preventing scalability and making code maintenance difficult.
+ For 2) the Cantera package is excellent for calculating properties (amongst other critical combustion scenarios) but it is a third party library where one would not have full control on the functions,
+ rather the data would be shipped from the DoF to Cantera and back,
+ therefore critical computational acceleration techniques may not be accessible.
+ In addition,
+ the use of a third party library such as Cantera can prevent working on targeted architectures that the developers may not have access to.
+ For 3) the task can be cumbersome and solitary for the developers.
+ The code produced by 3) would need a great deal of work from the ground up,
+ the details of the models necessary are described below.
+ The work presented here focuses on (4),
+ a software tool that can generate source code that fits the existing ecosystem of the target CFD software.
+\end_layout
+
+\begin_layout Standard
+Code generation is not a new concept.
+ In fact,
+ there is a history of code generation for chemistry applications.
+ Publicly accessible there exists two direct to gas phase combustion code generators:
+ PyJac (https://github.com/SLACKHA/pyJac) and Pyrometheus (https://github.com/ecisneros8/PyPrometheus).
+ PyJac focuses on generating analytical source term Jacobians with respect to a non-fluid based state which can be used to accelerate the the compute time to simulate the evolution of the chemical species.
+ PyJac's last commit was 6 years ago.
+ Pyrometheus generates either C++ header files or python files for gas phase combustion calculations with several on-the-fly optimizations for scalability to accelerate CFD on high performance computing systems.
+ The last commit for Pyrometheus was 4 years ago,
+ however,
+ we are in touch with the developers and they are still actively developing Pyrometheus in a private github project.
+\end_layout
+
+\begin_layout Standard
+In this work we present the first iteration of ChemGen a software package that uses code generation to incorporate multispecies thermo dynamics and chemical kinetics into target C++ based CFD codes.
+ The software makes use of 
+\emph on
+decorators
+\emph default
+ which will be described in depth in section 3,
+ but allow for the generated C++ code to integrate into a unique established software ecosystem.
+ It also is malleable in how reaction rates can be calculated,
+ in that they can be evaluated in pure serial,
+ or capabilities for parallel execution can be utilized by adapting a few key write functions.
+ ChemGen focuses on 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:thermo"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:source"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
 
 \end_inset
 
 .
- Specifically,
- restrictions on the numerical flux,
- physical modeling,
- element shape,
- polynomial order of the geometric approximation,
- and/or quadrature rules are relaxed.
- Complex detonation waves in two and three dimensions are computed.
- We find that whereas the positivity-preserving DG scheme is often not sufficiently stable (even with artificial viscosity to stabilize strong discontinuities),
- enforcing an entropy bound enables robust calculations on relatively coarse meshes.
- 
+ Future versions will focus on detailed transport calculations,
+ providing full chemically reacting flow states,
+ providing fast analytical jacobians in terms of full fluid dynamic states,
+ and providing accessible and scalable solvers for chemical state evolution.
+\end_layout
+
+\begin_layout Standard
+As The CFD algorithm can be simplified by solving the chemical mass action separately from the fluid transport.
+ This approximation allows the chemical kinetics problem at each grid cell or vertex to be integrated independently over the specified time step size δt.
+ At each element,
+ the Ns mass fractions and enthalpy (or temperature) are solved as a system of Ns+1 stiff ordinary differential equations (ODEs).
+ Even with the preceding simplification,
+ the cost of solving the ODEs can be prohibitive.
+ New algorithmic and computer science techniques such as massive parallel computing can significantly reduce the computational cost and are therefore of great interest to combustion simulation developers throughout the propulsion and power community.
+ An alternative approach exploits the available 
 \end_layout
 
 \begin_layout Subsection
@@ -2024,697 +1924,11 @@ Background
 \end_layout
 
 \begin_layout Standard
-Various stabilization strategies for high-order DG schemes have been introduced in the literature.
- Artificial viscosity is a popular approach that very effectively suppresses oscillations and is perfectly compatible with high polynomial orders,
- arbitrary elements,
- and general equation sets
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Per06,Bar10,Chi19"
-literal "false"
-
-\end_inset
-
-.
- However,
- there are certain limitations that discourage an overreliance on artificial viscosity for suppressing 
-\emph on
-all
-\emph default
- instabilities.
- First,
- it can significantly pollute accuracy,
- especially in smooth regions of the flow.
- As such,
- it should ideally be added only where necessary (e.g.,
- strong shocks that are otherwise difficult to robustly capture).
- Second,
- design of a shock sensor that can reliably detect discontinuous flow features for general configurations remains an open problem.
- Even in a single flow configuration that involves discontinuities of varying strengths (as is the case for detonations),
- it is difficult to detect all such discontinuities and add the 
-\begin_inset Quotes eld
-\end_inset
-
-right
-\begin_inset Quotes erd
-\end_inset
-
- amount of artificial viscosity.
- Third,
- there is typically a very strong dependence on tunable parameters.
- 
+...
 \end_layout
 
-\begin_layout Standard
-A common alternative to artificial viscosity is limiting.
- WENO-type
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Luo07,Maz19"
-literal "false"
-
-\end_inset
-
-,
- TVD/TVB
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Coc89,Coc89_2"
-literal "false"
-
-\end_inset
-
-,
- and moment limiters
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Kri07"
-literal "false"
-
-\end_inset
-
- are well-known examples.
- However,
- it can be difficult to extend these limiters to arbitrary polynomial orders for both the solution and geometric approximations,
- as well as to general equation sets.
- Furthermore,
- these limiters are not guaranteed to yield physically admissible solutions (i.e.,
- positive density and pressure),
- a drawback of artificial viscosity as well.
- An alternative approach for maintaining robustness is to align the grid with discontinuities.
- Recent formulations that do so in an implicit manner by treating the grid as a variable were developed by Corrigan et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Cor18"
-literal "false"
-
-\end_inset
-
- and Zahr and Persson
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zah18"
-literal "false"
-
-\end_inset
-
-.
- An encouraging preliminary effort to apply implicit shock tracking to reacting flow is discussed in
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zah21"
-literal "false"
-
-\end_inset
-
-,
- in which supersonic inviscid reacting flow over a two-dimensional wedge with simple thermodynamics and chemistry was computed.
- 
-\end_layout
-
-\begin_layout Standard
-Recently,
- positivity-preserving DG schemes
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha10,Zha11,Zha12,Zha17"
-literal "false"
-
-\end_inset
-
- have seen considerable success in solving the monocomponent,
- nonreacting Euler equations with explicit time stepping.
- These schemes prevent the occurrence of negative densities and pressures under a constraint on the time step size,
- a positivity-preserving numerical flux,
- and a limiting procedure consisting of a simple linear 
-\begin_inset Quotes eld
-\end_inset
-
-squeezing
-\begin_inset Quotes erd
-\end_inset
-
- of the solution towards its cell average.
- The limiting operator is conservative and maintains order of accuracy for smooth solutions.
- However,
- the limiter is not very effective at dampening oscillations.
- The positivity-preserving DG method was extended to the entropy-bounded DG scheme by Zhang and Shu
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha12_2"
-literal "false"
-
-\end_inset
-
-,
- in which an additional limiting step based on a Newton search was introduced to enforce a global entropy bound.
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-that enforces the thermodynamic entropy of the discrete solution to be greater than some global lower bound
-\end_layout
-
-\end_inset
-
- 
-\begin_inset Note Comment
-status open
-
-\begin_layout Plain Layout
-This idea is rooted in the minimum entropy principle satisfied by entropy solutions to the compressible Euler equations.
-\end_layout
-
-\end_inset
-
- Note that it is implicitly assumed that an entropy-bounded scheme is also positivity-preserving.
- Under their invariant-region-preserving DG framework,
- Jiang and Liu
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha12_2,Jia18"
-literal "false"
-
-\end_inset
-
- introduced a more straightforward limiter to enforce the entropy principle in an algebraic manner,
- which is particularly desirable in the multicomponent,
- thermally perfect case due to the cost of evaluating complex thermodynamics.
- Lv and Ihme
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lv15_2"
-literal "false"
-
-\end_inset
-
- further extended the entropy-bounded DG scheme (for the monocomponent Euler equations) by relaxing restrictions on the geometry and quadrature rules.
- They also introduced a local entropy bound.
- Numerical tests demonstrated the superiority of the entropy-bounded DG scheme for suppressing spurious oscillations,
- compared to the positivity-preserving DG method.
- Lv and Ihme later applied entropy bounding to their reacting flow DG solver
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Lv17"
-literal "false"
-
-\end_inset
-
-,
- which utilizes the double-flux approach discussed above.
- The frozen thermodynamics and relaxation towards a calorically perfect gas model circumvent the difficulties of extending the entropy-bounded DG method to reacting flow with exact thermodynamics and non-calorically-perfect gases.
- Furthermore,
- the physico-mathematical validity of combining the double-flux model with enforcement of a discrete minimum entropy principle is not immediately clear.
- We also note that these positivity-preserving and entropy-bounded DG methods are related to the recent geometric quasilinearization framework by Wu and Shu
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Wu21"
-literal "false"
-
-\end_inset
-
-,
- as well as the invariant-domain-preserving schemes based on graph viscosity by,
- for example,
- Guermond et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Gue19"
-literal "false"
-
-\end_inset
-
- and Pazner
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Paz21"
-literal "false"
-
-\end_inset
-
-,
- which employ a convex limiting procedure relying on an iterative line search.
-\end_layout
-
-\begin_layout Standard
-Before concluding this section,
- we note several other efforts to compute chemically reacting flows with DG schemes in a stable manner.
- Gutierrez-Jorquera and Kummer
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Gut22"
-literal "false"
-
-\end_inset
-
- computed steady-state diffusion flames using a low-Mach pressure-based solver and a one-step reaction mechanism.
- May et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "May21"
-literal "false"
-
-\end_inset
-
- simulated steady hypersonic flows with some high-enthalpy effects using a hybridized DG solver that employs artificial viscosity for shock capturing.
- Papoutsakis et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Pap18"
-literal "false"
-
-\end_inset
-
- computed chemically reacting hypersonic flow over a double cone with a TVB limiter;
- however,
- only a linear polynomial approximation of the solution was employed,
- and there were discrepancies with finite-volume and experimental results.
- A number of positivity-preserving DG schemes for the reacting Euler equations have also been developed.
- For example,
- Zhang and Shu
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha11"
-literal "false"
-
-\end_inset
-
- and Wang et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Wan12"
-literal "false"
-
-\end_inset
-
- extended the positivity-preserving DG scheme to handle source terms with explicit time stepping.
- Complex thermodynamics and stiff source terms were not addressed.
- Du and Yang
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Du19"
-literal "false"
-
-\end_inset
-
- and Du et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Du19_2"
-literal "false"
-
-\end_inset
-
- presented a positivity-preserving DG method based on a new explicit,
- exponential Runge-Kutta (RK)/multistep time integration scheme that can handle stiff source terms
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Hua18"
-literal "false"
-
-\end_inset
-
-.
- However,
- the temporal order of accuracy is strongly dependent on the initial conditions.
- Other positivity-preserving time integrators compatible with stiff source terms include implicit Patankar-type RK schemes
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Hua19,Hua19_2,Pan21"
-literal "false"
-
-\end_inset
-
-,
- which have been applied to finite difference
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Hua19,Hua19_2"
-literal "false"
-
-\end_inset
-
- and finite volume
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Pan21"
-literal "false"
-
-\end_inset
-
- discretizations of the reacting Euler equations.
- These schemes are still undergoing development,
- and there may be issues with extending them to DG discretizations
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Hua19"
-literal "false"
-
-\end_inset
-
-.
- An additional obstacle of both exponential RK/multistep and Patankar-type RK schemes is proper enforcement of the minimum entropy principle.
- For these reasons and due to its proven past success,
- we elect to still employ operator splitting to deal with stiff source terms.
- Nevertheless,
- exponential RK/multistep and Pantankar-type schemes are indeed worthy of future consideration.
-\end_layout
-
-\begin_layout Standard
-That we use an entropy-stable DG discretization to temporally integrate the chemical source terms may cause readers to question why an entropy-stable DG discretization is not also employed for the transport step.
- Note that entropy-stable schemes guarantee the global integral of mathematical entropy to be nonincreasing in time (assuming periodic or entropy-stable boundary conditions),
- whereas entropy-bounded schemes enforce,
- in a pointwise fashion,
- the specific thermodynamic entropy to be greater than some lower bound.
- Entropy-stable DG schemes for multicomponent (nonreacting) flows have emerged only recently
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Gou20_2,Ren21"
-literal "false"
-
-\end_inset
-
-.
- For general hyperbolic conservation laws,
- there are various ways to achieve entropy stability;
- two of the most well-known are as follows:
- (a) the entropy variables,
- instead of the conservative variables,
- are directly solved for,
- and (b) SBP operators are used to approximate discrete derivatives.
- The first approach,
- in which the conservative variables depend implicitly on the polynomial approximation of the entropy variables,
- is not appropriate for explicit time stepping,
- which we employ in this work (for the transport terms).
- Furthermore,
- with the typical choice of entropy,
- the entropy variables are undefined when any of the partial densities vanishes
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Gou20_2"
-literal "false"
-
-\end_inset
-
-.
- Conversely,
- the second approach,
- which has surged in popularity in recent years,
- is compatible with explicit time stepping (although small amounts of mathematical entropy can still be destroyed as a result of the time integration scheme) and does not assume exact integration to provably guarantee entropy stability.
- Belonging to this category are the methods by Renac
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Ren21"
-literal "false"
-
-\end_inset
-
- and Peyvan et al.
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Pey22"
-literal "false"
-
-\end_inset
-
-.
- On unstructured grids,
- particularly those with (possibly curved) simplicial elements,
- current SBP-based entropy-stable methods can become suboptimal
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Che17"
-literal "false"
-
-\end_inset
-
-,
- require direct use of the entropy variables (even if the conservative variables are the unknowns)
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Cha19,Cha18_2"
-literal "false"
-
-\end_inset
-
-,
- and/or significantly increase in complexity
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Cha19,Cre18,Cha18_2,Che20"
-literal "false"
-
-\end_inset
-
-.
- Note that these issues are not present in the developed entropy-stable DGODE (except a moderate increase in complexity),
- which entails a one-dimensional discretization in time.
- Due to the above factors,
- as well as the relative simplicity of the entropy-bounded DG scheme and its compatibility with the pressure-equilibrium-maintaining discretization by Johnson and Kercher
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Joh20_2"
-literal "false"
-
-\end_inset
-
-,
- we choose to employ the proposed entropy-bounded method for the transport step.
- Nevertheless,
- we emphasize that we are not ruling out entropy-stable schemes;
- advancements to these formulations are rapid and their potential is evident
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Gas21"
-literal "false"
-
-\end_inset
-
-.
- Finally,
- it should be noted that although the construction of entropy-stable and entropy-bounded methods rely on different techniques,
- entropy stability and entropy boundedness are not necessarily mutually exclusive.
- Depending on the type of entropy-stable scheme,
- it should,
- in principle,
- be feasible to achieve discrete satisfaction of both properties.
-\end_layout
-
-\begin_layout Standard
-The remainder of this paper is organized as follows.
- Sections
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:governing_equations"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- and
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:DG-discretization"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- summarize the governing equations and basic DG discretization,
- respectively.
- Section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:minimum-entropy-principle"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- reviews the minimum entropy principle associated with the compressible,
- multicomponent,
- nonreacting Euler equations and extends it to the reacting Euler equations.
- The next section presents the positivity-preserving and entropy-bounded DG formulation for the transport step.
- We then discuss the entropy-stable DG discretization for the reaction step in Section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:entropy-stable-DGODE"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-.
- Results for fundamental nonreacting test cases and one-dimensional detonation-wave simulations are given in the following section.
- We close the paper with concluding remarks.
+\begin_layout Subsection
+ChemGen Prospectus
 \end_layout
 
 \begin_layout Section
@@ -2729,7 +1943,7 @@ name "sec:governing_equations"
 \end_layout
 
 \begin_layout Standard
-The compressible,
+As ChemGen can certainly be utilized for low-Mach flows that decouples pressure from the energy equations.
  multicomponent,
  chemically reacting Euler equations are given as
 \begin_inset Formula 
@@ -3817,7 +3031,7 @@ Starting with a guess value,
 \end_layout
 
 \begin_layout Subsection
-Chemical reaction rates
+Chemical reaction rates and their ChemGen Representations
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:chemical-reaction-rates"
