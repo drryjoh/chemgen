@@ -82,7 +82,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <cmath>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
-        file.write("//#include <tbb/tbb.h> // testing tbb\n")
+        file.write("#include <tbb/tbb.h> // testing tbb\n")
         file.write("#include <chrono>// testing timings\n")
         write_headers(file, headers)
         [temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)

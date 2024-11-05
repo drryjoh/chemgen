@@ -48,6 +48,7 @@ def main():
     parser = argparse.ArgumentParser(description="A brief description of the script")
     parser.add_argument('chemical_mechanism', type=str, help="The name of the file")
     parser.add_argument('destination', type=str, help="The destination folder where the files will be generated")
+    parser.add_argument("--custom-source", type=str, help="Path to custom source writer file")
     args = parser.parse_args()
     
     # Convert arguments to Path objects
@@ -65,7 +66,7 @@ def main():
 
     gas = ct.Solution(chemical_mechanism)
     [configuration, configuration_file] = get_configuration(configuration_filename='configuration.yaml')
-    headers = process_cantera_file(gas, configuration, destination_folder)
+    headers = process_cantera_file(gas, configuration, destination_folder,args)
     print("***headers***")
 
     if "types_inl.h" in headers:

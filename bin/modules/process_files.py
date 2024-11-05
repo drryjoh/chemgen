@@ -1,14 +1,22 @@
 import cantera as ct
 import numpy as np
+import importlib.util
 from .arithmetic import *
 from .headers import *
 from .configuration import *
 from .thermo_chemistry import *
 from .write import *
 from .process_reactions import *
-from .write_source import *
 
-def process_cantera_file(gas, configuration, destination_folder):
+def load_custom_sourcewriter(filepath):
+    # Load a module from the given file path
+    spec = importlib.util.spec_from_file_location("source_custom", filepath)
+    custom_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(custom_module)
+    # Return the SourceWriter class from the custom module
+    return custom_module.SourceWriter
+
+def process_cantera_file(gas, configuration, destination_folder, args):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
@@ -61,12 +69,24 @@ def process_cantera_file(gas, configuration, destination_folder):
         headers.append('reactions.h')
     
     with open(destination_folder/'source.h','w') as file:
-        write_source_serial(file, equilibrium_constants, reaction_calls, 
-                            progress_rates, is_reversible, species_production_texts, 
-                            headers, configuration)
-        #write_source_threaded(file, equilibrium_constants, reaction_calls, 
-        #                    progress_rates, is_reversible, species_production_function_texts, 
-        #                    headers, configuration)
+        if args.custom_source:
+            try:
+                # Load the custom SourceWriter
+                CustomSourceWriter = load_custom_sourcewriter(args.custom_source)
+                # Instantiate and use the custom SourceWriter
+                custom_writer = CustomSourceWriter()
+                custom_writer.write_source(file, equilibrium_constants, reaction_calls, 
+                                        progress_rates, is_reversible, species_production_texts, 
+                                        headers, configuration)
+            except (FileNotFoundError, AttributeError) as e:
+                print(f"Error loading custom source writer: {e}")
+                sys.exit(1)
+        else:
+            from .write_source_serial import SourceWriter as source_serial
+            from .write_source_threaded import SourceWriter as source_threaded
+            source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_texts,  headers, configuration)
+            source_threaded().write_source(file, equilibrium_constants, reaction_calls,  progress_rates, is_reversible, species_production_function_texts, headers, configuration)
+
     
     required_headers = create_headers(configuration, destination_folder)
     return required_headers + headers

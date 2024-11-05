@@ -2778,9 +2778,9 @@ nolink "false"
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="3">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.35in">
+<column alignment="center" valignment="top" width="1.95in">
+<column alignment="center" valignment="top" width="2.6in">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -3747,22 +3747,26 @@ P_{r}(C_{i},M_{c},T,\ln T)=\frac{k_{A,0,j}(T,\ln T)}{k_{A,\infty,j}(T,\ln T)}\le
 
 \end_inset
 
-Where the same optimization for efficiencies can be made There is a family different fall off functions which all relvolve ina different way to approximate 
+Where the same optimization for efficiencies can be made There is a family different fall off functions which all revolve in a different way to approximate 
 \begin_inset Formula $F$
 \end_inset
 
+,
+ known as the broadening term,
  which we outline in the following
 \end_layout
 
 \begin_layout Subsubsection*
-Troe Form
+Troe Broadening
 \end_layout
 
 \begin_layout Standard
-to compute 
+For the Troe fall-off reaction the broadening term,
+ 
 \begin_inset Formula $F$
 \end_inset
 
+,
  in Equation
 \begin_inset space ~
 \end_inset
@@ -3778,52 +3782,29 @@ nolink "false"
 
 \end_inset
 
- in the 
+ is computed using the following 
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{eqnarray*}
-\log_{10}F(T,P_{r}) & = & \frac{\log_{10}F_{cent}(T)}{1+f_{1}(P_{r})^{2}}\\
-F_{cent}(T) & = & (1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T)\\
-f_{1} & = & (\log_{10}P_{r}+c)/(n-0.14(\log_{10}P_{r}+c))\\
-c & = & -0.4-0.67\;\log_{10}F_{cent}\\
-n & = & 0.75-1.27\;\log_{10}F_{cent}
-\end{eqnarray*}
+\begin{eqnarray}
+\log_{10}F(T,P_{r}) & = & \frac{\log_{10}F_{cent}(T)}{1+f_{1}(P_{r})^{2}}\label{eq:f_and_fcent}\\
+F_{cent}(T) & = & (1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T)\nonumber \\
+f_{1} & = & (\log_{10}P_{r}+c)/(n-0.14(\log_{10}P_{r}+c))\nonumber \\
+c & = & -0.4-0.67\;\log_{10}F_{cent}\nonumber \\
+n & = & 0.75-1.27\;\log_{10}F_{cent}\nonumber 
+\end{eqnarray}
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-where the definitions of 
-\begin_inset Formula $c_{1}$
-\end_inset
-
-,
- 
-\begin_inset Formula $c_{2}$
-\end_inset
-
-,
- 
-\begin_inset Formula $c_{3}$
-\end_inset
-
-,
- and 
-\begin_inset Formula $F_{\mathrm{cent}}$
-\end_inset
-
- are given in
+The origin of the of are given in
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset citation
 LatexCommand citep
-key "Gil83"
+key "Tro77,Tro79,Gil83,Tro87"
 literal "false"
 
 \end_inset
@@ -3832,11 +3813,93 @@ literal "false"
 \end_layout
 
 \begin_layout Subsubsection*
-SRI Form
+Tsang Broadening
+\end_layout
+
+\begin_layout Standard
+In the Tsange [cite] broadening approach 
+\begin_inset Formula $F_{cent}$
+\end_inset
+
+in Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:f_and_fcent"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ is simply
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+F_{cent}=A+BT
+\]
+
+\end_inset
+
+with the remaining features,
+ 
+\begin_inset Formula $f_{1}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $c$
+\end_inset
+
+,
+ and 
+\begin_inset Formula $n$
+\end_inset
+
+,
+ computed in the same way the Troe formulation.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+SRI Broadening
+\end_layout
+
+\begin_layout Standard
+In the SRI [cite] broadening approach 
+\begin_inset Formula $F$
+\end_inset
+
+ is replaced entirely by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+F(T,P_{r})=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection*
 Lindemann Form
+\begin_inset Formula 
+\[
+F(T,P_{r})=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e}
+\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
