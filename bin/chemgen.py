@@ -9,7 +9,7 @@ from pathlib import Path
 from modules.process_files import *
 from modules.configuration import *
 from modules.headers import *
-from modules.tests import *
+from modules.compile_and_run import *
 
 def find_chemical_mechanism(file_name):
     # Get the path to the current script (chemgen.py)
@@ -49,6 +49,9 @@ def main():
     parser.add_argument('chemical_mechanism', type=str, help="The name of the file")
     parser.add_argument('destination', type=str, help="The destination folder where the files will be generated")
     parser.add_argument("--custom-source", type=str, help="Path to custom source writer file")
+    parser.add_argument("--custom-test", type=str, help="Path to custom test case writer file")
+    parser.add_argument("--compile", action="store_true", help="Compile the source writer code")
+
     args = parser.parse_args()
     
     # Convert arguments to Path objects
@@ -73,10 +76,27 @@ def main():
         headers.remove("types_inl.h")
         headers.insert(0,"types_inl.h")
     
-    if True: #replace with run time argument
+
+    test_file = ''
+    
+    if args.custom_test:
+        try:
+            test_file = 'chemgen.cpp'
+            # Load the custom SourceWriter
+            create_test = load_custom_test(args.custom_test)
+            create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
+
+        except (FileNotFoundError, AttributeError) as e:
+            print(f"Error loading custom test writer: {e}")
+            sys.exit(1)
+
+    else: #replace with run time argument
         test_file = 'chemgen.cpp'
+        from modules.default_test import create_test
         create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
-        compile_header_test(test_file, configuration_file, destination_folder)
+    
+    if args.compile:
+        compile(test_file, configuration_file, destination_folder)
 
 # Entry point
 if __name__ == "__main__":

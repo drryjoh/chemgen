@@ -1,1 +1,0 @@
-{scalar} scale({scalar} A, {scalar} B) {{ return A * B;}}

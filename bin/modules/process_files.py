@@ -76,7 +76,7 @@ def process_cantera_file(gas, configuration, destination_folder, args):
                 # Instantiate and use the custom SourceWriter
                 custom_writer = CustomSourceWriter()
                 custom_writer.write_source(file, equilibrium_constants, reaction_calls, 
-                                        progress_rates, is_reversible, species_production_texts, 
+                                        progress_rates, is_reversible, species_production_function_texts, 
                                         headers, configuration)
             except (FileNotFoundError, AttributeError) as e:
                 print(f"Error loading custom source writer: {e}")
