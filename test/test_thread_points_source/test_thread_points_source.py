@@ -2,6 +2,7 @@ import importlib.util
 import cantera as ct
 from pathlib import Path
 import yaml
+import numpy as np
 
 def get_test_conditions(chemical_mechanism):
     config_path = Path('test_configuration.yaml')
@@ -42,7 +43,7 @@ def write_headers(file, headers):
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder):
     test_file = destination_folder/test_file_name
-    n_points = 1000
+    n_points = 10
     n_species = gas.n_species
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
@@ -56,17 +57,20 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
                         file.write(f"const int n_points = {n_points};")
                         file.write("using PointState = {scalar_list}<{scalar_list}<{scalar}, n_species+1>, n_points>;\n".format(**vars(configuration)))
                         file.write("using ChemicalState = {scalar_list}<{scalar}, n_species+1>;\n".format(**vars(configuration)))
-        [temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
-        gas.TPX = temperature, pressure, species_string
-        concentrations = gas.concentrations
-        concentration_test = '{species} species  = {{{array}}};'.format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
-        enthalpies = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights
-        entropies = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights
-        energies = gas.standard_int_energies_RT * gas.T * ct.gas_constant/gas.molecular_weights
-        gibbs = gas.standard_gibbs_RT * gas.T * ct.gas_constant
-        equilibrium_constants = gas.equilibrium_constants
-        gas.TPX = temperature, pressure, species_string
-        print(species_string)
+                        file.write("using PointReactions = {scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>;\n".format(**vars(configuration)))
+        #[temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
+        chemical_state = []
+        for i in range(n_points):
+            temperature = np.random.uniform(300, 1000)  # Random temperature between 300 and 1000
+            pressure = np.random.uniform(101325 / 10, 10 * 101325)  # Random pressure between 10132.5 and 1013250
+            n_species = gas.n_species 
+            # Generate random mole fractions that sum to 1
+            random_values = np.random.rand(n_species)  # Random values between 0 and 1 for each species
+            mole_fractions = random_values / np.sum(random_values)  
+            gas.TPX = temperature, pressure, mole_fractions
+            concentrations = gas.concentrations
+            chemical_state.append("{{{temperature},{array}}}".format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]), temperature = temperature,**vars(configuration))) 
+        point_state = ',\n    '.join(chemical_state)
         content = """
 // Overload << operator for std::array
 template <typename T, std::size_t N>
@@ -82,20 +86,12 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
 
 int main() {{
     // Call the arrhenius function with the specified parameters
-    {concentration_test}
-    {scalar} temperature_ =  {temperature};
-
-
-    {species} result_threaded = source_threaded(species, temperature_);
-
-    // Output the result
-    std::cout << "Source test result:  " << result_threaded << std::endl;
-    std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
+    PointState point_state={{{{
+{point_state}
+    }}}};
+    auto result_threaded = source_threaded(point_state);
     return 0;
 }}
             """
 
-        file.write(content.format(**vars(configuration), 
-        concentration_test = concentration_test, 
-        temperature = temperature, 
-        cantera_net_production_rates = ' '.join([f"{npr}" for npr in gas.net_production_rates])))
+        file.write(content.format(**vars(configuration), point_state = point_state))

@@ -22,18 +22,37 @@ class SourceWriter:
 
     def write_start_of_source_function_threaded(self, file, configuration):
         file.write("""
+        {device_option} {scalar_function} temperature_from_chemical_state( const ChemicalState& state) {const_option} {{ return state[0];}}
+        
+        {device_option} 
+        {species_function} species_from_chemical_state( const ChemicalState& state) 
+        {const_option} 
+        {{ 
+            Species species;
+            std::copy(state.begin() + 1, state.end(), species.begin());
+            return species;
+        }}
+
         {device_option}
         {species_function} source_threaded(const PointState& point_states) {const_option} 
         {{
+            PointState source = {{}};
+            ChemicalState state = {{}};
+            PointReactions point_reactions = {{}};
+            PointReactions point_progress_rates = {{}};
             {species} net_production_rates = {{{scalar_cast}(0)}};
             {index} chunk_size = 0;
-            {reactions} reactions = {{}};
-            {reactions} progress_rates = {{}};
-            {species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);
-            {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);
-            {scalar} log_temperature = log_gen(temperature);
-            {scalar} pressure_ = pressure(species, temperature);
-            {scalar} mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;\n""".format(**vars(configuration)))
+            {species} gibbs_free_energies = {{}};//species_gibbs_energy_mole_specific(temperature);
+            {species} species_ = {{}};//
+            {scalar} inv_universal_gas_constant_temperature  = {scalar_cast}(0);//inv(universal_gas_constant() * temperature);
+            {scalar} log_temperature = {scalar_cast}(0);//log_gen(temperature);
+            {scalar} pressure_ = {scalar_cast}(0);//pressure(species, temperature);
+            {scalar} mixture_concentration = {scalar_cast}(0);//pressure_ * inv_universal_gas_constant_temperature;
+            {scalar} temperature_ = {scalar_cast}(0);
+            {index} j = 0;
+            {index} k = 0;
+            //{reactions} reactions = {{}};
+            //{reactions} progress_rates = {{}};\n""".format(**vars(configuration)))
     
     def write_reaction_functions_pointer_list(self, file, reaction_calls, configuration):
         indentation = '        '
@@ -59,12 +78,42 @@ class SourceWriter:
     def write_reaction_ttb_loop(self, file, array, pointer_list, parameters, configuration):
         index = "{index}".format(**vars(configuration))
         file.write(f"""
-        for ({index} i = 0; i < n_reactions; ++i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
+        for ({index} i = 0; i < n_reactions * n_points; ++i) {{
+            j = i / (n_reactions + 1);  // Row index
+            k = i % (n_reactions + 1);  // Column index
+            if(k==0)
+            {{
+                //if k is zero you're at the top of the order for reactions
+                state = point_states[j];
+                temperature_ = temperature_from_chemical_state(state);
+                species_ = species_from_chemical_state(state);
+                gibbs_free_energies = species_gibbs_energy_mole_specific(temperature_);
+                inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature_);
+                log_temperature = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;
+            }}
+            {array}[j][k] = {pointer_list}[k]({parameters});
         }}
 
-        tbb::parallel_for(0, n_reactions, [&]({index} i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
+        tbb::parallel_for(0, n_reactions * n_points, [&]({index} i) {{
+            j = i / (n_reactions + 1);  // point
+            k = i % (n_reactions + 1);  // reaction
+
+            if(k==0)
+            {{
+                //if k is zero you're at the top of the order for reactions
+                state = point_states[j];
+                temperature_ = temperature_from_chemical_state(state);
+                species_ = species_from_chemical_state(state);
+                gibbs_free_energies = species_gibbs_energy_mole_specific(temperature_);
+                inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature_);
+                log_temperature = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;
+            }}
+
+            {array}[j][k] = {pointer_list}[k]({parameters});
         }});
 
         """)
@@ -74,25 +123,71 @@ class SourceWriter:
         file.write(f"""
         // Measure serial execution time
         auto start_serial_{array} = std::chrono::high_resolution_clock::now();
-        for ({index} i = 0; i < n_reactions; ++i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
+        for ({index} i = 0; i < n_reactions * n_points; ++i) {{
+            j = i / (n_reactions + 1);  // point
+            k = i % (n_reactions + 1);  // reaction
+
+            if(k==0)
+            {{
+                //if k is zero you're at the top of the order for reactions
+                state = point_states[j];
+                temperature_ = temperature_from_chemical_state(state);
+                species_ = species_from_chemical_state(state);
+                gibbs_free_energies = species_gibbs_energy_mole_specific(temperature_);
+                inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature_);
+                log_temperature = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;
+            }}
+            {array}[i] = {pointer_list}[j]({parameters});
         }} 
         auto end_serial_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
 
         // Measure parallel execution time
         auto start_parallel_{array} = std::chrono::high_resolution_clock::now();
-        tbb::parallel_for(0, n_reactions, [&]({index} i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
-            }});
+        tbb::parallel_for(0, n_reactions * n_points, [&]({index} i) 
+        {{
+            j = i / (n_reactions + 1);  // point
+            k = i % (n_reactions + 1);  // reaction
+
+            if(k==0)
+            {{
+                //if k is zero you're at the top of the order for reactions
+                state = point_states[j];
+                temperature_ = temperature_from_chemical_state(state);
+                species_ = species_from_chemical_state(state);
+                gibbs_free_energies = species_gibbs_energy_mole_specific(temperature_);
+                inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature_);
+                log_temperature = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;
+            }}
+            {array}[i] = {pointer_list}[j]({parameters});
+        }});
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
 
         chunk_size = 20;  // Starting chunk size
         auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
-        tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, chunk_size), [&](const tbb::blocked_range<int>& r) {{
+        tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) {{
-                {array}[i] = {pointer_list}[i]({parameters});
+            j = i / (n_reactions + 1);  // point
+            k = i % (n_reactions + 1);  // reaction
+
+            if(k==0)
+            {{
+                //if k is zero you're at the top of the order for reactions
+                state = point_states[j];
+                temperature_ = temperature_from_chemical_state(state);
+                species_ = species_from_chemical_state(state);
+                gibbs_free_energies = species_gibbs_energy_mole_specific(temperature_);
+                inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature_);
+                log_temperature = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;
+            }}
+            {array}[i] = {pointer_list}[j]({parameters});
             }}
         }});
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
@@ -100,9 +195,24 @@ class SourceWriter:
 
         chunk_size = 100;  // Starting chunk size
         auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
-        tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions, chunk_size), [&](const tbb::blocked_range<int>& r) {{
+        tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) {{
-                {array}[i] = {pointer_list}[i]({parameters});
+            j = i / (n_reactions + 1);  // point
+            k = i % (n_reactions + 1);  // reaction
+
+            if(k==0)
+            {{
+                //if k is zero you're at the top of the order for reactions
+                state = point_states[j];
+                temperature_ = temperature_from_chemical_state(state);
+                species_ = species_from_chemical_state(state);
+                gibbs_free_energies = species_gibbs_energy_mole_specific(temperature_);
+                inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature_);
+                log_temperature = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;
+            }}
+            {array}[i] = {pointer_list}[j]({parameters});
             }}
         }});
         auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
@@ -120,11 +230,11 @@ class SourceWriter:
         index = "{index}".format(**vars(configuration))
         file.write(f"""
         
-        for ({index} i = 0; i < n_species; ++i) {{
+        for ({index} i = 0; i < n_species * n_points; ++i) {{
             {array}[i] = {pointer_list}[i]({parameters});
         }}
 
-        tbb::parallel_for(0, n_species, [&]({index} i) {{
+        tbb::parallel_for(0, n_species * n_points, [&]({index} i) {{
             {array}[i] = {pointer_list}[i]({parameters});
         }});
 
@@ -192,9 +302,9 @@ class SourceWriter:
         self.write_progress_rate_functions_pointer_list(file, reaction_calls, configuration)
         self.write_production_rate_functions_pointer_list(file, species_production_function_texts, configuration)
 
-        self.write_reaction_ttb_loop_with_timing(file, "reactions", "reaction_functions", "species, temperature, log_temperature, pressure_, mixture_concentration", configuration)
-        self.write_reaction_ttb_loop_with_timing(file, "progress_rates", "progress_rate_functions", "species, temperature, gibbs_free_energies, reactions[i]", configuration)
-        self.write_species_ttb_loop_with_timing(file, "net_production_rates", "production_rate_functions", "progress_rates",configuration)
+        self.write_reaction_ttb_loop(file, "point_reactions", "reaction_functions", "species_, temperature_, log_temperature, pressure_, mixture_concentration", configuration)
+        #self.write_reaction_ttb_loop_with_timing(file, "progress_rates", "progress_rate_functions", "species, temperature, gibbs_free_energies, reactions[i]", configuration)
+        #self.write_species_ttb_loop_with_timing(file, "net_production_rates", "production_rate_functions", "progress_rates",configuration)
 
         self.write_end_of_function(file)
         headers.append('source.h')
