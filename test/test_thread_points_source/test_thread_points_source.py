@@ -43,7 +43,7 @@ def write_headers(file, headers):
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder):
     test_file = destination_folder/test_file_name
-    n_points = 10
+    n_points = 100
     n_species = gas.n_species
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
@@ -86,6 +86,9 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
 
 int main() {{
     // Call the arrhenius function with the specified parameters
+    int max_threads = tbb::this_task_arena::max_concurrency();
+    //tbb::global_control c(tbb::global_control::max_allowed_parallelism, 4); 
+    std::cout << "Number of threads available: " << max_threads << std::endl;
     PointState point_state={{{{
 {point_state}
     }}}};
