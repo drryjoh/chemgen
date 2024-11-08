@@ -23,11 +23,13 @@ def run_command(command):
         print(e.stderr.decode())  # Print error output
         sys.exit(1)  # Exit with error
 
-def compile_cpp_code(build_dir, source_files):
+def compile_cpp_code(build_dir, source_files, config):
     """Compile C++ code using g++ or other compilers."""
     os.makedirs(build_dir, exist_ok=True)
     os.makedirs(build_dir/"bin", exist_ok=True)
     
+    if config['build'].get('chemgen_smp') == 'TBB':
+        tbb_option = '-ltbb'
     # Command to compile C++ code
     compile_command = f"clang++ -std=c++17 -ltbb -O2 -o {build_dir}/bin/chemgen {' '.join(source_files)}"
     print(compile_command)
@@ -40,13 +42,13 @@ def run_tests(build_dir):
     print("Running tests...")
     run_command(test_command)
 
-def compile(test_file, configuration_file, destination_folder):
+def compile(test_file, configuration_file, destination_folder, third_parties):
     # Define directories and C++ source files
     build_directory = destination_folder.parent
     cpp_source_files = ['src'+'/'+test_file]
     # generate cmake
-    generate_cmake_file(configuration_file, build_directory)
+    generate_cmake_file(configuration_file, build_directory, third_parties)
     # Compile the C++ code
-    compile_cpp_code(build_directory, cpp_source_files)
+    compile_cpp_code(build_directory, cpp_source_files, configuration_file)
     # Run the tests
     run_tests(build_directory)

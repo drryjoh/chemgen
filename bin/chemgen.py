@@ -69,6 +69,17 @@ def main():
 
     gas = ct.Solution(chemical_mechanism)
     [configuration, configuration_file] = get_configuration(configuration_filename='configuration.yaml')
+
+    use_third_parties = False
+    third_party_path = Path(__file__).resolve().parent.parent/'third_party'
+    libraries = []
+    if configuration_file['build'].get('chemgen_smp') == 'TBB':
+        use_third_parties = True
+        libraries.append('tbb')
+
+    
+    third_parties = [use_third_parties, third_party_path, libraries]
+    
     headers = process_cantera_file(gas, configuration, destination_folder,args)
     print("***headers***")
 
@@ -96,7 +107,7 @@ def main():
         create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
     
     if args.compile:
-        compile(test_file, configuration_file, destination_folder)
+        compile(test_file, configuration_file, destination_folder, third_parties)
 
 # Entry point
 if __name__ == "__main__":
