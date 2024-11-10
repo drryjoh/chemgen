@@ -34,7 +34,7 @@ add_executable(chemgen ${{SOURCE_FILES}})
 
     if use_third_parties:
         cmake_content+="""\
-# Include TBB as an external project
+# Include {library.upper()} as an external project
 include(ExternalProject)
         """
         for library in libraries:
@@ -47,23 +47,30 @@ ExternalProject_Add({library}
         -D{library.upper()}_TEST=OFF
         -D{library.upper()}_EXAMPLES=OFF
         -D{library.upper()}_ENABLE_IPO=OFF
-    BUILD_IN_SOURCE 1
-    UPDATE_DISCONNECTED 1
+    #BUILD_IN_SOURCE 1
+    #UPDATE_DISCONNECTED 1
     BUILD_COMMAND ${{CMAKE_COMMAND}} --build . --config Release
     INSTALL_COMMAND ${{CMAKE_COMMAND}} --build . --target install
 )
 
-# Set the TBB include and library paths
+# Set the {library.upper()} include and library paths
 set({library.upper()}_INCLUDE_DIR ${{CMAKE_BINARY_DIR}}/{library}_install/include)
 set({library.upper()}_LIBRARY_DIR ${{CMAKE_BINARY_DIR}}/{library}_install/lib)
 
 # Include directories for the project
 include_directories(${{{library.upper()}_INCLUDE_DIR}})
 
-# Link TBB libraries
-target_link_libraries(chemgen PRIVATE ${{{library.upper()}_LIBRARY_DIR}}/lib{library}.so)
+# Link {library.upper()} libraries
+#target_link_libraries(chemgen PRIVATE ${{{library.upper()}_LIBRARY_DIR}}/lib{library}.so)
+# Find {library.upper()} libraries based on the platform
+find_library({library.upper()}_LIB tbb PATHS ${{{library.upper()}_LIBRARY_DIR}})
+find_library({library.upper()}_MALLOC_LIB tbbmalloc PATHS ${{{library.upper()}_LIBRARY_DIR}})
 
-# Ensure TBB is built before chemgen
+# Link the found libraries
+target_link_libraries(chemgen PRIVATE ${{{library.upper()}_LIB}} ${{{library.upper()}_MALLOC_LIB}})
+
+
+# Ensure {library.upper()} is built before chemgen
 add_dependencies(chemgen {library})
 """
 
