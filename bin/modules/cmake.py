@@ -44,6 +44,7 @@ include(ExternalProject)
 ExternalProject_Add({library}
     SOURCE_DIR {third_party_path}/{library}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${{CMAKE_BINARY_DIR}}/{library}_install
+        -DCMAKE_INSTALL_LIBDIR=lib  # Force installation to 'lib' directory
         -D{library.upper()}_TEST=OFF
         -D{library.upper()}_EXAMPLES=OFF
         -D{library.upper()}_ENABLE_IPO=OFF
