@@ -44,6 +44,11 @@ include(ExternalProject)
 ExternalProject_Add({library}
     SOURCE_DIR {third_party_path}/{library}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${{CMAKE_BINARY_DIR}}/{library}_install
+        -D{library.upper()}_TEST=OFF
+        -D{library.upper()}_EXAMPLES=OFF
+        -D{library.upper()}_ENABLE_IPO=OFF
+    BUILD_IN_SOURCE 1
+    UPDATE_DISCONNECTED 1
     BUILD_COMMAND ${{CMAKE_COMMAND}} --build . --config Release
     INSTALL_COMMAND ${{CMAKE_COMMAND}} --build . --target install
 )
