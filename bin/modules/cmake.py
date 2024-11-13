@@ -37,19 +37,30 @@ add_executable(chemgen ${{SOURCE_FILES}})
 # Include {library.upper()} as an external project
 include(ExternalProject)
         """
-        for library in libraries:
+    for library in libraries:
+        if library == 'mpi':
+            cmake_content+="""
+# Find and link MPI
+find_package(MPI REQUIRED)
+if (MPI_FOUND)
+    message(STATUS "MPI found: ${MPI_CXX_COMPILER}")
+    set(CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER})  # Use MPI compiler wrapper
+    target_include_directories(chemgen PRIVATE ${MPI_INCLUDE_PATH})
+    target_link_libraries(chemgen PRIVATE MPI::MPI_CXX)
+else()
+    message(FATAL_ERROR "MPI not found. Ensure MPI is loaded or installed.")
+endif()
+            """
+        else:
             cmake_content += f"""\
-
 # Configure the {library.upper()} build
 ExternalProject_Add({library}
     SOURCE_DIR {third_party_path}/{library}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${{CMAKE_BINARY_DIR}}/{library}_install
-        -DCMAKE_INSTALL_LIBDIR=lib  # Force installation to 'lib' directory
-        -D{library.upper()}_TEST=OFF
-        -D{library.upper()}_EXAMPLES=OFF
-        -D{library.upper()}_ENABLE_IPO=OFF
-    #BUILD_IN_SOURCE 1
-    #UPDATE_DISCONNECTED 1
+                -DCMAKE_INSTALL_LIBDIR=lib  # Force installation to 'lib' directory
+                -D{library.upper()}_TEST=OFF
+                -D{library.upper()}_EXAMPLES=OFF
+                -D{library.upper()}_ENABLE_IPO=OFF
     BUILD_COMMAND ${{CMAKE_COMMAND}} --build . --config Release
     INSTALL_COMMAND ${{CMAKE_COMMAND}} --build . --target install
 )
@@ -61,20 +72,14 @@ set({library.upper()}_LIBRARY_DIR ${{CMAKE_BINARY_DIR}}/{library}_install/lib)
 # Include directories for the project
 include_directories(${{{library.upper()}_INCLUDE_DIR}})
 
-# Link {library.upper()} libraries
-#target_link_libraries(chemgen PRIVATE ${{{library.upper()}_LIBRARY_DIR}}/lib{library}.so)
-# Find {library.upper()} libraries based on the platform
-find_library({library.upper()}_LIB tbb PATHS ${{{library.upper()}_LIBRARY_DIR}})
-find_library({library.upper()}_MALLOC_LIB tbbmalloc PATHS ${{{library.upper()}_LIBRARY_DIR}})
-
-# Link the found libraries
+# Find and link {library.upper()} libraries
+find_library({library.upper()}_LIB {library} PATHS ${{{library.upper()}_LIBRARY_DIR}})
+find_library({library.upper()}_MALLOC_LIB {library}malloc PATHS ${{{library.upper()}_LIBRARY_DIR}})
 target_link_libraries(chemgen PRIVATE ${{{library.upper()}_LIB}} ${{{library.upper()}_MALLOC_LIB}})
-
 
 # Ensure {library.upper()} is built before chemgen
 add_dependencies(chemgen {library})
 """
-
     # Enable debugging flags if needed
     cmake_content += "\n# Enable debugging flags\nset(CMAKE_BUILD_TYPE Release)"
 

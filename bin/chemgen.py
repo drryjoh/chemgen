@@ -51,6 +51,7 @@ def main():
     parser.add_argument("--custom-source", type=str, help="Path to custom source writer file")
     parser.add_argument("--custom-test", type=str, help="Path to custom test case writer file")
     parser.add_argument("--compile", action="store_true", help="Compile the source writer code")
+    parser.add_argument("--cmake", action="store_true", help="Compile the source writer code")
 
     args = parser.parse_args()
     
@@ -73,9 +74,13 @@ def main():
     use_third_parties = False
     third_party_path = Path(__file__).resolve().parent.parent/'third_party'
     libraries = []
-    if configuration_file['build'].get('chemgen_smp') == 'TBB':
+    print(configuration_file['build'].get('chemgen_smp') )
+    if configuration_file['build'].get('chemgen_smp','').lower() == 'tbb':
         use_third_parties = True
         libraries.append('tbb')
+    if configuration_file['build'].get('chemgen_mpi',''):
+        use_third_parties = True
+        libraries.append('mpi')
 
     
     third_parties = [use_third_parties, third_party_path, libraries]
@@ -109,6 +114,10 @@ def main():
     if args.compile:
         compile(test_file, configuration_file, destination_folder, third_parties)
 
+    if args.compile and args.cmake:
+        compile(test_file, configuration_file, destination_folder, third_parties)
+    if not args.compile and args.cmake:
+        compile(test_file, configuration_file, destination_folder, third_parties, compile=False)
 # Entry point
 if __name__ == "__main__":
     main()
