@@ -1,18 +1,18 @@
 from .reaction_utility import *
 import numpy as np
 import sys
-def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names):
+def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
     reaction_rate = reaction.rate
-    print("  PLOG Reaction with Rate Expressions:")
     pressures = []
     As = []
     Bs = []
     Es = []
 
     for P, rate in reaction.rate.rates:
-        print(f"    At {P} Pa: A = {rate.pre_exponential_factor}, "
-            f"b = {rate.temperature_exponent}, "
-            f"Ea = {rate.activation_energy}")
+        if verbose:
+            print(f"    At {P} Pa: A = {rate.pre_exponential_factor}, "
+                f"b = {rate.temperature_exponent}, "
+                f"Ea = {rate.activation_energy}")
         pressures.append(P)
         As.append(rate.pre_exponential_factor)
         Bs.append(rate.temperature_exponent)

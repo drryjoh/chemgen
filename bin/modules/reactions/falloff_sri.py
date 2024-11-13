@@ -1,16 +1,16 @@
 from .reaction_utility import *
 import sys
-def create_reaction_functions_and_calls_sri(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names):
+def create_reaction_functions_and_calls_sri(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
     reaction_rate = reaction.rate
-    print(f"  Arrhenius Parameters (high pressure limit): A = {reaction_rate.high_rate.pre_exponential_factor}, "
-        f"b = {reaction_rate.high_rate.temperature_exponent}, "
-        f"Ea = {reaction_rate.high_rate.activation_energy}")
-    print(f"  Arrhenius Parameters (low pressure limit): A = {reaction_rate.low_rate.pre_exponential_factor}, "
-        f"b = {reaction_rate.low_rate.temperature_exponent}, "
-        f"Ea = {reaction_rate.low_rate.activation_energy}")
+    if verbose:
+        print(f"  Arrhenius Parameters (high pressure limit): A = {reaction_rate.high_rate.pre_exponential_factor}, "
+            f"b = {reaction_rate.high_rate.temperature_exponent}, "
+            f"Ea = {reaction_rate.high_rate.activation_energy}")
+        print(f"  Arrhenius Parameters (low pressure limit): A = {reaction_rate.low_rate.pre_exponential_factor}, "
+            f"b = {reaction_rate.low_rate.temperature_exponent}, "
+            f"Ea = {reaction_rate.low_rate.activation_energy}")
     
     falloff_coeffs = reaction.rate.falloff_coeffs
-    print(falloff_coeffs)
     
     if len(falloff_coeffs) >3:
         [a, b, c, d, e] = falloff_coeffs

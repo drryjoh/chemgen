@@ -52,12 +52,15 @@ def main():
     parser.add_argument("--custom-test", type=str, help="Path to custom test case writer file")
     parser.add_argument("--compile", action="store_true", help="Compile the source writer code")
     parser.add_argument("--cmake", action="store_true", help="Compile the source writer code")
+    parser.add_argument("--n-points-test", type=int, default=1000,  help="Number of points for testing (default: 1000)")
+    parser.add_argument("--verbose", action="store_true", default=False, help="Verbose code generation")
 
     args = parser.parse_args()
     
     # Convert arguments to Path objects
     chemical_mechanism = find_chemical_mechanism(args.chemical_mechanism)
     destination_folder = Path(args.destination)/'src'
+    n_points_test = args.n_points_test
     
     # Check if the destination folder exists, if not, create it
     if not destination_folder.exists():
@@ -74,7 +77,6 @@ def main():
     use_third_parties = False
     third_party_path = Path(__file__).resolve().parent.parent/'third_party'
     libraries = []
-    print(configuration_file['build'].get('chemgen_smp') )
     if configuration_file['build'].get('chemgen_smp','').lower() == 'tbb':
         use_third_parties = True
         libraries.append('tbb')
@@ -85,8 +87,7 @@ def main():
     
     third_parties = [use_third_parties, third_party_path, libraries]
     
-    headers = process_cantera_file(gas, configuration, destination_folder,args)
-    print("***headers***")
+    headers = process_cantera_file(gas, configuration, destination_folder,args, verbose = args.verbose)
 
     if "types_inl.h" in headers:
         headers.remove("types_inl.h")
@@ -100,7 +101,7 @@ def main():
             test_file = 'chemgen.cpp'
             # Load the custom SourceWriter
             create_test = load_custom_test(args.custom_test)
-            create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
+            create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder, n_points = n_points_test)
 
         except (FileNotFoundError, AttributeError) as e:
             print(f"Error loading custom test writer: {e}")

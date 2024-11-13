@@ -41,9 +41,8 @@ def write_headers(file, headers):
     for header in headers:
         file.write(f"#include \"{header}\"\n")
 
-def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder):
+def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1000):
     test_file = destination_folder/test_file_name
-    n_points = 1000
     n_species = gas.n_species
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")

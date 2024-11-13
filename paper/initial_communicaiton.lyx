@@ -1677,8 +1677,7 @@ Developing robust CFD software is an accomplishment in itself,
 \end_layout
 
 \begin_layout Standard
-To model non-reacting phenomena,
- CFD focuses on the conservation variables related to mass,
+CFD focuses on the conservation variables related to mass,
  momentum,
  and energy of the fluid.
  For example,
@@ -1902,7 +1901,8 @@ nolink "false"
  Data would need to be transferred back and forth between the CFD's degrees of freedom (DoF) and Cantera,
  potentially restricting access to essential computational acceleration techniques.
  Additionally,
- relying on a third-party library like Cantera may hinder compatibility with targeted architectures that developers cannot directly access.Using 
+ relying on a third-party library like Cantera may hinder compatibility with targeted architectures that Cantera developers cannot directly access.
+ Using 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:manual"
@@ -2010,7 +2010,7 @@ High Performance Computing in CFD
 \end_layout
 
 \begin_layout Subsubsection
-Overloads and Templates in C++ and the Concept of Decorators for Code Generation
+Diversity found in C++ Software
 \end_layout
 
 \begin_layout Subsection
@@ -4678,7 +4678,6 @@ T3
 ,
 
 \series bold
- T4,
  
 \series default
 there is bound to be a trade off.
@@ -4738,22 +4737,6 @@ for a in a_list:
 
 \begin_layout Section
 Results
-\end_layout
-
-\begin_layout Standard
-white
-\end_layout
-
-\begin_layout Standard
-white
-\end_layout
-
-\begin_layout Standard
-white
-\end_layout
-
-\begin_layout Standard
-white
 \end_layout
 
 \begin_layout Standard

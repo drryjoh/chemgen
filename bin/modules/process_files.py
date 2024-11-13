@@ -16,7 +16,7 @@ def load_custom_sourcewriter(filepath):
     # Return the SourceWriter class from the custom module
     return custom_module.SourceWriter
 
-def process_cantera_file(gas, configuration, destination_folder, args):
+def process_cantera_file(gas, configuration, destination_folder, args, verbose = False):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
@@ -45,7 +45,7 @@ def process_cantera_file(gas, configuration, destination_folder, args):
         create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration)
 
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, reaction_index, configuration)
-        create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names)
+        create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
     headers = []
     with open(destination_folder/'types_inl.h','w') as file:

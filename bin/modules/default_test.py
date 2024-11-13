@@ -38,7 +38,7 @@ def get_test_conditions(chemical_mechanism):
     species_string  = ' '.join([f"{species['name']}:{species['MoleFraction']} " for species in species_list])
     return [temperature, pressure, species_string]
 
-def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder):
+def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 0):
     test_file = destination_folder/test_file_name
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
