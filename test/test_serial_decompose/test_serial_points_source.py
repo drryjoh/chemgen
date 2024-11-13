@@ -47,6 +47,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
     n_species = gas.n_species
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
+        file.write("#include <algorithm>\n")
         file.write("#include <array>\n")
         file.write("#include <vector>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")

@@ -42,6 +42,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
     test_file = destination_folder/test_file_name
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
+        file.write("#include <algorithm>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
         file.write("#include <tbb/tbb.h> // testing tbb\n")
