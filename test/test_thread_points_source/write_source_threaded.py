@@ -45,6 +45,7 @@ class SourceWriter:
             std::array<std::array<double, n_species>, n_points> species, gibbs_free_energies;
             std::array<double, n_points> temperatures, pressures, log_temperatures, mixture_concentrations, inv_universal_gas_constant_temperatures;
 
+            //precompute
             for({index} i = 0; i < n_points; i++)
             {{
                 state = point_states[i];
@@ -169,8 +170,8 @@ class SourceWriter:
         tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) 
             {{
-            int j = i / n_reactions;  // Row index
-            int k = i % n_reactions;  // Column in
+            int j = i / n_reactions;  // Row index (point)
+            int k = i % n_reactions;  // Column in (reaction)
             auto species_ = species[j];
             auto temperature_ = temperatures[j];
             auto log_temperature_ = log_temperatures[j];
@@ -210,26 +211,36 @@ class SourceWriter:
         index = "{index}".format(**vars(configuration))
         file.write(f"""
         // Measure serial execution time
+        //find me!
         auto start_serial_{array} = std::chrono::high_resolution_clock::now();
-        for ({index} i = 0; i < n_species; ++i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
+        for ({index} i = 0; i < n_species * n_points; ++i) {{
+            int j = i / n_species;  // point
+            int k = i % n_species;  // species
+            auto progress_rates_ = point_progress_rates[j];
+            {array}[j][k] = {pointer_list}[k]({parameters});
         }}    
         auto end_serial_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
 
         // Measure parallel execution time
         auto start_parallel_{array} = std::chrono::high_resolution_clock::now();
-        tbb::parallel_for(0, n_species, [&]({index} i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
+        tbb::parallel_for(0, n_species * n_points, [&]({index} i) {{
+            int j = i / n_species;  // point
+            int k = i % n_species;  // species
+            auto progress_rates_ = point_progress_rates[j];
+            {array}[j][k] = {pointer_list}[k]({parameters});
         }});
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
         
         chunk_size = 20;  // Starting chunk size
         auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
-        tbb::parallel_for(tbb::blocked_range<int>(0, n_species, chunk_size), [&](const tbb::blocked_range<int>& r) {{
+        tbb::parallel_for(tbb::blocked_range<int>(0, n_species * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) {{
-                {array}[i] = {pointer_list}[i]({parameters});
+                int j = i / n_species;  // point
+                int k = i % n_species;  // species
+                auto progress_rates_ = point_progress_rates[j];
+                {array}[j][k] = {pointer_list}[k]({parameters});
             }}
         }});
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
@@ -237,9 +248,12 @@ class SourceWriter:
 
         chunk_size = 100;  // Starting chunk size
         auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
-        tbb::parallel_for(tbb::blocked_range<int>(0, n_species, chunk_size), [&](const tbb::blocked_range<int>& r) {{
+        tbb::parallel_for(tbb::blocked_range<int>(0, n_species * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) {{
-                {array}[i] = {pointer_list}[i]({parameters});
+                int j = i / n_species;  // point
+                int k = i % n_species;  // species
+                auto progress_rates_ = point_progress_rates[j];
+                {array}[j][k] = {pointer_list}[k]({parameters});
             }}
         }});
         auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
@@ -270,7 +284,7 @@ class SourceWriter:
 
         self.write_reaction_ttb_loop_with_timing(file, "point_reactions", "reaction_functions", "species_, temperature_, log_temperature_, pressure_, mixture_concentration_", configuration)
         self.write_reaction_ttb_loop_with_timing(file, "point_progress_rates", "progress_rate_functions", "species_, temperature_, gibbs_free_energy_, point_reaction_", configuration)
-        #self.write_species_ttb_loop_with_timing(file, "net_production_rates", "production_rate_functions", "progress_rates",configuration)
+        self.write_species_ttb_loop_with_timing(file, "source", "production_rate_functions", "progress_rates_",configuration)
 
         self.write_end_of_function(file)
         headers.append('source.h')

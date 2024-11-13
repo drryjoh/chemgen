@@ -2033,7 +2033,7 @@ As The CFD algorithm can be simplified by solving the chemical mass action separ
 \end_layout
 
 \begin_layout Section
-Governing equations and Chemistry Models
+Governing equations and Chemical Kinetics 
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:governing_equations"
@@ -2303,7 +2303,7 @@ is utilized in various reactions,
  ChemGen creates this chemical state in the source term function prior to any other evaluations so that their values are readily available.
 \end_layout
 
-\begin_layout Subsection*
+\begin_layout Subsection
 Thermodynamics
 \end_layout
 
@@ -3453,10 +3453,7 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
-In this work,
- the use ChemGen underlined that the assimilation of the source term is sensitive to a few factors,
- to which we go into greater detail in the Results section.
- There exist various models for approximating the forward rate functions,
+There exist various models for approximating the forward rate functions,
  
 \begin_inset Formula $k_{j}^{f}$
 \end_inset
@@ -3817,7 +3814,7 @@ Tsang Broadening
 \end_layout
 
 \begin_layout Standard
-In the Tsange [cite] broadening approach 
+In the Tsang [cite] broadening approach 
 \begin_inset Formula $F_{cent}$
 \end_inset
 
@@ -3959,6 +3956,804 @@ nolink "false"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Section
+Calculation of the Source Term
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:sourceterm"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are several ways the reactions rates can be accrued to create the actual source term applied to the species conservation equations.
+ The most simple approach would be to use the chemical state at every degree of freedom to calculate the forward reactions,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)\label{eq:forward_rates_vector}
+\end{equation}
+
+\end_inset
+
+Here we represent the entirity of forward reactions as 
+\begin_inset Formula $\boldsymbol{k_{p}}$
+\end_inset
+
+ where the subscript 
+\begin_inset Formula $p$
+\end_inset
+
+represents a particularly degree of freedom.
+ At every degree of freedom there is a unique chemical state,
+ 
+\begin_inset Formula $y_{c,p}$
+\end_inset
+
+ that yields 
+\begin_inset Formula $n_{r}\times n_{dof}$
+\end_inset
+
+ forward reactions.
+ Once the forward reactions are calculated the rates of progress can then be computed and assembled as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right),\label{eq:progress_rates_vector}
+\end{equation}
+
+\end_inset
+
+where 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+q_{j,p}=k_{j}^{f}\left(y_{c,p}\right)\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}-\frac{k_{j}^{f}\left(y_{c,p}\right)}{K_{j}^{e}}\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}}.\label{eq:progress_rates_element}
+\end{equation}
+
+\end_inset
+
+This again 
+\begin_inset Formula $n_{r}\times n_{dof}$
+\end_inset
+
+ rates of progress.
+ The formulation in Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:progress_rates_element"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ is reduced in Chemgen by removing any zero-power terms and substituting multiplication operations for any whole number power in the terms
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}\text{ and }\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}}.
+\]
+
+\end_inset
+
+For instance,
+ the reaction 
+\begin_inset Formula $k_{1}$
+\end_inset
+
+ describing the global reaction of hydrogen and oxygen becoming water,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+2H_{2}+O_{2}\rightleftharpoons2H_{2}O,
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\left(C_{0},C_{1},C_{2}\right)=\left(C_{H_{2}},C_{O_{2}},C_{H_{2}O}\right)$
+\end_inset
+
+,
+ reduces to 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+q_{1,p}=k_{1}^{f}\left(y_{c,p}\right)C_{0}^{2}C_{1}-\frac{k_{1}^{f}\left(y_{c,p}\right)}{K_{1}^{e}}C_{2}^{2}=k_{1}^{f}\left(y_{c,p}\right)C_{0}C_{o}C_{1}-\frac{k_{1}^{f}\left(y_{c,p}\right)}{K_{1}^{e}}C_{2}C_{2}\label{eq:progress_rates_reduced}
+\end{equation}
+
+\end_inset
+
+Finally,
+ the rates of progress can then be assembled into the final net production rate 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right),
+\]
+
+\end_inset
+
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\omega_{i}=\sum_{j=1}^{n_{r}}\nu_{ij}q_{j}.
+\]
+
+\end_inset
+
+This results in 
+\begin_inset Formula $n_{n_{s}}\times n_{dof}$
+\end_inset
+
+ source terms.
+\end_layout
+
+\begin_layout Subsection
+Parallelization
+\end_layout
+
+\begin_layout Standard
+Several optimizations can be made in the code generation of the source term calculations.
+ The overall target of Chemgen is to be used in CFD,
+ wether to calculate source terms on the fly or to calculate in post processing independent of the CFD solver.
+ In either approach it is important to consider how these source terms can be built efficiently into software.
+ Here we outline and label several distinct parallelization approaches that can be utilized.
+ The choice of parallelization comes down to feasibility of implementation (particularly for existing software),
+ size of source term (i.e.
+ 10 reactions vs 1000 reactions),
+ and existing hardware.
+ In The Results section we utilize the malleability given by code generation to implement each of these parallelizations for chemical reaction mechanisms of various sizes and comment on the choice of each algorithm.
+\end_layout
+
+\begin_layout Standard
+Using the above description the following steps can be used in serial to calculate all source terms
+\end_layout
+
+\begin_layout Enumerate
+For all states at every degree of freedom,
+ 
+\begin_inset Formula $y_{f,p}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Calculate chemical state 
+\begin_inset Formula $y_{f,p}\rightarrow y_{c,p}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Calculate all forward reactions,
+ 
+\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Using 
+\begin_inset Formula $\boldsymbol{k_{p}}$
+\end_inset
+
+ calculate all rates of progress 
+\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Calculate all production rates 
+\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The algorithm above when done in serial is 
+\begin_inset Formula $\left(n_{dof}\times n_{r}\right)^{2}\left(n_{dof}\times n_{s}\right)$
+\end_inset
+
+ number of operations and we refer to it as 
+\series bold
+S
+\series default
+ in the following sections.
+ It is the most simple and easy implementation to utilize.
+ As such,
+ it can be regularly be debugged and examined.
+ However,
+ if 
+\begin_inset Formula $n_{r}$
+\end_inset
+
+ or 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+ become large,
+ the source term may become to cumbersome to execute in serial over all degrees of freedom.
+\end_layout
+
+\begin_layout Standard
+Using the first level of parallelization,
+ 
+\series bold
+S
+\series default
+ could be decompose the domain of degrees of freedom and equally distribute the work using the following algorithm
+\end_layout
+
+\begin_layout Standard
+S-d
+\end_layout
+
+\begin_layout Enumerate
+For all states at every degree of freedom,
+ 
+\begin_inset Formula $y_{f,p}$
+\end_inset
+
+ decompose into 
+\begin_inset Formula $d$
+\end_inset
+
+ decomposition,
+ 
+\begin_inset Formula $y_{f,p}|_{d}$
+\end_inset
+
+ of 
+\begin_inset Formula $n_{d}$
+\end_inset
+
+ domains
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+For each domain element,
+ 
+\begin_inset Formula $d$
+\end_inset
+
+,
+ perform the source term calculations in parallel:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Calculate Chemical state 
+\begin_inset Formula $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Calculate all forward reactions,
+ 
+\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Using 
+\begin_inset Formula $\boldsymbol{k_{p}}$
+\end_inset
+
+ calculate all rates of progress 
+\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Calculate all production rates 
+\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Gather 
+\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\end_inset
+
+ to assimilate full set for all degrees of freedom (if necessary).
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+This yields the same number of operations but each domain performs 
+\begin_inset Formula $\left(\frac{1}{n_{d}}\right)^{3}\left(n_{dof}\times n_{r}\right)^{2}\left(n_{dof}\times n_{s}\right)$
+\end_inset
+
+ and we refer to this approach as 
+\series bold
+S-d
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+If available,
+ another tier of parallelization can utilized in multiple ways,
+ for instance the calculations can be further decomposed into individual launches
+\end_layout
+
+\begin_layout Enumerate
+For all states at every degree of freedom,
+ 
+\begin_inset Formula $y_{f,p}$
+\end_inset
+
+ decompose into 
+\begin_inset Formula $d$
+\end_inset
+
+ decomposition,
+ 
+\begin_inset Formula $y_{f,p}|_{d}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+For each domain element,
+ 
+\begin_inset Formula $d$
+\end_inset
+
+,
+ perform the source term calculations in parallel:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Calculate Chemical state 
+\begin_inset Formula $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Thread over the 
+\begin_inset Formula $\frac{1}{n_{d}}n_{dof}n_{r}$
+\end_inset
+
+ calculations to calculate forward reactions,
+ 
+\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Thread over the 
+\begin_inset Formula $\frac{1}{n_{d}}n_{dof}n_{r}$
+\end_inset
+
+ calculations to calculate all rates of progress 
+\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\end_inset
+
+ in domain 
+\begin_inset Formula $d$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Thread over the 
+\begin_inset Formula $\frac{1}{n_{d}}n_{dof}n_{s}$
+\end_inset
+
+ calculations to calculate all production rates 
+\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Gather 
+\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\end_inset
+
+ to assimilate full set for all degrees of freedom (if necessary).
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+We refer to this parallelization as 
+\series bold
+T1.
+ 
+\series default
+Although 
+\series bold
+T1
+\series default
+ is appealing and provides a straightforward transition from 
+\series bold
+S-d,
+ 
+\series default
+the number of thread launches can become expensive,
+ thus we introduce another threading approach that threads over each degree of freedom within the subdomain
+\end_layout
+
+\begin_layout Enumerate
+For all states at every degree of freedom,
+ 
+\begin_inset Formula $y_{f,p}$
+\end_inset
+
+ decompose into 
+\begin_inset Formula $d$
+\end_inset
+
+ decomposition,
+ 
+\begin_inset Formula $y_{f,p}|_{d}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+For each domain element,
+ 
+\begin_inset Formula $d$
+\end_inset
+
+,
+ perform the source term calculations in parallel:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Calculate Chemical state 
+\begin_inset Formula $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Thread over each chemical state in the subdomain
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Calculate the reactions,
+ 
+\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Calculate the rates of progress 
+\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\end_inset
+
+ in domain 
+\begin_inset Formula $d$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Calculate all production rates 
+\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\end_inset
+
+ 
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+Gather 
+\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\end_inset
+
+ to assimilate full set for all degrees of freedom (if necessary).
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+This performs the source term at every threaded degree of freedom in serial.
+ We refer to the parallelization as 
+\series bold
+T2
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+With some rearranging the source term can be assembled over one 
+\begin_inset Formula $n_{r}$
+\end_inset
+
+ threaded loop for each degree of freedom in serial,
+\end_layout
+
+\begin_layout Enumerate
+For all states at every degree of freedom,
+ 
+\begin_inset Formula $y_{f,p}$
+\end_inset
+
+ decompose into 
+\begin_inset Formula $d$
+\end_inset
+
+ decomposition,
+ 
+\begin_inset Formula $y_{f,p}|_{d}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+For each domain element,
+ 
+\begin_inset Formula $d$
+\end_inset
+
+,
+ perform the source term calculations in parallel:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Calculate Chemical state 
+\begin_inset Formula $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Assemble the source term for each chemical state in the subdomain
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Create 
+\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\end_inset
+
+ for storage (if it doesn't already exist)
+\end_layout
+
+\begin_layout Enumerate
+Thread over 
+\begin_inset Formula $n_{r}$
+\end_inset
+
+ reactions,
+ indexed 
+\begin_inset Formula $j$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Enumerate
+individually calculate 
+\begin_inset Formula $k_{j}$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Enumerate
+using 
+\begin_inset Formula $k_{j}$
+\end_inset
+
+ calculate the rates of progress 
+\begin_inset Formula $q_{j}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+for 
+\begin_inset Formula $\nu_{ij}\ne$
+\end_inset
+
+0 add 
+\begin_inset Formula $\nu_{ij}q_{j}$
+\end_inset
+
+ to the existing source term,
+ 
+\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\end_inset
+
+,
+ element 
+\begin_inset Formula $i$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+Gather 
+\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\end_inset
+
+ to assimilate full set for all degrees of freedom (if necessary).
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+This creates on launch per degree of freedom but increases the compute on each thread.
+ We refer to this parallelization as 
+\series bold
+T3.
+\end_layout
+
+\begin_layout Standard
+For all approaches 
+\series bold
+S
+\series default
+,
+ 
+\series bold
+S-d
+\series default
+,
+ 
+\series bold
+T1
+\series default
+,
+ 
+\series bold
+T3
+\series default
+,
+
+\series bold
+ T4,
+ 
+\series default
+there is bound to be a trade off.
+ Some of these methods use several launches to utilize threading which can be expensive,
+ however,
+ if there are many fast threads available the launch time may become negligible.
+ In addition,
+ some of these approaches utilize various compute efficiencies that may be better for different hardware.
+ In CFD chemical source terms are unique in that they are embarrassed of their neighboring degrees of freedom.
+ Quantities such as fluxes and gradients require face contributions that involve other degrees of freedom.
+ It is therefore feasible that the approaches laid out here could be implemented in a variety of CFD software,
+ with the caveat that the performance may not transition due to other factors beholden to the target software.
+\end_layout
+
+\begin_layout Section
+Code Generation
+\end_layout
+
+\begin_layout Standard
+In the ChemGen software there are three main file types.
+ The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
+ The second file type are static code that are ingested by the python code and reformatted to the desired target software.
+ The remaining file types is a mixture of python code used to exercise tests,
+ most of which covered in the results section,
+ Section 5,
+ and yaml files that contain kinetic data.
+\end_layout
+
+\begin_layout Subsection
+The concept of decorators
+\end_layout
+
+\begin_layout Standard
+C++ code takes on many forms.
+ For instance...
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+for a in a_list:
+\end_layout
+
+\begin_layout Plain Layout
+
+	a*a
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Standard
+white
+\end_layout
+
+\begin_layout Standard
+white
+\end_layout
+
+\begin_layout Standard
+white
+\end_layout
+
+\begin_layout Standard
+white
 \end_layout
 
 \begin_layout Standard

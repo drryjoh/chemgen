@@ -1,0 +1,1023 @@
+%% LyX 2.4.2.1 created this file.  For more info, see https://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[twoside,english,3p]{elsarticle}
+\usepackage[LGR,T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{array}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+\DeclareRobustCommand{\greektext}{%
+  \fontencoding{LGR}\selectfont\def\encodingdefault{LGR}}
+\DeclareRobustCommand{\textgreek}[1]{\leavevmode{\greektext #1}}
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+% specify here the journal
+\journal{Computer Physics Communications}
+
+% use this if you need line numbers
+\usepackage{algpseudocode,algorithm,algorithmicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,calc,decorations.pathreplacing}
+
+\makeatother
+
+\usepackage{babel}
+\usepackage{listings}
+\renewcommand{\lstlistingname}{\inputencoding{latin9}Listing}
+
+\begin{document}
+\begin{frontmatter}
+\title{ChemGen: Malleable Chemistry Code Generation with Applications to
+High Performance Computational Fluid Dynamics\author{Ryan F. Johnson, Eric J. Ching, and Andrew D. Kercher}
+\address{Laboratories for Computational Physics and Fluid Dynamics,  U.S. Naval Research Laboratory, 4555 Overlook Ave SW, Washington, DC 20375}
+\author{Hai Wang}
+\address{Stanford University}}
+\begin{keyword}
+lalal
+\end{keyword}
+\begin{abstract}
+lalalal
+\end{abstract}
+\end{frontmatter}
+\global\long\def\middlebar{\,\middle|\,}%
+\global\long\def\average#1{\left\{  \!\!\left\{  #1\right\}  \!\!\right\}  }%
+\global\long\def\expnumber#1#2{{#1}\mathrm{e}{#2}}%
+ \newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+
+\global\long\def\revisionmathone#1{\textcolor{red}{#1}}%
+
+\global\long\def\revisionmathtwo#1{\textcolor{blue}{#1}}%
+
+\global\long\def\revisionmaththree#1{\textcolor{teal}{#1}}%
+
+\makeatletter \def\ps@pprintTitle{  \let\@oddhead\@empty  \let\@evenhead\@empty  \def\@oddfoot{\centerline{\thepage}}  \let\@evenfoot\@oddfoot} \makeatother
+
+\let\svthefootnote\thefootnote\let\thefootnote\relax\footnotetext{\\ \hspace*{65pt}DISTRIBUTION STATEMENT A. Approved for public release. Distribution is unlimited.}\addtocounter{footnote}{-1}\let\thefootnote\svthefootnote
+
+\begin{comment}
+\begin{tabular}{|c|l|l|l}
+\cline{1-3}
+\textbf{Symbol} & \textbf{Definition} & \textbf{Units} & \tabularnewline
+\cline{1-3}
+$c_{p}$ & Specific heat at constant pressure & $J/kg$ & \tabularnewline
+$c_{v}$ & Specific heat at constant volume & $J/kg$ & \tabularnewline
+$C_{i}$ & Concentration of species $i$ & $kmol/m^{3}$ & \tabularnewline
+$\boldsymbol{C}$ & Concentration vector of all species & $kmol/m^{3}$ & \tabularnewline
+$\bar{D}_{i}$ & Mass averaged diffusion Coefficient & $m^{2}/s$ & \tabularnewline
+$D_{ij}$ & Diffusion coefficient of species $i$ to species $j$ & $m^{2}/s$ & \tabularnewline
+$\mathrm{DG}(p=a)$ & Discontinuous Galerkin solution where $a$ is the polynomial degree &  & \tabularnewline
+$e_{t}$ & Total energy & $J/kg$ & \tabularnewline
+$\gamma$ & Ratio of specific heats & $c_{p}/c_{v}$ & \tabularnewline
+$h_{t}$ & Total enthalpy, species specific has subscript $i$ & $J/kg$ & \tabularnewline
+$h$ & grid spacing & $m$ & \tabularnewline
+$\lambda$ & Conductivity, species specific has subscript $i$ & $J/\left(m\cdot s\cdot K\right)$ & \tabularnewline
+$\mu$ & Viscosity, species specific has subscript $i$ & $m^{2}/s$ & \tabularnewline
+$n_{s}$ & Number of species &  & \tabularnewline
+$p$ & Pressure & $kg\cdot m/s^{2}$ & \tabularnewline
+$R^{o}$ & Universal gas constant, $8314.4621$, & $J/\left(kmol\cdot K\right)$$\frac{}{}$ & \tabularnewline
+$\rho$ & Density, & $kg/m^{3}$ & \tabularnewline
+$t$ & time & $s$ & \tabularnewline
+$T$ & Temperature of gas, & $K$ & \tabularnewline
+$\boldsymbol{\tau}$ & Dyadic Stress tensor, & $kg\cdot m/s^{2}$ & \tabularnewline
+$u$ & Internal energy, & $J/kg$ & \tabularnewline
+$\boldsymbol{v}$ & Velocity, & $m/s$ & \tabularnewline
+$\boldsymbol{V}_{i}$ & Species diffusion velocity & $m/s$ & \tabularnewline
+$W_{i}$ & Molecular weight of species $i$ & $kg/kmol$ & \tabularnewline
+$X_{i}$ & Mole fraction of species $i$ &  & \tabularnewline
+$Y_{i}$ & Mass fraction of species $i$ &  & \tabularnewline
+\cline{1-3}
+\end{tabular}
+\end{comment}
+
+
+\section{Introduction\label{sec:Introduction}}
+
+Computational fluid dynamics (CFD) is a widely recognized scientific
+and engineering tool for understanding or predicting fluid behavior
+in situations where experimental data is limited or unavailable, and
+analytical solutions do not exist. The core function of CFD is to
+solve for conserved quantities, such as mass, momentum, and energy
+that satisfy conservation equations in space and time across a defined
+domain. This requires discretizing the conservation equations, such
+as the Navier-Stokes equations, using methods such as the finite volume,
+finite difference, or finite element approaches. CFD relies on large
+volumes of data to describe the fluid, stored at specific points within
+the domain, known as degrees of freedom (DoF). At each degree of freedom,
+the conserved variables are calculated based on the evolution of the
+conservation variables dictated by the modeled conservation equations.
+
+Developing robust CFD software is an accomplishment in itself, given
+the multitude of challenging computational and numerical issues. The
+computational issues include efficient DoF communication in parallel,
+adaptive physical modeling, parallel computation, and managing complex
+geometries. Additionally, there are significant numerical challenges,
+such as stability-preserving methods, flux representation strategies,
+temporal integration techniques, and the development of robust boundary
+conditions. There is not one CFD software that seamlessly addresses
+all these diverse issues, giving rise to continued research into a
+variety of computational and numerical approaches to accelerate CFD
+while simultaneously modeling a fluid robustly. This gives rise to
+a family of CFD codes, ranging from experimental in-house codes for
+demonstrating new technologies, to established off-the-shelf softwares
+used for production level engineering simulations.
+
+To model non-reacting phenomena, CFD focuses on the conservation variables
+related to mass, momentum, and energy of the fluid. For example, a
+three-dimensional compressible fluid simulation involves five primary
+continuum variables: energy, mass, and a three-component momentum
+vector. This gives $n_{y}=n_{c}=5$, where $n_{c}$ is the number
+of conserved non-reacting variables, and $n_{y}$ is the total state
+size. In many cases, existing non-reacting CFD software built around
+these five variables can be adapted for chemically reacting flows
+by expanding the state to include chemical species. This adaptation
+involves extending the state size to encompass the chemical species
+necessary to model reactions, calculating their fluxes along with
+the original variables, and incorporating $n_{r}$ chemical reactions.
+This increases the state size to $n_{y}=n_{s}+n_{c}$ , where $n_{s}$
+represents the number of chemical species. Detailed chemical mechanisms
+may involve hundreds of species and thousands of reactions, typically
+with $n_{r}\approx5n_{s}$. The number of species increases with the
+complexity of the fuel, for instance the \_\_\_ model for hydrogen
+is 10 chemical species with \#\# reactions and the \_\_ model for
+JP-10 is \#\# species with \#\# reactions.
+
+In order to adapt the most fundamental chemically reacting flow into
+an existing single component CFD software three main features must
+be added:
+\begin{enumerate}
+\item \textbf{The thermodynamics must be updated to thermally perfect equation
+of state.} Most single-component formulations assume frozen gas thermodynamics,
+where pressure is directly related to internal energy. However, this
+assumption does not hold for multicomponent systems, requiring careful
+adjustments to ensure consistent computations between energy and temperature
+and pressure dependent relationships.\label{enu:thermo}
+\item \textbf{The ability to compute a source term. }The simplest CFD Navier-Stokes
+models typically do not include a source term, as it is not inherently
+part of the formulation. In these models, momentum, energy, and mass
+have no sources or sinks to add or remove them from the domain; instead,
+the conserved variables are transported and diffused.\label{enu:source}
+\item \textbf{Multicomponent transport models. }Mixture based transport
+quantities, such as viscosity and conductivity, would need to be adapted
+to multicomponent mixture models. In addition, the diffusion of each
+species needs to be considered with a transport method as well.
+\end{enumerate}
+There are several approaches to integrate these features, with the
+most common being:
+\begin{enumerate}
+\item Locate and adapt existing Fortran code from early versions of Chemkin
+(cite) or Senkin (cite) for the target CFD.\label{enu:chemkin}
+\item Use the more widely adopted, open-source, and actively maintained
+Cantera (cite), which can serve as a third-party library in C++ and
+Fortran source codes, as well as in interpretive languages like Python
+and MATLAB.\label{enu:cantera}
+\item Manually code new physical models, such as source term reactions,
+thermodynamic fits, and transport properties.\label{enu:manual}
+\item Use code generation tools to read the chemical mechanism and produce
+adaptable source code in the desired format for the CFD software.\label{enu:software}
+\end{enumerate}
+\ref{enu:chemkin} and \ref{enu:cantera} are reasonable choices for
+demonstration cases, but they present certain challenges. With \ref{enu:chemkin},
+the existing Chemkin and Senkin routines may not easily adapt to the
+specific requirements of the targeted CFD software, which can limit
+scalability and complicate code maintenance. For \ref{enu:cantera},
+although the package is excellent for property calculations and other
+critical combustion scenarios, it is a third-party library, limiting
+control over functions. Data would need to be transferred back and
+forth between the CFD's degrees of freedom (DoF) and Cantera, potentially
+restricting access to essential computational acceleration techniques.
+Additionally, relying on a third-party library like Cantera may hinder
+compatibility with targeted architectures that developers cannot directly
+access.Using \ref{enu:manual} can also be challenging; it often requires
+extensive, solitary work by developers, as the necessary models would
+need to be built from scratch (further described in Section \ref{sec:governing_equations}).
+The focus of this work is \ref{enu:software}, a tool that can generate
+source code compatible with the existing ecosystem of the target CFD
+software
+
+Code generation is a well-established concept, with a history in chemistry
+applications. There are two publicly available code generators focused
+on gas-phase combustion: PyJac (https://github.com/SLACKHA/pyJac)
+and Pyrometheus (https://github.com/ecisneros8/PyPrometheus). PyJac
+specializes in generating analytical source term Jacobians for non-fluid-based
+states, which can be used to speed up the computation of chemical
+species evolution. However, PyJac's last public commit was six years
+ago. Pyrometheus generates either C++ header files or Python files
+for gas-phase combustion calculations, incorporating several on-the-fly
+optimizations to enhance scalability for high-performance computing
+in CFD. Although Pyrometheus's last public commit was four years ago,
+we are in contact with the developers, who are actively working on
+a private GitHub project to continue Pyrometheus's development. Mutation++?
+
+In this work, we introduce the first iteration of ChemGen, a software
+package that leverages code generation to integrate multispecies thermodynamics
+and chemical kinetics into C++ based CFD codes. ChemGen utilizes decorators,
+discussed in detail in Section 3, to enable flexible C++ code generation
+tailored to existing software ecosystems. It also offers versatility
+in reaction rate calculations, allowing them to be evaluated in pure
+serial or adapted for parallel execution by modifying a few key functions.
+ChemGen currently focuses on thermodynamic properties and source term
+generation. Future versions will aim to incorporate detailed transport
+calculations, provide fully chemically reacting flow states, offer
+rapid analytical Jacobians for fluid dynamic states, and deliver scalable
+solvers for chemical state evolution.
+
+This paper is organized as follows. First, we provide an in-depth
+background on high-performance computing in CFD, focusing on how various
+computational architectures can accelerate CFD and how chemistry can
+be cohesively implemented. Next, we offer an overview of ChemGen’s
+current capabilities and its application within CFD software. We then
+discuss the formulation in the context of compressible, chemically
+reacting flows, covering the thermodynamic relationships for multi-species
+fluids, accepted reaction rate formulations, and the creation of source
+terms. Following this, we introduce several publicly available C++
+codes and the concept of decorators as implemented in ChemGen.
+
+We demonstrate ChemGen’s standalone code generation with examples
+showcasing its adaptability for distributed computing using MPI, Thread
+Building Blocks (TBB), and GPU-based threading, with a discussion
+on its integration potential with existing CFD models. Finally, we
+illustrate the integration of a ChemGen-generated source term within
+the open-source CFD code NEKRS
+
+\subsection{Background}
+
+\subsubsection{High Performance Computing in CFD}
+
+\subsubsection{Overloads and Templates in C++ and the Concept of Decorators for
+Code Generation}
+
+\subsection{ChemGen Prospectus}
+
+ODE:
+
+As The CFD algorithm can be simplified by solving the chemical mass
+action separately from the fluid transport. This approximation allows
+the chemical kinetics problem at each grid cell or vertex to be integrated
+independently over the specified time step size \textgreek{δ}t. At
+each element, the Ns mass fractions and enthalpy (or temperature)
+are solved as a system of Ns+1 stiff ordinary differential equations
+(ODEs). Even with the preceding simplification, the cost of solving
+the ODEs can be prohibitive. New algorithmic and computer science
+techniques such as massive parallel computing can significantly reduce
+the computational cost and are therefore of great interest to combustion
+simulation developers throughout the propulsion and power community.
+An alternative approach exploits the available 
+
+\section{Governing equations and Chemical Kinetics \label{sec:governing_equations}}
+
+ChemGen is suitable for low-Mach flows that decouple pressure from
+the energy equation; however, in this work, we focus on a compressible
+CFD formulation without viscous terms. Here, we primarily highlight
+the interaction between the fluid dynamic state, $y_{f}$, and the
+chemical state, $y_{c}$. By using the source term and thermodynamics
+described in the following sections, code generated by ChemGen can
+effectively transition a single-component, calorically perfect Euler
+formulation to a chemically reacting Euler formulation. In Section
+\#\#\#, we discuss how a chemically reacting Euler formulation can
+be adapted to a simplified reacting Navier-Stokes formulation by making
+assumptions about the mixture's transport properties. Future versions
+of ChemGen will support diffusive and convective flux models, but
+here we demonstrate ChemGen's role in generating source terms for
+integration with existing CFD codes. 
+
+The multicomponent chemically reacting Euler equations are given as
+\begin{equation}
+\frac{\partial y_{f}}{\partial t}+\nabla\cdot\mathcal{F}\left(y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\label{eq:conservation-law-strong-form}
+\end{equation}
+where $t\in\mathbb{R}^{+}$ is time, $y_{f}(x,t):\mathbb{R}^{d}\times\mathbb{R}^{+}\rightarrow\mathbb{R}^{m}$
+is the conservative state vector (with $x=(x_{1},\ldots,x_{d})$ denoting
+the physical coordinates), $\mathcal{F}(y_{f}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m\times d}$
+is the convective flux, $\mathcal{S}(y_{f}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m}$
+is the chemical source term. The fluid dynamic state is
+
+\begin{equation}
+y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state}
+\end{equation}
+where $n_{s}$ is the number of species (which yields $m=d+n_{s}+1$),
+$\rho$ is density, $v=\left(v_{1},\ldots,v_{d}\right)$ is the velocity,
+$e_{t}$ is the mass-specific total energy, and $C=\left(C_{1},\ldots,C_{n_{s}}\right)$
+are the species concentrations. The density is computed from the species
+concentrations as
+
+\[
+\rho=\sum_{i=1}^{n_{s}}\rho_{i}=\sum_{i=1}^{n_{s}}W_{i}C_{i},
+\]
+
+\noindent where $\rho_{i}$ is the partial density and $W_{i}$ is
+the molecular mass of the $i$th species. The mass fraction of the
+$i$th species is defined as 
+\[
+Y_{i}=\frac{\rho_{i}}{\rho}.
+\]
+
+\noindent The $k$th spatial convective flux component is written
+as
+\begin{equation}
+\mathcal{F}_{k}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
+\end{equation}
+where $p$ is the pressure. The mass-specific total energy is the
+sum of the specific internal and kinetic energies, given by
+
+\[
+e_{t}=u+\frac{1}{2}\sum_{k=1}^{d}v_{k}v_{k},
+\]
+where the (mixture-averaged) mass-specific internal energy, $u$,
+is the mass-weighted sum of the mass-specific internal energies of
+each species:
+\[
+u=\sum_{i=1}^{n_{s}}Y_{i}u_{i}.
+\]
+
+The chemical state is
+
+\begin{equation}
+y_{c}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}},\right)^{T},\label{eq:reacting-navier-stokes-state-1}
+\end{equation}
+which is the complete state needed to calculate $\mathcal{S}\left(y\right)$.
+The species concentrations, $C_{i}$, are all conserved quantities
+and can be extracted readily extracted from the fluid dynamic state.
+In the next section we expand on how to calculate temperature from
+internal energy using a nonlinear solve, $\rho u\left(C_{i},T\right)\rightarrow T$,
+which immediately gives the pressure from the fluid dynamic state
+
+\[
+p=R^{o}T\sum_{i=1}^{n_{s}}C_{i},
+\]
+with $R^{0}=8314.4621\,\mathrm{JKmol}^{-1}\mathrm{K}^{-1}$ denoting
+the universal gas constant. It is common to utilize $\ln T$ in the
+chemical state as a precomputed value to avoid over computing logarithms
+and incorporate it into optimizations. Finally the mixture concentration,
+
+\[
+M_{c}=\sum_{i=1}^{n_{s}}C_{i}=\frac{p}{R^{o}T},
+\]
+is utilized in various reactions, such as third body reactions with
+no specified efficiencies. ChemGen creates this chemical state in
+the source term function prior to any other evaluations so that their
+values are readily available.
+
+\subsection{Thermodynamics}
+
+This work assumes thermally perfect gases, with $u_{i}$ given by~\citep{Gio99}
+\begin{equation}
+u_{i}=h_{i}-R_{i}T=h_{\mathrm{ref},i}+\int_{T_{\mathrm{ref}}}^{T}c_{p,i}(\tau)d\tau-R_{i}T,\label{eq:internal_energy_identity}
+\end{equation}
+where $h_{i}$ is the mass-specific enthalpy of the $i$th species,
+$R_{i}=R^{0}/W_{i}$, $T$ is the temperature, $T_{\mathrm{ref}}$
+is the reference temperature (298.15 K), $h_{\mathrm{ref},i}$ is
+the reference-state species formation enthalpy, and $c_{p,i}$ is
+the mass-specific heat capacity at constant pressure of the $i$th
+species. $c_{p,i}$ is computed from an $n_{p}$-order polynomial
+as
+\begin{equation}
+c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k},\label{eq:specific_heat_polynomial}
+\end{equation}
+based on the NASA coefficients~\citep{Mcb93,Mcb02}. For efficiency
+purposes, ChemGen re-fits the polynomial for $c_{p,i}$ to arbitrary
+order. Thus, in order to establish consistent thermodynamics the identity
+for internal energy must be satisfied from Equation~(\ref{eq:internal_energy_identity}),
+thus the following relationships are used with pre-computed coefficients,
+
+\begin{equation}
+h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}\label{eq:entahlpy-polynomial}
+\end{equation}
+
+\begin{equation}
+u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k},\label{eq:internal-energy-polynomial}
+\end{equation}
+Here we target $h_{i}(T=298\text{K})$ as a standard enthalpy that
+can be obtained from the existing NASA coefficients or from utilizing
+any number of thermodynamics packages,
+
+\begin{equation}
+h_{\text{ref},i}=h_{i}(T=298\text{K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1},\label{eq:enthalpy-adjustment}
+\end{equation}
+
+\begin{equation}
+b_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k\geqq1\\
+h_{\text{ref},i}, & k=0.
+\end{cases}\label{eq:enthalpy_coeffs}
+\end{equation}
+
+\begin{equation}
+c_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k>1\\
+a_{i,0}-R & k=1\\
+h_{\text{ref},i}, & k=0.
+\end{cases}\label{eq:internal-energy-coeffs}
+\end{equation}
+This integration requires two monomial sequences for temperature,
+one to the power $n_{p}$, $\boldsymbol{T}_{n_{p}}=\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
+and one to the power $n_{p}+1$, $\boldsymbol{T}_{n_{p}+1}=\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$
+which can then be simply contracted with the respective array of coefficients,
+for example $u_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p}+1}\right>$
+where $\boldsymbol{C}_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})$.
+
+The mass-specific thermodynamic entropy of the mixture is defined
+as
+\begin{equation}
+s=\sum_{i=1}^{n_{s}}Y_{i}s_{i},\label{eq:entropy-mass-definition}
+\end{equation}
+with $s_{i}$ given by
+\begin{equation}
+s_{i}=s_{i}^{o}-R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}},\quad s_{i}^{o}=s_{\mathrm{ref},i}^{o}+\int_{T_{\mathrm{ref}}}^{T}\frac{c_{p,i}(\tau)}{\tau}d\tau,\label{eq:species-entropy-definition}
+\end{equation}
+where $s_{\mathrm{ref},i}^{o}$ is the species formation entropy at
+the reference temperature and reference pressure ($P_{\mathrm{ref}}=1\text{ atm}$),
+$s_{i}^{o}$ denotes the species entropy at atmospheric pressure,
+and $P_{i}=C_{i}R^{0}T$ is the partial pressure. The $R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}}$
+which accounts when the gas is not at atmospheric pressure conditions
+will be utilized in mixture averaged calculations covered later; the
+term depends on concentration as well as temperature and can be addressed
+downstream of these thermodynamic relations. Focusing then on using
+the Equation~(\ref{eq:specific_heat_polynomial}) a polynomial for
+$s_{i}^{o}$ entropy quantity is thus
+
+\begin{equation}
+s_{i}^{o}=s_{\mathrm{ref},i}^{o}+a_{o}\ln T+\sum_{k=1}^{n_{p}}\frac{a_{ik}}{k}T^{k}=a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k},\label{eq:entropy_polynomial}
+\end{equation}
+where
+
+\begin{equation}
+d_{ik}=\begin{cases}
+\frac{a_{i,k}}{k}, & k\geq1\\
+s_{\mathrm{ref},i}^{o} & k=0.
+\end{cases}\label{eq:entropy-coeffs}
+\end{equation}
+Finally the Gibbs free energy per species is
+
+\begin{equation}
+g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}\right)T=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}T\ln T+\sum_{k=1}^{n_{p}+1}d_{i,k-1}T^{k}\right)\label{eq:gibbs-deriviation}
+\end{equation}
+
+\begin{equation}
+g_{i}=b_{i0}-a_{io}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}}T^{n_{p}+1}\label{eq:gibbs-reformatted}
+\end{equation}
+Which can be represented like the entropy fit as
+
+\begin{equation}
+g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}\label{eq:gibbs-polynomial}
+\end{equation}
+This gives two new temperature monomials additional elements, one
+to the power $n_{p}$ with a $\ln T$, $\boldsymbol{T}_{n_{p},\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}},\ln T\right)$
+and one to the power $n_{p}+1$, $\boldsymbol{T}_{n_{p}+1,T\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}+1},-T\ln T\right)$
+which can then be simply contracted with the respective array of coefficients,
+$s_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p},\ln T}\right>$
+where $\boldsymbol{C}_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{0})$
+and $g_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p}+1,T\ln T}\right>$
+where $\boldsymbol{C}_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{0})$.
+
+\begin{comment}
+$s_{i}$ can also be expressed as~\citep{Gio99,Gou20,Gou20_2}
+\[
+s_{i}=s_{\mathrm{ref},i}^{o}+\int_{T_{\mathrm{ref}}}^{T}\frac{c_{v,i}(\tau)}{\tau}d\tau-R_{i}\log\frac{C_{i}}{C_{\mathrm{ref}}},
+\]
+where $C_{\mathrm{ref}}=P_{\mathrm{ref}}/R^{0}T_{\mathrm{ref}}$ is
+the reference concentration and $c_{v,i}=c_{p,i}-R_{i}$ is the mass-specific
+heat capacity at constant volume of the $i$th species. Summing up
+the partial pressures yields the equation of state for the mixture:
+\begin{equation}
+P=R^{0}T\sum_{i=1}^{n_{s}}C_{i}.\label{eq:EOS}
+\end{equation}
+$u_{i}$, $h_{i}$, and $s_{i}^{o}$ are computed by integrating Equation~(\ref{eq:specific_heat_polynomial}). 
+\end{comment}
+
+\begin{tabular}{|>{\centering}p{1.35in}|>{\centering}p{1.95in}|>{\centering}p{2.6in}|}
+\hline 
+Thermodynamic Quantity & Fit & Coefficient Description\tabularnewline
+\hline 
+\hline 
+Species specific heat at 
+
+constant pressure, $c_{p,i}$ & $c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k}$ & Re-fit from existing data\tabularnewline
+\hline 
+Species specific enthalpy, $h_{i}$ & $h_{i}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}$ & $b_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k\geqq1\\
+h_{\text{ref},i}, & k=0
+\end{cases}$;
+
+$h_{\text{ref},i}=h_{i}(T=298)-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1}$\tabularnewline
+\hline 
+Species specific internal energy, $u_{i}$ & $u_{i}=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k}$ & $c_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k>1\\
+a_{i,0}-R & k=1\\
+h_{\text{ref},i}, & k=0.
+\end{cases}$\tabularnewline
+\hline 
+Species specific entropy
+
+at reference pressure, $s_{i}^{o}$ & $s_{i}^{o}=a_{o}\ln T+\sum_{k=0}^{n_{p}+1}d_{ik}T^{k}$ & $d_{ik}=\begin{cases}
+\frac{a_{i,k}}{k}, & k\geq1\\
+s_{\mathrm{ref},i}^{o} & k=0.
+\end{cases}$\tabularnewline
+\hline 
+Species specific Gibbs
+
+free energy, $g_{i}$ & $g_{i}=-a_{i0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}$ & $f_{ik}=\begin{cases}
+\left(\frac{1}{k}-\frac{1}{k-1}\right)a_{i,k-1} & n_{p}+1>k>1\\
+a_{i,0}-s_{\mathrm{ref},i}^{o} & k=1\\
+h_{\text{ref},i} & k=0.
+\end{cases}$\tabularnewline
+\hline 
+\end{tabular}
+
+Full differentiability will be the focus of future ChemGen releases,
+however it is efficient to utilize the Newton method to extract temperature
+from internal energy which requires its derivative. Internal energy
+is typically part of a conserved state, for instance, the total energy
+formulation as outlined above would have the conserved variable of
+total energy as:
+
+\begin{equation}
+\rho e_{t}=\rho u+\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k}
+\end{equation}
+where the term $\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k}$ can be
+computed from other conserved variables, momentum $\rho v_{k}$ and
+species $v_{k}=\frac{\rho v_{k}}{\sum W_{i}C_{i}}$. Thus one can
+directly compute the internal energy at any time:
+
+\begin{equation}
+\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t}
+\end{equation}
+Newton's method are extremely accurate once converged and can be quite
+efficient when using exact derivatives, especially for scalar functions
+such as energy as a function of temperature, which does not require
+the inversion of a matrix. Included in ChemGen is a Newton iteration
+that is of the form
+
+\begin{equation}
+T_{n+1}=T_{n}-\frac{\rho u(T_{n})}{\frac{\partial\rho u(T_{n})}{\partial T}}.\label{eq:netwon_iteration_temperature}
+\end{equation}
+where $T_{n}$is the current guess (starting from $T_{0}$ an initial
+prescribed guess) and $T_{n+1}$ is the new guess. Here the terms
+in the fraction are
+
+\begin{equation}
+\rho u(T_{n})=\rho\sum_{i=1}^{n_{s}}Y_{i}u_{i}(T_{n})=\rho\sum_{i=1}^{n_{s}}\frac{W_{i}C_{i}}{\rho}u_{i}(T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p}+1}\right>
+\end{equation}
+ and
+
+\begin{equation}
+\frac{\partial\rho u(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<\boldsymbol{C}_{i},\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}\right>
+\end{equation}
+with 
+
+\begin{equation}
+\boldsymbol{C}_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})
+\end{equation}
+and
+
+\begin{equation}
+\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}=\left(0,1,2T,\dots,\left(n_{p}+1\right)T^{n_{p}}\right)
+\end{equation}
+In the iteration for temperature an optimization can be made considering
+that the species, $C_{i}$, are frozen. The coefficients can be pre-computed
+before the iterations to remove the need of extra contractions,
+
+\begin{equation}
+\boldsymbol{C}_{i}^{\dagger}=(W_{i}C_{i}c_{i,0},W_{i}C_{i}c_{i,1},W_{i}C_{i}c_{i,2},\dots,W_{i}C_{i}c_{i,n_{p}+1})
+\end{equation}
+which results in
+
+\begin{equation}
+T_{n+1}=T_{n}-\frac{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\boldsymbol{T}_{n_{p}+1}\right>}{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}\right>}
+\end{equation}
+Starting with a guess value, $T_{0}$, a target tolerance of $\epsilon$
+can be used or a set number of iterations, $n_{T}$, can be used to
+terminate the Newton iterations. It's important to note that a target
+tolerance could cause small divergences in threaded process, so keeping
+a set number of iterations would be ideal. ChemGen generates both
+target tolerance and set number of iterations. In general, we have
+found in our past work that $n_{T}=3$ is sufficient to be within
+$1e-8$ relative error for a variety of mechanisms at different temperatures.
+
+\subsection{Chemical reaction rates and their ChemGen Representations\label{subsec:chemical-reaction-rates}}
+
+The source term in Equation~(\ref{eq:conservation-law-strong-form})
+is a smooth function of the state variables, written as~\citep{Kee96}
+
+\begin{equation}
+\mathcal{S}\left(y\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-source-term}
+\end{equation}
+where $\omega_{i}$ is the production rate of the $i$th species,
+which satisfies mass conservation:
+\begin{equation}
+\sum_{i=1}^{n_{s}}W_{i}\omega_{i}=0.\label{eq:chemical-reaction-mass-conservation}
+\end{equation}
+The production rate is computed as
+\[
+\omega_{i}=\sum_{j=1}^{n_{r}}\nu_{ij}q_{j}.
+\]
+$n_{r}$ is the number of reactions, $\nu_{ij}=\nu_{ij}^{r}-\nu_{ij}^{f}$
+is the difference between the reverse ($\nu_{ij}^{r}$) and the forward
+stoichiometric coefficients ($\nu_{ij}^{f}$), and $q_{j}$ is the
+rate of progress of the $j$th reaction, computed as
+\begin{equation}
+q_{j}=k_{j}^{f}\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}-k_{j}^{r}\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}},\label{eq:chemical-reaction-rate-of-progress}
+\end{equation}
+where $k_{j}^{f}$ and $k_{j}^{r}$ are the forward and reverse rate
+constants, respectively, of the $j$th reaction. The forward and reverse
+rate constants are related via the equilibrium constant 
+
+\begin{equation}
+K_{j}^{e}=\frac{k_{j}^{f}}{k_{j}^{r}}\rightarrow k_{j}^{r}=\frac{k_{j}^{f}}{K_{j}^{e}}\label{eq:reverse_rate}
+\end{equation}
+where
+\begin{equation}
+K_{j}^{e}=\exp\left(-\frac{\Delta G_{j}'}{R^{0}T}\right)\left(\frac{p_{\mathrm{ref}}}{R^{0}T}\right)^{\sum_{i}\nu_{ij}},\label{eq:equilibrium-constant-1}
+\end{equation}
+where $\Delta G_{j}'$ is the change in reference-state Gibbs free
+energy for the $j$th reaction, given as
+\[
+\Delta G_{j}'=\sum_{i=1}^{n_{s}}\nu_{ij}g_{i}.
+\]
+where $g_{i}=h_{i}-Ts_{i}$ is the Gibbs function of the $i$th species.
+For this the term 
+\begin{align*}
+\left(\frac{p_{ref}}{R^{0}T}\right)^{\sum_{i}\nu_{ij}}
+\end{align*}
+in~(\ref{eq:equilibrium-constant-1}) ChemGen inspects $\sum_{i}\nu_{ij}$
+and finds the specific power, if it is an positive integer $\left(\frac{P_{\mathrm{ref}}}{R^{0}T}\right)$
+is expressed as a series of multiplications, ie. $\sum_{i}\nu_{ij}=3$
+gives $\left(\frac{p_{\mathrm{ref}}}{R^{0}T}\right)\cdot\left(\frac{p_{\mathrm{ref}}}{R^{0}T}\right)\cdot\left(\frac{p_{pref}}{R^{0}T}\right)$
+with $1/R^{0}T$ precomputed, if it is negative integer, $1/p_{ref}$
+is precomputed and a series of multiplication are carried in a similar
+manner. This removes the need to use the power function. Without code
+generation these types of expressions are bound to utilizing power
+functions or possibly if-statements that default to multiplication
+after inspecting the value of $\sum_{i}\nu_{ij}$.
+
+There exist various models for approximating the forward rate functions,
+$k_{j}^{f}$, in Equation~(\ref{eq:chemical-reaction-rate-of-progress}),
+all of the supported functions of which chemgen supports will discussed
+next.
+
+\subsubsection{Arrhenius reactions}
+
+The Arrhenius form is the most common model for approximating reaction
+rates. The forward rate constants are computed as
+\[
+k_{j}^{f}=k_{A,j}^{f}(T)=A_{j}T^{b_{j}}\exp\left(-\frac{E_{j}}{R^{0}T}\right),
+\]
+ where $A_{j}>0$ and $b_{j}$ are parameters and $E_{j}\geq0$ is
+the activation energy~\citep{Gio99,Kee96}. In ChemGen an optimization
+is made to again avoid the power function. Generally, $b_{j}$ is
+not an integer, however, since the $\exp$ function is unavoidable,
+we can utilize the precomputed $\ln T$ and insert an additional term
+in the exponent
+
+\[
+k_{A,j}^{f}(T,\ln T)=A_{j}\exp\left(\beta_{j}\ln T-\frac{E_{j}}{R^{0}T}\right).
+\]
+
+
+\subsubsection{Three-body reactions}
+
+These reactions require a ``third body'' in order to proceed. Dissociation
+and recombination reactions are often of this type. The rate of progress
+is scaled by a prefactor as~\citep{Kee96}
+\begin{equation}
+q_{j}=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)\left(k_{j}^{f}\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}-k_{j}^{r}\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}}\right),\label{eq:third_body}
+\end{equation}
+where $\alpha_{ij}$ are the third-body efficiencies. In ChemGen,
+the rate of progress is kept the same for a down stream calculation,
+so ~(\ref{eq:chemical-reaction-rate-of-progress}), can still be
+utilized the prefactor is incorporated with the Arrenhius expression
+
+\[
+k_{j}^{f}=k_{TB,j}^{f}(C_{i},M_{c},T,\ln T)=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f}(T,\ln T)=\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right)k_{A,j}^{f}(T,\ln T)
+\]
+which will still be attributed to the second term in ~(\ref{eq:third_body})
+via the relationship of $k_{j}^{f}$ to $k_{j}^{r}$ from ~(\ref{eq:reverse_rate}).
+An additional optimization can be made in the code generation process
+for the $\alpha_{ij}$ terms. The efficiencies always default to one,
+$\alpha_{ij}=1$, so for any species without a specific efficiency
+the $\left(\alpha_{ij}-1\right)C_{i}$ term can be removed, avoiding
+extra work to determine the efficiency from a sum of products of all
+species to a sum of products of all species with $\alpha_{ij}\ne1$. 
+
+\subsubsection{Fall-off reactions\label{subsec:fall-off-reactions}}
+
+Unimolecular/recombination fall-off reactions incorporate a dependence
+on pressure. In general, this model predicts an increase in the reaction
+rate with increasing pressure. Given Arrhenius-type low-pressure and
+high-pressure limits for the rate functions ($k_{A,0,j}$ and $k_{A,\infty,j}$,
+respectively with their own $A_{j}$, $b_{j}$, and $E_{j}$ constant),
+$k_{j}^{f}$ is computed as
+\begin{equation}
+k_{j}^{f}=k_{FO,j}^{f}(C_{i},M_{c},T,\ln T)=k_{A,\infty,j}(T,\ln T)\left(\frac{P_{r}(C_{i},M_{c},T,\ln T)}{1+P_{r}(C_{i},M_{c},T,\ln T)}\right)F,\label{eq:falloff-reaction}
+\end{equation}
+where $P_{r}$ is the reduced pressure, defined as
+\[
+P_{r}(C_{i},M_{c},T,\ln T)=\frac{k_{A,0,j}(T,\ln T)}{k_{A,\infty,j}(T,\ln T)}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right).
+\]
+Where the same optimization for efficiencies can be made There is
+a family different fall off functions which all revolve in a different
+way to approximate $F$, known as the broadening term, which we outline
+in the following
+
+\subsubsection*{Troe Broadening}
+
+For the Troe fall-off reaction the broadening term, $F$, in Equation~(\ref{eq:falloff-reaction})
+is computed using the following 
+
+\begin{eqnarray}
+\log_{10}F(T,P_{r}) & = & \frac{\log_{10}F_{cent}(T)}{1+f_{1}(P_{r})^{2}}\label{eq:f_and_fcent}\\
+F_{cent}(T) & = & (1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T)\nonumber \\
+f_{1} & = & (\log_{10}P_{r}+c)/(n-0.14(\log_{10}P_{r}+c))\nonumber \\
+c & = & -0.4-0.67\;\log_{10}F_{cent}\nonumber \\
+n & = & 0.75-1.27\;\log_{10}F_{cent}\nonumber 
+\end{eqnarray}
+The origin of the of are given in~\citep{Tro77,Tro79,Gil83,Tro87}.
+
+\subsubsection*{Tsang Broadening}
+
+In the Tsang {[}cite{]} broadening approach $F_{cent}$in Equation~\ref{eq:f_and_fcent}
+is simply
+
+\[
+F_{cent}=A+BT
+\]
+with the remaining features, $f_{1}$, $c$, and $n$, computed in
+the same way the Troe formulation. 
+
+\subsubsection*{SRI Broadening}
+
+In the SRI {[}cite{]} broadening approach $F$ is replaced entirely
+by:
+
+\[
+F(T,P_{r})=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e}
+\]
+
+
+\subsubsection*{Lindemann Form
+\[
+F(T,P_{r})=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e}
+\]
+}
+
+\subsubsection{Chemically activated bimolecular reactions}
+
+Reactions of this type are also pressure-dependent, but the reaction
+rates typically decrease with increasing pressure. The rate constants
+are computed as~\citep{Kee96}
+\[
+k=k_{0}\left(\frac{1}{1+P_{r}}\right)F,
+\]
+where $k_{0}$, $P_{r}$, and $F$ are calculated as in Section~\ref{subsec:fall-off-reactions}.
+
+\section{Calculation of the Source Term\label{subsec:sourceterm}}
+
+There are several ways the reactions rates can be accrued to create
+the actual source term applied to the species conservation equations.
+The most simple approach would be to use the chemical state at every
+degree of freedom to calculate the forward reactions,
+
+\begin{equation}
+\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)\label{eq:forward_rates_vector}
+\end{equation}
+Here we represent the entirity of forward reactions as $\boldsymbol{k_{p}}$
+where the subscript $p$represents a particularly degree of freedom.
+At every degree of freedom there is a unique chemical state, $y_{c,p}$
+that yields $n_{r}\times n_{dof}$ forward reactions. Once the forward
+reactions are calculated the rates of progress can then be computed
+and assembled as
+
+\begin{equation}
+\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right),\label{eq:progress_rates_vector}
+\end{equation}
+where 
+
+\begin{equation}
+q_{j,p}=k_{j}^{f}\left(y_{c,p}\right)\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}-\frac{k_{j}^{f}\left(y_{c,p}\right)}{K_{j}^{e}}\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}}.\label{eq:progress_rates_element}
+\end{equation}
+This again $n_{r}\times n_{dof}$ rates of progress. The formulation
+in Equation~\ref{eq:progress_rates_element} is reduced in Chemgen
+by removing any zero-power terms and substituting multiplication operations
+for any whole number power in the terms
+
+\[
+\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}\text{ and }\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}}.
+\]
+For instance, the reaction $k_{1}$ describing the global reaction
+of hydrogen and oxygen becoming water,
+
+\[
+2H_{2}+O_{2}\rightleftharpoons2H_{2}O,
+\]
+where $\left(C_{0},C_{1},C_{2}\right)=\left(C_{H_{2}},C_{O_{2}},C_{H_{2}O}\right)$,
+reduces to 
+
+\begin{equation}
+q_{1,p}=k_{1}^{f}\left(y_{c,p}\right)C_{0}^{2}C_{1}-\frac{k_{1}^{f}\left(y_{c,p}\right)}{K_{1}^{e}}C_{2}^{2}=k_{1}^{f}\left(y_{c,p}\right)C_{0}C_{o}C_{1}-\frac{k_{1}^{f}\left(y_{c,p}\right)}{K_{1}^{e}}C_{2}C_{2}\label{eq:progress_rates_reduced}
+\end{equation}
+Finally, the rates of progress can then be assembled into the final
+net production rate 
+
+\[
+\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right),
+\]
+where
+
+\[
+\omega_{i}=\sum_{j=1}^{n_{r}}\nu_{ij}q_{j}.
+\]
+This results in $n_{n_{s}}\times n_{dof}$ source terms.
+
+\subsection{Parallelization}
+
+Several optimizations can be made in the code generation of the source
+term calculations. The overall target of Chemgen is to be used in
+CFD, wether to calculate source terms on the fly or to calculate in
+post processing independent of the CFD solver. In either approach
+it is important to consider how these source terms can be built efficiently
+into software. Here we outline and label several distinct parallelization
+approaches that can be utilized. The choice of parallelization comes
+down to feasibility of implementation (particularly for existing software),
+size of source term (i.e. 10 reactions vs 1000 reactions), and existing
+hardware. In The Results section we utilize the malleability given
+by code generation to implement each of these parallelizations for
+chemical reaction mechanisms of various sizes and comment on the choice
+of each algorithm.
+
+Using the above description the following steps can be used in serial
+to calculate all source terms
+\begin{enumerate}
+\item For all states at every degree of freedom, $y_{f,p}$
+\begin{enumerate}
+\item Calculate chemical state $y_{f,p}\rightarrow y_{c,p}$
+\item Calculate all forward reactions, $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\item Using $\boldsymbol{k_{p}}$ calculate all rates of progress $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\item Calculate all production rates $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$ 
+\end{enumerate}
+\end{enumerate}
+The algorithm above when done in serial is $\left(n_{dof}\times n_{r}\right)^{2}\left(n_{dof}\times n_{s}\right)$
+number of operations and we refer to it as \textbf{S} in the following
+sections. It is the most simple and easy implementation to utilize.
+As such, it can be regularly be debugged and examined. However, if
+$n_{r}$ or $n_{s}$ become large, the source term may become to cumbersome
+to execute in serial over all degrees of freedom.
+
+Using the first level of parallelization, \textbf{S} could be decompose
+the domain of degrees of freedom and equally distribute the work using
+the following algorithm
+
+S-d
+\begin{enumerate}
+\item For all states at every degree of freedom, $y_{f,p}$ decompose into
+$d$ decomposition, $y_{f,p}|_{d}$ of $n_{d}$ domains
+\begin{enumerate}
+\item For each domain element, $d$, perform the source term calculations
+in parallel:
+\begin{enumerate}
+\item Calculate Chemical state $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\item Calculate all forward reactions, $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\item Using $\boldsymbol{k_{p}}$ calculate all rates of progress $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\item Calculate all production rates $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$ 
+\end{enumerate}
+\item Gather $\boldsymbol{\omega_{p}}$ to assimilate full set for all degrees
+of freedom (if necessary).
+\end{enumerate}
+\end{enumerate}
+This yields the same number of operations but each domain performs
+$\left(\frac{1}{n_{d}}\right)^{3}\left(n_{dof}\times n_{r}\right)^{2}\left(n_{dof}\times n_{s}\right)$
+and we refer to this approach as \textbf{S-d}.
+
+If available, another tier of parallelization can utilized in multiple
+ways, for instance the calculations can be further decomposed into
+individual launches
+\begin{enumerate}
+\item For all states at every degree of freedom, $y_{f,p}$ decompose into
+$d$ decomposition, $y_{f,p}|_{d}$
+\begin{enumerate}
+\item For each domain element, $d$, perform the source term calculations
+in parallel:
+\begin{enumerate}
+\item Calculate Chemical state $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\item Thread over the $\frac{1}{n_{d}}n_{dof}n_{r}$ calculations to calculate
+forward reactions, $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\item Thread over the $\frac{1}{n_{d}}n_{dof}n_{r}$ calculations to calculate
+all rates of progress $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+in domain $d$
+\item Thread over the $\frac{1}{n_{d}}n_{dof}n_{s}$ calculations to calculate
+all production rates $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$ 
+\end{enumerate}
+\item Gather $\boldsymbol{\omega_{p}}$ to assimilate full set for all degrees
+of freedom (if necessary).
+\end{enumerate}
+\end{enumerate}
+We refer to this parallelization as \textbf{T1. }Although \textbf{T1}
+is appealing and provides a straightforward transition from \textbf{S-d,
+}the number of thread launches can become expensive, thus we introduce
+another threading approach that threads over each degree of freedom
+within the subdomain
+\begin{enumerate}
+\item For all states at every degree of freedom, $y_{f,p}$ decompose into
+$d$ decomposition, $y_{f,p}|_{d}$
+\begin{enumerate}
+\item For each domain element, $d$, perform the source term calculations
+in parallel:
+\begin{enumerate}
+\item Calculate Chemical state $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\item Thread over each chemical state in the subdomain
+\begin{enumerate}
+\item Calculate the reactions, $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\item Calculate the rates of progress $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+in domain $d$
+\item Calculate all production rates $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$ 
+\end{enumerate}
+\end{enumerate}
+\item Gather $\boldsymbol{\omega_{p}}$ to assimilate full set for all degrees
+of freedom (if necessary).
+\end{enumerate}
+\end{enumerate}
+This performs the source term at every threaded degree of freedom
+in serial. We refer to the parallelization as \textbf{T2}.
+
+With some rearranging the source term can be assembled over one $n_{r}$
+threaded loop for each degree of freedom in serial,
+\begin{enumerate}
+\item For all states at every degree of freedom, $y_{f,p}$ decompose into
+$d$ decomposition, $y_{f,p}|_{d}$
+\begin{enumerate}
+\item For each domain element, $d$, perform the source term calculations
+in parallel:
+\begin{enumerate}
+\item Calculate Chemical state $y_{f,p}|_{d}\rightarrow y_{c,p}$
+\item Assemble the source term for each chemical state in the subdomain
+\begin{enumerate}
+\item Create $\boldsymbol{\omega_{p}}$ for storage (if it doesn't already
+exist)
+\item Thread over $n_{r}$ reactions, indexed $j$ 
+\item individually calculate $k_{j}$ 
+\item using $k_{j}$ calculate the rates of progress $q_{j}$
+\item for $\nu_{ij}\ne$0 add $\nu_{ij}q_{j}$ to the existing source term,
+$\boldsymbol{\omega_{p}}$, element $i$
+\end{enumerate}
+\end{enumerate}
+\item Gather $\boldsymbol{\omega_{p}}$ to assimilate full set for all degrees
+of freedom (if necessary).
+\end{enumerate}
+\end{enumerate}
+This creates on launch per degree of freedom but increases the compute
+on each thread. We refer to this parallelization as \textbf{T3.}
+
+For all approaches \textbf{S}, \textbf{S-d}, \textbf{T1}, \textbf{T3},\textbf{
+T4, }there is bound to be a trade off. Some of these methods use several
+launches to utilize threading which can be expensive, however, if
+there are many fast threads available the launch time may become negligible.
+In addition, some of these approaches utilize various compute efficiencies
+that may be better for different hardware. In CFD chemical source
+terms are unique in that they are embarrassed of their neighboring
+degrees of freedom. Quantities such as fluxes and gradients require
+face contributions that involve other degrees of freedom. It is therefore
+feasible that the approaches laid out here could be implemented in
+a variety of CFD software, with the caveat that the performance may
+not transition due to other factors beholden to the target software.
+
+\section{Code Generation}
+
+In the ChemGen software there are three main file types. The first
+file types are python files that manipulate chemistry data and existing
+static code to create compilation ready source code. The second file
+type are static code that are ingested by the python code and reformatted
+to the desired target software. The remaining file types is a mixture
+of python code used to exercise tests, most of which covered in the
+results section, Section 5, and yaml files that contain kinetic data.
+
+\subsection{The concept of decorators}
+
+C++ code takes on many forms. For instance...
+
+\bgroup\inputencoding{latin9}
+\begin{lstlisting}
+for a in a_list:
+	a*a
+\end{lstlisting}
+\leavevmode\egroup
+
+
+\section{Results}
+
+white
+
+white
+
+white
+
+white
+
+\bibliographystyle{elsarticle-num}
+\bibliography{citations}
+
+\end{document}
