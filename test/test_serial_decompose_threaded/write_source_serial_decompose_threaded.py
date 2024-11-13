@@ -46,14 +46,19 @@ class SourceWriter:
             // Determine the number of points each rank will handle
             {index} points_per_rank = n_points / n_ranks;
             {index} remainder = n_points % n_ranks;
+            {index} local_n_points = points_per_rank + (rank < remainder ? 1 : 0);
+            
+            //{index} desired_threads_per_rank = {index}(16)/n_ranks;
+            //tbb::global_control control(tbb::global_control::max_allowed_parallelism, desired_threads_per_rank);
+
 
             // Calculate start and end index for each rank
             {index} start = rank * points_per_rank + std::min(rank, remainder);
             {index} end = start + points_per_rank + (rank < remainder ? 1 : 0);
             
             //the mpi ranks either require copying the same size point source (large memory usage on each) or vector...
-            //std::vector<{scalar_list}<{scalar}, n_species>> point_source_local(local_n_points, {scalar_list}<double, n_species>{{0.0}});
-            PointSpecies point_source_local = {{}};
+            std::vector<{scalar_list}<{scalar}, n_species>> point_source_local(local_n_points, {scalar_list}<double, n_species>{{0.0}});
+            //PointSpecies point_source_local = {{}};
 
 
             \n""".format(**vars(configuration)))
@@ -81,10 +86,10 @@ class SourceWriter:
     
     def write_point_loop(self, file, configuration):
         file.write("""
-        auto start_serial = std::chrono::high_resolution_clock::now();
-            tbb::parallel_for(start, end, [&](int i)
+        auto start_local = std::chrono::high_resolution_clock::now();
+            tbb::parallel_for(0, local_n_points, [&]({index} i)
             {{
-                auto state_ = point_states[i];
+                auto state_ = point_states[i + start];
                 auto temperature_ = temperature_from_chemical_state(state_);
                 auto species_ = species_from_chemical_state(state_);
                 auto gibbs_free_energies_ = species_gibbs_energy_mole_specific(temperature_);
@@ -104,35 +109,47 @@ class SourceWriter:
                 }}
             }});
         
-        auto end_serial = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> serial_time = end_serial - start_serial; 
+        auto end_local = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> local_time = end_local - start_local;
+        std::cout << "Rank " << rank << " execution time: " << local_time.count() << " seconds"<<std::endl;
+        std::cout << "start " << start << " end: " << end <<" end-start: "<< end-start <<std::endl;
+
         """.format(**vars(configuration)))
 
     def write_end_of_function(self, file, configuration):
         mpi_scalar_type = "MPI_{}".format("{scalar}".format(**vars(configuration)).upper())
         file.write("""
-
-            if (rank == 0) {{
-                // Copy local results directly for rank 0
-                for ({index} i = 0; i < points_per_rank + (remainder > 0 ? 1 : 0); ++i) {{
+            if (rank == 0) 
+            {{
+                // Copy local results for rank 0
+                for ({index} i = 0; i < points_per_rank + (remainder > 0 ? 1 : 0); ++i) 
+                {{
                     point_source[i] = point_source_local[i];
                 }}
+                
                 // Receive data from other ranks
-                for ({index} r = 1; r < n_ranks; ++r) {{
+                for ({index} r = 1; r < n_ranks; ++r) 
+                {{
                     {index} recv_start = r * points_per_rank + std::min(r, remainder);
                     {index} recv_end = recv_start + points_per_rank + (r < remainder ? 1 : 0);
-                    MPI_Recv(&point_source[recv_start][0], (recv_end - recv_start) * n_species, {mpi_scalar_type}, r, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                    {index} recv_count = (recv_end - recv_start) * n_species; // Total elements to receive
+                    
+                    MPI_Recv(&point_source[recv_start][0], recv_count, {mpi_scalar_type}, r, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 }}
-            }} else {{
+            }} 
+            else 
+            {{
+                // Calculate the number of elements to send
+                {index} send_count = (end - start) * n_species;
+                
                 // Send local results to the root process
-                MPI_Send(&point_source_local[0][0], (end - start) * n_species, {mpi_scalar_type}, 0, 0, MPI_COMM_WORLD);
+                MPI_Send(&point_source_local[0][0], send_count, {mpi_scalar_type}, 0, 0, MPI_COMM_WORLD);
             }}
 
-            if (rank == 0) {{
-                std::cout << "Computation completed and gathered on root process."<<std::endl;
-                std::cout << "Serial execution time: " << serial_time.count() << " seconds"<<std::endl;
+            if (rank == 0) 
+            {{
+                std::cout << "Computation completed and gathered on root process." << std::endl;
             }}
-
             MPI_Finalize();
             return point_source;\n    }}""".format(**vars(configuration), mpi_scalar_type = mpi_scalar_type))
 

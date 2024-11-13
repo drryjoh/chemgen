@@ -43,7 +43,7 @@ def write_headers(file, headers):
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder):
     test_file = destination_folder/test_file_name
-    n_points = 1000
+    n_points = 10000
     n_species = gas.n_species
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
@@ -88,7 +88,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
 }}
 
 int main(int argc, char* argv[]) {{
-    
+    std::cout << argc<<std::endl;
     PointState point_state = 
     {{{{
 {point_state}
