@@ -53,7 +53,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         for header in headers:
             file.write(f"#include \"{header}\"\n")
             if "types" in header:
-                        file.write(f"const int n_points = {n_points};")
+                        file.write(f"const int n_points = {n_points};\n")
                         file.write("using PointState = {scalar_list}<{scalar_list}<{scalar}, n_species+1>, n_points>;\n".format(**vars(configuration)))
                         file.write("using ChemicalState = {scalar_list}<{scalar}, n_species+1>;\n".format(**vars(configuration)))
                         file.write("using PointReactions = {scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>;\n".format(**vars(configuration)))
