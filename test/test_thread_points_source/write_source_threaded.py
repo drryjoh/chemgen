@@ -34,92 +34,69 @@ class SourceWriter:
         }}
 
         {device_option}
-        {species_function} source_threaded(const PointState& point_states) {const_option} 
+        auto source_threaded(const PointState& point_states) {const_option} 
         {{
-            PointState source = {{}};
-            ChemicalState state = {{}};
-            PointReactions point_reactions = {{}};
-            PointReactions point_progress_rates = {{}};
-            {species} net_production_rates = {{{scalar_cast}(0)}};
+            std::cout << "Beginning of source" <<std::endl;
+            PointReactions point_reactions = std::make_unique<std::array<std::array<double, n_reactions>, n_points>>();
+            PointReactions point_progress_rates = std::make_unique<std::array<std::array<double, n_reactions>, n_points>>();
             {index} chunk_size = 0;
-            std::array<std::array<double, n_species>, n_points> species, gibbs_free_energies;
-            std::array<double, n_points> temperatures, pressures, log_temperatures, mixture_concentrations, inv_universal_gas_constant_temperatures;
-
-            //precompute
-            for({index} i = 0; i < n_points; i++)
-            {{
-                state = point_states[i];
-                temperatures[i] = temperature_from_chemical_state(state);
-                species[i] = species_from_chemical_state(state);
-                gibbs_free_energies[i] = species_gibbs_energy_mole_specific(temperatures[i]);
-                inv_universal_gas_constant_temperatures[i]  = inv(universal_gas_constant() * temperatures[i]);
-                log_temperatures[i] = log_gen(temperatures[i]);
-                pressures[i] = pressure(species[i], temperatures[i]);
-                mixture_concentrations[i] = pressures[i] * inv_universal_gas_constant_temperatures[i];
-            }} 
-
-            {index} j = 0;
-            {index} k = 0;\n""".format(**vars(configuration)))
+            std::cout << "1" <<std::endl;
+            std::unique_ptr<std::array<std::array<double, n_species>, n_points>> source;\n""".format(**vars(configuration)))
     
     def write_reaction_functions_pointer_list(self, file, reaction_calls, configuration):
         indentation = '        '
-        reaction_call_list = ','.join([f'\n{indentation}reaction_{k}' for k in range(len(reaction_calls))])
+        reaction_call_list = ','.join([f'{indentation}reaction_{k}' for k in range(len(reaction_calls))])
         file.write("""
             {scalar_list}<{scalar} (*)({species_parameter}, {scalar_parameter}, {scalar_parameter}, {scalar_parameter}, {scalar_parameter}), n_reactions> reaction_functions = {{{reaction_call_list} }};
     """.format(**vars(configuration), reaction_call_list = reaction_call_list, n_reactions = len(reaction_calls)))
 
     def write_progress_rate_functions_pointer_list(self, file, reaction_calls, configuration):
         indentation = '        '
-        progress_rates_call_list = ','.join([f'\n{indentation}progress_rate_{k}' for k in range(len(reaction_calls))])
+        progress_rates_call_list = ','.join([f'{indentation}progress_rate_{k}' for k in range(len(reaction_calls))])
         file.write("""
             {scalar_list}<{scalar} (*)({species_parameter}, {scalar_parameter}, {species_parameter}, {scalar_parameter}), n_reactions> progress_rate_functions = {{{progress_rates_call_list}}};
     """.format(**vars(configuration), progress_rates_call_list = progress_rates_call_list, n_reactions = len(reaction_calls)))
 
     def write_production_rate_functions_pointer_list(self, file, species_production_function_texts, configuration):
         indentation = '        '
-        progress_rates_call_list = ','.join([f'\n{indentation}production_rate_{k}' for k in range(len(species_production_function_texts))])
+        progress_rates_call_list = ','.join([f'{indentation}production_rate_{k}' for k in range(len(species_production_function_texts))])
         file.write("""
             {scalar_list}<{scalar} (*)({reactions_parameter}), n_species> production_rate_functions = {{{progress_rates_call_list}}};
     """.format(**vars(configuration), progress_rates_call_list = progress_rates_call_list, n_species = len(species_production_function_texts)))
-
-    def write_reaction_ttb_loop(self, file, array, pointer_list, parameters, configuration):
-        index = "{index}".format(**vars(configuration))
-        file.write(f"""
-        for ({index} i = 0; i < n_reactions * n_points; ++i) 
-        {{
-            int j = i / n_reactions;  // Row index
-            int k = i % n_reactions;  // Column in
-            {array}[j][k] = {pointer_list}[k]({parameters});
-        }}
-
-        tbb::parallel_for(0, n_reactions * n_points, [&]({index} i) {{
-            int j = i / n_reactions;  // Row index
-            int k = i % n_reactions;  // Column in
-            {array}[j][k] = {pointer_list}[k]({parameters});
-        }});
-
-        """)
-
-    def write_reaction_ttb_loop_with_timing(self, file, array, pointer_list, parameters, configuration):
+    
+    def write_forward_reaction_ttb_loop_with_timing(self, file, array, pointer_list, parameters, configuration):
         index = "{index}".format(**vars(configuration))
         scalar  = "{scalar}".format(**vars(configuration))
         species = "{species}".format(**vars(configuration))
         file.write(f"""
         // Measure serial execution time
         auto start_serial_{array} = std::chrono::high_resolution_clock::now();
+        std::cout << "2" <<std::endl;
         for ({index} i = 0; i < n_reactions * n_points; ++i) 
         {{
             int j = i / n_reactions;  // Row index
             int k = i % n_reactions;  // Column in
-            auto species_ = species[j];
-            auto temperature_ = temperatures[j];
-            auto log_temperature_ = log_temperatures[j];
-            auto pressure_ = pressures[j];
-            auto mixture_concentration_ = mixture_concentrations[j];
-            auto gibbs_free_energy_ = gibbs_free_energies[j];
-            auto point_reaction_ = point_reactions[j][k];
-            {array}[j][k] = {pointer_list}[k]({parameters});
+
+            // Static variables to retain values across iterations
+            static Species species_;
+            static double temperature_;
+            static double log_temperature_;
+            static double pressure_;
+            static double mixture_concentration_;
+
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                log_temperature_ = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration_ = mixture_concentration(species_);
+            }}
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
         }}
+        std::cout << "3" <<std::endl;
+
         auto end_serial_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
 
@@ -129,15 +106,24 @@ class SourceWriter:
         {{
             int j = i / n_reactions;  // Row index
             int k = i % n_reactions;  // Column in
-            auto species_ = species[j];
-            auto temperature_ = temperatures[j];
-            auto log_temperature_ = log_temperatures[j];
-            auto pressure_ = pressures[j];
-            auto mixture_concentration_ = mixture_concentrations[j];
-            auto gibbs_free_energy_ = gibbs_free_energies[j];
-            auto point_reaction_ = point_reactions[j][k];
+            static Species species_;
+            static double temperature_;
+            static double log_temperature_;
+            static double pressure_;
+            static double mixture_concentration_;
+            static Species gibbs_free_energy_;
 
-            {array}[j][k] = {pointer_list}[k]({parameters});
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                log_temperature_ = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration_ = mixture_concentration(species_);
+            }}
+
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
 
         }});
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
@@ -151,15 +137,24 @@ class SourceWriter:
             {{
             int j = i / n_reactions;  // Row index
             int k = i % n_reactions;  // Column in
-            auto species_ = species[j];
-            auto log_temperature_ = log_temperatures[j];
-            auto pressure_ = pressures[j];
-            auto mixture_concentration_ = mixture_concentrations[j];
-            auto temperature_ = temperatures[j];
-            auto gibbs_free_energy_ = gibbs_free_energies[j];
-            auto point_reaction_ = point_reactions[j][k];
+            static Species species_;
+            static double temperature_;
+            static double log_temperature_;
+            static double pressure_;
+            static double mixture_concentration_;
+            static Species gibbs_free_energy_;
 
-            {array}[j][k] = {pointer_list}[k]({parameters});
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                log_temperature_ = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration_ = mixture_concentration(species_);
+            }}
+
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
         }});
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
@@ -172,14 +167,24 @@ class SourceWriter:
             {{
             int j = i / n_reactions;  // Row index (point)
             int k = i % n_reactions;  // Column in (reaction)
-            auto species_ = species[j];
-            auto temperature_ = temperatures[j];
-            auto log_temperature_ = log_temperatures[j];
-            auto pressure_ = pressures[j];
-            auto mixture_concentration_ = mixture_concentrations[j];
-            auto gibbs_free_energy_ = gibbs_free_energies[j];
-            auto point_reaction_ = point_reactions[j][k];
-            {array}[j][k] = {pointer_list}[k]({parameters});
+            static Species species_;
+            static double temperature_;
+            static double log_temperature_;
+            static double pressure_;
+            static double mixture_concentration_;
+            static Species gibbs_free_energy_;
+
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                log_temperature_ = log_gen(temperature_);
+                pressure_ = pressure(species_, temperature_);
+                mixture_concentration_ = mixture_concentration(species_);
+            }}
+
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
         }});
         auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
@@ -193,17 +198,117 @@ class SourceWriter:
 
         """)
 
-    def write_species_ttb_loop(self, file, array, pointer_list, parameters, configuration):
+    def write_progress_rates_ttb_loop_with_timing(self, file, array, pointer_list, parameters, configuration):
         index = "{index}".format(**vars(configuration))
+        scalar  = "{scalar}".format(**vars(configuration))
+        species = "{species}".format(**vars(configuration))
         file.write(f"""
-        
-        for ({index} i = 0; i < n_species * n_points; ++i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
+        // Measure serial execution time
+        auto start_serial_{array} = std::chrono::high_resolution_clock::now();
+        for ({index} i = 0; i < n_reactions * n_points; ++i) 
+        {{
+            int j = i / n_reactions;  // Row index
+            int k = i % n_reactions;  // Column in
+
+            // Static variables to retain values across iterations
+            static Species species_;
+            static double temperature_;
+            static Species gibbs_free_energy_;
+
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                gibbs_free_energy_ = species_gibbs_energy_mole_specific(temperature_);
+            }}
+            auto point_reaction_ = (*point_reactions)[j][k];
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
         }}
 
-        tbb::parallel_for(0, n_species * n_points, [&]({index} i) {{
-            {array}[i] = {pointer_list}[i]({parameters});
+        auto end_serial_{array} = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
+
+        // Measure parallel execution time
+        auto start_parallel_{array} = std::chrono::high_resolution_clock::now();
+        tbb::parallel_for(0, n_reactions * n_points, [&]({index} i) 
+        {{
+            int j = i / n_reactions;  // Row index
+            int k = i % n_reactions;  // Column in
+            static Species species_;
+            static double temperature_;
+            static Species gibbs_free_energy_;
+
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                gibbs_free_energy_ = species_gibbs_energy_mole_specific(temperature_);
+            }}
+            auto point_reaction_ = (*point_reactions)[j][k];
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
+
         }});
+        auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
+
+        chunk_size = 20;  // Starting chunk size
+        auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
+        tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) 
+        {{
+            for ({index} i = r.begin(); i < r.end(); ++i) 
+            {{
+            int j = i / n_reactions;  // Row index
+            int k = i % n_reactions;  // Column in
+            static Species species_;
+            static double temperature_;
+            static Species gibbs_free_energy_;
+
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                gibbs_free_energy_ = species_gibbs_energy_mole_specific(temperature_);
+            }}
+            auto point_reaction_ = (*point_reactions)[j][k];
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
+            }}
+        }});
+        auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
+
+        chunk_size = n_reactions * n_points / 128; ;  // Starting chunk size
+        auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
+        tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
+            for ({index} i = r.begin(); i < r.end(); ++i) 
+            {{
+            int j = i / n_reactions;  // Row index (point)
+            int k = i % n_reactions;  // Column in (reaction)
+            static Species species_;
+            static double temperature_;
+            static Species gibbs_free_energy_;
+
+            // Update only when k == 0
+            if (k == 0) 
+            {{
+                species_ = species_from_chemical_state((*point_states)[j]);
+                temperature_ = temperature_from_chemical_state((*point_states)[j]);
+                gibbs_free_energy_ = species_gibbs_energy_mole_specific(temperature_);
+            }}
+            auto point_reaction_ = (*point_reactions)[j][k];
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
+            }}
+        }});
+        auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> parallel_time_{array}_2 = end_parallel_{array}_2 - start_parallel_{array}_2;
+
+        // Output results
+        std::cout << "Serial execution time for reactions loop {array}: " << serial_time_{array}.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for reactions loop {array}: " << parallel_time_{array}.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for reactions loop {array} chunk 20: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for reactions loop {array} chunk 100: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
 
         """)
 
@@ -216,8 +321,8 @@ class SourceWriter:
         for ({index} i = 0; i < n_species * n_points; ++i) {{
             int j = i / n_species;  // point
             int k = i % n_species;  // species
-            auto progress_rates_ = point_progress_rates[j];
-            {array}[j][k] = {pointer_list}[k]({parameters});
+            auto progress_rates_ = (*point_progress_rates)[j];
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
         }}    
         auto end_serial_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
@@ -227,8 +332,8 @@ class SourceWriter:
         tbb::parallel_for(0, n_species * n_points, [&]({index} i) {{
             int j = i / n_species;  // point
             int k = i % n_species;  // species
-            auto progress_rates_ = point_progress_rates[j];
-            {array}[j][k] = {pointer_list}[k]({parameters});
+            auto progress_rates_ = (*point_progress_rates)[j];
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
         }});
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
@@ -239,10 +344,11 @@ class SourceWriter:
             for ({index} i = r.begin(); i < r.end(); ++i) {{
                 int j = i / n_species;  // point
                 int k = i % n_species;  // species
-                auto progress_rates_ = point_progress_rates[j];
-                {array}[j][k] = {pointer_list}[k]({parameters});
+                auto progress_rates_ = (*point_progress_rates)[j];
+                (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
         }});
+
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
 
@@ -252,8 +358,8 @@ class SourceWriter:
             for ({index} i = r.begin(); i < r.end(); ++i) {{
                 int j = i / n_species;  // point
                 int k = i % n_species;  // species
-                auto progress_rates_ = point_progress_rates[j];
-                {array}[j][k] = {pointer_list}[k]({parameters});
+                auto progress_rates_ = (*point_progress_rates)[j];
+                (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
         }});
         auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
@@ -267,7 +373,7 @@ class SourceWriter:
         """)
 
     def write_end_of_function(self, file):
-        file.write("        return net_production_rates;\n    }")
+        file.write(" return source;\n        }")
 
     def write_source(self, file, equilibrium_constants, reaction_calls, 
                      progress_rates, is_reversible, 
@@ -282,9 +388,41 @@ class SourceWriter:
         self.write_progress_rate_functions_pointer_list(file, reaction_calls, configuration)
         self.write_production_rate_functions_pointer_list(file, species_production_function_texts, configuration)
 
-        self.write_reaction_ttb_loop_with_timing(file, "point_reactions", "reaction_functions", "species_, temperature_, log_temperature_, pressure_, mixture_concentration_", configuration)
-        self.write_reaction_ttb_loop_with_timing(file, "point_progress_rates", "progress_rate_functions", "species_, temperature_, gibbs_free_energy_, point_reaction_", configuration)
+        self.write_forward_reaction_ttb_loop_with_timing(file, "point_reactions", "reaction_functions", "species_, temperature_, log_temperature_, pressure_, mixture_concentration_", configuration)
+        self.write_progress_rates_ttb_loop_with_timing(file, "point_progress_rates", "progress_rate_functions", "species_, temperature_, gibbs_free_energy_, point_reaction_", configuration)
         self.write_species_ttb_loop_with_timing(file, "source", "production_rate_functions", "progress_rates_",configuration)
 
         self.write_end_of_function(file)
         headers.append('source.h')
+    
+    def write_species_ttb_loop(self, file, array, pointer_list, parameters, configuration):
+        index = "{index}".format(**vars(configuration))
+        file.write(f"""
+        
+        for ({index} i = 0; i < n_species * n_points; ++i) {{
+            {array}[i] = {pointer_list}[i]({parameters});
+        }}
+
+        tbb::parallel_for(0, n_species * n_points, [&]({index} i) {{
+            {array}[i] = {pointer_list}[i]({parameters});
+        }});
+
+        """)
+
+    def write_reaction_ttb_loop(self, file, array, pointer_list, parameters, configuration):
+        index = "{index}".format(**vars(configuration))
+        file.write(f"""
+        for ({index} i = 0; i < n_reactions * n_points; ++i) 
+        {{
+            int j = i / n_reactions;  // Row index
+            int k = i % n_reactions;  // Column in
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
+        }}
+
+        tbb::parallel_for(0, n_reactions * n_points, [&]({index} i) {{
+            int j = i / n_reactions;  // Row index
+            int k = i % n_reactions;  // Column in
+            (*{array})[j][k] = {pointer_list}[k]({parameters});
+        }});
+
+        """)
