@@ -79,11 +79,11 @@ class SourceWriter:
             int k = i % n_reactions;  // Column in
 
             // Static variables to retain values across iterations
-            static Species species_;
-            static double temperature_;
-            static double log_temperature_;
-            static double pressure_;
-            static double mixture_concentration_;
+            Species species_;
+            double temperature_;
+            double log_temperature_;
+            double pressure_;
+            double mixture_concentration_;
 
             // Update only when k == 0
             if (k == 0) 
@@ -106,12 +106,12 @@ class SourceWriter:
         {{
             int j = i / n_reactions;  // Row index
             int k = i % n_reactions;  // Column in
-            static Species species_;
-            static double temperature_;
-            static double log_temperature_;
-            static double pressure_;
-            static double mixture_concentration_;
-            static Species gibbs_free_energy_;
+            Species species_;
+            double temperature_;
+            double log_temperature_;
+            double pressure_;
+            double mixture_concentration_;
+            Species gibbs_free_energy_;
 
             // Update only when k == 0
             if (k == 0) 
@@ -137,12 +137,12 @@ class SourceWriter:
             {{
             int j = i / n_reactions;  // Row index
             int k = i % n_reactions;  // Column in
-            static Species species_;
-            static double temperature_;
-            static double log_temperature_;
-            static double pressure_;
-            static double mixture_concentration_;
-            static Species gibbs_free_energy_;
+            Species species_;
+            double temperature_;
+            double log_temperature_;
+            double pressure_;
+            double mixture_concentration_;
+            Species gibbs_free_energy_;
 
             // Update only when k == 0
             if (k == 0) 
@@ -167,12 +167,12 @@ class SourceWriter:
             {{
             int j = i / n_reactions;  // Row index (point)
             int k = i % n_reactions;  // Column in (reaction)
-            static Species species_;
-            static double temperature_;
-            static double log_temperature_;
-            static double pressure_;
-            static double mixture_concentration_;
-            static Species gibbs_free_energy_;
+            Species species_;
+            double temperature_;
+            double log_temperature_;
+            double pressure_;
+            double mixture_concentration_;
+            Species gibbs_free_energy_;
 
             // Update only when k == 0
             if (k == 0) 
@@ -211,9 +211,9 @@ class SourceWriter:
             int k = i % n_reactions;  // Column in
 
             // Static variables to retain values across iterations
-            static Species species_;
-            static double temperature_;
-            static Species gibbs_free_energy_;
+            Species species_;
+            double temperature_;
+            Species gibbs_free_energy_;
 
             // Update only when k == 0
             if (k == 0) 
@@ -235,9 +235,9 @@ class SourceWriter:
         {{
             int j = i / n_reactions;  // Row index
             int k = i % n_reactions;  // Column in
-            static Species species_;
-            static double temperature_;
-            static Species gibbs_free_energy_;
+            Species species_;
+            double temperature_;
+            Species gibbs_free_energy_;
 
             // Update only when k == 0
             if (k == 0) 
@@ -261,9 +261,9 @@ class SourceWriter:
             {{
             int j = i / n_reactions;  // Row index
             int k = i % n_reactions;  // Column in
-            static Species species_;
-            static double temperature_;
-            static Species gibbs_free_energy_;
+            Species species_;
+            double temperature_;
+            Species gibbs_free_energy_;
 
             // Update only when k == 0
             if (k == 0) 
@@ -286,9 +286,9 @@ class SourceWriter:
             {{
             int j = i / n_reactions;  // Row index (point)
             int k = i % n_reactions;  // Column in (reaction)
-            static Species species_;
-            static double temperature_;
-            static Species gibbs_free_energy_;
+            Species species_;
+            double temperature_;
+            Species gibbs_free_energy_;
 
             // Update only when k == 0
             if (k == 0) 
