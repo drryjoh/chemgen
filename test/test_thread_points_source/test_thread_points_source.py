@@ -86,10 +86,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
 }}
 
 int main() {{
-    // Call the arrhenius function with the specified parameters
-    int max_threads = tbb::this_task_arena::max_concurrency();
-    //tbb::global_control c(tbb::global_control::max_allowed_parallelism, 4); 
-    std::cout << "Number of threads available: " << max_threads << std::endl;
+
     PointState point_state = std::make_unique<std::array<std::array<double, n_species + 1>, n_points>>();
 {point_state};
     std::cout << "calling source_threaded" <<std::endl;

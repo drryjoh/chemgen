@@ -36,11 +36,14 @@ class SourceWriter:
         {device_option}
         auto source_threaded(const PointState& point_states) {const_option} 
         {{
-            std::cout << "Beginning of source" <<std::endl;
+            int max_threads = tbb::this_task_arena::max_concurrency();
+            std::cout << "Number of threads available: " << max_threads << std::endl;
+
             PointReactions point_reactions = std::make_unique<std::array<std::array<double, n_reactions>, n_points>>();
             PointReactions point_progress_rates = std::make_unique<std::array<std::array<double, n_reactions>, n_points>>();
             {index} chunk_size = 0;
-            std::unique_ptr<std::array<std::array<double, n_species>, n_points>> source;\n""".format(**vars(configuration)))
+            std::unique_ptr<std::array<std::array<double, n_species>, n_points>> source;
+            source = std::make_unique<std::array<std::array<double, n_species>, n_points>>();\n""".format(**vars(configuration)))
     
     def write_reaction_functions_pointer_list(self, file, reaction_calls, configuration):
         indentation = '        '
@@ -157,7 +160,7 @@ class SourceWriter:
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
 
-        chunk_size = n_reactions * n_points / 128; ;  // Starting chunk size
+        chunk_size = n_reactions * n_points / max_threads;  // Starting chunk size
         auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
         tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) 
@@ -276,7 +279,7 @@ class SourceWriter:
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
 
-        chunk_size = n_reactions * n_points / 128; ;  // Starting chunk size
+        chunk_size = n_reactions * n_points / max_threads;  // Starting chunk size
         auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
         tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) 
@@ -349,7 +352,7 @@ class SourceWriter:
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
 
-        chunk_size = n_species * n_points/128;  // Starting chunk size
+        chunk_size = n_species * n_points/max_threads;  // Starting chunk size
         auto start_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
         tbb::parallel_for(tbb::blocked_range<int>(0, n_species * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) {{
