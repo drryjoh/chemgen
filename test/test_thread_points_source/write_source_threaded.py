@@ -40,7 +40,6 @@ class SourceWriter:
             PointReactions point_reactions = std::make_unique<std::array<std::array<double, n_reactions>, n_points>>();
             PointReactions point_progress_rates = std::make_unique<std::array<std::array<double, n_reactions>, n_points>>();
             {index} chunk_size = 0;
-            std::cout << "1" <<std::endl;
             std::unique_ptr<std::array<std::array<double, n_species>, n_points>> source;\n""".format(**vars(configuration)))
     
     def write_reaction_functions_pointer_list(self, file, reaction_calls, configuration):
@@ -71,7 +70,6 @@ class SourceWriter:
         file.write(f"""
         // Measure serial execution time
         auto start_serial_{array} = std::chrono::high_resolution_clock::now();
-        std::cout << "2" <<std::endl;
         for ({index} i = 0; i < n_reactions * n_points; ++i) 
         {{
             int j = i / n_reactions;  // Row index
@@ -95,7 +93,6 @@ class SourceWriter:
             }}
             (*{array})[j][k] = {pointer_list}[k]({parameters});
         }}
-        std::cout << "3" <<std::endl;
 
         auto end_serial_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> serial_time_{array} = end_serial_{array} - start_serial_{array};
