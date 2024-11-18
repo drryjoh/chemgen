@@ -49,6 +49,6 @@ point_progress_rates_no_chunk = np.array(point_progress_rates_no_chunk)
 point_progress_rates_20 = np.array(point_progress_rates_20) 
 point_progress_rates_100 = np.array(point_progress_rates_100)
 
-plt.plot(pts, forward_reactions_serial/forward_reactions_no_chunk, 'ok')
+plt.plot(pts[:-1], forward_reactions_serial[:-1]/forward_reactions_no_chunk[:-1], 'ok')
 plt.plot(pts[:-1], point_progress_rates_serial[:-1]/point_progress_rates_100, 'or')
 plt.show()

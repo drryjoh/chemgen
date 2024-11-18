@@ -367,8 +367,8 @@ class SourceWriter:
         // Output results
         std::cout << "Serial execution time for species_{array}: " << serial_time_{array}.count() << " seconds"<<std::endl;
         std::cout << "Parallel execution time for species_{array}: " << parallel_time_{array}.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for reactions loop {array} chunk 20: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for reactions loop {array} chunk 100: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for species_{array} chunk 20: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for species_{array} chunk 100: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
 
         """)
 
