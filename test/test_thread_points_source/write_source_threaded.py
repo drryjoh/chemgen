@@ -125,7 +125,7 @@ class SourceWriter:
 
             (*{array})[j][k] = {pointer_list}[k]({parameters});
 
-        }});
+        }}, tbb::auto_partitioner{{}} );
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
 
@@ -156,7 +156,7 @@ class SourceWriter:
 
             (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
-        }});
+        }}, tbb::auto_partitioner{{}});
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
 
@@ -186,7 +186,7 @@ class SourceWriter:
 
             (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
-        }});
+        }}, tbb::auto_partitioner{{}} );
         auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_2 = end_parallel_{array}_2 - start_parallel_{array}_2;
 
@@ -249,7 +249,7 @@ class SourceWriter:
             auto point_reaction_ = (*point_reactions)[j][k];
             (*{array})[j][k] = {pointer_list}[k]({parameters});
 
-        }});
+        }}, tbb::auto_partitioner{{}} );
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
 
@@ -275,7 +275,7 @@ class SourceWriter:
             auto point_reaction_ = (*point_reactions)[j][k];
             (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
-        }});
+        }}, tbb::auto_partitioner{{}} );
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
 
@@ -300,7 +300,7 @@ class SourceWriter:
             auto point_reaction_ = (*point_reactions)[j][k];
             (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
-        }});
+        }}, tbb::auto_partitioner{{}} );
         auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_2 = end_parallel_{array}_2 - start_parallel_{array}_2;
 
@@ -334,7 +334,7 @@ class SourceWriter:
             int k = i % n_species;  // species
             auto progress_rates_ = (*point_progress_rates)[j];
             (*{array})[j][k] = {pointer_list}[k]({parameters});
-        }});
+        }}, tbb::auto_partitioner{{}} );
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
         
@@ -347,7 +347,7 @@ class SourceWriter:
                 auto progress_rates_ = (*point_progress_rates)[j];
                 (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
-        }});
+        }}, tbb::auto_partitioner{{}} );
 
         auto end_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_1 = end_parallel_{array}_1 - start_parallel_{array}_1;
@@ -361,7 +361,7 @@ class SourceWriter:
                 auto progress_rates_ = (*point_progress_rates)[j];
                 (*{array})[j][k] = {pointer_list}[k]({parameters});
             }}
-        }});
+        }}, tbb::auto_partitioner{{}} );
         auto end_parallel_{array}_2 = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array}_2 = end_parallel_{array}_2 - start_parallel_{array}_2;
         // Output results
