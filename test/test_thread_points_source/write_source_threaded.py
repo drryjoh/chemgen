@@ -129,7 +129,7 @@ class SourceWriter:
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
 
-        chunk_size = 20;  // Starting chunk size
+        chunk_size = n_species * n_points/(10 * max_threads);  // Starting chunk size
         auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) 
         {{
@@ -193,8 +193,8 @@ class SourceWriter:
         // Output results
         std::cout << "Serial execution time for reactions loop {array}: " << serial_time_{array}.count() << " seconds"<<std::endl;
         std::cout << "Parallel execution time for reactions loop {array}: " << parallel_time_{array}.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for reactions loop {array} chunk 20: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for reactions loop {array} chunk 100: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for reactions loop {array} chunk 10*n_threads: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for reactions loop {array} chunk n_threads: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
 
         """)
 
@@ -253,7 +253,7 @@ class SourceWriter:
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
 
-        chunk_size = 20;  // Starting chunk size
+        chunk_size = n_species * n_points/(10 * max_threads);  // Starting chunk size
         auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         tbb::parallel_for(tbb::blocked_range<int>(0, n_reactions * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) 
         {{
@@ -307,8 +307,8 @@ class SourceWriter:
         // Output results
         std::cout << "Serial execution time for reactions loop {array}: " << serial_time_{array}.count() << " seconds"<<std::endl;
         std::cout << "Parallel execution time for reactions loop {array}: " << parallel_time_{array}.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for reactions loop {array} chunk 20: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for reactions loop {array} chunk 100: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for reactions loop {array} chunk 10*n_threads: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for reactions loop {array} chunk n_threads: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
 
         """)
 
@@ -338,7 +338,7 @@ class SourceWriter:
         auto end_parallel_{array} = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> parallel_time_{array} = end_parallel_{array} - start_parallel_{array};
         
-        chunk_size = 20;  // Starting chunk size
+        chunk_size = n_species * n_points/(10 * max_threads);  // Starting chunk size
         auto start_parallel_{array}_1 = std::chrono::high_resolution_clock::now();
         tbb::parallel_for(tbb::blocked_range<int>(0, n_species * n_points, chunk_size), [&](const tbb::blocked_range<int>& r) {{
             for ({index} i = r.begin(); i < r.end(); ++i) {{
@@ -367,8 +367,8 @@ class SourceWriter:
         // Output results
         std::cout << "Serial execution time for species_{array}: " << serial_time_{array}.count() << " seconds"<<std::endl;
         std::cout << "Parallel execution time for species_{array}: " << parallel_time_{array}.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for species_{array} chunk 20: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
-        std::cout << "Parallel execution time for species_{array} chunk 100: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for species_{array} chunk 10*n_threads: " << parallel_time_{array}_1.count() << " seconds"<<std::endl;
+        std::cout << "Parallel execution time for species_{array} chunk n_threads: " << parallel_time_{array}_2.count() << " seconds"<<std::endl;
 
         """)
 
