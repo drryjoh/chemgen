@@ -1,15 +1,16 @@
 #!/usr/bin/bash
 #SBATCH --job-name=test_job
-#SBATCH --output=test_job.%j.out
-#SBATCH --error=test_job.%j.err
-#SBATCH --time=10:00
+#SBATCH --output=chemgen_ffcm2.out
+#SBATCH --error=chemgen.err
+#SBATCH --time=50:00
 #SBATCH -p haiwang 
-#SBATCH -c 10
+#SBATCH --cpus-per-task=20
 #SBATCH --mem=8GB
 
 . ~/.ryan_modules
-
-NUMBER=500
+echo "Nodes allocated for this job: $SLURM_NODELIST"
+export TBB_NUM_THREADS=10
+NUMBER=100
 
 # Loop to double the number 10 times
 for ((i=1; i<=10; i++))
