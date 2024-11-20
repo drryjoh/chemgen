@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-file_names = ["chemgen_ffcm2.out", "chemgen_h2.out"]#,"chemgen_h2.out"]
+file_names = ["chemgen_ffcm2.out", "chemgen_h2.out", "chemgen_h2_16.out", "chemgen_ffcm2_16.out"]
 for file in file_names:
     pts = []
     forward_reactions_serial = []
@@ -133,4 +133,4 @@ for file in file_names:
 
     plt.figure()
     plt.semilogx(pts, serial_time/best_time, '-k', label="$\\omega_i$ \n $n_{chunk} = n_{r}\\times n_{pts}/n_{threads}$")
-#plt.show()
+plt.show()

@@ -1,0 +1,251 @@
+Nodes allocated for this job: sh02-08n56
+Number of points 100
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000235662 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000158083 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000106106 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 5.2858e-05 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 8.6979e-05 seconds
+Number of points 200
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000419522 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000232998 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00015742 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00011277 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000115817 seconds
+Number of points 400
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000810897 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000477166 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000264057 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000144636 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000136408 seconds
+Number of points 800
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00150318 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00092404 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000497458 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000305403 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000151634 seconds
+Number of points 1600
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00297264 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00169834 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000861015 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000519557 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000287759 seconds
+Number of points 3200
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00573727 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00335552 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00170887 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00098792 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000533337 seconds
+Number of points 6400
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.013188 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00673836 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00297799 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00163413 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.000992489 seconds
+Number of points 12800
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0242505 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0119491 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00654204 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00352151 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00191157 seconds
+Number of points 25600
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0454682 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0247956 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0131329 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00741255 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00371613 seconds
+Number of points 51200
+Processing file: ffcm2_h2
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_just_mpi/build
+Consolidate compiler generated dependencies of target chemgen
+[ 50%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with 1 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0903997 seconds
+Running with 2 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0467032 seconds
+Running with 4 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0259586 seconds
+Running with 8 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.014191 seconds
+Running with 16 MPI processes
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00739198 seconds

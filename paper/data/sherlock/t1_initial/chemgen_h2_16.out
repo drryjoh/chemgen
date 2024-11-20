@@ -1,0 +1,239 @@
+ffcm2_h2
+Nodes allocated for this job: sh02-10n48
+Number of points 100
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.000350434 seconds
+Parallel execution time for reactions loop point_reactions: 0.00322003 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.00183461 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 7.5697e-05 seconds
+Serial execution time for reactions loop point_progress_rates: 0.000201996 seconds
+Parallel execution time for reactions loop point_progress_rates: 7.9681e-05 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 5.9678e-05 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 4.1284e-05 seconds
+Serial execution time for species_source: 2.0496e-05 seconds
+Parallel execution time for species_source: 4.7882e-05 seconds
+Parallel execution time for species_source chunk 10*n_threads: 3.4638e-05 seconds
+Parallel execution time for species_source chunk n_threads: 1.591e-05 seconds
+Number of points 200
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.000698827 seconds
+Parallel execution time for reactions loop point_reactions: 0.00211576 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.000329084 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 9.7395e-05 seconds
+Serial execution time for reactions loop point_progress_rates: 0.000383987 seconds
+Parallel execution time for reactions loop point_progress_rates: 9.8098e-05 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 9.4621e-05 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 5.8136e-05 seconds
+Serial execution time for species_source: 4.1259e-05 seconds
+Parallel execution time for species_source: 5.1123e-05 seconds
+Parallel execution time for species_source chunk 10*n_threads: 3.3037e-05 seconds
+Parallel execution time for species_source chunk n_threads: 2.3575e-05 seconds
+Number of points 400
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.00130588 seconds
+Parallel execution time for reactions loop point_reactions: 0.00151712 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.000319438 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.000179861 seconds
+Serial execution time for reactions loop point_progress_rates: 0.000747457 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.000141126 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.000128819 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.000122141 seconds
+Serial execution time for species_source: 8.1275e-05 seconds
+Parallel execution time for species_source: 7.1774e-05 seconds
+Parallel execution time for species_source chunk 10*n_threads: 4.0223e-05 seconds
+Parallel execution time for species_source chunk n_threads: 2.586e-05 seconds
+Number of points 800
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.0016832 seconds
+Parallel execution time for reactions loop point_reactions: 0.0043944 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.000254359 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.000296522 seconds
+Serial execution time for reactions loop point_progress_rates: 0.00104465 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.00144283 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.0014017 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.00141442 seconds
+Serial execution time for species_source: 0.000115303 seconds
+Parallel execution time for species_source: 8.3257e-05 seconds
+Parallel execution time for species_source chunk 10*n_threads: 4.9264e-05 seconds
+Parallel execution time for species_source chunk n_threads: 3.9715e-05 seconds
+Number of points 1600
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.00450104 seconds
+Parallel execution time for reactions loop point_reactions: 0.00567133 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.000422424 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.000569034 seconds
+Serial execution time for reactions loop point_progress_rates: 0.00282021 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.000439866 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.000292412 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.00040456 seconds
+Serial execution time for species_source: 0.000297163 seconds
+Parallel execution time for species_source: 0.000107612 seconds
+Parallel execution time for species_source chunk 10*n_threads: 6.8689e-05 seconds
+Parallel execution time for species_source chunk n_threads: 7.086e-05 seconds
+Number of points 3200
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.00880945 seconds
+Parallel execution time for reactions loop point_reactions: 0.00452223 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.000905808 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.0012108 seconds
+Serial execution time for reactions loop point_progress_rates: 0.00542589 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.00601623 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.000594767 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.000758906 seconds
+Serial execution time for species_source: 0.000551497 seconds
+Parallel execution time for species_source: 0.000117503 seconds
+Parallel execution time for species_source chunk 10*n_threads: 9.0752e-05 seconds
+Parallel execution time for species_source chunk n_threads: 0.000119217 seconds
+Number of points 6400
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.0187645 seconds
+Parallel execution time for reactions loop point_reactions: 0.00453348 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.00175855 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.00266789 seconds
+Serial execution time for reactions loop point_progress_rates: 0.0105475 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.00240534 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.00113831 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.00166006 seconds
+Serial execution time for species_source: 0.00101107 seconds
+Parallel execution time for species_source: 0.000254062 seconds
+Parallel execution time for species_source chunk 10*n_threads: 0.000162659 seconds
+Parallel execution time for species_source chunk n_threads: 0.000225742 seconds
+Number of points 12800
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.0313322 seconds
+Parallel execution time for reactions loop point_reactions: 0.00647536 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.00347281 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.00495595 seconds
+Serial execution time for reactions loop point_progress_rates: 0.0235927 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.00250185 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.00237639 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.00300813 seconds
+Serial execution time for species_source: 0.00218178 seconds
+Parallel execution time for species_source: 0.000500323 seconds
+Parallel execution time for species_source chunk 10*n_threads: 0.000322514 seconds
+Parallel execution time for species_source chunk n_threads: 0.000372023 seconds
+Number of points 25600
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.0327397 seconds
+Parallel execution time for reactions loop point_reactions: 0.00742448 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.00406986 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.00625803 seconds
+Serial execution time for reactions loop point_progress_rates: 0.0181646 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.00268129 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.00333029 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.00301795 seconds
+Serial execution time for species_source: 0.00168765 seconds
+Parallel execution time for species_source: 0.000413339 seconds
+Parallel execution time for species_source chunk 10*n_threads: 0.000308074 seconds
+Parallel execution time for species_source chunk n_threads: 0.000364707 seconds
+Number of points 51200
+Processing file: ffcm2_h2
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_t1/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+calling source_threaded
+Number of threads available: 16
+Serial execution time for reactions loop point_reactions: 0.0182457 seconds
+Parallel execution time for reactions loop point_reactions: 0.00759364 seconds
+Parallel execution time for reactions loop point_reactions chunk 10*n_threads: 0.00287862 seconds
+Parallel execution time for reactions loop point_reactions chunk n_threads: 0.00329327 seconds
+Serial execution time for reactions loop point_progress_rates: 0.0242128 seconds
+Parallel execution time for reactions loop point_progress_rates: 0.00199517 seconds
+Parallel execution time for reactions loop point_progress_rates chunk 10*n_threads: 0.00175683 seconds
+Parallel execution time for reactions loop point_progress_rates chunk n_threads: 0.0020787 seconds
+Serial execution time for species_source: 0.00230593 seconds
+Parallel execution time for species_source: 0.00147423 seconds
+Parallel execution time for species_source chunk 10*n_threads: 0.000236354 seconds
+Parallel execution time for species_source chunk n_threads: 0.000303354 seconds
+running!
