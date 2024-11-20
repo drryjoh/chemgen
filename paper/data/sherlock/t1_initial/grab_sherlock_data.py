@@ -18,7 +18,7 @@ for file in file_names:
     source_no_chunk = []
     source_10nthreads = []
     source_nthreads = []
-    prepend = "data/{file}".format(file = file.split(',')[0])
+    prepend = "data/{file}".format(file = file.split('.')[0])
     
     with open(file,"r") as f:
         for line in f:
@@ -100,6 +100,9 @@ for file in file_names:
     best_time = best_time_ft + best_time_progress + best_time_source
     serial_time = forward_reactions_serial + point_progress_rates_serial + source_serial
 
+    np.save(f"{prepend}_best_time.npy", best_time)
+    np.save(f"{prepend}_serial_time.npy", serial_time)
+
     plt.figure()
     plt.semilogx(pts, forward_reactions_serial/forward_reactions_no_chunk, '-ok',label = "$k_f$ Default TBB")
     plt.semilogx(pts, forward_reactions_serial/forward_reactions_10nthreads, '-ob',label = "$k_f$ TBB \n $n_{chunk} = n_{r}\\times n_{pts}/(10n_{threads})$")
@@ -130,4 +133,4 @@ for file in file_names:
 
     plt.figure()
     plt.semilogx(pts, serial_time/best_time, '-k', label="$\\omega_i$ \n $n_{chunk} = n_{r}\\times n_{pts}/n_{threads}$")
-plt.show()
+#plt.show()
