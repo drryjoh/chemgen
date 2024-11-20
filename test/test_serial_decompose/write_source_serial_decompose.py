@@ -130,11 +130,7 @@ class SourceWriter:
                         local_n_points * n_species, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
             }}
 
-
-            if (rank == 0) {{
-                std::cout << "Computation completed and gathered on root process."<<std::endl;
-                std::cout << "Rank 1 execution time: " << serial_time.count() << " seconds"<<std::endl;
-            }}
+            std::cout << "Rank " << rank << ": Computation completed: "<< serial_time.count()  << std::endl;
 
             MPI_Finalize();
             return point_source;\n    }}""".format(**vars(configuration), mpi_scalar_type = mpi_scalar_type))
