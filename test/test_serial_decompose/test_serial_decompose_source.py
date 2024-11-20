@@ -55,11 +55,10 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         for header in headers:
             file.write(f"#include \"{header}\"\n")
             if "types" in header:
-                        file.write(f"const int n_points = {n_points};")
-                        file.write("using PointState = {scalar_list}<{scalar_list}<{scalar}, n_species+1>, n_points>;\n".format(**vars(configuration)))
+                        file.write(f"const int n_points = {n_points};\n")
+                        file.write("using PointState = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_species+1>, n_points>>;\n".format(**vars(configuration)))
                         file.write("using ChemicalState = {scalar_list}<{scalar}, n_species+1>;\n".format(**vars(configuration)))
-                        file.write("using PointReactions = {scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>;\n".format(**vars(configuration)))
-                        file.write("using PointSpecies = {scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>;\n".format(**vars(configuration)))
+                        file.write("using PointReactions = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>>;\n".format(**vars(configuration)))
         #[temperature, pressure, species_string] = get_test_conditions(chemical_mechanism)
         chemical_state = []
         for i in range(n_points):
@@ -71,7 +70,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
             mole_fractions = random_values / np.sum(random_values)  
             gas.TPX = temperature, pressure, mole_fractions
             concentrations = gas.concentrations
-            chemical_state.append("{{{temperature},{array}}}".format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]), temperature = temperature,**vars(configuration))) 
+            chemical_state.append("(*point_state)[{i}] = {{{temperature},{array}}}".format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]), temperature = temperature,**vars(configuration),i=i)) 
         point_state = ',\n    '.join(chemical_state)
         content = """
 // Overload << operator for std::array

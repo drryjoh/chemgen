@@ -50,9 +50,6 @@ class SourceWriter:
             // Calculate start and end index for each rank
             {index} start = rank * points_per_rank + std::min(rank, remainder);
             {index} end = start + points_per_rank + (rank < remainder ? 1 : 0);
-            
-            //the mpi ranks either require copying the same size point source (large memory usage on each) or vector...
-            //std::vector<{scalar_list}<{scalar}, n_species>> point_source_local(local_n_points, {scalar_list}<double, n_species>{{0.0}});
             PointSpecies point_source_local = {{}};
 
 

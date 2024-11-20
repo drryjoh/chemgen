@@ -4187,7 +4187,7 @@ Calculate all production rates
 \end_deeper
 \begin_layout Standard
 The algorithm above when done in serial is 
-\begin_inset Formula $\left(n_{dof}\times n_{r}\right)^{2}\left(n_{dof}\times n_{s}\right)$
+\begin_inset Formula $2\left(n_{dof}\times n_{r}\right)+\left(n_{dof}\times n_{s}\right)$
 \end_inset
 
  number of operations and we refer to it as 
@@ -4307,7 +4307,7 @@ Gather
 \end_deeper
 \begin_layout Standard
 This yields the same number of operations but each domain performs 
-\begin_inset Formula $\left(\frac{1}{n_{d}}\right)^{3}\left(n_{dof}\times n_{r}\right)^{2}\left(n_{dof}\times n_{s}\right)$
+\begin_inset Formula $\left(\frac{1}{n_{d}}\right)\left(2\left(n_{dof}\times n_{r}\right)+\left(n_{dof}\times n_{s}\right)\right)$
 \end_inset
 
  and we refer to this approach as 
@@ -4320,7 +4320,10 @@ S-d
 \begin_layout Standard
 If available,
  another tier of parallelization can utilized in multiple ways,
- for instance the calculations can be further decomposed into individual launches
+ for instance the calculations can be further decomposed into individual launches for threaded operations.
+ For these examples we specifically utilize thread building blocks,
+ we also specifically modified them for GPU based algorithms that we mention later in this section.
+ The first approach using threading is as follows:
 \end_layout
 
 \begin_layout Enumerate
@@ -4737,6 +4740,30 @@ for a in a_list:
 
 \begin_layout Section
 Results
+\end_layout
+
+\begin_layout Subsection
+Thermodynamics
+\end_layout
+
+\begin_layout Subsection
+Reaction Rates
+\end_layout
+
+\begin_layout Subsection
+Parallelism
+\end_layout
+
+\begin_layout Subsubsection
+CPU Based Parallelism 
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Subsubsection*
+T1 Parallelism:
 \end_layout
 
 \begin_layout Standard
