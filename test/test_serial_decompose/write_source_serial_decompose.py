@@ -34,9 +34,9 @@ class SourceWriter:
         }}
 
         {device_option}
-        PointSpecies source_decomposed(int argc, char* argv[], const PointState& point_states) {const_option} 
+        auto source_decomposed(int argc, char* argv[], const PointState& point_states) {const_option} 
         {{
-            PointSpecies  point_source = {{}};
+            PointSpecies point_source = std::make_unique<std::array<std::array<double, n_species>, n_points>>();
             MPI_Init(&argc, &argv);
 
             {index} rank, n_ranks;
@@ -50,7 +50,9 @@ class SourceWriter:
             // Calculate start and end index for each rank
             {index} start = rank * points_per_rank + std::min(rank, remainder);
             {index} end = start + points_per_rank + (rank < remainder ? 1 : 0);
-            PointSpecies point_source_local = {{}};
+            {index} local_n_points = points_per_rank + (rank < remainder ? 1 : 0);
+
+            std::vector<{scalar_list}<{scalar}, n_species>> point_source_local(local_n_points, {scalar_list}<double, n_species>{{0.0}});
 
 
             \n""".format(**vars(configuration)))
@@ -81,7 +83,7 @@ class SourceWriter:
         auto start_serial = std::chrono::high_resolution_clock::now();
             for({index} i = start; i < end; i++)
             {{
-                auto state_ = point_states[i];
+                auto state_ = (*point_states)[i];
                 auto temperature_ = temperature_from_chemical_state(state_);
                 auto species_ = species_from_chemical_state(state_);
                 auto gibbs_free_energies_ = species_gibbs_energy_mole_specific(temperature_);
@@ -97,7 +99,7 @@ class SourceWriter:
                 }}
                 for({index} j = 0; j < n_species; j++)
                 {{
-                    point_source_local[i][j] = production_rate_functions[j](point_progress);
+                    point_source_local[i - start][j] = production_rate_functions[j](point_progress);
                 }}
             }}
         
@@ -111,23 +113,27 @@ class SourceWriter:
 
             if (rank == 0) {{
                 // Copy local results directly for rank 0
-                for ({index} i = 0; i < points_per_rank + (remainder > 0 ? 1 : 0); ++i) {{
-                    point_source[i] = point_source_local[i];
+                for (int i = 0; i < points_per_rank + (remainder > 0 ? 1 : 0); ++i) {{
+                    (*point_source)[i] = point_source_local[i];
                 }}
                 // Receive data from other ranks
-                for ({index} r = 1; r < n_ranks; ++r) {{
-                    {index} recv_start = r * points_per_rank + std::min(r, remainder);
-                    {index} recv_end = recv_start + points_per_rank + (r < remainder ? 1 : 0);
-                    MPI_Recv(&point_source[recv_start][0], (recv_end - recv_start) * n_species, {mpi_scalar_type}, r, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                for (int r = 1; r < n_ranks; ++r) {{
+                    int recv_start = r * points_per_rank + std::min(r, remainder);
+                    int recv_end = recv_start + points_per_rank + (r < remainder ? 1 : 0);
+                    // Use reinterpret_cast to access nested arrays correctly
+                    MPI_Recv(reinterpret_cast<double*>(&(*point_source)[recv_start][0]),
+                            (recv_end - recv_start) * n_species, MPI_DOUBLE, r, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 }}
             }} else {{
                 // Send local results to the root process
-                MPI_Send(&point_source_local[0][0], (end - start) * n_species, {mpi_scalar_type}, 0, 0, MPI_COMM_WORLD);
+                MPI_Send(reinterpret_cast<const double*>(&point_source_local[0][0]),
+                        local_n_points * n_species, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
             }}
+
 
             if (rank == 0) {{
                 std::cout << "Computation completed and gathered on root process."<<std::endl;
-                std::cout << "Serial execution time: " << serial_time.count() << " seconds"<<std::endl;
+                std::cout << "Rank 1 execution time: " << serial_time.count() << " seconds"<<std::endl;
             }}
 
             MPI_Finalize();
