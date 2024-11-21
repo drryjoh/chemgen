@@ -1,0 +1,151 @@
+Nodes allocated for this job: sh03-01n03
+Number of points 100
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00238485 seconds
+Number of points 200
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00275266 seconds
+Number of points 400
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00356352 seconds
+Number of points 800
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00539644 seconds
+Number of points 1600
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.00931447 seconds
+Number of points 3200
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0170443 seconds
+Number of points 6400
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0322117 seconds
+Number of points 12800
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.0613324 seconds
+Number of points 25600
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.113228 seconds
+Number of points 51200
+Processing file: FFCM2_model
+-- MPI found: /share/software/user/open/openmpi/4.1.2/bin/mpic++
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/users/ryjoh/run_serial_threaded/build
+[ 80%] Built target tbb
+Consolidate compiler generated dependencies of target chemgen
+[ 90%] Building CXX object CMakeFiles/chemgen.dir/src/chemgen.cpp.o
+[100%] Linking CXX executable bin/chemgen
+[100%] Built target chemgen
+Running with  MPI processes and TBB_NUM_THREADS=1
+Number of threads available: 1
+Computation completed and gathered on root process.
+Rank 1 execution time: 0.225859 seconds
