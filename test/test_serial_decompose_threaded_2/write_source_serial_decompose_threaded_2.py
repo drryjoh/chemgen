@@ -11,14 +11,15 @@ class SourceWriter:
                 file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species,{scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature); return {progress_rate}}}\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
         file.write("\n")
 
-    def write_species_production_functions(self, file, species_production_rates, configuration):
-        for species_index, species_production in enumerate(species_production_rates):
-            if species_production != '':
-                file.write("{device_option} {scalar_function} production_rate_{species_index}({reactions_parameter} progress_rates){{ return {species_production};}};\n".format(**vars(configuration), species_production = species_production, species_index = species_index)) 
-            else:
-                file.write(f"//source_{species_index} has no production term\n")
-                file.write("{device_option} {scalar_function} production_rate_{species_index}({reactions_parameter} progress_rates){{ return {scalar_cast}(0);}};\n".format(**vars(configuration), species_production = species_production, species_index = species_index)) 
-        file.write("\n")
+    def write_species_production_functions_on_the_fly(self, file, species_production_on_fly_function_texts, configuration):
+        for reaction_index, species_production in enumerate(species_production_on_fly_function_texts):
+            file.write("""
+{device_option} 
+void production_rate_{reaction_index}({scalar_parameter} progress_rate, {species}& species_source)
+{{
+{species_production}
+}};
+""".format(**vars(configuration), species_production = species_production, reaction_index = reaction_index)) 
 
     def write_start_of_source_function_threaded(self, file, configuration):
         file.write("""
@@ -71,12 +72,12 @@ class SourceWriter:
             {scalar_list}<{scalar} (*)({species_parameter}, {scalar_parameter}, {species_parameter}, {scalar_parameter}), n_reactions> progress_rate_functions = {{{progress_rates_call_list}}};
     """.format(**vars(configuration), progress_rates_call_list = progress_rates_call_list, n_reactions = len(reaction_calls)))
 
-    def write_production_rate_functions_pointer_list(self, file, species_production_function_texts, configuration):
+    def write_accrue_source_pointer_list(self, file, species_production_on_fly_function_texts, configuration):
         indentation = ''
-        progress_rates_call_list = ','.join([f'{indentation}production_rate_{k}' for k in range(len(species_production_function_texts))])
+        progress_rates_call_list = ','.join([f'{indentation}production_rate_{k}' for k in range(len(species_production_on_fly_function_texts))])
         file.write("""
-            {scalar_list}<{scalar} (*)({reactions_parameter}), n_species> production_rate_functions = {{{progress_rates_call_list}}};
-    """.format(**vars(configuration), progress_rates_call_list = progress_rates_call_list, n_species = len(species_production_function_texts)))
+            {scalar_list}<void (*)({scalar_parameter}, {species}&), n_reactions> accrue_source_on_fly = {{{progress_rates_call_list}}};
+    """.format(**vars(configuration), progress_rates_call_list = progress_rates_call_list))
     
     def write_point_loop(self, file, configuration):
         file.write("""
@@ -99,15 +100,11 @@ class SourceWriter:
                 auto log_temperature_ = log_gen(temperature_);
                 auto pressure_ = pressure(species_, temperature_);
                 auto mixture_concentration_ = pressure_ * inv_universal_gas_constant_temperature_;
-                Reactions point_progress = {{}};
                 for({index} j = 0; j < n_reactions; j++)
                 {{
                     auto point_forward_reaction = reaction_functions[j](species_, temperature_, log_temperature_, pressure_, mixture_concentration_);
-                    point_progress = progress_rate_functions[j](species_, temperature_, gibbs_free_energies_, point_forward_reaction);
-                }}
-                for({index} j = 0; j < n_species; j++)
-                {{
-                    point_source_local[i - start][j] = production_rate_functions[j](point_progress);
+                    auto point_progress = progress_rate_functions[j](species_, temperature_, gibbs_free_energies_, point_forward_reaction);
+                    accrue_source_on_fly[j](point_progress, point_source_local[i - start]);
                 }}
             }}
         }}, tbb::auto_partitioner{{}} );
@@ -153,12 +150,12 @@ class SourceWriter:
                      species_production_function_texts, headers, configuration):
         self.write_reaction_functions(file, reaction_calls, configuration)
         self.write_progress_rate_functions(file, progress_rates, is_reversible, equilibrium_constants, configuration)
-        self.write_species_production_functions(file, species_production_function_texts, configuration)
+        self.write_species_production_functions_on_the_fly(file, species_production_on_fly_function_texts, configuration)
 
         self.write_start_of_source_function_threaded(file, configuration)
         self.write_reaction_functions_pointer_list(file, reaction_calls, configuration)
         self.write_progress_rate_functions_pointer_list(file, reaction_calls, configuration)
-        self.write_production_rate_functions_pointer_list(file, species_production_function_texts, configuration)
+        self.write_accrue_source_pointer_list(file, species_production_on_fly_function_texts, configuration)
         self.write_point_loop(file, configuration)
 
         self.write_end_of_function(file, configuration)
