@@ -35,7 +35,7 @@ class SourceWriter:
         file.write("        return net_production_rates;\n    }")
 
     def write_source(self, file, equilibrium_constants, 
-                     reaction_calls,  progress_rates, is_reversible, 
+                     reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
                      species_production_texts, headers, configuration): 
         #
         self.write_start_of_source_function(file, configuration)

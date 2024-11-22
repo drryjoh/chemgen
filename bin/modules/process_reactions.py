@@ -26,8 +26,8 @@ def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_b
     backward_rate = ' * '.join(backward_rate_array)
 
     return (forward_rate, backward_rate)
-
-def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, reaction_index, configuration):
+#species_production_on_fly_function_texts,
+def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts,  species_production_on_fly_function_texts, reaction_index, configuration):
     for index in indexes_of_species_in_reaction: 
         formatted_text = "{scalar_cast}({stoichiometric_production}) * rate_of_progress_{reaction_index}".format(**vars(configuration), 
         stoichiometric_production = stoichiometric_production[index], 
@@ -46,6 +46,14 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
             species_production_function_texts[index] = formatted_text
         else:
             species_production_function_texts[index] = ' + '.join([species_production_function_texts[index], formatted_text])
+    
+    on_the_fly_production = []
+    for index in indexes_of_species_in_reaction: 
+        on_the_fly_production.append( "species_source[{species_index}] = {scalar_cast}({stoichiometric_production}) * progress_rates; //Reaction {reaction_index}".format(**vars(configuration), 
+        stoichiometric_production = stoichiometric_production[index], 
+        reaction_index = reaction_index,
+        species_index = index))
+    species_production_on_fly_function_texts.append('\n'.join(on_the_fly_production))
 
 def create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
     is_reversible[reaction_index] = reaction.reversible

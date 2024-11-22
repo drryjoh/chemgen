@@ -4116,8 +4116,63 @@ This results in
  source terms.
 \end_layout
 
+\begin_layout Section
+Code Generation
+\end_layout
+
+\begin_layout Standard
+In the ChemGen software there are three main file types.
+ The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
+ The second file type are static code that are ingested by the python code and reformatted to the desired target software.
+ The remaining file types is a mixture of python code used to exercise tests,
+ most of which covered in the results section,
+ Section 5,
+ and yaml files that contain kinetic data.
+\end_layout
+
 \begin_layout Subsection
-Parallelization
+The concept of decorators
+\end_layout
+
+\begin_layout Standard
+C++ code takes on many forms.
+ For instance...
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+for a in a_list:
+\end_layout
+
+\begin_layout Plain Layout
+
+	a*a
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Thermodynamics
+\end_layout
+
+\begin_layout Subsection
+Reaction Rates
+\end_layout
+
+\begin_layout Subsection
+Parallelism
 \end_layout
 
 \begin_layout Standard
@@ -4676,7 +4731,8 @@ T1
 ,
  
 \series bold
-T3
+T2,
+ T3
 \series default
 ,
 
@@ -4693,77 +4749,46 @@ there is bound to be a trade off.
  Quantities such as fluxes and gradients require face contributions that involve other degrees of freedom.
  It is therefore feasible that the approaches laid out here could be implemented in a variety of CFD software,
  with the caveat that the performance may not transition due to other factors beholden to the target software.
-\end_layout
-
-\begin_layout Section
-Code Generation
+ 
 \end_layout
 
 \begin_layout Standard
-In the ChemGen software there are three main file types.
- The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
- The second file type are static code that are ingested by the python code and reformatted to the desired target software.
- The remaining file types is a mixture of python code used to exercise tests,
- most of which covered in the results section,
- Section 5,
- and yaml files that contain kinetic data.
-\end_layout
-
-\begin_layout Subsection
-The concept of decorators
-\end_layout
-
-\begin_layout Standard
-C++ code takes on many forms.
- For instance...
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-for a in a_list:
-\end_layout
-
-\begin_layout Plain Layout
-
-	a*a
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Results
-\end_layout
-
-\begin_layout Subsection
-Thermodynamics
-\end_layout
-
-\begin_layout Subsection
-Reaction Rates
-\end_layout
-
-\begin_layout Subsection
-Parallelism
+In this section we utilize these architectures in on several systems with two main approaches,
+ the first is to use CPU based parallelism with the threading is done using the logical cores on a given node and the second is using GPU based parallelism.
+ These approaches are mainly to showcase that the generated code can be arranged to fit the needs of the user;
+ however,
+ we do report signficant speed-up and general findings,
+ which was found to be consistent with the theoretical configurations of the architectures we tested on.
+ Full optimization of the execution of these algorithms can be pursued in future iterations of Chemgen.
 \end_layout
 
 \begin_layout Subsubsection
 CPU Based Parallelism 
 \end_layout
 
-\begin_layout Standard
-
+\begin_layout Subsubsection*
+Serial Performance,
+ S
 \end_layout
 
 \begin_layout Subsubsection*
-T1 Parallelism:
+MPI Decomposed Performance,
+ S-d
+\end_layout
+
+\begin_layout Subsubsection*
+Threading Performance,
+ T1
+\end_layout
+
+\begin_layout Subsubsection*
+MPI and Threading Performance,
+ T2
+\end_layout
+
+\begin_layout Subsubsection*
+MPI and Threading Performance,
+ T3
 \end_layout
 
 \begin_layout Standard

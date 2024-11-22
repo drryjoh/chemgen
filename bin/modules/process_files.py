@@ -20,6 +20,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
+    species_production_on_fly_function_texts = [''] * gas.n_reactions
     species_production_jacobian = [[''] * (gas.n_species + 1)] * (gas.n_species + 1)
     reaction_rates = [''] * gas.n_reactions
     reaction_calls = [''] * gas.n_reactions
@@ -44,7 +45,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
 
         create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration)
 
-        accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, reaction_index, configuration)
+        accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, species_production_on_fly_function_texts, reaction_index, configuration)
         create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
     headers = []
@@ -76,7 +77,8 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
                 # Instantiate and use the custom SourceWriter
                 custom_writer = CustomSourceWriter()
                 custom_writer.write_source(file, equilibrium_constants, reaction_calls, 
-                                        progress_rates, is_reversible, species_production_function_texts, 
+                                        progress_rates, is_reversible, species_production_on_fly_function_texts,
+                                        species_production_function_texts, 
                                         headers, configuration)
             except (FileNotFoundError, AttributeError) as e:
                 print(f"Error loading custom source writer: {e}")
@@ -84,8 +86,8 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
         else:
             from .write_source_serial import SourceWriter as source_serial
             from .write_source_threaded import SourceWriter as source_threaded
-            source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_texts,  headers, configuration)
-            source_threaded().write_source(file, equilibrium_constants, reaction_calls,  progress_rates, is_reversible, species_production_function_texts, headers, configuration)
+            source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration)
+            source_threaded().write_source(file, equilibrium_constants, reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_function_texts, headers, configuration)
 
     
     required_headers = create_headers(configuration, destination_folder)
