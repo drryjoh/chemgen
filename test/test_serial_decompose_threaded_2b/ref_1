@@ -1,0 +1,14 @@
+tbb::parallel_for(tbb::blocked_range<int>(start, end, chunk_size), [&](const tbb::blocked_range<int>& r) {
+    for (int i = r.begin(); i < r.end(); ++i) {
+        auto state_ = (*point_states)[i];
+        auto temperature_ = temperature_from_chemical_state(state_);
+        auto species_ = species_from_chemical_state(state_);
+
+        // Unroll the loop manually
+        compute_reaction<0>(species_, temperature_, point_source_local[i - start]);
+        compute_reaction<1>(species_, temperature_, point_source_local[i - start]);
+        compute_reaction<2>(species_, temperature_, point_source_local[i - start]);
+        // Add more calls for additional reactions.
+    }
+}, tbb::auto_partitioner{});
+

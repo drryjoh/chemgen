@@ -1,0 +1,27 @@
+template<int ReactionIndex>
+void compute_reaction(const Species& species, const double& temperature, Species& species_source) {
+    if constexpr (ReactionIndex == 0) {
+        double inv_universal_gas_constant_temperature = 1.0 / (universal_gas_constant() * temperature);
+        double equilibrium_constant = exp_gen(-(double(-2.0) * species[1] +
+                                                double(-1.0) * species[3] +
+                                                double(2.0) * species[5]) *
+                                               inv_universal_gas_constant_temperature);
+        double forward_reaction = species[1] * species[3];  // Example computation
+        species_source[1] = -2.0 * forward_reaction;
+        species_source[3] = -1.0 * forward_reaction;
+        species_source[5] = 2.0 * forward_reaction;
+    } else if constexpr (ReactionIndex == 1) {
+        double forward_reaction = species[1] * species[3];  // Example computation
+        species_source[1] = -2.0 * forward_reaction;
+        species_source[3] = -1.0 * forward_reaction;
+        species_source[5] = 2.0 * forward_reaction;
+    } else if constexpr (ReactionIndex == 2) {
+        // Logic for reaction 2
+        double forward_reaction = species[5];  // Example computation
+        species_source[5] = -1.0 * forward_reaction;
+        species_source[0] = 2.0 * forward_reaction;
+        species_source[2] = 1.0 * forward_reaction;
+    }
+    // Add more `if constexpr` blocks as needed for additional ReactionIndex values.
+}
+
