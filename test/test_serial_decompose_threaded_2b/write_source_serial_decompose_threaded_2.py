@@ -91,16 +91,13 @@ class SourceWriter:
                 auto log_temperature_ = log_gen(temperature_);
                 auto pressure_ = pressure(species_, temperature_);
                 auto mixture_concentration_ = pressure_ * inv_universal_gas_constant_temperature_;
-                for({index} j = 0; j < n_reactions; j++)
-                {{
-                    compute_reaction(species_, 
-                                     temperature_, 
-                                     log_temperature_, 
-                                     pressure_,
-                                     mixture_concentration_, 
-                                     gibbs_free_energies_,
-                                     point_source_local[i - start]);
-                }}
+                compute_reaction(species_, 
+                                    temperature_, 
+                                    log_temperature_, 
+                                    pressure_,
+                                    mixture_concentration_, 
+                                    gibbs_free_energies_,
+                                    point_source_local[i - start]);
             }}
         }}, tbb::auto_partitioner{{}} );
         
