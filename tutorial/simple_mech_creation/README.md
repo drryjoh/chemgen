@@ -32,7 +32,7 @@ For the first test run
 chemgen.py simple_mech .
 ```
 
-Both `simple_mech.yaml` and `simple_mech` can be used. The yaml extension is automatically searched for.
+Both `simple_mech.yaml` and `simple_mech` can be used. The yaml extension is automatically searched for. For this test case, `simple_mech.yaml` is included in `/chemical_mechanisms/`. 
 
 There will be a newly generated directory, `src/` which contains
 ```
@@ -115,11 +115,27 @@ running
 chemgen.py simple_mech . --cmake
 ```
 
-will make a CMakeLists.txt file for user-imposed compilation strategies.
+will make a CMakeLists.txt file for user-imposed compilation strategies. 
+
+```bash
+mkdir build
+cd build
+ccmake ../
+make
+./bin/chemgen
+```
+
+Previously, running
+```bash
+chemgen.py simple_mech . --compile
+```
+
+Generates source code and compile with a hard coded command. Eventually these hard coded commands will be replaced with generating cmake on the fly and compiling. If your machine has specific compilation setting the `cmake` approach is probably best.
+
 
 ## Run Larger Mechanism
 
-The generated test, `chemgen.cpp`, utilized `test_configuration.yaml` in this directory
+The previously generated test, `chemgen.cpp`, utilized `test_configuration.yaml` in this directory which includes the following configuration:
 
 ```yaml
 test_conditions:
@@ -165,9 +181,16 @@ test_conditions:
     - name: C2H4
       MoleFraction: 0.1
 ```
-Note: `random: On` supersedes any other settings in the test configuration file. We can perform this larger test with FFCM2_model.yaml
+Note: `random: On` supersedes any other settings in the test configuration file. We can perform this larger test with FFCM2_model.yaml. The FFCM2_model can be download in the chemical mechanisms folder
+```bash
+cd /chemgen/chemical_mechansims/
+./download.sh
 ```
+
+Then you can run chemgen in any run directory:
+
+```bash
 chemgen.py FFCM2_model.yaml . --compile
 ```
 
-For the explicit `C2H4` addition, the source term is easy to parse, but the other data is large and cumbersome. In further tutorials we perform random scattering of the source term to compare its `$L_2$`-norm and compute ChemGen's accuracy compared to cantera.
+For the explicit `C2H4` addition, the source term is easy to parse, but the random data is large and cumbersome. In further tutorials we perform random scattering of the source term to compare its `$L_2$`-norm and compute ChemGen's accuracy compared to cantera.
