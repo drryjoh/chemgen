@@ -85,9 +85,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
                 sys.exit(1)
         else:
             from .write_source_serial import SourceWriter as source_serial
-            from .write_source_threaded import SourceWriter as source_threaded
             source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration)
-            source_threaded().write_source(file, equilibrium_constants, reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_function_texts, headers, configuration)
 
     
     required_headers = create_headers(configuration, destination_folder)

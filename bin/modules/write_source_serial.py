@@ -37,10 +37,9 @@ class SourceWriter:
     def write_source(self, file, equilibrium_constants, 
                      reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
                      species_production_texts, headers, configuration): 
-        #
         self.write_start_of_source_function(file, configuration)
         self.write_reaction_calculations(file, reaction_calls, configuration)
         self.write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
         self.write_species_production(file, species_production_texts, configuration)
-        headers.append('source.h')
         self.write_end_of_function(file)
+        headers.append('source.h')
