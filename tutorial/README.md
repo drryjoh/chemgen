@@ -12,13 +12,13 @@
 
 These tutorials were created to give a general understanding of the code mechanics in ChemGen. 
 
-1) [Simple Mechanism Creation](./simple_mech_creation/README.md)
+1) [Mechanism Creation](./mechanism_creation/README.md)
 
-This tutorial generates source code using a simple mechanism. The mechanism is an arbitrary single reaction and several species so that the generated source code is readable.
+This tutorial generates source code using a the most basic ChemGen features. The mechanism is an arbitrary single reaction and several species so that the generated source code is readable.
 
-2) [Large Mechanism Creation](./large_mech_creation/README.md)
+2) [ChemGen Error Assessment](./chemgen_error_assessment/README.md) 
 
-This tutorial generates source code using a large mechanism (FFCM2). The mechanism is large enough that the readability of all the reaction terms accrued together can be quite cumbersome, but, neverless is still usable code
+This tutorial creates a custom chemgen.cpp function that tests random chemical states and generates L2-norms for the specificied mechanism. We then plot their errors in various ways.
 
 3) [Mechansim Creation with Decorators](./decorators/README.md)
 
