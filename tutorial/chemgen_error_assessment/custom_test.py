@@ -56,6 +56,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
     test_file = destination_folder/test_file_name
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
+        file.write("#include <fstream> \n")
         file.write("#include <algorithm>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
@@ -63,9 +64,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
             file.write(f"#include \"{header}\"\n")
             if "types" in header:
                         file.write(f"const int n_points = {n_points};\n")
-                        file.write("using PointState = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_species+1>, n_points>>;\n".format(**vars(configuration)))
-                        file.write("using ChemicalState = {scalar_list}<{scalar}, n_species+1>;\n".format(**vars(configuration)))
-                        file.write("using PointReactions = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>>;\n".format(**vars(configuration)))
+                        file.write("using PointScalar = std::unique_ptr<{scalar_list}<{scalar}, n_points>>;\n".format(**vars(configuration)))
                         file.write("using PointSpecies = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>>;\n".format(**vars(configuration)))
 
         #[temperature, pressure, species_string, random] = get_test_conditions(chemical_mechanism)
@@ -78,84 +77,66 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
             point_temperatures.append(gas.T)
             point_source.append(gas.net_production_rates)
         
+        concentration_test_array = []
+        point_source_test_array = []
         for point in range(n_points):
-            ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in point_concentrations[point]])
-        concentration_test = '{species} species  = {{{array}}};'.format(array = ,**vars(configuration)) 
-        enthalpies = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights
-        entropies = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights
-        energies = gas.standard_int_energies_RT * gas.T * ct.gas_constant/gas.molecular_weights
-        gibbs = gas.standard_gibbs_RT * gas.T * ct.gas_constant
-        equilibrium_constants = gas.equilibrium_constants
-        =' '.join([f"{npr}" for npr in gas.net_production_rates]
+            concentration_test_array.append("{{{0}}}".format(','.join(["{c}".format(c=c, **vars(configuration)) for c in point_concentrations[point]])))
+            point_source_test_array.append("{{{0}}}".format(','.join(["{c}".format(c=c, **vars(configuration)) for c in point_source[point]])))
+        
+        temperature_tests = ','.join([str(temp) for temp in point_temperatures])
+        concentration_tests = ','.join(concentration_test_array)
+        point_cantera_net_production_rates = ','.join(point_source_test_array)
 
         content = """
-// Overload << operator for std::array
-template <typename T, std::size_t N>
-std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
-    os << "[ ";
-    for (const auto& value : arr) 
-    {{
-        os << value << " ";
-    }}
-    os << "]";
-    return os;
-}}
 
-const int n_points = {n_points};
-std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>>
-using ScalarList  = 
+void l2_norm({scalar_parameter} temperature, {species_parameter} result, {species_parameter} cantera_source, std::ofstream& file) 
+{{
+
+    // Calculate L2 norm
+    {scalar} l2_norm = 0.0;
+    for (size_t i = 0; i < n_species; ++i) 
+    {{
+        l2_norm += pow_gen2(result[i] - cantera_source[i]);
+    }}
+    l2_norm = std::sqrt(l2_norm);
+
+    // Write the result to the CSV file
+    file << temperature << ", " << l2_norm << std::endl;
+}}
 
 {index} main() {{
     std::cout << "*** ChemGen ***" <<std::endl;
-    {concentration_test}
-    {scalar} temperature_ =  {temperature};
-    {species} result = source(species, temperature_);
+    PointSpecies concentration_tests = {{{concentration_tests}}};
+    PointScalar temperatures =  {{{temperature_tests}}};
+    PointSpecies cantera_sources = {{{point_cantera_net_production_rates}}};
 
-
-    {scalar} pressure_return = pressure(species, temperature_);
-    {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
-    std::cout << "temperature: " << temperature_<<std::endl;
-    for({index} i=0; i<10; ++i)
+    // Open the CSV file
+    std::ofstream file("l2_norm_results.csv");
+    if (!file.is_open()) 
     {{
-        std::cout << "temperature_ for "<< i <<" iterations: " << (temperature_ - temperature(int_energy, species, i)) / (temperature_)<<std::endl;
+        std::cerr << "Error: Unable to open file for writing." << std::endl;
+        return 1;
     }}
-    // Output the result
-    std::cout << "Source test result:  " << result << std::endl;
-    std::cout << "Cantera test result: " <<"{cantera_net_production_rates}"<<std::endl;
 
-    
-    std::cout << "ChemGen internal energy: "<< int_energy <<std::endl;
-    std::cout << "Cantera internal energy: " <<"{cantera_int_energy}"<<std::endl;
+    // Write the header
+    file << "temperature, l2_norm" << std::endl;
 
-    
-    std::cout << "Chemgen species cps: " << species_specific_heat_constant_pressure_mass_specific(temperature_) <<std::endl;
-    std::cout << "Cantera species cps: " <<"{cantera_species_cp}"<<std::endl;
+    // Process each point
+    {index} n_points = temperatures.size();
+    for ({index} i = 0; i < n_points; i++)
+    {{
+        {species} result = source(concentration_tests[i], temperatures[i]);
+        l2_norm(temperatures[i], result, cantera_sources[i], file);
+    }}
 
-    
-    std::cout << "Chemgen species enthalpies: " << species_enthalpy_mass_specific(temperature_) <<std::endl;
-    std::cout << "Cantera species enthalpies: " <<"{cantera_species_enthalpy}"<<std::endl;
-    
-    std::cout << "Chemgen species internal energies: " << species_internal_energy_mass_specific(temperature_) <<std::endl;
-    std::cout << "Cantera species internal energies: " <<"{cantera_species_energies}"<<std::endl;
+    // Close the file
+    file.close();
 
-    std::cout << "Chemgen species internal entropies: " << species_entropy_mass_specific(temperature_) <<std::endl;
-    std::cout << "Cantera species internal entropies: " <<"{cantera_species_entropy}"<<std::endl;
-
-    
-    std::cout << "Chemgen species gibbs energy: " << species_gibbs_energy_mole_specific(temperature_) <<std::endl;
-    std::cout << "Cantera species gibbs energy: " <<"{cantera_species_gibbs}"<<std::endl;
-
-
-    std::cout << "Pressure: " <<pressure_return <<std::endl;
-    std::cout << "Temperature Monomial at 300           : " <<temperature_monomial({scalar_cast}(300)) <<std::endl;
-    std::cout << "Temperature Energy Monomial at 300           : " <<temperature_energy_monomial({scalar_cast}(300)) <<std::endl;
-    std::cout << "Temperature Entropy Monomial at 300           : " <<temperature_entropy_monomial({scalar_cast}(300)) <<std::endl;
-    std::cout << "Temperature Gibbs Monomial at 300           : " <<temperature_gibbs_monomial({scalar_cast}(300)) <<std::endl;
-    
     return 0;
 }}
             """
         file.write(content.format(**vars(configuration), 
-        concentration_tests = concentration_tests, 
-        temperatures = temperatures, 
-        point_cantera_net_production_rates = point_cantera_net_production_rates)))
+                   concentration_tests = concentration_tests, 
+                   temperature_tests = temperature_tests, 
+                   point_cantera_net_production_rates = point_cantera_net_production_rates,
+                   n_points = n_points))
