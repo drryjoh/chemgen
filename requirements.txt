@@ -1,0 +1,2 @@
+cantera
+pyyaml

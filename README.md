@@ -16,7 +16,7 @@ To set up the project on your local machine, please follow these steps:
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/your-username/your-repository.git
+   git clone https://github.com/drryjoh/chemgen.git
    cd your-repository
    ```
 
@@ -56,7 +56,7 @@ Ensure you are using Python 3 and `pip` is invoked through `python3 -m pip` for 
 
 ## Usage
 
-Provide instructions on how to use the project here. Include example commands or code snippets to guide users on how to run the project.
+The best way to learn to use ChemGen is through the tutorials located [here](tutorial/README.md).
 
 ## License
 
