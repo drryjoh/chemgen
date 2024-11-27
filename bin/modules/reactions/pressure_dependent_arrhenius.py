@@ -40,9 +40,10 @@ def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, spe
     return_text ="""
 {device_option}
 {scalar_function}
-call_forward_reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} log_pressure) {const_option}
+call_forward_reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure) {const_option}
 {{
         {scalar} inv_universal_gas_constant_temperature = inv(universal_gas_constant() * temperature); 
+        {scalar} log_pressure = log_gen(pressure);
 {choose_text}
 }}
     """
