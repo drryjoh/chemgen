@@ -73,11 +73,15 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         point_temperatures = []
         point_source = []
         for point in range(n_points):
-            gas.TPX = get_random_TPX(gas)
+            gas.TPX = 2000, 101325.0, "OH:0.05, H:0.05, H2O:0.9"#get_random_TPX(gas)
             point_concentrations.append(gas.concentrations)
             point_temperatures.append(gas.T)
             point_source.append(gas.net_rates_of_progress)
-        
+        print(gas.species_names)
+        print(gas.X)
+        print(gas.concentrations)
+        print(gas.T)
+        print(gas.P)
         concentration_test_array = []
         point_source_test_array = []
         for point in range(n_points):
