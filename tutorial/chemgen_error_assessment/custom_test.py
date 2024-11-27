@@ -49,7 +49,7 @@ def get_random_TPX(gas):
 
     # Normalize the numbers so they sum to 1
     random_X = [x / total for x in random_X]
-    return (300 + random.random() * 5000, 10132.5 + 1013250 * random.random(), random_X)
+    return (1000 + random.random() * 1000, 10132.5 + 1013250.0 * random.random(), random_X)
 
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1):
@@ -80,14 +80,39 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         concentration_test_array = []
         point_source_test_array = []
         for point in range(n_points):
-            concentration_test_array.append("{{{0}}}".format(','.join(["{c}".format(c=c, **vars(configuration)) for c in point_concentrations[point]])))
-            point_source_test_array.append("{{{0}}}".format(','.join(["{c}".format(c=c, **vars(configuration)) for c in point_source[point]])))
+            concentration_test_array.append("(*concentration_tests)[{point}] = {{{list}}};".format(list = ','.join(["{c}".format(c=c, **vars(configuration)) for c in point_concentrations[point]]), point = point))
+            point_source_test_array.append("(*cantera_sources)[{point}] = {{{list}}};".format(list = ','.join(["{c}".format(c=c, **vars(configuration)) for c in point_source[point]]), point = point))
         
-        temperature_tests = ','.join([str(temp) for temp in point_temperatures])
-        concentration_tests = ','.join(concentration_test_array)
-        point_cantera_net_production_rates = ','.join(point_source_test_array)
+        temperature_tests = "(*temperatures) = {{{list}}};".format(list = ','.join([str(temp) for temp in point_temperatures]))
+        concentration_tests = ' '.join(concentration_test_array)
+        point_cantera_net_production_rates = ' '.join(point_source_test_array)
 
         content = """
+{scalar_function} safe_divide({scalar_parameter} a, {scalar_parameter} b) {const_option}
+{{
+    if(b == 0)
+    {{
+        return 0;
+    }}
+    else
+    {{
+        return a/b;
+    }}
+}}
+
+{scalar_function} log10_choose({scalar_parameter} a) {const_option}
+{{
+    if(a == 0)
+    {{
+        return 0;
+    }}
+    else
+    {{
+        return log10_gen(a);
+    }}
+}}
+
+
 
 void l2_norm({scalar_parameter} temperature, {species_parameter} result, {species_parameter} cantera_source, std::ofstream& file) 
 {{
@@ -96,7 +121,8 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     {scalar} l2_norm = 0.0;
     for (size_t i = 0; i < n_species; ++i) 
     {{
-        l2_norm += pow_gen2(result[i] - cantera_source[i]);
+
+        l2_norm += ({scalar_cast}(1)/{scalar_cast}(n_species)) * ( log10_choose(std::abs(result[i])) - log10_choose(std::abs(cantera_source[i])) );
     }}
     l2_norm = std::sqrt(l2_norm);
 
@@ -106,9 +132,13 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
 
 {index} main() {{
     std::cout << "*** ChemGen ***" <<std::endl;
-    PointSpecies concentration_tests = {{{concentration_tests}}};
-    PointScalar temperatures =  {{{temperature_tests}}};
-    PointSpecies cantera_sources = {{{point_cantera_net_production_rates}}};
+    PointSpecies concentration_tests = std::make_unique<{scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>>();
+    PointSpecies cantera_sources = std::make_unique<{scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>>();
+    PointScalar temperatures = std::make_unique<{scalar_list}<{scalar}, n_points>>();
+
+    {concentration_tests};
+    {temperature_tests};
+    {point_cantera_net_production_rates};
 
     // Open the CSV file
     std::ofstream file("l2_norm_results.csv");
@@ -122,11 +152,10 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     file << "temperature, l2_norm" << std::endl;
 
     // Process each point
-    {index} n_points = temperatures.size();
     for ({index} i = 0; i < n_points; i++)
     {{
-        {species} result = source(concentration_tests[i], temperatures[i]);
-        l2_norm(temperatures[i], result, cantera_sources[i], file);
+        {species} result = source((*concentration_tests)[i], (*temperatures)[i]);
+        l2_norm((*temperatures)[i], result, (*cantera_sources)[i], file);
     }}
 
     // Close the file
