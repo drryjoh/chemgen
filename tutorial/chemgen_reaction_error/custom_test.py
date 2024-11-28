@@ -54,6 +54,11 @@ def get_random_TPX(gas):
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1):
     test_file = destination_folder/test_file_name
+    check_states = True
+    if check_states:
+        state_files = ["bad_state_189.npy", "bad_state_623.npy"]
+        mech_file = "FFCM2_model.yaml"
+        n_points = len(state_files)
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
         file.write("#include <fstream> \n")
@@ -72,16 +77,20 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         point_concentrations = []
         point_temperatures = []
         point_source = []
+        
         for point in range(n_points):
-            gas.TPX = 2000, 101325.0, "OH:0.05, H:0.05, H2O:0.9"#get_random_TPX(gas)
+            if check_states:
+                bad_state = np.load(state_files[point])
+                gas = ct.Solution(mech_file)
+                temperature_b = bad_state[0]
+                pressure_b = ct.gas_constant * temperature_b * np.sum(bad_state[1:])
+                X_b= bad_state[1:]/np.sum(bad_state[1:])
+                gas.TPX =  temperature_b, pressure_b, X_b
+            else:
+                gas.TPX = get_random_TPX(gas)
             point_concentrations.append(gas.concentrations)
             point_temperatures.append(gas.T)
             point_source.append(gas.net_rates_of_progress)
-        print(gas.species_names)
-        print(gas.X)
-        print(gas.concentrations)
-        print(gas.T)
-        print(gas.P)
         concentration_test_array = []
         point_source_test_array = []
         for point in range(n_points):
@@ -127,8 +136,9 @@ void l2_norm({scalar_parameter} temperature, {reactions_parameter} result, {reac
     file << temperature << ", ";
     for (size_t i = 0; i < n_reactions; ++i) 
     {{
-        {scalar} l2_norm_0 =  pow_gen2(safe_divide(result[i]-cantera_source[i], cantera_source[i]));
+        {scalar} l2_norm_0 =  log10_choose(std::abs(result[i])) - log10_choose(std::abs(cantera_source[i]));
         //file << l2_norm_0 << ", ";
+
         file << result[i] <<", "<<cantera_source[i] << ", ";
 
         l2_norm += l2_norm_0;

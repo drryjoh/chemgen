@@ -2,14 +2,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
+import cantera as ct
 
 # Load the data from your CSV file
 data = np.loadtxt("l2_norm_results.csv", delimiter=",", skiprows=1)
+states = np.loadtxt("states.csv", delimiter=",", skiprows=0)
 
 # Separate the data into temperatures and errors
 temperatures = data[:, 0]  # First column
 errors = data[:, 1]        # Second column
-
+bad_states = []
+for k, error in enumerate(errors):
+    if error>10.0:
+        bad_states.append(states[k,:])
+        np.save(f"bad_state_{k}.npy", states[k,:])
+for bad_state in bad_states:
+    gas = ct.Solution("FFCM2_model.yaml")
+    temperature = bad_state[0]
+    pressure = ct.gas_constant * temperature * np.sum(bad_state[1:])
+    X = bad_state[1:]/np.sum(bad_state[1:])
+    gas.TPX =  temperature, pressure, X
+    print(pressure)
+    print(X)
 # Create a boxplot
 fig, ax = plt.subplots(figsize=(8, 6))
 boxprops = dict(patch_artist=True)  # Enable patching for the box

@@ -43,13 +43,42 @@ def get_test_conditions(chemical_mechanism):
     return [temperature, pressure, species_string, False]
 
 def get_random_TPX(gas):
-    import random
-    random_X = [random.random() for _ in range(gas.n_species)]
-    total = sum(random_X)
+    # Define species list
+    species_list = gas.species_names
 
-    # Normalize the numbers so they sum to 1
-    random_X = [x / total for x in random_X]
-    return (1000 + random.random() * 1000, 10132.5 + 1013250.0 * random.random(), random_X)
+    # Define major species
+    major_species = { 'H2', 'O2', 'H2O', 'AR', 'N2', 'CO', 'CO2', 'CH4', 'C2H4', 'C4H10'}
+
+    # Initialize the species array
+    species_array = np.zeros(len(species_list))
+    
+    major_indices = [i for i, species in enumerate(species_list) if species in major_species]
+    major_values = np.random.uniform(0.1, 1.0, len(major_indices))
+
+    minor_indices = [i for i, species in enumerate(species_list) if species not in major_species]
+    minor_values = np.random.uniform(1e-8, 0.001, len(minor_indices))
+
+    # Randomly make 50% of major values zero
+    major_mask = np.random.choice([True, False], size=len(major_values), p=[0.2, 0.8])
+    major_values = major_values * major_mask
+
+    # Randomly make 50% of minor values zero
+    minor_mask = np.random.choice([True, False], size=len(minor_values), p=[0.5, 0.5])
+    minor_values = minor_values * minor_mask
+
+    for idx, value in zip(minor_indices, minor_values):
+        species_array[idx] = value
+
+    for idx, value in zip(major_indices, major_values):
+        species_array[idx] = value
+
+    for k, species in enumerate(species_array):
+        if species<1e-8:
+            species_array[k] = 0.0
+            
+    species_array /= species_array.sum()
+
+    return (1000 + 1000 * np.random.random(), 10132.5 + 101325.0 * 2 * np.random.random(), species_array)
 
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1):
@@ -72,6 +101,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         point_temperatures = []
         point_source = []
         for point in range(n_points):
+            import random
             gas.TPX = get_random_TPX(gas)
             point_concentrations.append(gas.concentrations)
             point_temperatures.append(gas.T)
@@ -114,20 +144,34 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
 
 
 
-void l2_norm({scalar_parameter} temperature, {species_parameter} result, {species_parameter} cantera_source, std::ofstream& file) 
+void l2_norm({scalar_parameter} temperature, {species_parameter} result, {species_parameter} cantera_source, {species_parameter} concentrations,  std::ofstream& file) 
 {{
 
     // Calculate L2 norm
+    file << temperature;
+    {scalar} l2_norm = {scalar_cast}(0.0);
+    {scalar} weight = {scalar_cast}(1.0);
+    {scalar} sum_c = sum_gen(concentrations);
+    for (size_t i = 0; i < n_species; ++i) 
+    {{
+        //weight = concentrations[i]/sum_c;
+        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(std::abs(safe_divide(result[i] - cantera_source[i], cantera_source[i])));
+    }}
+    file<< ", " << std::sqrt(l2_norm);
+    file<< std::endl;
+  
+}}
+void write_states({species_parameter} concentrations, {scalar_parameter} temperature,  std::ofstream& states) 
+{{
+
+    // Calculate L2 norm
+    states << temperature;
     {scalar} l2_norm = 0.0;
     for (size_t i = 0; i < n_species; ++i) 
     {{
-
-        l2_norm += ({scalar_cast}(1)/{scalar_cast}(n_species)) * ( log10_choose(std::abs(result[i])) - log10_choose(std::abs(cantera_source[i])) );
+        states << ", " << concentrations[i];
     }}
-    l2_norm = std::sqrt(l2_norm);
-
-    // Write the result to the CSV file
-    file << temperature << ", " << l2_norm << std::endl;
+    states << std::endl;
 }}
 
 {index} main() {{
@@ -142,24 +186,39 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
 
     // Open the CSV file
     std::ofstream file("l2_norm_results.csv");
+    std::ofstream states("states.csv");
     if (!file.is_open()) 
     {{
         std::cerr << "Error: Unable to open file for writing." << std::endl;
         return 1;
     }}
+    if (!states.is_open()) 
+    {{
+        std::cerr << "Error: Unable to open file for writing." << std::endl;
+        return 1;
+    }}
+
 
     // Write the header
-    file << "temperature, l2_norm" << std::endl;
-
+    file << "temperature, L2"<<std::endl;
+    /*
+    for ({index} i = 0; i < n_species; i++)
+    {{
+        file << ", l2_norm_" << i;
+    }}
+    file <<std::endl;
+    */
     // Process each point
     for ({index} i = 0; i < n_points; i++)
     {{
         {species} result = source((*concentration_tests)[i], (*temperatures)[i]);
-        l2_norm((*temperatures)[i], result, (*cantera_sources)[i], file);
+        write_states((*concentration_tests)[i], (*temperatures)[i], states);
+        l2_norm((*temperatures)[i], result, (*cantera_sources)[i], (*concentration_tests)[i], file);
     }}
 
     // Close the file
     file.close();
+    states.close();
 
     return 0;
 }}
