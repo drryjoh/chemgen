@@ -37,17 +37,14 @@ def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, spe
         E = Es[k]
         A = As[k]
         B = Bs[k]
-
-        # Add the current rate to the list for this pressure
-        if reaction_index == 861:
-            print(f"pressure: {pressure}")
-            print(f"pressure_previous: {previous_pressure}")
         # If the pressure changes, finalize the current list of rates
         if pressure != previous_pressure:
             rates.append(rate_at_pressure)  # Save the rates for the previous pressure
             rate_at_pressure = []  # Reset for the new pressure
             unique_pressures.append(pressure)  # Add the new pressure to unique list
+        
         rate_at_pressure.append(f"arrhenius({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature)")
+
         # Update the previous pressure tracker
         previous_pressure = pressure
 
@@ -55,8 +52,6 @@ def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, spe
     if rate_at_pressure:
         rates.append(rate_at_pressure)
 
-    if reaction_index == 861 or reaction_index == 80 or reaction_index == 841:
-        print(unique_pressures)
     
     rates_for_write = []
     for rate in rates:

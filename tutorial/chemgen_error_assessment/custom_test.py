@@ -53,17 +53,17 @@ def get_random_TPX(gas):
     species_array = np.zeros(len(species_list))
     
     major_indices = [i for i, species in enumerate(species_list) if species in major_species]
-    major_values = np.random.uniform(0.1, 1.0, len(major_indices))
+    major_values = np.random.uniform(0.1, 0.5, len(major_indices))
 
     minor_indices = [i for i, species in enumerate(species_list) if species not in major_species]
-    minor_values = np.random.uniform(1e-8, 0.001, len(minor_indices))
+    minor_values = np.random.uniform(1e-8, 1e-6, len(minor_indices))
 
     # Randomly make 50% of major values zero
     major_mask = np.random.choice([True, False], size=len(major_values), p=[0.2, 0.8])
     major_values = major_values * major_mask
 
     # Randomly make 50% of minor values zero
-    minor_mask = np.random.choice([True, False], size=len(minor_values), p=[0.5, 0.5])
+    minor_mask = np.random.choice([True, False], size=len(minor_values), p=[0.2, 0.8])
     minor_values = minor_values * minor_mask
 
     for idx, value in zip(minor_indices, minor_values):
@@ -71,10 +71,6 @@ def get_random_TPX(gas):
 
     for idx, value in zip(major_indices, major_values):
         species_array[idx] = value
-
-    for k, species in enumerate(species_array):
-        if species<1e-8:
-            species_array[k] = 0.0
             
     species_array /= species_array.sum()
 
@@ -101,7 +97,6 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         point_temperatures = []
         point_source = []
         for point in range(n_points):
-            import random
             gas.TPX = get_random_TPX(gas)
             point_concentrations.append(gas.concentrations)
             point_temperatures.append(gas.T)
@@ -155,7 +150,7 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     for (size_t i = 0; i < n_species; ++i) 
     {{
         //weight = concentrations[i]/sum_c;
-        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(std::abs(safe_divide(result[i] - cantera_source[i], cantera_source[i])));
+        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(log10_choose(std::abs(result[i])) - log10_choose(std::abs(cantera_source[i])));
     }}
     file<< ", " << std::sqrt(l2_norm);
     file<< std::endl;

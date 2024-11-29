@@ -56,7 +56,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
     test_file = destination_folder/test_file_name
     check_states = True
     if check_states:
-        state_files = ["bad_state_189.npy", "bad_state_623.npy"]
+        state_files = ["bad_state_189.npy", "bad_state_623.npy", "bad_state_6565.npy", "bad_state_6565.npy"]
         mech_file = "FFCM2_model.yaml"
         n_points = len(state_files)
     with open(test_file, 'w') as file:
