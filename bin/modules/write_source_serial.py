@@ -8,13 +8,27 @@ class SourceWriter:
             {species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);
             {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);
             {scalar} log_temperature = log_gen(temperature);
+            {reactions} gibbs_reactions = gibbs_reaction(log_temperature);
             {scalar} pressure_ = pressure(species, temperature);
             {scalar} mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;\n""".format(**vars(configuration)))
     
     def write_progress_rates(self, file, progress_rates, is_reversible, equilibrium_constants, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
+                import re
+
+                # Original string
+                original_string = f"{equilibrium_constants[i]}"
+
+                # New content to replace with
+                replacement = f"gibbs_reactions[{i}]"
+
+                # Regular expression to match text inside the parentheses
+                pattern = r"exp_gen\(-\(.*?\)\)"
+
+                # Replace using re.sub
+                equilibrium_constant = re.sub(r"(?<=exp_gen\(-\().*?(?=\)\))", replacement, original_string)
+                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constant, **vars(configuration)))
             file.write(f"        {progress_rate}\n") 
         file.write("\n")
         

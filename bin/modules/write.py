@@ -123,3 +123,21 @@ def write_gibbs_thermo_transport_fit(file, name, thermo_fit_text, configuration)
 }}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
+
+def write_gibbs_reaction_transport_fit(file, name, thermo_fit_text, configuration):
+    content ="""
+{device_option}
+{reactions_function} 
+{name}({temperature_monomial_parameter} log_temperature_monomial_sequence) {const_option} 
+{{
+{thermo_fit}
+}}
+
+{device_option}
+{reactions_function} 
+{name}({scalar_parameter} log_temperature) {const_option} 
+{{
+    return {name}(temperature_monomial(log_temperature));
+}}
+    """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
+    file.write(content)

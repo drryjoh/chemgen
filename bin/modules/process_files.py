@@ -62,6 +62,8 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
                 write_entropy_thermo_transport_fit(file, name, thermo_fit, configuration)
             elif thermo_type == "gibbs":
                 write_gibbs_thermo_transport_fit(file, name, thermo_fit, configuration)
+            elif thermo_type == "gibbs_reaction":
+                write_gibbs_reaction_transport_fit(file, name, thermo_fit, configuration)
             else:
                 write_thermo_transport_fit(file, name, thermo_fit,  configuration)
     
