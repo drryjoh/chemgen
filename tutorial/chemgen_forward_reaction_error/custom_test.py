@@ -55,7 +55,12 @@ def get_random_TPX(gas):
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1):
     test_file = destination_folder/test_file_name
     check_states = True
+    #reactions_of_interest = list(set([516, 538, 770, 861, 893, 894, 911, 945, 990, 1008, 538, 945, 1008]))
+    reactions_of_interest = list(set([157, 183, 430 ,634, 945]))
+    
+    n_reactions_of_interest = len(reactions_of_interest)
     if check_states:
+        #state_files = ["bad_state_189.npy", "bad_state_623.npy"]
         state_files = ["bad_state_1662.npy", "bad_state_4577.npy", "bad_state_4831.npy", "bad_state_7395.npy"]
         mech_file = "FFCM2_model.yaml"
         n_points = len(state_files)
@@ -69,8 +74,10 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
             file.write(f"#include \"{header}\"\n")
             if "types" in header:
                         file.write(f"const int n_points = {n_points};\n")
+                        file.write(f"const int n_reactions_of_interest = {n_reactions_of_interest};\n")
+                        file.write("using ReactionSubset = {scalar_list}<{scalar}, n_reactions_of_interest>;\n".format(**vars(configuration)))
                         file.write("using PointScalar = std::unique_ptr<{scalar_list}<{scalar}, n_points>>;\n".format(**vars(configuration)))
-                        file.write("using PointReactions = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>>;\n".format(**vars(configuration)))
+                        file.write("using PointReactions = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_reactions_of_interest>, n_points>>;\n".format(**vars(configuration)))
                         file.write("using PointSpecies = std::unique_ptr<{scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>>;\n".format(**vars(configuration)))
 
         #[temperature, pressure, species_string, random] = get_test_conditions(chemical_mechanism)
@@ -78,24 +85,30 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         point_temperatures = []
         point_source = []
         
+        print(reactions_of_interest)
+        
         for point in range(n_points):
             if check_states:
+                print(point)
+                print(state_files[point])
                 bad_state = np.load(state_files[point])
                 gas = ct.Solution(mech_file)
                 temperature_b = bad_state[0]
                 pressure_b = ct.gas_constant * temperature_b * np.sum(bad_state[1:])
                 X_b= bad_state[1:]/np.sum(bad_state[1:])
                 gas.TPX =  temperature_b, pressure_b, X_b
+                print(gas.T)
+                print(gas.P)
             else:
                 gas.TPX = get_random_TPX(gas)
             point_concentrations.append(gas.concentrations)
             point_temperatures.append(gas.T)
-            point_source.append(gas.net_rates_of_progress)
+            point_source.append([gas.forward_rate_constants[idx] for idx in reactions_of_interest])
         concentration_test_array = []
         point_source_test_array = []
         for point in range(n_points):
             concentration_test_array.append("(*concentration_tests)[{point}] = {{{list}}};".format(list = ','.join(["{c}".format(c=c, **vars(configuration)) for c in point_concentrations[point]]), point = point))
-            point_source_test_array.append("(*cantera_sources)[{point}] = {{{list}}};".format(list = ','.join(["{c}".format(c=c, **vars(configuration)) for c in point_source[point]]), point = point))
+            point_source_test_array.append("(*cantera_forwards)[{point}] = {{{list}}};".format(list = ','.join(["{c}".format(c=c, **vars(configuration)) for c in point_source[point]]), point = point))
         
         temperature_tests = "(*temperatures) = {{{list}}};".format(list = ','.join([str(temp) for temp in point_temperatures]))
         concentration_tests = ' '.join(concentration_test_array)
@@ -128,31 +141,24 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
 
 
 
-void l2_norm({scalar_parameter} temperature, {reactions_parameter} result, {reactions_parameter} cantera_source, std::ofstream& file) 
+void l2_norm({scalar_parameter} temperature, const ReactionSubset& result, const ReactionSubset& cantera_source, std::ofstream& file) 
 {{
 
     // Calculate L2 norm
     {scalar} l2_norm = 0.0;
-    file << temperature << ", ";
-    for (size_t i = 0; i < n_reactions; ++i) 
+    for (size_t i = 0; i < n_reactions_of_interest; ++i) 
     {{
-        {scalar} l2_norm_0 =  log10_choose(std::abs(result[i])) - log10_choose(std::abs(cantera_source[i]));
-        //file << l2_norm_0 << ", ";
-
-        file << result[i] <<", "<<cantera_source[i] << ", ";
-
-        l2_norm += l2_norm_0;
+        file <<result[i] <<", " <<cantera_source[i] << " "<< std::endl;
     }}
     l2_norm = std::sqrt(l2_norm);
+    file << std::endl;
 
-    // Write the result to the CSV file
-    file << l2_norm << std::endl;
 }}
 
 {index} main() 
     {{
     PointSpecies concentration_tests = std::make_unique<{scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>>();
-    PointReactions cantera_sources = std::make_unique<{scalar_list}<{scalar_list}<{scalar}, n_reactions>, n_points>>();
+    PointReactions cantera_forwards = std::make_unique<{scalar_list}<{scalar_list}<{scalar}, n_reactions_of_interest>, n_points>>();
     PointScalar temperatures = std::make_unique<{scalar_list}<{scalar}, n_points>>();
 
     {concentration_tests};
@@ -166,19 +172,11 @@ void l2_norm({scalar_parameter} temperature, {reactions_parameter} result, {reac
         return 1;
     }}
 
-    file << "temperature ";
-    for ({index} i = 0; i < n_reactions; i++)
-    {{
-        file <<", Reaction_chemgen_" << i <<", reaction_cantera_"<<i;
-    }}
-
-    file <<", l2_norm"<< std::endl;
-
     // Process each point
     for ({index} i = 0; i < n_points; i++)
     {{
-        {reactions} result = progress_rates((*concentration_tests)[i], (*temperatures)[i]);
-        l2_norm((*temperatures)[i], result, (*cantera_sources)[i], file);
+        auto result = reactions_I_want((*concentration_tests)[i], (*temperatures)[i]);
+        l2_norm((*temperatures)[i], result, (*cantera_forwards)[i], file);
     }}
 
     // Close the file

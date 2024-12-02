@@ -13,7 +13,7 @@ temperatures = data[:, 0]  # First column
 errors = data[:, 1]        # Second column
 bad_states = []
 for k, error in enumerate(errors):
-    if error>10.0:
+    if error>.8:
         bad_states.append(states[k,:])
         np.save(f"bad_state_{k}.npy", states[k,:])
 for bad_state in bad_states:
@@ -23,7 +23,9 @@ for bad_state in bad_states:
     X = bad_state[1:]/np.sum(bad_state[1:])
     gas.TPX =  temperature, pressure, X
     print(pressure)
-    print(X)
+    for Xi, species in zip(X, gas.species_names):
+        if Xi>0.0:
+            print(f"{species}: {Xi}")
 # Create a boxplot
 fig, ax = plt.subplots(figsize=(8, 6))
 boxprops = dict(patch_artist=True)  # Enable patching for the box

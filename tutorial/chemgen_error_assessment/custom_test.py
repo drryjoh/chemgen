@@ -48,6 +48,14 @@ def get_random_TPX(gas):
 
     # Define major species
     major_species = { 'H2', 'O2', 'H2O', 'AR', 'N2', 'CO', 'CO2', 'CH4', 'C2H4', 'C4H10'}
+    minor_minor = {"NC3H7", "IC3H7", "C3H6", "C3H5", "CH3CCH2", "AC3H4", "PC3H4", "C3H3", "C2H5CHO", "CH3COCH3",
+                   "CH3COCH2", "C2H3CHO", "C3H5OH", "NC3H7O2", "NC3H7OOH", "IC3H7O2", "IC3H7OOH", "C4H2",
+                   "NC4H3", "IC4H3", "C4H4", "NC4H5", "IC4H5", "C4H5-2", "C4H6", "C4H612", "C4H6-2", "C4H7",
+                   "IC4H7", "IC4H7-1", "C4H81", "C4H82", "IC4H8", "NC4H9", "SC4H9", "IC4H9", "TC4H9", "C4H10",
+                   "IC4H10", "H2C4O", "CH2CHCHCHO", "CH3CHCHCO", "CH3CHCHCHO", "C3H7CHO", "IC3H7CHO",
+                   "C2H5COCH3", "C2H3COCH3", "OH*", "CH*"}
+    
+
 
     # Initialize the species array
     species_array = np.zeros(len(species_list))
@@ -55,23 +63,31 @@ def get_random_TPX(gas):
     major_indices = [i for i, species in enumerate(species_list) if species in major_species]
     major_values = np.random.uniform(0.1, 0.5, len(major_indices))
 
-    minor_indices = [i for i, species in enumerate(species_list) if species not in major_species]
+    minor_indices = [i for i, species in enumerate(species_list) if (species not in major_species) and (species not in minor_minor)]
     minor_values = np.random.uniform(1e-8, 1e-6, len(minor_indices))
 
+    minor_minor_indices = [i for i, species in enumerate(species_list) if species in minor_minor]
+    minor_minor_values = np.random.uniform(1e-9, 1e-7, len(minor_minor_indices))
+
     # Randomly make 50% of major values zero
-    major_mask = np.random.choice([True, False], size=len(major_values), p=[0.2, 0.8])
+    major_mask = np.random.choice([True, False], size=len(major_values), p=[0.5, 0.5])
     major_values = major_values * major_mask
 
     # Randomly make 50% of minor values zero
-    minor_mask = np.random.choice([True, False], size=len(minor_values), p=[0.2, 0.8])
+    minor_mask = np.random.choice([True, False], size=len(minor_values), p=[0.5, 0.5])
     minor_values = minor_values * minor_mask
+
+    minor_minor_mask = np.random.choice([True, False], size=len(minor_minor_values), p=[0.2, 0.8])
+    minor_minor_values = minor_minor_values * minor_minor_mask
 
     for idx, value in zip(minor_indices, minor_values):
         species_array[idx] = value
 
-    for idx, value in zip(major_indices, major_values):
+    for idx, value in zip(minor_minor_indices, major_values):
         species_array[idx] = value
-            
+
+    for idx, value in zip(major_indices, minor_minor_values):
+        species_array[idx] = value   
     species_array /= species_array.sum()
 
     return (1000 + 1000 * np.random.random(), 10132.5 + 101325.0 * 2 * np.random.random(), species_array)
@@ -149,8 +165,8 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     {scalar} sum_c = sum_gen(concentrations);
     for (size_t i = 0; i < n_species; ++i) 
     {{
-        //weight = concentrations[i]/sum_c;
-        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(log10_choose(std::abs(result[i])) - log10_choose(std::abs(cantera_source[i])));
+        weight = concentrations[i]/sum_c;
+        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(safe_divide(result[i] - cantera_source[i], cantera_source[i]));
     }}
     file<< ", " << std::sqrt(l2_norm);
     file<< std::endl;
