@@ -9,6 +9,7 @@ class SourceWriter:
             {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);
             {scalar} log_temperature = log_gen(temperature);
             {scalar} pressure_ = pressure(species, temperature);
+            {reactions} gibbs_reactions = gibbs_reaction(log_temperature);
             {scalar} mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;\n""".format(**vars(configuration)))
     
         file.write("\n")
@@ -20,7 +21,21 @@ class SourceWriter:
     def write_progress_rates(self, file, progress_rates, is_reversible, equilibrium_constants, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
+                import re
+
+                # Original string
+                original_string = f"{equilibrium_constants[i]}"
+
+                # New content to replace with
+                replacement = f"gibbs_reactions[{i}]"
+
+                # Regular expression to match text inside the parentheses
+                pattern = r"exp_gen\(-\(.*?\)\)"
+
+                # Replace using re.sub
+                equilibrium_constant = re.sub(r"(?<=exp_gen\(-\().*?(?=\)\))", replacement, original_string)
+                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constant, **vars(configuration)))
+                #file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
             file.write(f"        {progress_rate}\n") 
         file.write("\n")
 
@@ -31,8 +46,8 @@ class SourceWriter:
 
     def write_source(self, file, equilibrium_constants, 
                      reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
-                     species_production_texts, headers, configuration): 
-        self.write_start_of_source_function(file, configuration)
+                     species_production_texts, headers, configuration, fit_gibbs_reaction = True): 
+         configuration)
         self.write_reaction_calculations(file, reaction_calls, configuration)
         self.write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
         self.write_end_of_function(file, progress_rates)

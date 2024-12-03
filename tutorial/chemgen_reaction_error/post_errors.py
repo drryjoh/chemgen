@@ -32,7 +32,7 @@ def safe_divide(a, b):
             return a / b
 
 # Load the CSV data
-state_files = ["bad_state_1662.npy", "bad_state_4577.npy", "bad_state_4831.npy", "bad_state_7395.npy"]
+state_files = ["bad_state_4745.npy"]
 
 mech_file = "FFCM2_model.yaml"
 gases = []

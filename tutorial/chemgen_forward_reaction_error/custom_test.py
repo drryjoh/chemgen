@@ -55,13 +55,11 @@ def get_random_TPX(gas):
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1):
     test_file = destination_folder/test_file_name
     check_states = True
-    #reactions_of_interest = list(set([516, 538, 770, 861, 893, 894, 911, 945, 990, 1008, 538, 945, 1008]))
-    reactions_of_interest = list(set([157, 183, 430 ,634, 945]))
-    
+    reactions_of_interest = list(set([448, 945]))
     n_reactions_of_interest = len(reactions_of_interest)
     if check_states:
         #state_files = ["bad_state_189.npy", "bad_state_623.npy"]
-        state_files = ["bad_state_1662.npy", "bad_state_4577.npy", "bad_state_4831.npy", "bad_state_7395.npy"]
+        state_files = ["bad_state_4745.npy"]
         mech_file = "FFCM2_model.yaml"
         n_points = len(state_files)
     with open(test_file, 'w') as file:

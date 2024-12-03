@@ -21,7 +21,7 @@ void production_rate_{reaction_index}({scalar_parameter} progress_rate, {species
 }};
 """.format(**vars(configuration), species_production = species_production, reaction_index = reaction_index)) 
 
-    def write_start_of_source_function_threaded(self, file, configuration):
+    def write_start_of_source_function(self, file, configuration, fit_gibbs_reaction = True):
         file.write("""
         {device_option} {scalar_function} temperature_from_chemical_state( const ChemicalState& state) {const_option} {{ return state[0];}}
         
@@ -147,12 +147,12 @@ void production_rate_{reaction_index}({scalar_parameter} progress_rate, {species
 
     def write_source(self, file, equilibrium_constants, reaction_calls, 
                      progress_rates, is_reversible, species_production_on_fly_function_texts,
-                     species_production_function_texts, headers, configuration):
+                     species_production_function_texts, headers, configuration, fit_gibbs_reaction = True): 
         self.write_reaction_functions(file, reaction_calls, configuration)
         self.write_progress_rate_functions(file, progress_rates, is_reversible, equilibrium_constants, configuration)
         self.write_species_production_functions_on_the_fly(file, species_production_on_fly_function_texts, configuration)
 
-        self.write_start_of_source_function_threaded(file, configuration)
+        self.write_start_of_source_function_threaded(file, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
         self.write_reaction_functions_pointer_list(file, reaction_calls, configuration)
         self.write_progress_rate_functions_pointer_list(file, reaction_calls, configuration)
         self.write_accrue_source_pointer_list(file, species_production_on_fly_function_texts, configuration)
