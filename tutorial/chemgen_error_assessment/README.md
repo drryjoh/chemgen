@@ -7,50 +7,51 @@
 - [Generating Error Data](#Generating Data)
 - [Post Processing Data](#Post Processing)
 
-## Generate Custom Test
+## Description
+
+Here we will use chemgen to generate the source code for evaluating the species production source term. We then evaluate the accuracy of this error by comparing to cantera pre-calculated source terms. 
+
+## Preparation
+
 In all tutorials we will shorten the use of ChemGen's paths to the repo. To access ChemGen in this folder run the following command:
 
 ```bash
 export PATH="$(cd ../../bin && pwd):$PATH"
 ```
 
-Now, ChemGen can be run from any directory by simply specifying `chemgen.py`
+Now, ChemGen can be run from any directory by simply specifying `chemgen.py`. Make sure all [prequisites are installed](../../README.md).
 
 ChemGen has an option "--custom-test" where a python function, `write_test` can be overwritten to create a custom `chemgen.cpp`. We've included `custom_test.py` in this directory.
 
 
 ## Generating Data
 
-#### \(10^{-4}\) (Excellent Accuracy)
-- **Meaning**: The approximate value is extremely close to the true value.
-- A log-scale error of \(10^{-4}\) corresponds to a deviation factor:
-  \[
-  10^{10^{-4}} \approx 1.0002303
-  \]
-- This is essentially a **tiny fractional difference**, less than **0.023%**.
+To run this tutorial the following command should be used
+```terminal
+chemgen.py FFCM2_model .  --custom-test custom_test.py --n-points-test 1000 --compile
+```
 
----
+The typical fomrmat for ChemGen execution is
 
-#### \(10^{-1}\) (Moderate Accuracy)
-- **Meaning**: The approximate value is moderately close to the true value.
-- A log-scale error of \(10^{-1}\) corresponds to a deviation factor:
-  \[
-  10^{10^{-1}} \approx 1.2589
-  \]
-- This means the approximate value is within about **25.89%** of the true value. 
-- Such deviations are often acceptable in systems with high variability or where perfect precision is not required.
+```terminal
+chemgen.py [path/to/kinetics/file] [path/to/generated/code]
+```
 
----
+the first item in the command references the chemgen python source which executes the code generation, the second command is the name of a chemical kinetic model (in this case FFCM2_model), the . directs the target directory where to generate source. Additional options are used in this tutorial denoted by the `--` command. The `--custom-test` utilizes a custom test generation covered in detailed in the next session. The `--n-points-test` passes in a random number of points to test, in this case 1000, and `--compile` compiles the test cases after generating the source code. The default compilation is
 
-### Summary of Accuracy Levels
+```
+clang++ -std=c++17 -O2 -o ./bin/chemgen src/chemgen.cpp
+```
 
-| Log-Scale Error | Deviation Factor \(10^{\text{Log-Error}}\) | Description                 |
-|------------------|-------------------------------------------|-----------------------------|
-| \(10^{-4}\)      | \(1.0002303\)                            | Excellent accuracy (<0.023%) |
-| \(10^{-1}\)      | \(1.2589\)                               | Moderate accuracy (~25.89%) |
+However, cmake will be used in future tutorials and can also be generationed using the `--cmake` command instead.
 
----
 
-This formatting ensures mathematical clarity and makes the content easy to read and understand in Markdown-rendering tools.
+## Custom test
 
-## Post Processing
+Included in the directory is a python file used to overwrite the default custom_test generated. The custom test generates `n_points` of number of chemical states and randomly creates the chemical makeup (concentrations) and temperature. The source term is then evaluated for each point, which creates `n_species` amount of data per point. Each species specific source term is compared to cantera and an L2-norm is generated per point
+
+```math
+l_2 = \sqrt{\sum_{i=1}^{n_s}\frac{1}{n_s}((S(y_i)_{cg}-S(y_i)_{ct})/S(y_i)_{ct})^2}
+```
+
+Where `$ct$` is the cantera solution and `$cg$` is the chemgen solution. 
