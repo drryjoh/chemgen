@@ -80,8 +80,8 @@ l_2 = \sqrt{\sum_{i=1}^{n_s}\frac{1}{n_s}\left(\frac{S(y_i)_{cg} - S(y_i)_{ct}}{
 ```
 
 Where:
-- \( S(y_i)_{ct} \): Source term from Cantera.
-- \( S(y_i)_{cg} \): Source term from ChemGen.
+- $`S(y_i)_{ct}`$: Source term from Cantera.
+- $`S(y_i)_{cg}`$: Source term from ChemGen.
 
 ---
 
