@@ -1,9 +1,11 @@
 # ChemGen Tutorial
 
 ## Table of Contents
-
-- [Generating Custom Tests](#generating-custom-tests)
+- [Description](#description)
+- [Preparation](#preparation)
 - [Generating Data](#generating-data)
+- [ChemGen Execution Format](#chemgen-execution-format)
+- [Generating Custom Tests](#generating-custom-tests)
 - [Post-Processing Data](#post-processing-data)
 
 ## Description
@@ -24,7 +26,6 @@ Now, ChemGen can be executed from any directory by simply calling `chemgen.py`. 
 
 ChemGen provides a `--custom-test` option that allows you to override the default `write_test` function to create a custom `chemgen.cpp`. This tutorial includes a `custom_test.py` file for that purpose.
 
----
 
 ## Generating Data
 
