@@ -1,57 +1,101 @@
-# Chemgen
+Let me ensure all code snippets are correctly placed within code blocks for consistent rendering. Here's the revised version:
 
+```markdown
+# ChemGen Tutorial
 
 ## Table of Contents
 
-- [Generating Custom Test](#Generating Custom Test)
-- [Generating Error Data](#Generating Data)
-- [Post Processing Data](#Post Processing)
+- [Generating Custom Tests](#generating-custom-tests)
+- [Generating Data](#generating-data)
+- [Post-Processing Data](#post-processing-data)
 
 ## Description
 
-Here we will use chemgen to generate the source code for evaluating the species production source term. We then evaluate the accuracy of this error by comparing to cantera pre-calculated source terms. 
+This tutorial demonstrates how to use ChemGen to generate source code for evaluating species production source terms. The accuracy of these terms is then validated by comparing them to pre-calculated Cantera source terms.
+
+---
 
 ## Preparation
 
-In all tutorials we will shorten the use of ChemGen's paths to the repo. To access ChemGen in this folder run the following command:
+For simplicity, we'll shorten references to ChemGen's paths. To access ChemGen in this directory, run the following command:
 
 ```bash
 export PATH="$(cd ../../bin && pwd):$PATH"
 ```
 
-Now, ChemGen can be run from any directory by simply specifying `chemgen.py`. Make sure all [prequisites are installed](../../README.md).
+Now, ChemGen can be executed from any directory by simply calling `chemgen.py`. Ensure that all [prerequisites are installed](../../README.md).
 
-ChemGen has an option "--custom-test" where a python function, `write_test` can be overwritten to create a custom `chemgen.cpp`. We've included `custom_test.py` in this directory.
+ChemGen provides a `--custom-test` option that allows you to override the default `write_test` function to create a custom `chemgen.cpp`. This tutorial includes a `custom_test.py` file for that purpose.
 
+---
 
 ## Generating Data
 
-To run this tutorial the following command should be used
-```terminal
-chemgen.py FFCM2_model .  --custom-test custom_test.py --n-points-test 1000 --compile
+To execute this tutorial, use the following command:
+
+```bash
+chemgen.py FFCM2_model . --custom-test custom_test.py --n-points-test 1000 --compile
 ```
 
-The typical fomrmat for ChemGen execution is
+### ChemGen Execution Format
 
-```terminal
+The typical format for executing ChemGen is:
+
+```bash
 chemgen.py [path/to/kinetics/file] [path/to/generated/code]
 ```
 
-the first item in the command references the chemgen python source which executes the code generation, the second command is the name of a chemical kinetic model (in this case FFCM2_model), the . directs the target directory where to generate source. Additional options are used in this tutorial denoted by the `--` command. The `--custom-test` utilizes a custom test generation covered in detailed in the next session. The `--n-points-test` passes in a random number of points to test, in this case 1000, and `--compile` compiles the test cases after generating the source code. The default compilation is
+- **First Argument**: Path to the kinetics model file (e.g., `FFCM2_model`).
+- **Second Argument**: Target directory for generated source code (e.g., `.`).
 
-```
+### Tutorial-Specific Options
+
+- `--custom-test`: Specifies a custom Python script to generate tests.
+- `--n-points-test`: Sets the number of random points to test (e.g., `1000`).
+- `--compile`: Compiles the generated test cases using the default compiler settings.
+
+Default compilation command:
+```bash
 clang++ -std=c++17 -O2 -o ./bin/chemgen src/chemgen.cpp
 ```
 
-However, cmake will be used in future tutorials and can also be generationed using the `--cmake` command instead.
-
-
-## Custom test
-
-Included in the directory is a python file used to overwrite the default custom_test generated. The custom test generates `n_points` of number of chemical states and randomly creates the chemical makeup (concentrations) and temperature. The source term is then evaluated for each point, which creates `n_species` amount of data per point. Each species specific source term is compared to cantera and an L2-norm is generated per point
-
-```math
-l_2 = \sqrt{\sum_{i=1}^{n_s}\frac{1}{n_s}((S(y_i)_{cg}-S(y_i)_{ct})/S(y_i)_{ct})^2}
+Alternatively, use CMake for compilation:
+```bash
+chemgen.py FFCM2_model . --custom-test custom_test.py --n-points-test 1000 --cmake
 ```
 
-Where `$ct$` is the cantera solution and `$cg$` is the chemgen solution. 
+---
+
+## Generating Custom Tests
+
+This tutorial includes a `custom_test.py` file that overrides the default test generation functionality. 
+
+### Test Overview
+
+The custom test generates a specified number (`n_points`) of chemical states with randomly assigned chemical concentrations and temperatures. For each state:
+
+1. The source term is calculated for each species.
+2. The result is compared to the Cantera solution.
+3. An L2-norm is computed for the error:
+
+```math
+l_2 = \sqrt{\sum_{i=1}^{n_s}\frac{1}{n_s}\left(\frac{S(y_i)_{cg} - S(y_i)_{ct}}{S(y_i)_{ct}}\right)^2}
+```
+
+Where:
+- \( S(y_i)_{ct} \): Source term from Cantera.
+- \( S(y_i)_{cg} \): Source term from ChemGen.
+
+---
+
+## Post-Processing Data
+
+Additional details on post-processing will be covered in subsequent tutorials.
+```
+
+### Adjustments Made:
+1. **Ensured Code Blocks**: All commands, code snippets, and terminal commands are now wrapped in triple backticks for proper display in Markdown.
+2. **Equation Isolation**: The math equation is within a fenced code block for environments that support LaTeX rendering.
+3. **Consistency**: Reviewed and confirmed uniformity in formatting across all sections.
+
+This version ensures all code and terminal commands display correctly in a "copy code" box when rendered.
