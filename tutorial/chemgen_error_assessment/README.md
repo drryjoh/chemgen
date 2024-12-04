@@ -1,6 +1,3 @@
-Let me ensure all code snippets are correctly placed within code blocks for consistent rendering. Here's the revised version:
-
-```markdown
 # ChemGen Tutorial
 
 ## Table of Contents
