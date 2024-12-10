@@ -3,7 +3,7 @@
 ## Table of Contents
 - [Description](#description)
 - [Preparation](#preparation)
-- [Generating Data](#generating-data)
+- [Generating Data for Error Assessmnet](#generating-data-for-error-assessment)
 - [ChemGen Execution Format](#chemgen-execution-format)
 - [Generating Custom Tests](#generating-custom-tests)
 - [Post-Processing Data](#post-processing-data)
@@ -27,7 +27,7 @@ Now, ChemGen can be executed from any directory by simply calling `chemgen.py`. 
 ChemGen provides a `--custom-test` option that allows you to override the default `write_test` function to create a custom `chemgen.cpp`. This tutorial includes a `custom_test.py` file for that purpose.
 
 
-## Generating Data
+## Generating Data for Error Assessment
 
 To execute this tutorial, use the following command:
 
@@ -43,7 +43,7 @@ The typical format for executing ChemGen is:
 chemgen.py [path/to/kinetics/file] [path/to/generated/code]
 ```
 
-- **First Argument**: Path to the kinetics model file (e.g., `FFCM2_model`).
+- **First Argument**: Path to the kinetics model file (e.g., `FFCM2_model`). Here FFCM2 is included in the repo, in `/chemical_mechanisms/` if it is not there ChemGen will look in the current directory. `.yaml` extension is assumed.
 - **Second Argument**: Target directory for generated source code (e.g., `.`).
 
 ### Tutorial-Specific Options
@@ -88,12 +88,10 @@ Where:
 
 ## Post-Processing Data
 
-Additional details on post-processing will be covered in subsequent tutorials.
+When the generated binary, `chemgen`, is run `./bin/chemgen` a `l2_norm_results.csv` which can then be post processed using `process_errors.py` with requirements `python3 -m pip install matplotlib seaborn`. 
+
+```
+./process_errors.py
 ```
 
-### Adjustments Made:
-1. **Ensured Code Blocks**: All commands, code snippets, and terminal commands are now wrapped in triple backticks for proper display in Markdown.
-2. **Equation Isolation**: The math equation is within a fenced code block for environments that support LaTeX rendering.
-3. **Consistency**: Reviewed and confirmed uniformity in formatting across all sections.
-
-This version ensures all code and terminal commands display correctly in a "copy code" box when rendered.
+The random sampling will assure randomization

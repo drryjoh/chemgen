@@ -131,7 +131,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         content = """
 {scalar_function} safe_divide({scalar_parameter} a, {scalar_parameter} b) {const_option}
 {{
-    if(b == 0)
+    if(std::abs(b) <= 1e-10)
     {{
         return 0;
     }}
@@ -141,19 +141,17 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
     }}
 }}
 
-{scalar_function} log10_choose({scalar_parameter} a) {const_option}
+{scalar_function} safe_jump({scalar_parameter} a, {scalar_parameter} b) {const_option}
 {{
-    if(a == 0)
+    if(std::abs(a) <= 1e-10 && std::abs(b))
     {{
         return 0;
     }}
     else
     {{
-        return log10_gen(a);
+        return a - b;
     }}
 }}
-
-
 
 void l2_norm({scalar_parameter} temperature, {species_parameter} result, {species_parameter} cantera_source, {species_parameter} concentrations,  std::ofstream& file) 
 {{
@@ -165,8 +163,8 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     {scalar} sum_c = sum_gen(concentrations);
     for (size_t i = 0; i < n_species; ++i) 
     {{
-        weight = concentrations[i]/sum_c;
-        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(safe_divide(result[i] - cantera_source[i], cantera_source[i]));
+        //weight = concentrations[i]/sum_c;
+        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(safe_divide(safe_jump(result[i], cantera_source[i]), cantera_source[i]));
     }}
     file<< ", " << std::sqrt(l2_norm);
     file<< std::endl;
