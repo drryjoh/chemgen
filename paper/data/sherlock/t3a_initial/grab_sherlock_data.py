@@ -41,16 +41,19 @@ for k, file in enumerate(file_names):
                 labels.append(f"T2: Threads = {threads}\n Ranks = {int(16/threads)} ")
                 marker = 'o'
             elif "t3_initial" in file:
-                labels.append(f"T2: Threads = {threads}\n Ranks = {int(16/threads)} ")
+                labels.append(f"T3a: Threads = {threads}\n Ranks = {int(16/threads)} ")
                 marker = 'o'
             else: 
-                labels.append(f"T3: Threads = {threads}\n Ranks = {int(16/threads)} ")
+                labels.append(f"T3b: Threads = {threads}\n Ranks = {int(16/threads)} ")
                 marker = 'x'
         
         if len(pts) == len(times): 
             plt.semilogx(pts, baseline/times,f'-{marker}',mfc="white",label = labels[k], color = colors[k])
         else:
             plt.semilogx(pts[0:len(times)], baseline[0:len(times)]/times,'-o',mfc="white",label = labels[k], color = colors[k])
-plt.legend(fontsize = 6, ncol=2, markerscale=.75)
+plt.legend(fontsize = 8, ncol=2, markerscale=.75)
 plt.ylabel("Speed up over pure MPI on 16 cores")
+plt.xlabel("Number of Degrees of Freedom")
+plt.savefig("speedup.png", dpi=300)
+
 plt.show()

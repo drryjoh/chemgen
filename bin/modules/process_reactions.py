@@ -91,12 +91,11 @@ def create_rates_of_progress(progress_rates, progress_rates_functions, reaction_
                 **vars(configuration)))
 
     progress_rates[reaction_index] = formatted_text
-def create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration):
+def create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration, fit_gibbs_reaction = True):
     scalar_cast = "{scalar_cast}".format(**vars(configuration))
     equilibrium_constant_elements = []
     sum_stoichiometric_production = np.sum(stoichiometric_production)
     
-    #pow(p_atm*inv(R*T),{power_integer})
     power_term = ''
     if sum_stoichiometric_production.is_integer():
         power_integer = int(sum_stoichiometric_production)
@@ -110,8 +109,12 @@ def create_equilibrium_constants(stoichiometric_production, reaction_index, inde
             power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{power_integer})'
     else:
         power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{scalar_cast}({sum_stoichiometric_production}))'
+    
     for index in indexes_of_species_in_reaction:
         if stoichiometric_production[index] != 0:
             equilibrium_constant_elements.append(f"{scalar_cast}({stoichiometric_production[index]}) * gibbs_free_energies[{index}]")
-    equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"),
-    power_term=power_term)
+
+    if fit_gibbs_reaction:
+        equilibrium_constants[reaction_index] = "exp_gen(-gibbs_reactions[{reaction_index}]) * {power_term}".format(power_term = power_term, reaction_index = reaction_index)
+    else:
+        equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"), power_term=power_term)

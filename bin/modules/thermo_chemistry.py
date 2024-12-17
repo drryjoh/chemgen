@@ -120,6 +120,49 @@ def get_specific_heat_constant_pressure_species_coefficients(gas, order, tempera
 
     return specific_heat_constant_pressure_species_coefficients
 
+def get_gibbs_reaction_coefficients(gas, order, temperatures):
+    gibbs_reaction = []
+
+    for temperature in temperatures:
+        gas.TP = temperature, pressure_reference
+        gibbs_reaction.append(gas.delta_standard_gibbs/ct.gas_constant/temperature)
+    
+    gibbs_reaction = np.array(gibbs_reaction)
+
+    #polyfit
+    gibbs_reaction_coefficients = np.polyfit(np.log(temperatures), gibbs_reaction, order)
+
+    polynomial = np.poly1d(gibbs_reaction_coefficients[:,0])
+
+    #reverse order
+    for k in range(gas.n_reactions):
+        gibbs_reaction_coefficients[:,k] = gibbs_reaction_coefficients[::-1,k]
+
+    return gibbs_reaction_coefficients
+
+def check_gibbs_against_temperature(gas, temperature_min, temperature_max, n_samples, gibbs_coefficients, order):
+    import matplotlib.pyplot as plt
+    temperatures = np.linspace(temperature_min, temperature_max, n_samples)
+    gibbs_exact = np.zeros([gas.n_reactions, n_samples])
+    gibbs_fit = np.zeros([gas.n_reactions, n_samples])
+
+    log_T_energy_monomial_sequence = np.power(np.log(1800), np.linspace(0., order, num = order + 1))
+    print(log_T_energy_monomial_sequence)
+    print(gibbs_coefficients)
+
+    for i, temperature in enumerate(temperatures):
+        gas.TP = temperature, pressure_reference
+        log_T_energy_monomial_sequence = np.power(np.log(gas.T), np.linspace(0., order, num = order + 1))
+        
+        gibbs_ct = gas.delta_standard_gibbs/ct.gas_constant/temperature
+        for k in range(gas.n_reactions):
+            gibbs_exact[k,i] = gibbs_ct[k]
+            gibbs_fit[k,i] = np.sum(gibbs_coefficients[:,k] * log_T_energy_monomial_sequence)
+    for k in range(gas.n_reactions):
+        plt.figure()
+        plt.plot(temperatures, gibbs_exact[k,:],'-r')
+        plt.plot(temperatures, gibbs_fit[k,:],'--k')
+    plt.show()
 def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200, temperature_max = 8000):
     gas.transport_model = "Mix"
     temperatures = np.linspace(temperature_min, temperature_max, 1000)
@@ -130,32 +173,37 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     internal_energy_coefficients = get_internal_energy_coefficients(gas, order, enthalpy_coefficients)
     species_entropy_coefficients = get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_heat_constant_pressure_species_coefficients)
     gibbs_energy_coefficients = get_gibbs_energy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients, enthalpy_coefficients, species_entropy_coefficients)
+    gibbs_reaction_energy_coefficients = get_gibbs_reaction_coefficients(gas, order, temperatures)
 
     species_specific_heat_text = thermo_fit_text("temperature_monomial_sequence", specific_heat_constant_pressure_species_coefficients, "default", configuration)
     species_enthalpy_text  =      thermo_fit_text("temperature_energy_monomial_sequence", enthalpy_coefficients, "energy", configuration)
     internal_internal_text =      thermo_fit_text("temperature_energy_monomial_sequence", internal_energy_coefficients, "energy", configuration)
     species_entropy_text   =      thermo_fit_text("temperature_entropy_monomial_sequence", species_entropy_coefficients, "energy", configuration)
     gibbs_energy_text   =      thermo_fit_text("temperature_gibbs_monomial_sequence", gibbs_energy_coefficients, "gibbs", configuration)
+    gibbs_energy_reaction_text   =      thermo_fit_text("log_temperature_monomial_sequence", gibbs_reaction_energy_coefficients, "default", configuration, return_type = "{reactions}")
 
     return [["species_specific_heat_constant_pressure_mass_specific",
     "species_enthalpy_mass_specific",
     "species_internal_energy_mass_specific",
     "species_entropy_mass_specific",
-    "species_gibbs_energy_mole_specific"],
+    "species_gibbs_energy_mole_specific",
+    "gibbs_reaction"],
     [species_specific_heat_text,
     species_enthalpy_text,
     internal_internal_text,
     species_entropy_text,
-    gibbs_energy_text],
-    ["specific_heat", "energy", "energy", "entropy", "gibbs"]]
+    gibbs_energy_text,
+    gibbs_energy_reaction_text],
+    ["specific_heat", "energy", "energy", "entropy", "gibbs", "gibbs_reaction"]]
 
 
-def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration, indentation=' '*8):
+def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration, indentation=' '*8, return_type = '{species}'):
     thermo_shape = np.shape(coefficients)
     order = thermo_shape[0]
     n_species  = thermo_shape[1]
     content_array = []
     content = f"{indentation}return\n"
+    return_type = return_type.format(**vars(configuration))
 
     for k in range(n_species):
         coefficients_k = ', '.join(["{scalar_cast}({coefficient})".format(**vars(configuration), coefficient = coefficient) for coefficient in coefficients[:,k]])
@@ -165,5 +213,5 @@ def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration,
         temperature_monomial_type = "{temperature_monomial}".format(**vars(configuration)) if thermo_type == "default" else f"{{temperature_{thermo_type}_monomial}}".format(**vars(configuration)) , 
         coefficients_k = coefficients_k))
 
-    content += '{indentation}{species}{{\n'.format(**vars(configuration), indentation = indentation) + ',\n'.join(content_array)+'};\n'
+    content += f'{indentation}{return_type}'+'{{\n'.format(**vars(configuration), indentation = indentation) + ',\n'.join(content_array)+'};\n'
     return content

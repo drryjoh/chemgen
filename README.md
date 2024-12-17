@@ -17,10 +17,32 @@ To set up the project on your local machine, please follow these steps:
 
    ```bash
    git clone https://github.com/drryjoh/chemgen.git
-   cd your-repository
+   cd chemgen
    ```
 
 2. Install the required dependencies using Python 3:
+
+We recommend installing a unique python environment using `python3.11` as that is the latest python version that supports cantera. To create a unique environmnet:
+
+```terminal
+mkdir ~/python_environments/
+cd ~/python_environments/
+python3.11 -m venv chemgen
+source ~/python_environments/chemgen/bin/activate
+```
+
+you can add to you bashrc/zshrc file
+```
+alias chemgen="source ~/python_environments/chemgen/bin/activate"
+```
+
+which will allow you to access the source from command line
+
+```terminal
+chemgen
+```
+
+Once you have your unique python environment, you can install the requirements via
 
    ```bash
    python3 -m pip install -r requirements.txt
@@ -31,28 +53,6 @@ To set up the project on your local machine, please follow these steps:
    ```bash
    python3 -m pip install cantera pyyaml
    ```
-
-## Dependencies
-
-The project requires the following Python packages to run:
-
-- **[Cantera](https://cantera.org)**: Cantera is an open-source suite of tools for problems involving chemical kinetics, thermodynamics, and transport processes.
-  
-  Install it using:
-
-  ```bash
-  python3 -m pip install cantera
-  ```
-
-- **[PyYAML](https://pyyaml.org/)**: A Python library for parsing and emitting YAML.
-  
-  Install it using:
-
-  ```bash
-  python3 -m pip install pyyaml
-  ```
-
-Ensure you are using Python 3 and `pip` is invoked through `python3 -m pip` for consistent environment management.
 
 ## Usage
 

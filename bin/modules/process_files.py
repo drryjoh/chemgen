@@ -16,7 +16,7 @@ def load_custom_sourcewriter(filepath):
     # Return the SourceWriter class from the custom module
     return custom_module.SourceWriter
 
-def process_cantera_file(gas, configuration, destination_folder, args, verbose = False):
+def process_cantera_file(gas, configuration, destination_folder, args, verbose = False, fit_gibbs_reaction = True):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
@@ -43,7 +43,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
 
-        create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration)
+        create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration, fit_gibbs_reaction)
 
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, species_production_on_fly_function_texts, reaction_index, configuration)
         create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
@@ -62,6 +62,8 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
                 write_entropy_thermo_transport_fit(file, name, thermo_fit, configuration)
             elif thermo_type == "gibbs":
                 write_gibbs_thermo_transport_fit(file, name, thermo_fit, configuration)
+            elif thermo_type == "gibbs_reaction":
+                write_gibbs_reaction_transport_fit(file, name, thermo_fit, configuration)
             else:
                 write_thermo_transport_fit(file, name, thermo_fit,  configuration)
     
@@ -79,13 +81,13 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
                 custom_writer.write_source(file, equilibrium_constants, reaction_calls, 
                                         progress_rates, is_reversible, species_production_on_fly_function_texts,
                                         species_production_function_texts, 
-                                        headers, configuration)
+                                        headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
             except (FileNotFoundError, AttributeError) as e:
                 print(f"Error loading custom source writer: {e}")
                 sys.exit(1)
         else:
             from .write_source_serial import SourceWriter as source_serial
-            source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration)
+            source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
 
     
     required_headers = create_headers(configuration, destination_folder)

@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!python3
 
 import argparse
 import sys
@@ -54,6 +54,7 @@ def main():
     parser.add_argument("--cmake", action="store_true", help="Compile the source writer code")
     parser.add_argument("--n-points-test", type=int, default=1000,  help="Number of points for testing (default: 1000)")
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose code generation")
+    parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction")
 
     args = parser.parse_args()
     
@@ -61,6 +62,11 @@ def main():
     chemical_mechanism = find_chemical_mechanism(args.chemical_mechanism)
     destination_folder = Path(args.destination)/'src'
     n_points_test = args.n_points_test
+    fit_gibbs_reaction  = True
+    if args.fit_gibbs_reaction == False
+        fit_gibbs_reaction  = False
+        print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
+
     
     # Check if the destination folder exists, if not, create it
     if not destination_folder.exists():
@@ -87,7 +93,7 @@ def main():
     
     third_parties = [use_third_parties, third_party_path, libraries]
     
-    headers = process_cantera_file(gas, configuration, destination_folder,args, verbose = args.verbose)
+    headers = process_cantera_file(gas, configuration, destination_folder,args, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction)
 
     if "types_inl.h" in headers:
         headers.remove("types_inl.h")
@@ -119,7 +125,7 @@ def main():
         compile(test_file, configuration_file, destination_folder, third_parties)
     if not args.compile and args.cmake:
         compile(test_file, configuration_file, destination_folder, third_parties, compile=False)
-# Entry point
+
 if __name__ == "__main__":
     main()
 

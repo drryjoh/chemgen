@@ -1,0 +1,80 @@
+#**************************************************************************************
+#
+# Simple single reaction  mechanism
+#
+# - Description:
+#   A simple single reaction model for chemisty code generation testing based off off FFCM-2 thermo and transport
+#
+# - Date: 
+#     Oct 2024
+#
+# - Contact:
+#     Ryan Johnson: ryjoh@stanford.edu
+#
+#***************************************************************************************
+
+units: {length: cm, quantity: mol, activation-energy: cal/mol}
+
+phases:
+  - kinetics: gas
+    transport: mixture-averaged
+    name: gri30-CO-H2-submech
+    skip-undeclared-third-bodies: true
+    thermo: ideal-gas
+    elements: [H, O]
+    species: [H, OH, H2O ]
+    state:
+      T: 1.0e-03
+      density: 1.0e-03
+      Y: {H: 1.0}
+
+species:
+  - name: H
+    composition: {H: 1.0}
+    thermo:
+      model: NASA7
+      temperature-ranges: [200.0, 1000.0, 6000.0]
+      data:
+        - [2.5, 0.0, 0.0, 0.0, 0.0, 2.547366e+04, -0.44668285]
+        - [2.5, 0.0, 0.0, 0.0, 0.0, 2.547366e+04, -0.44668285]
+    transport:
+      model: gas
+      geometry: atom
+      diameter: 2.05
+      well-depth: 145.0
+  - name: OH
+    composition: {H: 1.0, O: 1.0}
+    thermo:
+      model: NASA7
+      temperature-ranges: [200.0, 1000.0, 6000.0]
+      data:
+        - [3.99198424, -2.40106655e-03, 4.61664033e-06, -3.87916306e-09,
+        1.36319502e-12, 3368.89836, -0.103998477]
+        - [2.83853033, 1.10741289e-03, -2.94000209e-07, 4.20698729e-11,
+        -2.4228989e-15, 3697.80808, 5.84494652]
+    transport:
+      model: gas
+      geometry: linear
+      diameter: 2.75
+      well-depth: 80.0
+  - name: H2O
+    composition: {H: 2.0, O: 1.0}
+    thermo:
+      model: NASA7
+      temperature-ranges: [200.0, 1000.0, 6000.0]
+      data:
+        - [4.1986352, -2.0364017e-03, 6.5203416e-06, -5.4879269e-09, 1.771968e-12,
+        -3.0293726e+04, -0.84900901]
+        - [2.6770389, 2.9731816e-03, -7.7376889e-07, 9.4433514e-11, -4.2689991e-15,
+        -2.9885894e+04, 6.88255]
+    transport:
+      model: gas
+      geometry: nonlinear
+      diameter: 2.605
+      well-depth: 572.4
+      dipole: 1.844
+      rotational-relaxation: 4.0
+
+reactions:
+- equation: H2O + H2O <=> H + OH + H2O  # Reaction 14
+  rate-constant: {A: 1.01e+26, b: -2.44, Ea: 1.202e+05}

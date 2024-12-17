@@ -82,6 +82,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         entropies = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights
         energies = gas.standard_int_energies_RT * gas.T * ct.gas_constant/gas.molecular_weights
         gibbs = gas.standard_gibbs_RT * gas.T * ct.gas_constant
+        gibbs_reactions = gas.delta_standard_gibbs/gas.T/ct.gas_constant
         equilibrium_constants = gas.equilibrium_constants
 
         content = """
@@ -136,7 +137,9 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
     
     std::cout << "Chemgen species gibbs energy: " << species_gibbs_energy_mole_specific(temperature_) <<std::endl;
     std::cout << "Cantera species gibbs energy: " <<"{cantera_species_gibbs}"<<std::endl;
-
+    
+    std::cout << "Chemgen species gibbs reactions : " << gibbs_reaction(log_gen(temperature_)) <<std::endl;
+    std::cout << "Cantera species gibbs reactions : " <<"{cantera_gibbs_reactions}"<<std::endl;
 
     std::cout << "Pressure: " <<pressure_return <<std::endl;
     std::cout << "Temperature Monomial at 300           : " <<temperature_monomial({scalar_cast}(300)) <<std::endl;
@@ -156,5 +159,6 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
         cantera_species_entropy = ' '.join([f"{ent}" for ent in entropies]),
         cantera_species_energies = ' '.join([f"{energy}" for energy in energies]),
         cantera_species_gibbs = ' '.join([f"{gibb}" for gibb in gibbs]),
+        cantera_gibbs_reactions = ' '.join([f"{gibb}" for gibb in gibbs_reactions]),
         equilibrium_constants = ' '.join([f"{eqcon}" for eqcon in equilibrium_constants]),
         cantera_int_energy = gas.int_energy_mass * gas.density))
