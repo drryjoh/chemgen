@@ -66,7 +66,7 @@ chemgen.py FFCM2_model . --custom-test custom_test.py --n-points-test 1000 --cma
 
 ## Generating Custom Tests
 
-This tutorial includes a `custom_test.py` file that overrides the default test generation functionality. 
+This tutorial includes a `custom_test.py` file that overrides the default test generation functionality. This generates the `chemgen.cpp` file that contains several support functions, such as `l2_norm`, as well as the `main()` function that calls the generates source code and provides the test for the random chemical states.
 
 ### Test Overview
 
@@ -94,4 +94,6 @@ When the generated binary, `chemgen`, is run `./bin/chemgen` a `l2_norm_results.
 ./process_errors.py
 ```
 
-The random sampling will assure randomization
+The error distribution for one particular random set of entries is shown below as a box and whisker plot and distribution. The bow and whisker plot shoys only a few outliers ever making it above a 10% differenc in reaction rate, with the mean around a relative error of less than 0.01 pct.
+![Error as a plotted using a box and whisker](bw.png)
+![Error distribution](hist.png)
