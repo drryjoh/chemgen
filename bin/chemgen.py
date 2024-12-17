@@ -63,7 +63,7 @@ def main():
     destination_folder = Path(args.destination)/'src'
     n_points_test = args.n_points_test
     fit_gibbs_reaction  = True
-    if args.fit_gibbs_reaction == False
+    if args.fit_gibbs_reaction == False:
         fit_gibbs_reaction  = False
         print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
 

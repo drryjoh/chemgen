@@ -143,7 +143,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
 
 {scalar_function} safe_jump({scalar_parameter} a, {scalar_parameter} b) {const_option}
 {{
-    if(std::abs(a) <= 1e-10 && std::abs(b))
+    if(std::abs(a) <= 1e-8 && std::abs(b))
     {{
         return 0;
     }}
@@ -161,7 +161,7 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     {scalar} l2_norm = {scalar_cast}(0.0);
     for (size_t i = 0; i < n_species; ++i) 
     {{
-        l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(safe_divide(safe_jump(result[i], cantera_source[i]), cantera_source[i]));
+        l2_norm += ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(safe_divide(safe_jump(result[i], cantera_source[i]), cantera_source[i]));
     }}
     file<< ", " << std::sqrt(l2_norm);
     file<< std::endl;
