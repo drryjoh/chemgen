@@ -18,7 +18,6 @@ def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_ra
         Bs.append(rate.temperature_exponent)
         Es.append(rate.activation_energy)
 
-
     reaction_rates[reaction_index] = pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration)
     reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, pressure_);\n".format(**vars(configuration),reaction_index = reaction_index)    
 

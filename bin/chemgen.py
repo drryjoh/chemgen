@@ -55,7 +55,6 @@ def main():
     parser.add_argument("--n-points-test", type=int, default=1000,  help="Number of points for testing (default: 1000)")
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose code generation")
     parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction")
-    parser.add_argument("--fit-gibbs-reaction-per-species", action="store_true", default=False, help="Fit the gibbs free energy per species then sum for each reaction")
 
     args = parser.parse_args()
     
@@ -64,9 +63,9 @@ def main():
     destination_folder = Path(args.destination)/'src'
     n_points_test = args.n_points_test
     fit_gibbs_reaction  = True
-    if args.fit_gibbs_reaction == False or args.fit_gibbs_reaction_per_species == True:
+    if args.fit_gibbs_reaction == False
         fit_gibbs_reaction  = False
-        print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some erros when compared to cantera.")
+        print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
 
     
     # Check if the destination folder exists, if not, create it
@@ -126,7 +125,6 @@ def main():
         compile(test_file, configuration_file, destination_folder, third_parties)
     if not args.compile and args.cmake:
         compile(test_file, configuration_file, destination_folder, third_parties, compile=False)
-
 
 if __name__ == "__main__":
     main()

@@ -28,8 +28,6 @@ class SourceWriter:
                 pattern = r"exp_gen\(-\(.*?\)\)"
                 # Replace using re.sub
                 equilibrium_constant = re.sub(pattern, f"exp_gen(-({replacement}))", original_string)
-
-    
                 file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = original_string, **vars(configuration)))
             file.write(f"        {progress_rate}\n") 
         file.write("\n")

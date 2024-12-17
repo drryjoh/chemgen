@@ -159,11 +159,8 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     // Calculate L2 norm
     file << temperature;
     {scalar} l2_norm = {scalar_cast}(0.0);
-    {scalar} weight = {scalar_cast}(1.0);
-    {scalar} sum_c = sum_gen(concentrations);
     for (size_t i = 0; i < n_species; ++i) 
     {{
-        //weight = concentrations[i]/sum_c;
         l2_norm += weight * ({scalar_cast}(1)/{scalar_cast}(n_species)) * pow_gen2(safe_divide(safe_jump(result[i], cantera_source[i]), cantera_source[i]));
     }}
     file<< ", " << std::sqrt(l2_norm);
