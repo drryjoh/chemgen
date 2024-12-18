@@ -75,7 +75,7 @@ def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, spe
 {scalar_function}
 call_forward_reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure) {const_option}
 {{
-        {scalar} inv_universal_gas_constant_temperature = inv(universal_gas_constant() * temperature); 
+        {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
         {scalar} log_pressure = log_gen(pressure);
         {scalar} rate = {scalar_cast}(0);
 {choose_text}

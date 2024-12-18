@@ -22033,12 +22033,12 @@ status collapsed
 
 \begin_layout Plain Layout
 auto density_star = pow_intrinsic((sqr(c_nghbr) / gamma_ref_owner) * exp_intrins
-ic(-w2 / cv_ref_owner), inv(gamma_m_one_ref_owner));
+ic(-w2 / cv_ref_owner), inv_gen(gamma_m_one_ref_owner));
 \end_layout
 
 \begin_layout Plain Layout
 auto c_star = gamma_m_one_ref_owner * (w5-w1) / 4_S; auto pressure_star
- = multiply(density_star, sqr(c_star), inv(gamma_ref_owner));
+ = multiply(density_star, sqr(c_star), inv_gen(gamma_ref_owner));
 \end_layout
 
 \begin_layout Plain Layout

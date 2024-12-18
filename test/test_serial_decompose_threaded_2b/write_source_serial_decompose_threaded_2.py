@@ -15,7 +15,7 @@ class SourceWriter:
         for reaction_index, reaction_call in enumerate(reaction_calls):
             if reaction_index == 0:
                 scalar_declare  = "{scalar} ".format(**vars(configuration))
-                file.write("       {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);\n".format(**vars(configuration)))
+                file.write("       {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);\n".format(**vars(configuration)))
             else:
                 scalar_declare  = ""
 
@@ -87,7 +87,7 @@ class SourceWriter:
                 auto temperature_ = temperature_from_chemical_state(state_);
                 auto species_ = species_from_chemical_state(state_);
                 auto gibbs_free_energies_ = species_gibbs_energy_mole_specific(temperature_);
-                auto inv_universal_gas_constant_temperature_  = inv(universal_gas_constant() * temperature_);
+                auto inv_universal_gas_constant_temperature_  = inv_gen(universal_gas_constant() * temperature_);
                 auto log_temperature_ = log_gen(temperature_);
                 auto pressure_ = pressure(species_, temperature_);
                 auto mixture_concentration_ = pressure_ * inv_universal_gas_constant_temperature_;

@@ -6,9 +6,9 @@ class SourceWriter:
     def write_progress_rate_functions(self, file, progress_rates, is_reversible, equilibrium_constants, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species, {scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature); {scalar} equilibrium_constant_{i} =  {equilibrium_constant}; return {progress_rate}}}".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
+                file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species, {scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature); {scalar} equilibrium_constant_{i} =  {equilibrium_constant}; return {progress_rate}}}".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
             else:
-                file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species,{scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature); return {progress_rate}}}\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
+                file.write("        {device_option}\n{scalar_function} progress_rate_{i}({species_parameter} species,{scalar_parameter} temperature, {species_parameter} gibbs_free_energies, {scalar_parameter} forward_reaction_{i}) {const_option} {{{scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature); return {progress_rate}}}\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration), progress_rate = progress_rate.split("=")[1]))
         file.write("\n")
 
     def write_species_production_functions_on_the_fly(self, file, species_production_on_fly_function_texts, configuration):
@@ -96,7 +96,7 @@ void production_rate_{reaction_index}({scalar_parameter} progress_rate, {species
                 auto temperature_ = temperature_from_chemical_state(state_);
                 auto species_ = species_from_chemical_state(state_);
                 auto gibbs_free_energies_ = species_gibbs_energy_mole_specific(temperature_);
-                auto inv_universal_gas_constant_temperature_  = inv(universal_gas_constant() * temperature_);
+                auto inv_universal_gas_constant_temperature_  = inv_gen(universal_gas_constant() * temperature_);
                 auto log_temperature_ = log_gen(temperature_);
                 auto pressure_ = pressure(species_, temperature_);
                 auto mixture_concentration_ = pressure_ * inv_universal_gas_constant_temperature_;

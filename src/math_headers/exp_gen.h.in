@@ -5,10 +5,10 @@
 
 //ln
 {device_option} {scalar_function} log_gen({scalar_parameter} a) {const_option} {{return {logmath}(a);}}
-{device_option} {scalar_function} dlog_da({scalar_parameter} a) {const_option} {{return inv(a);}}
-{device_option} {scalar_function} log_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return inv(a) * a_perturbation;}}
+{device_option} {scalar_function} dlog_da({scalar_parameter} a) {const_option} {{return inv_gen(a);}}
+{device_option} {scalar_function} log_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return inv_gen(a) * a_perturbation;}}
 
 //log10
 {device_option} {scalar_function} log10_gen({scalar_parameter} a) {const_option} {{return {log10math}(a);}}
-{device_option} {scalar_function} dlog10_da({scalar_parameter} a) {const_option} {{return inv(a * log_gen(10));}}
+{device_option} {scalar_function} dlog10_da({scalar_parameter} a) {const_option} {{return inv_gen(a * log_gen(10));}}
 {device_option} {scalar_function} log10_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return dlog_da(a) * a_perturbation;}}

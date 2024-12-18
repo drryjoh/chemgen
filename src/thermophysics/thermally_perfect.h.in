@@ -120,7 +120,7 @@ dtemperature_entropy_monomial_dtemperature({scalar_parameter} temperature) {cons
     {temperature_energy_monomial} temperature_energy_monomial_derivative_ = {{}};
     {temperature_energy_monomial} temperature_energy_monomial_ = temperature_entropy_monomial(temperature);
     temperature_energy_monomial_derivative_[0] = 0.0; // The derivative of T^0 (constant 1) is 0
-    temperature_energy_monomial_derivative_[n_order_thermo] = inv(temperature); // derivative of ln(T)
+    temperature_energy_monomial_derivative_[n_order_thermo] = inv_gen(temperature); // derivative of ln(T)
 
 
     // Derivative of Horner's method: Start with 1 and multiply progressively by T
@@ -159,7 +159,7 @@ dtemperature_gibbs_monomial_dtemperature({scalar_parameter} temperature) {const_
     {temperature_gibbs_monomial} temperature_gibbs_monomial_ = temperature_gibbs_monomial(temperature);
     temperature_gibbs_monomial_derivative_[0] = 0.0; // The derivative of T^0 (constant 1) is 0
     temperature_gibbs_monomial_derivative_[n_order_thermo + 1] = 
-    multiply_chain(temperature, {scalar_cast}(1), {logmath}(temperature), inv(temperature)); 
+    multiply_chain(temperature, {scalar_cast}(1), {logmath}(temperature), inv_gen(temperature)); 
 
 
     // Derivative of Horner's method: Start with 1 and multiply progressively by T

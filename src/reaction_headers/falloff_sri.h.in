@@ -13,7 +13,7 @@ f_sri({scalar_parameter} a,
     multiply(a, exp_gen(-divide(b, temperature))) + exp_gen(-divide(temperature, c));
     
     // Compute the exponent based on Pr
-    {scalar} exponent = inv(1.0 + pow_gen2(log10_gen(Pr)));
+    {scalar} exponent = inv_gen(1.0 + pow_gen2(log10_gen(Pr)));
     
     // Compute the full expression
     return 
@@ -46,7 +46,7 @@ df_sri_dtemperature({scalar_parameter} a,
                 -ddivide_da(temperature, c));
     
     // Compute the exponent based on Pr
-    {scalar} exponent = inv(1.0 + pow_gen2(log10_gen(Pr)));
+    {scalar} exponent = inv_gen(1.0 + pow_gen2(log10_gen(Pr)));
     {scalar} dexponent_dtemperature = 
     inv_chain(1.0 + pow_gen2(log10_gen(Pr)),
               pow_gen2_chain(log10_gen(Pr),
@@ -86,7 +86,7 @@ falloff_sri({scalar_parameter} A_low,  //constant
         divide(multiply(k_low,
                         mixture_concentration),
                k_high);
-        {scalar} inv_one_p_Pr = inv({scalar_cast}(1)+Pr);
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
         {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
 
 		{scalar} return_value = 
@@ -133,7 +133,7 @@ dfalloff_sri_temperature({scalar_parameter} A_low,  //constant
                     k_high,
                     dk_high_dtemperature);
         
-        {scalar} inv_one_p_Pr = inv({scalar_cast}(1)+Pr);
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
         {scalar} dinv_one_p_Pr_dtemperature = 
         inv_chain({scalar_cast}(1)+Pr,
                   dPr_dtemperature);

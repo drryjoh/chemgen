@@ -17,7 +17,7 @@ falloff_lindemann({scalar_parameter} A_low,  //constant
         divide(multiply(k_low,
                         mixture_concentration),
                k_high);
-        {scalar} inv_one_p_Pr = inv({scalar_cast}(1)+Pr);
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
         {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
 
 		{scalar} return_value = 
@@ -58,7 +58,7 @@ dfalloff_lindemann_temperature({scalar_parameter} A_low,  //constant
                     k_high,
                     dk_high_dtemperature);
         
-        {scalar} inv_one_p_Pr = inv({scalar_cast}(1)+Pr);
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
         {scalar} dinv_one_p_Pr_dtemperature = 
         inv_chain({scalar_cast}(1)+Pr,
                   dPr_dtemperature);

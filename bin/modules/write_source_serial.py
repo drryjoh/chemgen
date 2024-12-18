@@ -9,7 +9,7 @@ class SourceWriter:
         {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
         {{
             {species} net_production_rates = {{{scalar_cast}(0)}};
-            {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);
+            {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
             {scalar} log_temperature = log_gen(temperature);
             {gibbs}
             {scalar} pressure_ = pressure(species, temperature);

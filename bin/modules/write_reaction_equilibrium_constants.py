@@ -9,7 +9,7 @@ def write_equilibrium_constants(file, equilibrium_constants, configuration):
     {{
         {species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);
         {reactions} equilibrium_constants = {{}};
-        {scalar} inv_universal_gas_constant_temperature  = inv(universal_gas_constant() * temperature);
+        {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
 {equilibrium_constant_evaluations}
         return equilibrium_constants;
     }}

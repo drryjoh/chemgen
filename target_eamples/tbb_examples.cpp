@@ -9,14 +9,14 @@
 double call_forward_reaction(int reaction_id, const std::vector<double>& species, double temperature);
 double species_gibbs_energy_mole_specific(double temperature);
 double universal_gas_constant();
-double inv(double x);
+double inv_gen(double x);
 double mixture_concentration(const std::vector<double>& species);
 
 // The source function you want to parallelize
 std::vector<double> source(const std::vector<double>& species, double temperature) {
     std::vector<double> net_production_rates(species.size(), 0.0);
     std::vector<double> gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);
-    double inv_universal_gas_constant_temperature = inv(universal_gas_constant() * temperature);
+    double inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature);
 
     // Parallel loop using TBB (Threading Building Blocks)
     tbb::parallel_for(tbb::blocked_range<int>(0, 43), [&](tbb::blocked_range<int>& r) {

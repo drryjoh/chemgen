@@ -12,14 +12,14 @@
 {device_option} {scalar_function} dpow2_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(2) * a;}}
 
 //iverse
-{device_option} {scalar_function} inv({scalar_parameter} a) {const_option} {{return {scalar_cast}(1)/a;}}
+{device_option} {scalar_function} inv_gen({scalar_parameter} a) {const_option} {{return {scalar_cast}(1)/a;}}
 {device_option} {scalar_function} dinv_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(-1)/pow2(a);}}
 {device_option} {scalar_function} inv_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return {scalar}(-a_perturbation)/pow2(a);}}
 
 //divide
 {device_option} {scalar_function} divide({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return a / b;}}
 //derivatives
-{device_option} {scalar_function} ddivide_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return inv(b);}}
+{device_option} {scalar_function} ddivide_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return inv_gen(b);}}
 {device_option} {scalar_function} ddivide_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return -a / pow2(b);}}
 //derivatives * increment
 {device_option} {scalar_function} divide_chain({scalar_parameter} a, {scalar_parameter} a_perturbation, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{return a_perturbation / b + -a / pow2(b) * b_perturbation;}}

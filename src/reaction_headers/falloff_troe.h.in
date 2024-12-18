@@ -7,9 +7,9 @@ f_cent_troe({scalar_parameter} alpha,
        {scalar_parameter} temperature) {const_option}
 {{
         return
-        ({scalar_cast}(1) - alpha) * exp_gen(-inv(T3) * temperature)
-        + alpha * exp_gen(-inv(T1) * temperature)
-        + exp_gen(-inv(temperature) * T2);
+        ({scalar_cast}(1) - alpha) * exp_gen(-inv_gen(T3) * temperature)
+        + alpha * exp_gen(-inv_gen(T1) * temperature)
+        + exp_gen(-inv_gen(temperature) * T2);
 }}
 
 {device_option}
@@ -21,9 +21,9 @@ df_cent_troe_dtemperature({scalar_parameter} alpha,
                      {scalar_parameter} temperature) {const_option}
 {{
         return
-        ({scalar_cast}(1) - alpha) * exp_chain(-inv(T3) * temperature, -inv(T3))
-        + alpha * exp_chain(-inv(T1) * temperature, -inv(T1))
-        + exp_chain(-inv(temperature) * T2, -dinv_da(temperature) * T2);
+        ({scalar_cast}(1) - alpha) * exp_chain(-inv_gen(T3) * temperature, -inv_gen(T3))
+        + alpha * exp_chain(-inv_gen(T1) * temperature, -inv_gen(T1))
+        + exp_chain(-inv_gen(temperature) * T2, -dinv_da(temperature) * T2);
 }}
 
 {device_option}
@@ -46,7 +46,7 @@ f_troe({scalar_parameter} alpha,
         {scalar} a = log_Pr + c;
         {scalar} b = n - d * (log_Pr + c);
 
-        {scalar} Pr_factor = inv({scalar_cast}(1) + pow_gen2(divide(a, b)));
+        {scalar} Pr_factor = inv_gen({scalar_cast}(1) + pow_gen2(divide(a, b)));
         
         return
         pow_gen({scalar_cast}(10), (multiply(log_f_cent_troe_, Pr_factor)));
@@ -84,7 +84,7 @@ df_troe_dtemperature({scalar_parameter} alpha,
         {scalar} b = n - d * (log_Pr +c);
         {scalar} db_dtemperature = dn_dtemperature - d * (dlog_Pr_dtemperature + dc_dtemperature);
 
-        {scalar} Pr_factor = inv({scalar_cast}(1) + pow_gen2(divide(a, b)));
+        {scalar} Pr_factor = inv_gen({scalar_cast}(1) + pow_gen2(divide(a, b)));
         {scalar} dPr_factor_dtemperature = 
         inv_chain({scalar_cast}(1) + pow_gen2(divide(a, b)),
                                    + pow_gen2_chain(divide(a, b),
@@ -126,7 +126,7 @@ falloff_troe({scalar_parameter} A_low,  //constant
         divide(multiply(k_low,
                         mixture_concentration),
                k_high);
-        {scalar} inv_one_p_Pr = inv({scalar_cast}(1)+Pr);
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
         {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
 
 		{scalar} return_value = 
@@ -172,7 +172,7 @@ dfalloff_troe_temperature({scalar_parameter} A_low,  //constant
                     k_high,
                     dk_high_dtemperature);
         
-        {scalar} inv_one_p_Pr = inv({scalar_cast}(1)+Pr);
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
         {scalar} dinv_one_p_Pr_dtemperature = 
         inv_chain({scalar_cast}(1)+Pr,
                   dPr_dtemperature);
