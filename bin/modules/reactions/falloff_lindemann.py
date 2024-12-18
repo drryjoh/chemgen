@@ -9,6 +9,13 @@ def create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_calls
             f"b = {reaction_rate.low_rate.temperature_exponent}, "
             f"Ea = {reaction_rate.low_rate.activation_energy}")
     
+    if reaction.third_body_name !='M':
+        requires_mixture_concentration[reaction_index] = False
+        third_body_multiplier = "species[{index}]".format(index = species_names.index(reaction.third_body_name))
+    else:
+        requires_mixture_concentration[reaction_index] = True
+        third_body_multiplier = 'mixture_concentration'
+    
     falloff_coeffs = reaction.rate.falloff_coeffs
     reaction_rates[reaction_index] = lindemann_text(reaction_index,
                                                     reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
@@ -16,7 +23,7 @@ def create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_calls
                                                     reaction.efficiencies, species_names,
                                                     configuration)
                             
-    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, mixture_concentration);\n".format(**vars(configuration),reaction_index = reaction_index)    
+    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, {third_body_multiplier});\n".format(**vars(configuration),reaction_index = reaction_index, third_body_multiplier = third_body_multiplier)    
 
 def lindemann_text(i, A_low, B_low, E_low, A_high, B_high, E_high, efficiencies, species_names, configuration):
     mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)
