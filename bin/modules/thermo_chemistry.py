@@ -163,8 +163,9 @@ def check_gibbs_against_temperature(gas, temperature_min, temperature_max, n_sam
         plt.plot(temperatures, gibbs_exact[k,:],'-r')
         plt.plot(temperatures, gibbs_fit[k,:],'--k')
     plt.show()
-def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200, temperature_max = 8000):
-    gas.transport_model = "Mix"
+def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200, temperature_max = 8000, transport = False):
+    if transport:
+        gas.transport_model = "Mix"
     temperatures = np.linspace(temperature_min, temperature_max, 1000)
     
     #mass specific quantities (units/kg)
