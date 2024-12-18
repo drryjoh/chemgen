@@ -1,3 +1,4 @@
+#pragma once
 #include <numeric>  // For std::accumulate
 {device_option} {scalar_function} 
 sum_gen({species_parameter} a_s) {const_option} {{return {device_sum_inl};}}
