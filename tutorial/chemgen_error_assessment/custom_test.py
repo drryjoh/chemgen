@@ -47,7 +47,7 @@ def get_random_TPX(gas):
     species_list = gas.species_names
 
     # Define major species
-    major_species = { 'H2', 'O2', 'H2O', 'AR', 'N2', 'CO', 'CO2', 'CH4', 'C2H4', 'C4H10'}
+    major_species = { 'H2', 'O2', 'H2O', 'AR', 'N2'}#, 'CO', 'CO2', 'CH4', 'C2H4', 'C4H10'}
     minor_minor = {"NC3H7", "IC3H7", "C3H6", "C3H5", "CH3CCH2", "AC3H4", "PC3H4", "C3H3", "C2H5CHO", "CH3COCH3",
                    "CH3COCH2", "C2H3CHO", "C3H5OH", "NC3H7O2", "NC3H7OOH", "IC3H7O2", "IC3H7OOH", "C4H2",
                    "NC4H3", "IC4H3", "C4H4", "NC4H5", "IC4H5", "C4H5-2", "C4H6", "C4H612", "C4H6-2", "C4H7",
@@ -70,8 +70,8 @@ def get_random_TPX(gas):
     minor_minor_values = np.random.uniform(1e-9, 1e-7, len(minor_minor_indices))
 
     # Randomly make 50% of major values zero
-    major_mask = np.random.choice([True, False], size=len(major_values), p=[0.5, 0.5])
-    major_values = major_values * major_mask
+    #major_mask = np.random.choice([True, False], size=len(major_values), p=[0.5, 0.5])
+    #major_values = major_values * major_mask
 
     # Randomly make 50% of minor values zero
     minor_mask = np.random.choice([True, False], size=len(minor_values), p=[0.5, 0.5])
@@ -83,13 +83,14 @@ def get_random_TPX(gas):
     for idx, value in zip(minor_indices, minor_values):
         species_array[idx] = value
 
-    for idx, value in zip(minor_minor_indices, major_values):
+    for idx, value in zip(major_indices, major_values):
         species_array[idx] = value
 
-    for idx, value in zip(major_indices, minor_minor_values):
+    for idx, value in zip(minor_minor_indices, minor_minor_values):
         species_array[idx] = value   
-    species_array /= species_array.sum()
 
+    species_array /= species_array.sum()
+    
     return (1000 + 1000 * np.random.random(), 10132.5 + 101325.0 * 2 * np.random.random(), species_array)
 
 
@@ -113,7 +114,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         point_temperatures = []
         point_source = []
         for point in range(n_points):
-            gas.TPX = get_random_TPX(gas)
+            gas.TPX = get_random_TPX(gas) 
             point_concentrations.append(gas.concentrations)
             point_temperatures.append(gas.T)
             point_source.append(gas.net_production_rates)

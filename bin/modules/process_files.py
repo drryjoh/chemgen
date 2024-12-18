@@ -30,6 +30,8 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
     requires_mixture_concentration = [False] * gas.n_reactions  
     molecular_weights_string = ','.join(["{scalar_cast}({mw})".format(**vars(configuration), mw=mw) for mw in gas.molecular_weights])
     molecular_weights = f"{{{molecular_weights_string}}}"
+    inv_molecular_weights_string = ','.join(["{scalar_cast}({mw})".format(**vars(configuration), mw=1.0/mw) for mw in gas.molecular_weights])
+    inv_molecular_weights = f"{{{inv_molecular_weights_string}}}"
     [thermo_names, thermo_fits, thermo_types] = polyfit_thermodynamics(gas, configuration, order = int("{n_thermo_order}".format(**vars(configuration))))
     # Loop through all reactions
     for reaction_index in range(gas.n_reactions):
@@ -53,7 +55,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
         write_type_defs(file, gas, configuration)
         headers.append('types_inl.h')
     with open(destination_folder/'generated_constants.h', 'w') as file:
-        write_molecular_weights(file, molecular_weights,  configuration)
+        write_molecular_weights(file, molecular_weights, inv_molecular_weights,  configuration)
     with open(destination_folder/'thermotransport_fits.h','w') as file:
         for name, thermo_fit, thermo_type in zip(thermo_names, thermo_fits, thermo_types):
             if thermo_type == "energy":

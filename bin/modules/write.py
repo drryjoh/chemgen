@@ -21,9 +21,10 @@ temperature_energy_monomial_typedef = "{temperature_monomial_typedef}".format(**
 temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 2"))
     )
 
-def write_molecular_weights(file, molecular_weights, configuration):
+def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     #{device_option} {constexpr} {scalar_function} inv_pressure_atmosphere() {const_option} {{return {scalar_cast}(1)/{scalar_cast}(101325.0);}}
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
+    content += "{device_option} {constexpr} {species_function} inv_molecular_weights() {const_option} {{return {inv_molecular_weights};}}".format(**vars(configuration), inv_molecular_weights = inv_molecular_weights)
     file.write(content)
 
 
