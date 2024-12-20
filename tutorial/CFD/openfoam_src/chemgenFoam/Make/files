@@ -1,0 +1,4 @@
+chemgenFoam.C
+
+EXE  = ~/chemgenFoam
+
