@@ -8,14 +8,14 @@ def create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_calls
         print(f"  Arrhenius Parameters (low pressure limit): A = {reaction_rate.low_rate.pre_exponential_factor}, "
             f"b = {reaction_rate.low_rate.temperature_exponent}, "
             f"Ea = {reaction_rate.low_rate.activation_energy}")
-    
+
     if reaction.third_body_name !='M':
         requires_mixture_concentration[reaction_index] = False
         third_body_multiplier = "species[{index}]".format(index = species_names.index(reaction.third_body_name))
     else:
         requires_mixture_concentration[reaction_index] = True
         third_body_multiplier = 'mixture_concentration'
-    
+
     falloff_coeffs = reaction.rate.falloff_coeffs
     reaction_rates[reaction_index] = lindemann_text(reaction_index,
                                                     reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,

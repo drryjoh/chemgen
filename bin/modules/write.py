@@ -22,11 +22,28 @@ temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**v
     )
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
-    #{device_option} {constexpr} {scalar_function} inv_pressure_atmosphere() {const_option} {{return {scalar_cast}(1)/{scalar_cast}(101325.0);}}
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
     content += "{device_option} {constexpr} {species_function} inv_molecular_weights() {const_option} {{return {inv_molecular_weights};}}".format(**vars(configuration), inv_molecular_weights = inv_molecular_weights)
     file.write(content)
 
+def write_species_names(file, species_names, configuration):
+    file.write("""
+    // Define the species names as a fixed-size array
+    #pragma once
+    #include <string>
+
+    static constexpr {scalar_list}<const char*, 10> species_names_gen()
+    {{
+        return {{{species_list}}};
+    }}
+
+    // Return the species name for a given index
+    static {string} species_name_gen({index} index)
+    {{
+        constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
+        return names[index]; // Return the name of the requested species
+    }}
+    """.format(**vars(configuration), species_list = ', '.join([f"\"{name}\"" for name in species_names])))
 
 def write_thermo_transport_fit(file, name, thermo_fit_text, configuration):
     content ="""

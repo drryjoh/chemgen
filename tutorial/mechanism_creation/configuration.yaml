@@ -19,6 +19,7 @@ decorators:
   temperature_gibbs_monomial_parameter: "const TemperatureGibbsMonomial&"
 
   index: "int"
+  string: "std::string"
 
   species_typedef: "std::array<double, n_species>"
   species: "Species"

@@ -19,6 +19,7 @@ decorators:
   temperature_gibbs_monomial_parameter: "const TemperatureGibbsMonomial&"
 
   index: "int"
+  string: "std::string"
 
   species_typedef: "std::array<double, n_species>"
   species: "Species"
@@ -57,16 +58,4 @@ decorators:
 build:
   chemgen_smp: None 
   chemgen_optimized: O2
-
-decorators_double:
-  scalar: "double"
-  scalar_function: "double"
-  scalar_cast: "double"
-  scalar_parameter: "const double&"
-  const_option: ""
-  constexpr: "constexpr"
-  device_option: ""
-  expmath: "std::exp"
-  powmath: "std::pow"
-  logmath: "std::log"
 
