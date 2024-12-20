@@ -82,7 +82,7 @@
     volScalarField& internal_energy = chemgen_chemistry.internal_energy();
     PtrList<volScalarField>& concentrations = chemgen_chemistry.C();
 
-    PtrList<volScalarField> Y = chemgen_chemistry.Y();
+    PtrList<volScalarField>& Y = chemgen_chemistry.Y();
 
     scalar integratedHeat = 0.0;
 
@@ -102,7 +102,23 @@
     {
         Info<< concentrations[i].name() <<": "<<concentrations[i][0]<<endl;
     }
+
     Info << "T from rhoU" <<""<<endl;
     chemgen_chemistry.temperature_from_internal_energy();
     Info << " T   = " << T[0] << " [K] " << nl;
+
+    internal_energy[0] = internal_energy[0] * 1.01;
+    concentrations[3][0] = 0.00001;
+    chemgen_chemistry.temperature_from_internal_energy();
+    chemgen_chemistry.update_chemical_state_from_concentrations_and_temperature();
+
+        Info << " p   = " << p[0] << " [Pa]" << nl
+        << " T   = " << T[0] << " [K] " << nl
+        << " rho   = " << rho[0] << " [kg/m^3] " << nl
+        << " rhoU   = " << internal_energy[0] << " [J/m^3] " << nl
+        << endl;
+    forAll(Y, i)
+    {
+        Info<< Y[i].name() <<": "<<Y[i][0]<<endl;
+    }
 

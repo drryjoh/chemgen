@@ -193,7 +193,7 @@ struct ChemgenInterface
         return sourceField_;
     }
         
-    volScalarField rho
+    volScalarField density
     (
         const PtrList<volScalarField>& Y,
         const volScalarField& p,
@@ -228,6 +228,66 @@ struct ChemgenInterface
         
         return rho_;
     }
+
+    void density_from_concentrations
+    (
+        volScalarField& rho,
+        const PtrList<volScalarField>& C
+    ) const
+    {
+
+        Species MW = molecular_weights();
+
+        forAll(rho, cellI)
+        {
+            scalar sum_rho = scalar(0);
+            forAll(C, specieI)
+            {
+                sum_rho+= C[specieI][cellI] * MW[specieI];
+            }
+
+            rho[cellI] = sum_rho;
+        } 
+    }
+
+    void mass_fractions_from_concentrations_density
+    (
+        PtrList<volScalarField>& Y,
+        const PtrList<volScalarField>& C,
+        const volScalarField& rho
+    ) const
+    {
+
+        Species MW = molecular_weights();
+
+        forAll(rho, cellI)
+        {
+            forAll(C, specieI)
+            {
+                Y[specieI][cellI] = C[specieI][cellI] * MW[specieI]/rho[cellI];
+            }
+        } 
+    }
+
+    void pressure_from_concentrations_temperature
+    (
+        volScalarField& p,
+        const PtrList<volScalarField>& C,
+        const volScalarField T
+    ) const
+    {
+        forAll(p, cellI)
+        {
+            scalar sum_C = scalar(0);
+            forAll(C, specieI)
+            {
+                sum_C+= C[specieI][cellI];
+            }
+
+            p[cellI] = T[cellI] * universal_gas_constant() * sum_C;
+        }
+    }
+
 
     volScalarField internal_energy
     (

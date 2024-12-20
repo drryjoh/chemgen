@@ -56,7 +56,7 @@ namespace Foam
             volScalarField& internal_energy();
             volScalarField& rho();
             void temperature_from_internal_energy();
-            
+            void update_chemical_state_from_concentrations_and_temperature();
     };
 
 } // namespace Foam

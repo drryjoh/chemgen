@@ -38,7 +38,7 @@ CustomChemistryModel::CustomChemistryModel(
   ),
   C_(Y.size())                // 7. Initialize C_ with the same size as Y_
 {
-    rho_ = ChemgenInterface_.rho(Y_, p_, T_);
+    rho_ = ChemgenInterface_.density(Y_, p_, T_);
     C_ = ChemgenInterface_.concentrations(Y_, rho_, T_);
     internal_energy_ = ChemgenInterface_.internal_energy(Y_, rho_, T_);
 }
@@ -222,26 +222,19 @@ volScalarField& CustomChemistryModel::internal_energy()
 
 void CustomChemistryModel::temperature_from_internal_energy()
 {
+    forAll(C_, specieI)
+    {
+        Info << C_[specieI][0] << endl;
+    }
     ChemgenInterface_.temperature_from_internal_energy(C_, internal_energy_, T_);
 }
 
-//void CustomChemistryModel::update_all_chemical_state()
-//{
-//    Species 
-//    forAll(p_, cellI)
-//    {
-//        species_sum  = scalar(0);
-//        rho_i  = scalar(0);
-        
-//        forAll(C_, specieI)
-//        {
-//            species_sum+=C_[specieI][celli]
-//        }
-
-//        p_ = 
-//    }
-//    rho_ = ChemgenInterface_.rho(Y_, p_, T_, C_,);
-//}
+void CustomChemistryModel::update_chemical_state_from_concentrations_and_temperature()
+{
+    ChemgenInterface_.density_from_concentrations(rho_, C_);   
+    ChemgenInterface_.pressure_from_concentrations_temperature(p_, C_, T_);
+    ChemgenInterface_.mass_fractions_from_concentrations_density(Y_, C_, rho_);
+}
 
 
 } // namespace Foam
