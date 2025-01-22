@@ -47,7 +47,7 @@ def get_random_TPX(gas):
     species_list = gas.species_names
 
     # Define major species
-    major_species = { 'H2', 'O2', 'H2O', 'AR', 'N2'}#, 'CO', 'CO2', 'CH4', 'C2H4', 'C4H10'}
+    major_species = { 'H2', 'O2', 'H2O', 'AR', 'N2', 'CO', 'CO2', 'CH4', 'C2H4', 'C4H10'}
     minor_minor = {"NC3H7", "IC3H7", "C3H6", "C3H5", "CH3CCH2", "AC3H4", "PC3H4", "C3H3", "C2H5CHO", "CH3COCH3",
                    "CH3COCH2", "C2H3CHO", "C3H5OH", "NC3H7O2", "NC3H7OOH", "IC3H7O2", "IC3H7OOH", "C4H2",
                    "NC4H3", "IC4H3", "C4H4", "NC4H5", "IC4H5", "C4H5-2", "C4H6", "C4H612", "C4H6-2", "C4H7",
