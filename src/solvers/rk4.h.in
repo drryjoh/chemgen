@@ -7,31 +7,72 @@ rk4({scalar_parameter}  internal_energy,
 /*
 python code
     k1  = source(y_n)
-    k2  = source(y_n +  h * k1/2.0)
-    k3  = source(y_n + h * k2/2.0)
-    k4  = source(y_n + h * k3)
+    k2  = source(y_n +  dt *k1/2.0)
+    k3  = source(y_n + dt *k2/2.0)
+    k4  = source(y_n + dt *k3)
     return y_n + h/6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
 */
 	{scalar} temperature_1 = temperature(internal_energy, concentrations_1, {index}(3));
 	{species} k1  = source(concentrations_1, temperature_1);
 
-	{species} concentrations_2 = concentrations_1 +  scale_gen(h * {scalar_cast}(0.5), k1);
+	{species} concentrations_2 = concentrations_1 +  {scale}(dt * {scalar_cast}(0.5), k1);
 	{scalar} temperature_2  = temperature(internal_energy, concentrations_2, {index}(3));
 	{species} k2  = source(concentrations_2, temperature_2);
 
-	{species} concentrations_3 = concentrations_1 +  scale_gen(h * {scalar_cast}(0.5), k2);
+	{species} concentrations_3 = concentrations_1 +  {scale}(dt * {scalar_cast}(0.5), k2);
 	{scalar} temperature_3  = temperature(internal_energy, concentrations_3, {index}(3));
 	{species} k3  = source(concentrations_3, temperature_3);
 
-	{species} concentrations_3 = concentrations_1 +  scale_gen(h, k3);
-	{scalar} temperature_3  = temperature(internal_energy, concentrations_3, {index}(3));
-	{species} k4  = source(concentrations_3, temperature_3);
+	{species} concentrations_4 = concentrations_1 +  {scale}(dt, k3);
+	{scalar} temperature_4  = temperature(internal_energy, concentrations_4, {index}(3));
+	{species} k4  = source(concentrations_4, temperature_4);
 
     return concentrations_1 +
-	       scale(h * {scalar_cast}(0.16666666666666666), 
-		         k1 + 
-				 scale({scalar_cast}(2), k2) +
-				 scale({scalar_cast}(2), k3) + 
-				 k4);
+	       {scale}(dt * {scalar_cast}(0.16666666666666666), 
+		             k1 + 
+					 {scale}({scalar_cast}(2), k2) +
+					 {scale}({scalar_cast}(2), k3) + 
+					 k4);
+}}
+
+{device_option}
+{scalar_function}
+rk_source_simple({scalar_parameter}  y_n) {const_option}
+{{
+	return {scalar_cast}(3) * y_n;
+}}
+
+{device_option}
+{scalar_function}
+rk4_simple({scalar_parameter}  y_n,
+		   {scalar_parameter} dt) {const_option}
+{{
+/*
+python code
+    k1  = source(y_n)
+    k2  = source(y_n +  dt *k1/2.0)
+    k3  = source(y_n + dt *k2/2.0)
+    k4  = source(y_n + dt *k3)
+    return y_n + h/6 * (k1 + 2 * k2 + 2 * k3 + k4)
+
+*/
+
+	{scalar} k1  = rk_source_simple(y_n);
+
+	{scalar} y_n_2 = y_n +  {scale}(dt * {scalar_cast}(0.5), k1);
+	{scalar} k2  = rk_source_simple(y_n_2);
+
+	{scalar} y_n_3 = y_n +  {scale}(dt * {scalar_cast}(0.5), k2);
+	{scalar} k3  = rk_source_simple(y_n_3);
+
+	{scalar} y_n_4 = y_n +  {scale}(dt, k3);
+	{scalar} k4  = rk_source_simple(y_n_4);
+
+    return y_n +
+	       {scale}(dt * {scalar_cast}(0.16666666666666666), 
+		           k1 + 
+				   {scale}({scalar_cast}(2), k2) +
+				   {scale}({scalar_cast}(2), k3) + 
+				   k4);
 }}

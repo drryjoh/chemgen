@@ -94,6 +94,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
 
     
     required_headers = create_headers(configuration, chemistry_solver, destination_folder)
+    
     return required_headers + headers
 
 

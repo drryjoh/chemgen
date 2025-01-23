@@ -94,14 +94,18 @@ def main():
     chemistry_solver = configuration_file.get('solver', {}).get('chemistry_solver', None)
     if chemistry_solver:
         generate_chemistry_solver = True
-        if chemistry_solver != "rk4":
-            print("Chemistry solver unsupported please choose from [rk4]")
-            exit()
-        else:
+        if chemistry_solver.lower() == "none":
+            print("none was specified for chemistry_solver in configuration file, no solver will be generated")
+            generate_chemistry_solver = False
+        elif chemistry_solver.lower() == "rk4":
             print("RK4 chemistry solver chosen")
+        else:
+            print("Chemistry solver unsupported. Please choose from [rk4].")
+            exit()
     else:
-        print("Not generating with a chemgen chemistry solver")
-    
+        generate_chemistry_solver = False
+        print("Not generating with a chemgen chemistry solver.")
+
     third_parties = [use_third_parties, third_party_path, libraries]
     
     headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction)
@@ -109,7 +113,10 @@ def main():
     if "types_inl.h" in headers:
         headers.remove("types_inl.h")
         headers.insert(0,"types_inl.h")
-    
+
+    if "rk4.h" in headers:
+        headers.remove("rk4.h")
+        headers.append("rk4.h")
 
     test_file = ''
     

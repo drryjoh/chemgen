@@ -19,6 +19,11 @@ scale_gen({scalar_parameter} a, {species_parameter} b_s) {const_option}
     return c_s;
 }}
 
+{device_option} {scalar_function} 
+scale_gen({scalar_parameter} a, {scalar_parameter} b) {const_option}
+{{
+    return a * b;
+}}
 
 {device_option} {species_function} 
 operator+({species_parameter} a_s, {species_parameter} b_s) {const_option}

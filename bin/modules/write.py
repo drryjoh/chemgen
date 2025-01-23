@@ -32,7 +32,7 @@ def write_species_names(file, species_names, configuration):
     #pragma once
     #include <string>
 
-    static constexpr {scalar_list}<const char*, 10> species_names_gen()
+    static constexpr {scalar_list}<const char*, {n_species}> species_names_gen()
     {{
         return {{{species_list}}};
     }}
@@ -43,7 +43,7 @@ def write_species_names(file, species_names, configuration):
         constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
         return names[index]; // Return the name of the requested species
     }}
-    """.format(**vars(configuration), species_list = ', '.join([f"\"{name}\"" for name in species_names])))
+    """.format(**vars(configuration), species_list = ', '.join([f"\"{name}\"" for name in species_names]), n_species = len(species_names)))
 
 def write_thermo_transport_fit(file, name, thermo_fit_text, configuration):
     content ="""
