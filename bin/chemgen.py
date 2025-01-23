@@ -90,10 +90,21 @@ def main():
         use_third_parties = True
         libraries.append('mpi')
 
+    generate_chemistry_solver = False
+    chemistry_solver = configuration_file.get('solver', {}).get('chemistry_solver', None)
+    if chemistry_solver:
+        generate_chemistry_solver = True
+        if chemistry_solver != "rk4":
+            print("Chemistry solver unsupported please choose from [rk4]")
+            exit()
+        else:
+            print("RK4 chemistry solver chosen")
+    else:
+        print("Not generating with a chemgen chemistry solver")
     
     third_parties = [use_third_parties, third_party_path, libraries]
     
-    headers = process_cantera_file(gas, configuration, destination_folder,args, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction)
+    headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction)
 
     if "types_inl.h" in headers:
         headers.remove("types_inl.h")

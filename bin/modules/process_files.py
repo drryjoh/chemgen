@@ -16,7 +16,7 @@ def load_custom_sourcewriter(filepath):
     # Return the SourceWriter class from the custom module
     return custom_module.SourceWriter
 
-def process_cantera_file(gas, configuration, destination_folder, args, verbose = False, fit_gibbs_reaction = True):
+def process_cantera_file(gas, configuration, destination_folder, args, chemistry_solver, verbose = False, fit_gibbs_reaction = True):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
@@ -93,7 +93,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, verbose =
             source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
 
     
-    required_headers = create_headers(configuration, destination_folder)
+    required_headers = create_headers(configuration, chemistry_solver, destination_folder)
     return required_headers + headers
 
 

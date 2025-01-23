@@ -1,0 +1,37 @@
+{device_option}
+{species_function}
+rk4({scalar_parameter}  internal_energy,
+    {species_parameter} concentrations_1,
+	{scalar_parameter} dt) {const_option}
+{{
+/*
+python code
+    k1  = source(y_n)
+    k2  = source(y_n +  h * k1/2.0)
+    k3  = source(y_n + h * k2/2.0)
+    k4  = source(y_n + h * k3)
+    return y_n + h/6 * (k1 + 2 * k2 + 2 * k3 + k4)
+
+*/
+	{scalar} temperature_1 = temperature(internal_energy, concentrations_1, {index}(3));
+	{species} k1  = source(concentrations_1, temperature_1);
+
+	{species} concentrations_2 = concentrations_1 +  scale_gen(h * {scalar_cast}(0.5), k1);
+	{scalar} temperature_2  = temperature(internal_energy, concentrations_2, {index}(3));
+	{species} k2  = source(concentrations_2, temperature_2);
+
+	{species} concentrations_3 = concentrations_1 +  scale_gen(h * {scalar_cast}(0.5), k2);
+	{scalar} temperature_3  = temperature(internal_energy, concentrations_3, {index}(3));
+	{species} k3  = source(concentrations_3, temperature_3);
+
+	{species} concentrations_3 = concentrations_1 +  scale_gen(h, k3);
+	{scalar} temperature_3  = temperature(internal_energy, concentrations_3, {index}(3));
+	{species} k4  = source(concentrations_3, temperature_3);
+
+    return concentrations_1 +
+	       scale(h * {scalar_cast}(0.16666666666666666), 
+		         k1 + 
+				 scale({scalar_cast}(2), k2) +
+				 scale({scalar_cast}(2), k3) + 
+				 k4);
+}}
