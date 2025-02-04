@@ -1,0 +1,16 @@
+{device_option}
+{scalar_function} 
+temperature({chemical_state_parameter} chemical_state) {const_option} 
+{{
+    return temperature(get_energy(chemical_state), get_species(chemical_state));
+}}
+
+{device_option}
+{chemical_state_function} 
+source({chemical_state_parameter} chemical_state) {const_option} 
+{{
+    return 
+    set_chemical_state({scalar_cast}(0),
+                       source(get_species(chemical_state), temperature(chemical_state)));
+}}
+

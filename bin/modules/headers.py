@@ -24,7 +24,7 @@ def create_headers(configuration, chemistry_solver, destination_folder):
     make_headers(code_directory, file_names, headers, configuration, destination_folder)
 
     code_directory = Path('src') / 'thermophysics'
-    file_names = ['constants.h.in',"thermally_perfect.h.in"]
+    file_names = ['constants.h.in',"thermally_perfect.h.in","chemical_state_functions.h.in"]
     make_headers(code_directory, file_names, headers, configuration, destination_folder)
 
     code_directory = Path('src') / 'reaction_headers'

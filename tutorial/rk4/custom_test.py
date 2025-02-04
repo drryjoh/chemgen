@@ -7,11 +7,7 @@ import numpy as np
 
 def get_test_conditions(chemical_mechanism):
     config_path = Path('test_configuration.yaml')
-    if "simple_tb" in chemical_mechanism:
-        print("**simple TB**")
-        test_file = 'test_tb_configuration.yaml'
-    else:
-        test_file = 'test_configuration.yaml'
+    test_file = 'test_configuration.yaml'
     config_path = Path(test_file)
 
     if config_path.exists():
@@ -26,11 +22,6 @@ def get_test_conditions(chemical_mechanism):
     
     # Extract values from the parsed YAML data
     test_conditions = configuration.get('test_conditions', {})
-
-    # Handle the optional 'random' key
-    random = test_conditions.get('random', None)  # Default to None if 'random' is not present
-    if random:
-        return [0, 0, 0, random]
 
     # Extract other required values
     temperature = test_conditions['temperature']
@@ -55,7 +46,8 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <algorithm>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
-        write_headers(file, headers)
+        for header in headers:
+            file.write(f"#include \"{header}\"\n")
 
         [temperature, pressure, species_string, random] = get_test_conditions(chemical_mechanism)
         gas.TPX = temperature, pressure, species_string
@@ -64,30 +56,37 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         concentration_test = '{species} species  = {{{array}}};'.format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
 
         content = """
+
 // Overload << operator for std::array
 template <typename T, std::size_t N>
 std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
-    os << "[ ";
     for (const auto& value : arr) 
     {{
         os << value << " ";
     }}
-    os << "]";
     return os;
 }}
 
 {index} main() {{
-    std::cout << "*** ChemGen ***" <<std::endl;
+    //std::cout << "*** ChemGen ***" <<std::endl;
     {concentration_test}
     {scalar} temperature_ =  {temperature};
-    {species} result = source(species, temperature_);
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
+    {chemical_state} y = set_chemical_state(int_energy, species);
+    {scalar} dt = 1e-9;
+    //{scalar} dt = 0.01;
+    {scalar} simple = 1;
+    {scalar} t = 0;
 
-    
-    for({index} i=0; i<100; ++i)
+    std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
+    for({index} i = 0; i < 200000; i++)
     {{
-        std::cout << "temperature_ for "<< i <<" iterations: " << (temperature_ - temperature(int_energy, species, i)) / (temperature_)<<std::endl;
+        y = rk4(y, dt);
+        //simple = rk4_simple(simple, dt);
+        t = t + dt;
+        std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
     }}
+    
 
     
     return 0;

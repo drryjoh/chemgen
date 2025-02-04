@@ -30,6 +30,7 @@ def write_formatted_code(code_directory, file_to_format, configuration, destinat
             try:
                 line.format(**vars(configuration))
             except:
+                print(f"while formatting: {file_to_format}")
                 print(f"unescaped braces found in line {k+1}")
                 print(line)
         sys.exit(f"unescaped braces found in file {file_to_format}")

@@ -57,7 +57,6 @@ python code
     return y_n + h/6 * (k1 + 2 * k2 + 2 * k3 + k4)
 
 */
-
 	{scalar} k1  = rk_source_simple(y_n);
 
 	{scalar} y_n_2 = y_n +  {scale}(dt * {scalar_cast}(0.5), k1);
@@ -68,6 +67,34 @@ python code
 
 	{scalar} y_n_4 = y_n +  {scale}(dt, k3);
 	{scalar} k4  = rk_source_simple(y_n_4);
+
+    return y_n +
+	       {scale}(dt * {scalar_cast}(0.16666666666666666), 
+		           k1 + 
+				   {scale}({scalar_cast}(2), k2) +
+				   {scale}({scalar_cast}(2), k3) + 
+				   k4);
+}}
+
+{device_option}
+template<typename T>
+T rk4(const T& y_n, {scalar_parameter} dt) {const_option}
+{{
+
+	T k1  = source(y_n);
+	//std::cout << k1 << std::endl;
+
+	T y_n_2 = y_n +  {scale}(dt * {scalar_cast}(0.5), k1);
+	T k2  = source(y_n_2);
+	//std::cout << k2 << std::endl;
+
+	T y_n_3 = y_n +  {scale}(dt * {scalar_cast}(0.5), k2);
+	T k3  = source(y_n_3);
+	//std::cout << k3 << std::endl;
+
+	T y_n_4 = y_n +  {scale}(dt, k3);
+	T k4  = source(y_n_4);
+	//std::cout << k4 << std::endl;
 
     return y_n +
 	       {scale}(dt * {scalar_cast}(0.16666666666666666), 

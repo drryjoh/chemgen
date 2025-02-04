@@ -2,10 +2,12 @@
 def write_type_defs(file, gas, configuration):
     n_species  = gas.n_species
     n_reactions  = gas.n_reactions
+
     file.write("""
 const {index} n_species = {n_species};
 const {index} n_reactions = {n_reactions};
 const {index} n_order_thermo = {n_thermo_order} + 1;
+const {index} n_chemical_state = {n_species} + 1;
 // Using alias for the array type (for example, an array of double values)
 using Species = {species_typedef};
 using Reactions = {reactions_typedef};
@@ -13,12 +15,14 @@ using TemperatureMonomial = {temperature_monomial_typedef};
 using TemperatureEnergyMonomial = {temperature_energy_monomial_typedef};
 using TemperatureGibbsMonomial = {temperature_gibbs_monomial_typedef};
 using ThermoTable = {scalar_list}<TemperatureEnergyMonomial, n_species>;
+using ChemicalState = {chemical_state_tyedef};
 
 """.format(**vars(configuration), 
 n_species = int(n_species),
 n_reactions = int(n_reactions), 
 temperature_energy_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 1"),
-temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 2"))
+temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 2"),
+chemical_state_tyedef = "{species_typedef}".format(**vars(configuration)).replace("n_species", "n_species + 1"))
     )
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):

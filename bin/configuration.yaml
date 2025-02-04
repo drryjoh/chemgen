@@ -37,6 +37,13 @@ decorators:
   reactions_parameter: "const Reactions&"
   reactions_element: "reactions[{i}]"
 
+  chemical_state_typedef: "std::array<double, n_species+1>"
+  chemical_state: "ChemicalState"
+  chemical_state_function: "ChemicalState"
+  chemical_state_cast: "ChemicalState"
+  chemical_state_parameter: "const ChemicalState&"
+  chemical_state_element: "chemical_state[{i}]"
+  
   source_element: "net_production_rates[{i}]"
   const_option: ""
   constexpr: "constexpr"

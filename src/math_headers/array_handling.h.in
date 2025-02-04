@@ -1,9 +1,11 @@
 #pragma once
 #include <numeric>  // For std::accumulate
-{device_option} {scalar_function} 
+{device_option}
+{scalar_function} 
 sum_gen({species_parameter} a_s) {const_option} {{return {device_sum_inl};}}
 
-{device_option} {species_function} 
+{device_option}
+{species_function} 
 fill_gen({scalar_parameter} a) {const_option}
 {{
     Species b_s{{}};  // Create an empty array
@@ -11,7 +13,8 @@ fill_gen({scalar_parameter} a) {const_option}
     return b_s;  // Return the filled array
 }}
 
-{device_option} {species_function} 
+{device_option}
+{species_function} 
 scale_gen({scalar_parameter} a, {species_parameter} b_s) {const_option}
 {{
     {species} c_s;
@@ -19,13 +22,24 @@ scale_gen({scalar_parameter} a, {species_parameter} b_s) {const_option}
     return c_s;
 }}
 
-{device_option} {scalar_function} 
+{device_option}
+{chemical_state_function} 
+scale_gen({scalar_parameter} a, {chemical_state_parameter} b_s) {const_option}
+{{
+    {chemical_state} c_s;
+    {device_transform_inl}
+    return c_s;
+}}
+
+{device_option}
+{scalar_function} 
 scale_gen({scalar_parameter} a, {scalar_parameter} b) {const_option}
 {{
     return a * b;
 }}
 
-{device_option} {species_function} 
+{device_option}
+{species_function} 
 operator+({species_parameter} a_s, {species_parameter} b_s) {const_option}
 {{
     {species} c_s;
@@ -33,7 +47,8 @@ operator+({species_parameter} a_s, {species_parameter} b_s) {const_option}
     return c_s;
 }}
 
-{device_option} {species_function} 
+{device_option}
+{species_function} 
 operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_option}
 {{
     {species} c_s;
@@ -42,10 +57,72 @@ operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_opti
     return c_s;
 }}
 
-{device_option} {species_function} 
+{device_option}
+{chemical_state_function} 
+operator+({chemical_state_parameter} a_s, {chemical_state_parameter} b_s) {const_option}
+{{
+    {chemical_state} c_s;
+    {device_element_sum_inl}
+    return c_s;
+}}
+
+{device_option}
+{chemical_state_function} 
+operator-({chemical_state_parameter} a_s, {chemical_state_parameter} b_s_positive) {const_option}
+{{
+    {chemical_state} c_s;
+    {chemical_state} b_s = scale_gen({scalar_cast}(-1.0), b_s_positive);
+    {device_element_sum_inl}
+    return c_s;
+}}
+
+{device_option}
+{species_function} 
 operator*({species_parameter} a_s, {species_parameter} b_s) {const_option}
 {{
     {species} c_s;
     {device_element_multiply_inl}
     return c_s;
+}}
+
+{device_option}
+{chemical_state_function} 
+operator*({chemical_state_parameter} a_s, {chemical_state_parameter} b_s) {const_option}
+{{
+    {chemical_state} c_s;
+    {device_element_multiply_inl}
+    return c_s;
+}}
+
+{device_option}
+{species_function} 
+get_species({chemical_state_parameter} y) {const_option}
+{{
+    {species} s;
+    for ({index} i = 1; i <= n_species; i++)
+    {{
+        s[i-1] = y[i];
+    }}
+    return s;
+}}
+
+{device_option}
+{scalar_function} 
+get_energy({chemical_state_parameter} y) {const_option}
+{{
+    return y[0];
+}}
+
+{device_option}
+{chemical_state_function} 
+set_chemical_state({scalar_parameter} internal_energy,
+                   {species_parameter} species) {const_option}
+{{
+    {chemical_state} y;
+    for ({index} i = 1; i <= n_species; i++)
+    {{
+        y[i] = species[i-1];
+    }}
+    y[0] = internal_energy;
+    return y;
 }}

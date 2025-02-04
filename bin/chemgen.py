@@ -113,6 +113,10 @@ def main():
     if "types_inl.h" in headers:
         headers.remove("types_inl.h")
         headers.insert(0,"types_inl.h")
+    
+    if "chemical_state_functions.h" in headers:
+        headers.remove("chemical_state_functions.h")
+        headers.append("chemical_state_functions.h")
 
     if "rk4.h" in headers:
         headers.remove("rk4.h")
