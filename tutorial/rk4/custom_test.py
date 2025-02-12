@@ -67,28 +67,25 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
     return os;
 }}
 
-{index} main() {{
-    //std::cout << "*** ChemGen ***" <<std::endl;
+{index}
+main()
+{{
     {concentration_test}
     {scalar} temperature_ =  {temperature};
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
     {chemical_state} y = set_chemical_state(int_energy, species);
-    {scalar} dt = 1e-9;
-    //{scalar} dt = 0.01;
+    {scalar} dt = 1e-8;
     {scalar} simple = 1;
     {scalar} t = 0;
 
     std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
-    for({index} i = 0; i < 200000; i++)
+    for({index} i = 0; i < 40000; i++)
     {{
         y = rk4(y, dt);
-        //simple = rk4_simple(simple, dt);
         t = t + dt;
         std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
     }}
-    
 
-    
     return 0;
 }}
             """

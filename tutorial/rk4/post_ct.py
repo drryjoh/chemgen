@@ -43,9 +43,10 @@ data = np.array(data)
 
 # Plot results
 d = np.loadtxt("chem_out.txt")
-plt.plot(data[:, 0], data[:, 1],'-r')
-plt.plot(d[:, 0], d[:, 1],'--k')
-plt.xlabel("Time (s)")
+plt.plot(data[:, 0]*1000.0, data[:, 1],'-r', label = "Cantera")
+plt.plot(d[:, 0]*1000.0, d[:, 1],'--k', label = "ChemGen")
+plt.legend()
+plt.xlabel("Time ($\mu$s)")
 plt.ylabel("Temperature (K)")
 plt.title("Temperature Evolution in Homogeneous Reactor")
 plt.show()
