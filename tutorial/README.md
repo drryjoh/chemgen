@@ -3,7 +3,7 @@
 
 ## Table of Contents
 
-- [Introduction Tutorials](#Introduction Tutorials)
+- [Introduction Tutorials](#Introduction-Tutorials)
 - [Advanced Examples](#dependencies)
 - [CFD Examples](#usage)
 - [License](#license)
@@ -22,42 +22,8 @@ This tutorial creates a custom chemgen.cpp function that tests random chemical s
 
 3) [Mechansim Creation with Decorators](./decorators/README.md)
 
-This tutorial gives an overview of how ChemGen can be used to target difference C++ code. For instance a simple function
+This tutorial gives an overview of how ChemGen can be used to target difference C++ code using the decorators. Decorators can enable GPU device execuction via kokkos or simply change how variables are passed into functions. 
 
-```cpp
-double my_function(const double& a) const {return a*a;}
-```
-
-can be represnted in chemgen as
-
-```cpp
-{device_function}
-{scalar_function} my_function({scalar_parameter} a) {const_option} {{return a*a;}}
-```
-
-where the configuration.yaml file is used to specify the decorators
-```yaml
-decorators:
-  scalar_function: double
-  scalar_parameter: const double&
-  const_option: const
-```
-
-this function and all other scalar functions can be changed for simgle precision  via
-```yaml
-decorators:
-  scalar_function: float
-  scalar_parameter: const float&
-  const_option: const
-```
-
-to yield
-
-```cpp
-float my_function(const float& a) const {return a*a;}
-```
-
-throughout the code.
 ## Dependencies
 
 The project requires the following Python packages to run:
