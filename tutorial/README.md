@@ -4,8 +4,8 @@
 ## Table of Contents
 
 - [Introduction Tutorials](#Introduction-Tutorials)
-- [Advanced Examples](#dependencies)
-- [CFD Examples](#usage)
+- [Advanced Examples](#Advanced-Examples)
+- [Dependencies](#Dependencies)
 - [License](#license)
 
 ## Introduction Tutorials 
@@ -24,8 +24,16 @@ This tutorial creates a custom chemgen.cpp function that tests random chemical s
 
 This tutorial gives an overview of how ChemGen can be used to target difference C++ code using the decorators. Decorators can enable GPU device execuction via kokkos or simply change how variables are passed into functions. 
 
+3) [Mechansim Creation with Decorators](./rk4/README.md)
+
+This tutorial gives an overview of how ChemGen can be used to target difference C++ code using the decorators. Decorators can enable GPU device execuction via kokkos or simply change how variables are passed into functions. 
+## Advanced Examples
+
+Coming with ChemGen V2.
+
 ## Dependencies
 
+### Pip package management
 The project requires the following Python packages to run:
 
 - **[Cantera](https://cantera.org)**: Cantera is an open-source suite of tools for problems involving chemical kinetics, thermodynamics, and transport processes.
@@ -46,9 +54,35 @@ The project requires the following Python packages to run:
 
 Ensure you are using Python 3 and `pip` is invoked through `python3 -m pip` for consistent environment management.
 
-## Usage
+### Virtual environment
+To avoid conflicts, we suggest creating a specific ChemGen virtual environment. 
 
-Provide instructions on how to use the project here. Include example commands or code snippets to guide users on how to run the project.
+Run the following commands in your terminal 
+
+```
+mkdir -p ~/python_environments
+python3 -m venv ~/python_environments/chemgen
+source ~/python_environments/chemgen/bin/activate
+```
+We suggest an alias such as the one below to be added to your `.bashrc` or `.zshrc` files
+
+```terminal
+alias cg="source ~/python_environments/chemgen/bin/activate"
+```
+
+Once the virtual environment is created, activate it and install the required packages:
+
+```terminar
+cg
+python3 -m pip install cantera pyyaml
+```
+ 
+ (Note: `cg` is using the alias, you could still use `source ~/python_environments/chemgen/bin/activate`) 
+ 
+```terminal
+deactivate
+```
+
 
 ## License
 
