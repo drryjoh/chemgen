@@ -1,3 +1,4 @@
+#!python3
 import cantera as ct
 import numpy as np
 import matplotlib.pyplot as plt
@@ -49,4 +50,5 @@ plt.legend()
 plt.xlabel("Time ($\mu$s)")
 plt.ylabel("Temperature (K)")
 plt.title("Temperature Evolution in Homogeneous Reactor")
+plt.savefig("rk4.png")
 plt.show()
