@@ -64,4 +64,57 @@ Source test result for scalar double:  [ -0.0027410426276326 -0.0013705213138163
 
 ## Other uses
 
+The decorators:
+```yaml
+  scalar_parameter: "const double&"
+```
+
+Are meant to give ability to pass by reference and call functions in a certain way. By removing the const-reference,
+```yaml
+  scalar_parameter: "double"
+```
+the generated functions change from
+```cpp
+double call_forward_reaction_0(const double& temperature, const double& log_temperature)  { return arrhenius(double(103990000.00000003), double(0.0), double(64057040.0), temperature, log_temperature);}
+```
+to
+
+```cpp
+double call_forward_reaction_0(double temperature, double log_temperature)  { return arrhenius(double(103990000.00000003), double(0.0), double(64057040.0), temperature, log_temperature);}
+```
+
+In addition if these functions are to go into a struct and you desire them to be const you can change
+```yaml
+const_option: ""
+```
+to
+
+```yaml
+const_option: "const"
+```
+
+```cpp
+double call_forward_reaction_0(const double& temperature, const double& log_temperature) const { return arrhenius(double(103990000.00000003), double(0.0), double(64057040.0), temperature, log_temperature);}
+```
+
+### Device functions
+
+A later tutorial will demonstrate this in better detail, but
+
+```yaml
+ device_option: ""
+ species_typedef: "std::array<double, n_species>"
+```
+can be changed to 
+```yaml
+ device_option: "KOKKOS_INLINE_FUNCTION"
+ species_typedef: "Kokkos::View<double[n_species]>"
+```
+
+Which yields
+```
+using Species = Kokkos::View<double[n_species]>;
+```
+Which definitely requires more nuances, but can be used to enable Kokkos
+
 
