@@ -1,4 +1,4 @@
-# Chemgen
+# ChemGen
 
 A brief description of your project goes here.
 
