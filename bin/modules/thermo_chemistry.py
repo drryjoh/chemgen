@@ -132,8 +132,6 @@ def get_gibbs_reaction_coefficients(gas, order, temperatures):
     #polyfit
     gibbs_reaction_coefficients = np.polyfit(np.log(temperatures), gibbs_reaction, order)
 
-    polynomial = np.poly1d(gibbs_reaction_coefficients[:,0])
-
     #reverse order
     for k in range(gas.n_reactions):
         gibbs_reaction_coefficients[:,k] = gibbs_reaction_coefficients[::-1,k]

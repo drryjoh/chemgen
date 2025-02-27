@@ -1,0 +1,10 @@
+test_conditions:
+  temperature: 2000
+  pressure: 101325.0
+  species:
+    - name: O2
+      MoleFraction: 0.2
+    - name: N2
+      MoleFraction: 0.6
+    - name: H2
+      MoleFraction: 0.1  
