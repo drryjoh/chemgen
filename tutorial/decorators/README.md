@@ -47,7 +47,7 @@ float my_function(const float& a) const {return a*a;}
 throughout the code.
 
 ## Precision
-Using the above example we have provided a [configuration_float](../bin/configuration_float.yaml) [configuration_double](../bin/configuration_double.yaml). By performing the following
+Using the above example we have provided a [configuration_float](configuration_float.yaml) [configuration_double](configuration_double.yaml). By performing the following
 
 ```
 cp configuration_float.yaml configuration.yaml
@@ -82,6 +82,8 @@ to
 ```cpp
 double call_forward_reaction_0(double temperature, double log_temperature)  { return arrhenius(double(103990000.00000003), double(0.0), double(64057040.0), temperature, log_temperature);}
 ```
+
+This can be done using the [configuration_point](configuration_double.yaml) file
 
 In addition if these functions are to go into a struct and you desire them to be const you can change
 ```yaml
