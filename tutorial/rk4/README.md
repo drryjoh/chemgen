@@ -3,10 +3,7 @@
 ## Table of Contents
 - [Description](#description)
 - [Preparation](#preparation)
-- [Generating Data for Error Assessmnet](#generating-data-for-error-assessment)
-- [ChemGen Execution Format](#chemgen-execution-format)
-- [Generating Custom Tests](#generating-custom-tests)
-- [Post-Processing Data](#post-processing-data)
+- [Homogeneous Reactor Simulation](#Homogeneous-Reactor-Simulation)
 
 ## Description
 
@@ -32,7 +29,7 @@ Now, ChemGen can be executed from any directory by simply calling `chemgen.py`. 
 ChemGen provides a `--custom-test` option that allows you to override the default `write_test` function to create a custom `chemgen.cpp`. This tutorial includes a `custom_test.py` file for that purpose.
 
 
-## Generating Data for Error Assessment
+## Homogeneous Reactor Simulation
 
 To execute this tutorial, use the following command:
 
@@ -47,7 +44,7 @@ solver:
   chemistry_solver: rk4
 ```
 
-which compiles in the Runge Kutta fourth oder solver found in [rk4.in.h](../../src/solvers/rk4.h.in). The solver is used in the generated chemgen.cpp file from [write_test](write_test.py):
+which compiles in the Runge Kutta fourth oder solver found in [rk4.in.h](../../src/solvers/rk4.h.in). The solver is used in the generated chemgen.cpp file from [custom_test](custom_test.py):
 
 ```cpp
    for(int i = 0; i < 40000; i++)
@@ -65,5 +62,5 @@ Once compiled and run the `chem_out.txt` can be used to compare to cantera's hom
 ./post_ct.py
 ```
 .
-![Error as a plotted using a box and whisker](bw.png)
-![Error distribution](hist.png)
+![RK4 Homogeneous Reactor](rk4.png)
+
