@@ -4,6 +4,10 @@
 ## Table of Contents
 
 - [Introduction Tutorials](#Introduction-Tutorials)
+- - [Mechanism Creation](./mechanism_creation/README.md)
+- - [ChemGen Error Assessment](./chemgen_error_assessment/README.md)
+- - [Mechansim Creation with Decorators](./decorators/README.md)
+- - [Homogeneous Reactor](./rk4/README.md)
 - [Advanced Examples](#Advanced-Examples)
 - [Dependencies](#Dependencies)
 - [License](#license)
@@ -24,9 +28,10 @@ This tutorial creates a custom chemgen.cpp function that tests random chemical s
 
 This tutorial gives an overview of how ChemGen can be used to target difference C++ code using the decorators. Decorators can enable GPU device execuction via kokkos or simply change how variables are passed into functions. 
 
-3) [Mechansim Creation with Decorators](./rk4/README.md)
+4) [Homogeneous Reactor](./rk4/README.md)
 
-This tutorial gives an overview of how ChemGen can be used to target difference C++ code using the decorators. Decorators can enable GPU device execuction via kokkos or simply change how variables are passed into functions. 
+This tutorial gives an overview of how ChemGen can be used to create a homogeneous reactor and used a built in Runge Kutta 4th order accurate time integrator to integrate the chemical soruce term.
+
 ## Advanced Examples
 
 Coming with ChemGen V2.
