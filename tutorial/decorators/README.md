@@ -114,6 +114,8 @@ can be changed to
 Which yields
 ```
 using Species = Kokkos::View<double[n_species]>;
+KOKKOS_INLINE_FUNCTION
+double call_forward_reaction_0(double temperature, double log_temperature)  { return arrhenius(double(103990000.00000003), double(0.0), double(64057040.0), temperature, log_temperature);}
 ```
 Which definitely requires more nuances, but can be used to enable Kokkos
 
