@@ -97,6 +97,7 @@ def get_random_TPX(gas):
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1):
     test_file = destination_folder/test_file_name
     with open(test_file, 'w') as file:
+        file.write("#include <Kokkos_Core.hpp>\n")
         file.write("#include <cmath>\n")
         file.write("#include <fstream> \n")
         file.write("#include <algorithm>\n")
@@ -125,7 +126,7 @@ using PointSpecies = Kokkos::View<double**>;
         for point in range(n_points):
             temperature_test_array.append(f"h_temperatures({point}) = {point_temperatures[point]};")
             for sp, concentration in enumerate(point_concentrations[point]):
-                concentration_test_array.append(f"h_concentration_tests({point})({sp}) = {concentration};")
+                concentration_test_array.append(f"h_concentration_tests({point},{sp}) = {concentration};")
             concentration_test_array[-1] = concentration_test_array[-1]+'\n       '
         
         temperature_tests = ' '.join(temperature_test_array)
@@ -184,7 +185,7 @@ void write_states({species_parameter} concentrations, {scalar_parameter} tempera
     states << std::endl;
 }}
 
-{index} main() {{
+{index} main(int argc, char* argv[]) {{
     std::cout << "*** ChemGen ***" <<std::endl;
         Kokkos::initialize(argc, argv);
         {{   
@@ -201,7 +202,7 @@ void write_states({species_parameter} concentrations, {scalar_parameter} tempera
 
     Kokkos::deep_copy(concentration_tests_device, h_concentration_tests);
     Kokkos::deep_copy(temperatures_device, h_temperatures);
-    
+    Kokkos::Timer timer;
 
     Kokkos::parallel_for("ProcessPoints", n_points, KOKKOS_LAMBDA(int i) 
     {{
@@ -220,7 +221,11 @@ void write_states({species_parameter} concentrations, {scalar_parameter} tempera
 
         // Add other computations if needed...
     }});
+    Kokkos::fence();
 
+    // Stop timing and print duration
+    double elapsed_time = timer.seconds();
+    std::cout << "Total execution time: " << elapsed_time << " seconds" << std::endl;
 
     }}
     Kokkos::finalize();
