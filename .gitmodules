@@ -1,3 +1,6 @@
 [submodule "third_party/tbb"]
 	path = third_party/tbb
 	url = https://github.com/oneapi-src/oneTBB.git
+[submodule "third_party/kokkos"]
+	path = third_party/kokkos
+	url = https://github.com/kokkos/kokkos.git
