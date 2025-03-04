@@ -158,6 +158,21 @@ template <typename Func>
     os <<", " << derivative_checker(my_function_1, x_test, log_gen(100.0), 15) << std::endl;
     
     std::cout << std::endl;
+    
+//test log_temperature derivative
+    x_test = mixture_concentration_test;
+    auto my_function_2 = [&](double x) {{return falloff_lindemann(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, temperature_test, log_temperature_test, x);}};
+    
+
+    {scalar} df_dM = dfalloff_lindemann_dmixture_concentration(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, temperature_test, log_temperature_test, mixture_concentration_test);
+    std::cout << "falloff_lindemann derivative:  " << df_dM << std::endl;
+    std::cout << "falloff_lindemann derivative Check:  ";
+    
+    os << "dfalloff_lindemann_dmixture_concentration: ";
+    os << df_dM;
+    os <<", " << derivative_checker(my_function_2, x_test, 0.1, 15) << std::endl;
+    
+    std::cout << std::endl;
     return 0;
 }}
             """

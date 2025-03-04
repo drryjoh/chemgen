@@ -112,3 +112,38 @@ dfalloff_lindemann_dlog_temperature({scalar_parameter} A_low,  //constant
                        dPr_inv_one_p_Pr_dlog_temperature);
 
 }}
+
+{device_option}
+{scalar_function}
+dfalloff_lindemann_dmixture_concentration({scalar_parameter} A_low,  //constant
+                                          {scalar_parameter} B_low, //constant
+                                          {scalar_parameter} E_low,  //constant
+                                          {scalar_parameter} A_high, //constant
+                                          {scalar_parameter} B_high,  //constant
+                                          {scalar_parameter} E_high, //constant
+                                          {scalar_parameter} temperature, 
+                                          {scalar_parameter} log_temperature,
+                                          {scalar_parameter} mixture_concentration) {const_option}
+{{
+        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature, log_temperature);
+        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature, log_temperature);
+        
+        {scalar} Pr = 
+        divide(multiply(k_low,
+                        mixture_concentration),
+               k_high);
+        
+        {scalar} dPr_dmixture_concentration = 
+        divide(k_low,  //d/dM(k_low*M) = k_low
+               k_high);
+
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
+        {scalar} dinv_one_p_Pr_dmixture_concentration = inv_chain({scalar_cast}(1)+Pr, dPr_dmixture_concentration);
+
+        {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
+        {scalar} dPr_inv_one_p_P_dmixture_concentration = multiply_chain(Pr, dPr_dmixture_concentration, inv_one_p_Pr, dinv_one_p_Pr_dmixture_concentration);
+
+		return
+        multiply(k_high,
+                 dPr_inv_one_p_P_dmixture_concentration); //d/dM(k_high * Pr_inv_one_p_Pr) = k_high * d(Pr_inv_one_p_P)/dM
+}}
