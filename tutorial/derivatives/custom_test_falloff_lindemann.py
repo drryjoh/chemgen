@@ -99,101 +99,65 @@ template <typename Func>
 {index} main() {{
     std::cout << "*** ChemGen ***" <<std::endl<<std::endl;
     
-    std::ofstream outFile("arrhenius.txt");  // Open a file to write
+    std::ofstream outFile("falloff_lindemann.txt");  // Open a file to write
     std::ostream& os = outFile;  // Alias for cleaner code
     {concentration_test}
     {scalar} temperature_ =  {temperature};
-    {scalar} A_test = {scalar_cast}(10000);
-    {scalar} B_test = {scalar_cast}(1.5);
-    {scalar} E_test = {scalar_cast}(1000);
+
+    {scalar} A1_test = {scalar_cast}(1588800000000);
+    {scalar} B1_test = {scalar_cast}(-2.1);
+    {scalar} E1_test = {scalar_cast}(23012000);
+
+    {scalar} A2_test = {scalar_cast}(1588800000000);
+    {scalar} B2_test = {scalar_cast}(-2.1);
+    {scalar} E2_test = {scalar_cast}(23012000);
+    {scalar} mixture_concentration_test = {scalar_cast}(0.5);
+
     {scalar} temperature_test = {scalar_cast}(1000);
+    {scalar} log_temperature_test = log_gen({scalar_cast}(1000));
     {scalar} x_test = temperature_test;
-
-//test generic expression
-    x_test = 3.0;
-    auto my_function_0 = [&](double x) {{return std::pow(x, {scalar_cast}(3.4));}};
-    {scalar} dmy_function_0_dx = {scalar_cast}(3.4) * std::pow(x_test, {scalar_cast}(2.4));
+    /*
+    referenc falloff
+    falloff_lindemann(double(1588800000000.0002), 
+                        double(-2.1), 
+                        double(23012000.0), 
+                        double(12029000.000000002),
+                        double(-0.31),
+                        double(29049512.0),
+                        temperature, 
+                        log_temperature,
+                        mixture_concentration + (double(0.5)-double(1))*species[1] + (double(1.5)-double(1))*species[9]);
+    */
     
-    std::cout << "d/dx(x^3.4):  " << dmy_function_0_dx << std::endl;
-    std::cout << "exponent in arrhenius my_function_0:  ";
+//test temperature derivative
+    x_test = temperature_test;
+    auto my_function_0 = [&](double x) {{return falloff_lindemann(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, x, log_temperature_test, mixture_concentration_test);}};
     
-    os << "confirm derivative checker: ";
-    os << dmy_function_0_dx;
-    os <<", " << derivative_checker(my_function_0, x_test, 2.0, 10) << std::endl;
-    std::cout << std::endl;
 
-//exp gen
-    x_test = 3.0;
-    auto my_function_0a = [&](double x) {{return exp_gen(-2.0 * x);}};
-
-    {scalar} dmy_function_0a_dx = exp_chain(-2.0 * x_test, -2.0);
+    {scalar} df_dT = dfalloff_lindemann_dtemperature(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, temperature_test, log_temperature_test, mixture_concentration_test);
+    std::cout << "falloff_lindemann derivative:  " << df_dT << std::endl;
+    std::cout << "falloff_lindemann derivative Check:  ";
     
-    os << "expgen: ";
-    std::cout << "d/dx(exp(-2x)):  " << dmy_function_0a_dx << std::endl;
-    std::cout << "exponent in arrhenius my_function_0a:  ";
-
-    os << dmy_function_0a_dx;
-    os <<", " << derivative_checker(my_function_0a, x_test, 2.0, 10) << std::endl;
-
-    std::cout << std::endl;
-
-//test exponent in arrhenius
-    os << "expgen in arrhenius: ";
-    x_test = 1000.0;
-    auto my_function_1 = [&](double x) {{return exp_gen(divide(-E_test, universal_gas_constant() * x));}};
-        
-    {scalar} dexp_term_dtemperature =
-        exp_chain(divide(-E_test,
-                        universal_gas_constant() * temperature_test),
-                ddivide_db(-E_test,
-                            universal_gas_constant() * temperature_test)*universal_gas_constant());
-    
-    std::cout << "exponent in arrhenius Derivative:  " << dexp_term_dtemperature << std::endl;
-    std::cout << "exponent in arrhenius Check:  ";
-    
-    os << dexp_term_dtemperature;
-    os <<", " << derivative_checker(my_function_1, x_test, 10.0 , 5) << std::endl;
+    os << "dfalloff_lindemann_dtemperature: ";
+    os << df_dT;
+    os <<", " << derivative_checker(my_function_0, x_test, 100.0, 10) << std::endl;
     
     std::cout << std::endl;
 
-//test arrhenius
-    os << "darrhenius_dtemperature(A,B,E,T): ";
-    {scalar} darr_dt = darrhenius_dtemperature(A_test, B_test, E_test, temperature_test);
-    auto my_function = [&](double x) {{return arrhenius(A_test, B_test, E_test, x); }};
-    std::cout << "Arrhenius Derivative:  " << darr_dt << std::endl;
-    std::cout << "Arrhenius Check:  ";
+//test log_temperature derivative
+    x_test = log_gen(temperature_test);
+    auto my_function_1 = [&](double x) {{return falloff_lindemann(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, temperature_test, x, mixture_concentration_test);}};
+    
 
-    os << darr_dt;
-    os <<", " << derivative_checker(my_function, x_test, 10.0 , 5) << std::endl;
-
+    {scalar} df_dlogT = dfalloff_lindemann_dlog_temperature(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, temperature_test, log_temperature_test, mixture_concentration_test);
+    std::cout << "falloff_lindemann derivative:  " << df_dlogT << std::endl;
+    std::cout << "falloff_lindemann derivative Check:  ";
+    
+    os << "dfalloff_lindemann_dlog_temperature: ";
+    os << df_dlogT;
+    os <<", " << derivative_checker(my_function_1, x_test, log_gen(100.0), 15) << std::endl;
+    
     std::cout << std::endl;
-
-//test arrhenius
-    os << "darrhenius_dtemperature(A,B,E,T,logT): ";
-    {scalar} log_temperature_test = log_gen(temperature_test);
-    {scalar} darr_dt_ = darrhenius_dtemperature(A_test, B_test, E_test, temperature_test, log_temperature_test);
-    auto my_function_4 = [&](double x) {{return arrhenius(A_test, B_test, E_test, x, log_temperature_test); }};
-    std::cout << "Arrhenius Derivative:  " << darr_dt_ << std::endl;
-    std::cout << "Arrhenius Check:  ";
-
-    os << darr_dt_;
-    os <<", " << derivative_checker(my_function_4, x_test, 10.0 , 5) << std::endl;
-  
-    std::cout << std::endl;
-
-//test arrhenius
-    os << "darrhenius_dlogT(A,B,E,T,logT): ";
-    x_test = log_temperature_test;
-    {scalar} darr_dt_lt = darrhenius_dlog_temperature(A_test, B_test, E_test, temperature_test, log_temperature_test);
-    auto my_function_5 = [&](double x) {{return arrhenius(A_test, B_test, E_test, temperature_test, x); }};
-    std::cout << "Arrhenius Derivative:  " << darr_dt_lt << std::endl;
-    std::cout << "Arrhenius Check:  ";
-
-    os << darr_dt_lt;
-    os <<", " << derivative_checker(my_function_5, x_test, log_gen(5.0) , 10)<< std::endl;
-
-    std::cout << std::endl;
-
     return 0;
 }}
             """

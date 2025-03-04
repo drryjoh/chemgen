@@ -29,19 +29,21 @@ falloff_lindemann({scalar_parameter} A_low,  //constant
 
 {device_option}
 {scalar_function}
-dfalloff_lindemann_temperature({scalar_parameter} A_low,  //constant
-                               {scalar_parameter} B_low, //constant
-                               {scalar_parameter} E_low,  //constant
-                               {scalar_parameter} A_high, //constant
-                               {scalar_parameter} B_high,  //constant
-                               {scalar_parameter} E_high, //constant
-                               {scalar_parameter} temperature, 
-                               {scalar_parameter} mixture_concentration) {const_option}
+dfalloff_lindemann_dtemperature({scalar_parameter} A_low,  //constant
+                                {scalar_parameter} B_low, //constant
+                                {scalar_parameter} E_low,  //constant
+                                {scalar_parameter} A_high, //constant
+                                {scalar_parameter} B_high,  //constant
+                                {scalar_parameter} E_high, //constant
+                                {scalar_parameter} temperature, 
+                                {scalar_parameter} log_temperature,
+                                {scalar_parameter} mixture_concentration) {const_option}
 {{
-        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature);
-        {scalar} dk_low_dtemperature  = darrhenius_dtemperature(A_low, B_low, E_low, temperature);
-        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature);
-        {scalar} dk_high_dtemperature = darrhenius_dtemperature(A_high, B_high, E_high, temperature);
+        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature, log_temperature);
+        {scalar} dk_low_dtemperature  = darrhenius_dtemperature(A_low, B_low, E_low, temperature, log_temperature);
+
+        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature, log_temperature);
+        {scalar} dk_high_dtemperature = darrhenius_dtemperature(A_high, B_high, E_high, temperature, log_temperature);
         
         {scalar} Pr = 
         divide(multiply(k_low,
@@ -51,28 +53,62 @@ dfalloff_lindemann_temperature({scalar_parameter} A_low,  //constant
         {scalar} dPr_dtemperature = 
         divide_chain(multiply(k_low,
                               mixture_concentration),
-                     multiply_chain(k_low,
-                                    dk_low_dtemperature,
-                                    mixture_concentration,
-                                    {scalar_cast}(0)),
-                    k_high,
-                    dk_high_dtemperature);
-        
+                     multiply(dk_low_dtemperature,
+                              mixture_concentration),
+                     k_high,
+                     dk_high_dtemperature);
+
         {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
-        {scalar} dinv_one_p_Pr_dtemperature = 
-        inv_chain({scalar_cast}(1)+Pr,
-                  dPr_dtemperature);
+        {scalar} dinv_one_p_Pr_dtemperature = inv_chain({scalar_cast}(1)+Pr, dPr_dtemperature);
 
         {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
-        {scalar} dPr_inv_one_p_Pr_dtemperature = 
-        multiply_chain(Pr,
-                       dPr_dtemperature, 
-                       inv_one_p_Pr,
-                       dinv_one_p_Pr_dtemperature);
+        {scalar} dPr_inv_one_p_Pr_dtemperature = multiply_chain(Pr, dPr_dtemperature, inv_one_p_Pr, dinv_one_p_Pr_dtemperature);
 
-		return 
+		return
+        multiply_chain(k_high, dk_high_dtemperature, Pr_inv_one_p_Pr, dPr_inv_one_p_Pr_dtemperature);
+}}
+
+{device_option}
+{scalar_function}
+dfalloff_lindemann_dlog_temperature({scalar_parameter} A_low,  //constant
+                                    {scalar_parameter} B_low, //constant
+                                    {scalar_parameter} E_low,  //constant
+                                    {scalar_parameter} A_high, //constant
+                                    {scalar_parameter} B_high,  //constant
+                                    {scalar_parameter} E_high, //constant
+                                    {scalar_parameter} temperature, 
+                                    {scalar_parameter} log_temperature,
+                                    {scalar_parameter} mixture_concentration) {const_option}
+{{
+        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature, log_temperature);
+        {scalar} dk_low_dlog_temperature  = darrhenius_dlog_temperature(A_low, B_low, E_low, temperature, log_temperature);
+
+        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature, log_temperature);
+        {scalar} dk_high_dlog_temperature = darrhenius_dlog_temperature(A_high, B_high, E_high, temperature, log_temperature);
+        
+        {scalar} Pr = 
+        divide(multiply(k_low,
+                        mixture_concentration),
+               k_high);
+        
+        {scalar} dPr_dlog_temperature = 
+        divide_chain(multiply(k_low,
+                              mixture_concentration),
+                     multiply(dk_low_dlog_temperature,
+                              mixture_concentration),
+                     k_high,
+                     dk_high_dlog_temperature);
+
+        {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
+        {scalar} dinv_one_p_Pr_dlog_temperature = inv_chain({scalar_cast}(1)+Pr, dPr_dlog_temperature);
+
+        {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
+        {scalar} dPr_inv_one_p_Pr_dlog_temperature = multiply_chain(Pr, dPr_dlog_temperature, inv_one_p_Pr, dinv_one_p_Pr_dlog_temperature);
+
+		return
         multiply_chain(k_high,
-                       dk_high_dtemperature,
+                       dk_high_dlog_temperature,
                        Pr_inv_one_p_Pr,
-                       dPr_inv_one_p_Pr_dtemperature);
+                       dPr_inv_one_p_Pr_dlog_temperature);
+
 }}
