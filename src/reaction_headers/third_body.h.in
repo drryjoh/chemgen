@@ -1,6 +1,11 @@
 {device_option}
 {scalar_function}
-third_body({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option}
+third_body({scalar_parameter} A, 
+           {scalar_parameter} B,
+		   {scalar_parameter} E, 
+		   {scalar_parameter} temperature, 
+		   {scalar_parameter} log_temperature, 
+		   {scalar_parameter} mixture_concentration) {const_option}
 {{
 		return multiply(mixture_concentration,
 						arrhenius(A, B, E, temperature, log_temperature));
@@ -8,8 +13,38 @@ third_body({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {sc
 
 {device_option}
 {scalar_function}
-dthird_body_dtemperature({scalar_parameter} A, {scalar_parameter} B, {scalar_parameter} E, {scalar_parameter} temperature, {scalar_parameter} mixture_concentration) {const_option}
+dthird_body_dtemperature({scalar_parameter} A, 
+                         {scalar_parameter} B, 
+						 {scalar_parameter} E, 
+						 {scalar_parameter} temperature, 
+						 {scalar_parameter} log_temperature,
+						 {scalar_parameter} mixture_concentration) {const_option}
 {{
 		return multiply(mixture_concentration,
-						darrhenius_dtemperature(A,B,E,temperature));
+						darrhenius_dtemperature(A,B,E,temperature,log_temperature));
+}}
+
+{device_option}
+{scalar_function}
+dthird_body_dlog_temperature({scalar_parameter} A, 
+                             {scalar_parameter} B, 
+						     {scalar_parameter} E, 
+						     {scalar_parameter} temperature, 
+						     {scalar_parameter} log_temperature,
+						     {scalar_parameter} mixture_concentration) {const_option}
+{{
+		return multiply(mixture_concentration,
+						darrhenius_dlog_temperature(A,B,E,temperature,log_temperature));
+}}
+
+{device_option}
+{scalar_function}
+dthird_body_dmixture_concentration({scalar_parameter} A, 
+                                   {scalar_parameter} B, 
+								   {scalar_parameter} E, 
+								   {scalar_parameter} temperature,
+								   {scalar_parameter} log_temperature,
+								   {scalar_parameter} mixture_concentration) {const_option}
+{{
+		return arrhenius(A,B,E,temperature, log_temperature);
 }}
