@@ -204,6 +204,29 @@ falloff_troe(const double& A_low,  //constant
     os <<", " << derivative_checker(my_function_3, x_test, 100.0, 10) << std::endl;
     
     std::cout << std::endl;
+
+    x_test = log_temperature_test;
+
+    auto my_function_4 = [&](double x) {{return falloff_troe(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, alpha, T1, T2, T3, temperature_test,                    x, mixture_concentration_test);}};
+    df_dT =                   dfalloff_troe_dlog_temperature(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, alpha, T1, T2, T3, temperature_test, log_temperature_test, mixture_concentration_test);
+    std::cout << "falloff falloff_troe derivative (logT):  " << df_dT << std::endl;
+    std::cout << "falloff falloff_troe derivative (logT) check:  ";
+    
+    os << "dfalloff_troe_dlog_temperature: ";
+    os << df_dT;
+    os <<", " << derivative_checker(my_function_4, x_test, log_gen(100.0), 10) << std::endl;
+    
+    std::cout << std::endl;
+    x_test = mixture_concentration_test;
+
+    auto my_function_5 = [&](double x) {{return falloff_troe(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, alpha, T1, T2, T3, temperature_test, log_temperature_test, x);}};
+    df_dT =                   dfalloff_troe_dmixture_concentration(A1_test, B1_test, E1_test, A2_test, B2_test, E2_test, alpha, T1, T2, T3, temperature_test, log_temperature_test, mixture_concentration_test);
+    std::cout << "falloff falloff_troe derivative (M):  " << df_dT << std::endl;
+    std::cout << "falloff falloff_troe derivative (M) check:  ";
+    
+    os << "dfalloff_troe_dmixture_concentration: ";
+    os << df_dT;
+    os <<", " << derivative_checker(my_function_5, x_test, mixture_concentration_test * 0.1, 10) << std::endl;
     return 0;
 }}
             """
