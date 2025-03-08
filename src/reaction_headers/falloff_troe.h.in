@@ -1,10 +1,10 @@
 {device_option}
 {scalar_function}
 f_cent_troe({scalar_parameter} alpha, 
-       {scalar_parameter} T1, 
-       {scalar_parameter} T2,
-       {scalar_parameter} T3,
-       {scalar_parameter} temperature) {const_option}
+            {scalar_parameter} T1, 
+            {scalar_parameter} T2,
+            {scalar_parameter} T3,
+            {scalar_parameter} temperature) {const_option}
 {{
         return
         ({scalar_cast}(1) - alpha) * exp_gen(-inv_gen(T3) * temperature)
@@ -15,10 +15,10 @@ f_cent_troe({scalar_parameter} alpha,
 {device_option}
 {scalar_function}
 df_cent_troe_dtemperature({scalar_parameter} alpha, 
-                     {scalar_parameter} T1, 
-                     {scalar_parameter} T2,
-                     {scalar_parameter} T3,
-                     {scalar_parameter} temperature) {const_option}
+                          {scalar_parameter} T1, 
+                          {scalar_parameter} T2,
+                          {scalar_parameter} T3,
+                          {scalar_parameter} temperature) {const_option}
 {{
         return
         ({scalar_cast}(1) - alpha) * exp_chain(-inv_gen(T3) * temperature, -inv_gen(T3))
@@ -38,14 +38,11 @@ f_troe({scalar_parameter} alpha,
         {scalar} f_cent_troe_ = f_cent_troe(alpha, T1, T2, T3, temperature); 
         {scalar} log_f_cent_troe_ = log10_gen(f_cent_troe_);
         {scalar} log_Pr = log10_gen(Pr);
-
         {scalar} c = {scalar_cast}(-0.4) + {scalar_cast}(-0.67) * log_f_cent_troe_;
         {scalar} n = {scalar_cast}(0.75) + {scalar_cast}(-1.27) * log_f_cent_troe_;
         {scalar} d = {scalar_cast}(0.14);
-
         {scalar} a = log_Pr + c;
         {scalar} b = n - d * (log_Pr + c);
-
         {scalar} Pr_factor = inv_gen({scalar_cast}(1) + pow_gen2(divide(a, b)));
         
         return
@@ -59,49 +56,95 @@ df_troe_dtemperature({scalar_parameter} alpha,
                      {scalar_parameter} T2,
                      {scalar_parameter} T3,
                      {scalar_parameter} temperature,
-                     {scalar_parameter} Pr,
-                     {scalar_parameter} dPr_dtemperature) {const_option}
+                     {scalar_parameter} Pr) {const_option}
 {{
-        {scalar} f_cent_troe_ = f_cent_troe(alpha, T1, T2, T3, temperature);
-        {scalar} df_cent_troe_dtemperature_ = df_cent_troe_dtemperature(alpha, T1, T2, T3, temperature);
+
+        {scalar} f_cent_troe_ = f_cent_troe(alpha, T1, T2, T3, temperature); 
+        {scalar} df_cent_troe_dtemperature_ =  df_cent_troe_dtemperature(alpha, T1, T2, T3, temperature); 
 
         {scalar} log_f_cent_troe_ = log10_gen(f_cent_troe_);
-        {scalar} dlog_f_cent_troe_dtemperature = log_chain(f_cent_troe_, df_cent_troe_dtemperature_);
+        {scalar} dlog_f_cent_troe_dtemperature_ = log10_chain(f_cent_troe_, df_cent_troe_dtemperature_);
 
         {scalar} log_Pr = log10_gen(Pr);
-        {scalar} dlog_Pr_dtemperature = log_chain(Pr, dPr_dtemperature);
+        {scalar} dlog_Pr_dtemperature = {scalar}(0.0);
 
         {scalar} c = {scalar_cast}(-0.4) + {scalar_cast}(-0.67) * log_f_cent_troe_;
-        {scalar} dc_dtemperature = {scalar_cast}(-0.0) + {scalar_cast}(-0.67) * dlog_f_cent_troe_dtemperature;
+        {scalar} dc_dtemperature = {scalar_cast}(-0.67) * dlog_f_cent_troe_dtemperature_;
+
         {scalar} n = {scalar_cast}(0.75) + {scalar_cast}(-1.27) * log_f_cent_troe_;
-        {scalar} dn_dtemperature = {scalar_cast}(0.0) + {scalar_cast}(-1.27) * dlog_f_cent_troe_dtemperature;
+        {scalar} dn_dtemperature =  {scalar_cast}(-1.27) * dlog_f_cent_troe_dtemperature_;
+        
         {scalar} d = {scalar_cast}(0.14);
         {scalar} dd_dtemperature = {scalar_cast}(0.0);
 
         {scalar} a = log_Pr + c;
-        {scalar} da_dtemperature = dlog_Pr_dtemperature + dc_dtemperature;
+        {scalar} da_dtemperature = dc_dtemperature;
 
-        {scalar} b = n - d * (log_Pr +c);
-        {scalar} db_dtemperature = dn_dtemperature - d * (dlog_Pr_dtemperature + dc_dtemperature);
+        {scalar} b = n - multiply(d, (log_Pr + c));
+        {scalar} db_dtemperature = dn_dtemperature - multiply(d, dc_dtemperature);
 
         {scalar} Pr_factor = inv_gen({scalar_cast}(1) + pow_gen2(divide(a, b)));
         {scalar} dPr_factor_dtemperature = 
-        inv_chain({scalar_cast}(1) + pow_gen2(divide(a, b)),
-                                   + pow_gen2_chain(divide(a, b),
-                                                    divide_chain(a,
-                                                                 da_dtemperature,
-                                                                 b,
-                                                                 db_dtemperature)));
-        
+        inv_chain({scalar_cast}(1) + pow_gen2(divide(a, b)), 
+                  pow_gen2_chain(divide(a,
+                                        b), 
+                                 divide_chain(a, 
+                                              da_dtemperature,
+                                              b,
+                                              db_dtemperature)));
+
         return
-        exp_chain(multiply(log_f_cent_troe_,
-                           Pr_factor),
-                  multiply_chain(log_f_cent_troe_,
-                                 dlog_f_cent_troe_dtemperature,
-                                 Pr_factor,
-                                 dPr_factor_dtemperature));
+        dpow_db_chain({scalar_cast}(10), 
+                      multiply(log_f_cent_troe_, 
+                               Pr_factor), 
+                      multiply_chain(log_f_cent_troe_, 
+                                     dlog_f_cent_troe_dtemperature_,
+                                     Pr_factor,
+                                     dPr_factor_dtemperature));
 }}
 
+{device_option}
+{scalar_function}
+df_troe_dPr({scalar_parameter} alpha, 
+            {scalar_parameter} T1, 
+            {scalar_parameter} T2,
+            {scalar_parameter} T3,
+            {scalar_parameter} temperature,
+            {scalar_parameter} Pr) {const_option}
+{{
+        {scalar} f_cent_troe_ = f_cent_troe(alpha, T1, T2, T3, temperature); 
+        {scalar} log_f_cent_troe_ = log10_gen(f_cent_troe_);
+
+        {scalar} log_Pr = log10_gen(Pr);
+        {scalar} dlog_Pr_dPr = dlog10_da(Pr);
+
+        {scalar} c = {scalar_cast}(-0.4) + {scalar_cast}(-0.67) * log_f_cent_troe_;
+        {scalar} n = {scalar_cast}(0.75) + {scalar_cast}(-1.27) * log_f_cent_troe_;
+        {scalar} d = {scalar_cast}(0.14);
+
+        {scalar} a = log_Pr + c;
+        {scalar} da_dPr = dlog_Pr_dPr;
+
+        {scalar} b = n - d * (log_Pr + c);
+        {scalar} db_dPr =  -d * (dlog_Pr_dPr);
+
+        {scalar} Pr_factor = inv_gen({scalar_cast}(1) + pow_gen2(divide(a, b)));
+        {scalar} dPr_factor_dPr = inv_chain({scalar_cast}(1) + pow_gen2(divide(a, b)),
+                                            pow_gen2_chain(divide(a, b),
+                                                           divide_chain(a,
+                                                                        da_dPr,
+                                                                        b,
+                                                                        db_dPr)));
+        
+        return
+        dpow_db_chain({scalar_cast}(10), 
+                      multiply(log_f_cent_troe_, 
+                                Pr_factor),
+                      multiply_chain(log_f_cent_troe_,
+                                     {scalar}(0.0), 
+                                     Pr_factor,
+                                     dPr_factor_dPr));
+}}
 
 {device_option}
 {scalar_function}
@@ -126,20 +169,19 @@ falloff_troe({scalar_parameter} A_low,  //constant
         divide(multiply(k_low,
                         mixture_concentration),
                k_high);
+
         {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
+
         {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
-
-		{scalar} return_value = 
-        multiply(multiply(k_high,
-						  Pr_inv_one_p_Pr),
+        
+	return 
+        multiply(multiply(k_high, Pr_inv_one_p_Pr),
                  f_troe(alpha, T1, T2, T3, temperature, Pr));
-
-        return return_value;
 }}
 
 {device_option}
 {scalar_function}
-dfalloff_troe_temperature({scalar_parameter} A_low,  //constant
+dfalloff_troe_dtemperature({scalar_parameter} A_low,  //constant
                           {scalar_parameter} B_low, //constant
                           {scalar_parameter} E_low,  //constant
                           {scalar_parameter} A_high, //constant
@@ -150,12 +192,14 @@ dfalloff_troe_temperature({scalar_parameter} A_low,  //constant
                           {scalar_parameter} T2,//constant
                           {scalar_parameter} T3,//constant
                           {scalar_parameter} temperature, 
+                          {scalar_parameter} log_temperature,
                           {scalar_parameter} mixture_concentration) {const_option}
 {{
-        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature);
-        {scalar} dk_low_dtemperature  = darrhenius_dtemperature(A_low, B_low, E_low, temperature);
-        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature);
-        {scalar} dk_high_dtemperature = darrhenius_dtemperature(A_high, B_high, E_high, temperature);
+        {scalar} k_low  = arrhenius(A_low, B_low, E_low, temperature, log_temperature);
+        {scalar} dk_low_dtemperature  = darrhenius_dtemperature(A_low, B_low, E_low, temperature, log_temperature);
+
+        {scalar} k_high = arrhenius(A_high, B_high, E_high, temperature, log_temperature);
+        {scalar} dk_high_dtemperature = darrhenius_dtemperature(A_high, B_high, E_high, temperature, log_temperature);
         
         {scalar} Pr = 
         divide(multiply(k_low,
@@ -165,32 +209,22 @@ dfalloff_troe_temperature({scalar_parameter} A_low,  //constant
         {scalar} dPr_dtemperature = 
         divide_chain(multiply(k_low,
                               mixture_concentration),
-                     multiply_chain(k_low,
-                                    dk_low_dtemperature,
-                                    mixture_concentration,
-                                    {scalar_cast}(0)),
-                    k_high,
-                    dk_high_dtemperature);
-        
+                     multiply(dk_low_dtemperature,
+                              mixture_concentration),
+                     k_high,
+                     dk_high_dtemperature);
+
         {scalar} inv_one_p_Pr = inv_gen({scalar_cast}(1)+Pr);
-        {scalar} dinv_one_p_Pr_dtemperature = 
-        inv_chain({scalar_cast}(1)+Pr,
-                  dPr_dtemperature);
-
+        {scalar} dinv_one_p_Pr_dtemperature = inv_chain({scalar_cast}(1)+Pr, dPr_dtemperature);
+        
         {scalar} Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
-        {scalar} dPr_inv_one_p_Pr_dtemperature = 
-        multiply_chain(Pr,
-                       dPr_dtemperature, 
-                       inv_one_p_Pr,
-                       dinv_one_p_Pr_dtemperature);
 
-		return 
-        multiply_chain(multiply(k_high,
-						        Pr_inv_one_p_Pr),
-                       multiply_chain(k_high,
-                                      dk_high_dtemperature,
-						              Pr_inv_one_p_Pr,
-                                      dPr_inv_one_p_Pr_dtemperature),
-                       f_troe(alpha, T1, T2, T3, temperature, Pr),
-                       df_troe_dtemperature(alpha, T1, T2, T3, temperature, Pr, dPr_dtemperature));
+        {scalar} dPr_inv_one_p_Pr_dtemperature = multiply_chain(Pr, dPr_dtemperature, inv_one_p_Pr, dinv_one_p_Pr_dtemperature);
+
+
+	return
+        multiply_chain(multiply(k_high, Pr_inv_one_p_Pr),
+                       multiply_chain(k_high, dk_high_dtemperature, Pr_inv_one_p_Pr, dPr_inv_one_p_Pr_dtemperature),
+                       f_troe(alpha, T1, T2, T3, temperature, Pr), 
+                       df_troe_dtemperature(alpha, T1, T2, T3, temperature, Pr) + df_troe_dPr(alpha, T1, T2, T3, temperature, Pr) * dPr_dtemperature);
 }}

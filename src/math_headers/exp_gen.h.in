@@ -11,4 +11,4 @@
 //log10
 {device_option} {scalar_function} log10_gen({scalar_parameter} a) {const_option} {{return (a > {scalar_cast}(0)) ? {log10math}(a) : {scalar_cast}(0.0);}}
 {device_option} {scalar_function} dlog10_da({scalar_parameter} a) {const_option} {{return inv_gen(a * log_gen(10));}}
-{device_option} {scalar_function} log10_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return dlog_da(a) * a_perturbation;}}
+{device_option} {scalar_function} log10_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return dlog10_da(a) * a_perturbation;}}

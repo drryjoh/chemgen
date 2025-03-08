@@ -283,3 +283,10 @@ reactions:
   low-P-rate-constant: {A: 1.5888e+21, b: -2.1, Ea: 5500.0}
   high-P-rate-constant: {A: 1.2029e+13, b: -0.31, Ea: 6943.0}
   efficiencies: {H2: 0.5, N2: 1.5}
+- equation: 2 H2 + O2 (+M) <=> 2 H2O (+M)  # Reaction Troe 
+  type: falloff
+  low-P-rate-constant: {A: 7.2417e+20, b: -1.72, Ea: 525.0}
+  high-P-rate-constant: {A: 5.2863e+12, b: 0.44, Ea: 0.0}
+  Troe: {A: 0.5, T3: 30.0, T1: 9.0e+04}
+  efficiencies: {H2: 2.0, H2O: 13.76974842661546, N2: 1.0, O2: 0.78}
+  duplicate: true

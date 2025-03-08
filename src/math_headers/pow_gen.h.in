@@ -2,8 +2,13 @@
 {device_option} {scalar_function} pow_gen({scalar_parameter} a, {scalar_parameter} b) {const_option} {{ return {powmath}(a, b);}}
 // Partial derivative of a^b with respect to a
 {device_option} {scalar_function} dpow_da({scalar_parameter} a, {scalar_parameter} b) {const_option} {{ return b * {powmath}(a, b - {scalar_cast}(1));}}
+//chain rule if b = constant
+{device_option} {scalar_function} dpow_da_chain({scalar_parameter} a, {scalar_parameter} a_chain, {scalar_parameter} b) {const_option} {{ return a_chain * b * {powmath}(a, b - {scalar_cast}(1));}}
 // Partial derivative of a^b with respect to b
 {device_option} {scalar_function} dpow_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{ return {powmath}(a, b) * {logmath}(a);}}
+// chain rule if a = constant
+{device_option} {scalar_function} dpow_db_chain({scalar_parameter} a, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{ return {powmath}(a, b) * {logmath}(a) * b_perturbation;}}
+
 {device_option} 
 {scalar_function}
 pow_gen_chain({scalar_parameter} a, 
