@@ -19,10 +19,12 @@ def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_ra
         Es.append(rate.activation_energy)
 
     reaction_rates[reaction_index] = pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration)
-    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, pressure_);\n".format(**vars(configuration),reaction_index = reaction_index)    
+    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(temperature, pressure_);\n".format(**vars(configuration),reaction_index = reaction_index)    
 
 def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration):
     choose_text = ''
+    dchoose_text_dtemperature = ''
+    dchoose_text_dpressure = ''
     indentation = '        '
     scalar_cast = '{scalar_cast}'.format(**vars(configuration))
     scalar = '{scalar}'.format(**vars(configuration))
@@ -73,7 +75,7 @@ def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, spe
     return_text ="""
 {device_option}
 {scalar_function}
-call_forward_reaction_{reaction_index}({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} pressure) {const_option}
+call_forward_reaction_{reaction_index}({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
 {{
         {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
         {scalar} log_pressure = log_gen(pressure);
@@ -81,6 +83,40 @@ call_forward_reaction_{reaction_index}({species_parameter} species, {scalar_para
 {choose_text}
         return rate;
 }}
+
+{device_option}
+{scalar_function}
+dcall_forward_reaction_{reaction_index}_dtemperature({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
+{{
+        {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
+        {scalar} log_pressure = log_gen(pressure);
+        {scalar} rate = {scalar_cast}(0);
+{dchoose_text_dtemperature}
+        return rate;
+}}
+
+{device_option}
+{scalar_function}
+dcall_forward_reaction_{reaction_index}_dlog_temperature({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
+{{
+        {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
+        {scalar} log_pressure = log_gen(pressure);
+        {scalar} rate = {scalar_cast}(0);
+{dchoose_text_dtemperature}
+        return rate;
+}}
+
+{device_option}
+{scalar_function}
+dcall_forward_reaction_{reaction_index}_dpressure({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
+{{
+        {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
+        {scalar} log_pressure = log_gen(pressure);
+        {scalar} rate = {scalar_cast}(0);
+{dchoose_text_dpressure}
+        return rate;
+}}
     """
-    return return_text.format(**vars(configuration), reaction_index = reaction_index, choose_text = choose_text)
+    return return_text.format(**vars(configuration), reaction_index = reaction_index, choose_text = choose_text,
+                              dchoose_text_dpressure = dchoose_text_dpressure, dchoose_text_dtemperature = dchoose_text_dtemperature)
                                      
