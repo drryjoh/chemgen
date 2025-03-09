@@ -44,9 +44,9 @@ dlog_arrhenius_diugct({scalar_parameter} log_A,
 }}
 
 {device_option}
-{scalar_function} pressure_dependent_arrhenius({scalar_parameter} log_k1, 
-                                               {scalar_parameter} log_k2, 
-                                               {scalar_parameter} log_P,
+{scalar_function} pressure_dependent_arrhenius({scalar_parameter} log_k1, //f(temperature)
+                                               {scalar_parameter} log_k2, //f(temperature)
+                                               {scalar_parameter} log_P, //f(pressure)
                                                {scalar_parameter} log_P1,
                                                {scalar_parameter} log_P2) 
 {{
@@ -54,20 +54,28 @@ dlog_arrhenius_diugct({scalar_parameter} log_A,
 }}
 
 {device_option}
-{scalar_function} pressure_dependent_arrhenius_chain({scalar_parameter} log_k1,
-                                                     {scalar_parameter} dlog_k1, 
-                                                     {scalar_parameter} log_k2,
-                                                     {scalar_parameter} dlog_k2, 
-                                                     {scalar_parameter} log_P,
-                                                     {scalar_parameter} dlog_P,
-                                                     {scalar_parameter} log_P1,
-                                                     {scalar_parameter} log_P2) 
+{scalar_function} dpressure_dependent_arrhenius_dtemperature({scalar_parameter} log_k1, 
+                                                             {scalar_parameter} dlog_k1_dtemperature, 
+                                                             {scalar_parameter} log_k2,
+                                                             {scalar_parameter} dlog_k2_dtemperature, 
+                                                             {scalar_parameter} log_P, 
+                                                             {scalar_parameter} log_P1,
+                                                             {scalar_parameter} log_P2) 
 {{
     return  
     exp_chain(log_k1 + (log_k2 - log_k1) * (log_P - log_P1) / (log_P2 - log_P1),
-              dlog_k1 + multiply_chain((log_k2 - log_k1),
-                                       (dlog_k2 - dlog_k1),
-                                       (log_P - log_P1) / (log_P2 - log_P1),
-                                       (dlog_P) / (log_P2 - log_P1)));
+              dlog_k1_dtemperature1 + (dlog_k2_dtemperature2 - dlog_k1_dtemperature) * (log_P - log_P1) / (log_P2 - log_P1));
 }}
 
+{device_option}
+{scalar_function} dpressure_dependent_arrhenius_dpressure({scalar_parameter} log_k1, 
+                                                          {scalar_parameter} log_k2,
+                                                          {scalar_parameter} log_P,
+                                                          {scalar_parameter} dlog_P_dpressure, 
+                                                          {scalar_parameter} log_P1,
+                                                          {scalar_parameter} log_P2) 
+{{
+    return  
+    exp_chain(log_k1 + (log_k2 - log_k1) * (log_P - log_P1) / (log_P2 - log_P1),
+              (log_k2 - log_k1) * dlog_P_dpressure / (log_P2 - log_P1));
+}}
