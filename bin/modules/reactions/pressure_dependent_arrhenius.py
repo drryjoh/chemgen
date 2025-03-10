@@ -12,7 +12,8 @@ def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_ra
         if verbose:
             print(f"    At {P} Pa: A = {rate.pre_exponential_factor}, "
                 f"b = {rate.temperature_exponent}, "
-                f"Ea = {rate.activation_energy}")
+                f"Ea = {rate.activation_energy},"
+                f"P  = {P}")
         pressures.append(P)
         As.append(rate.pre_exponential_factor)
         Bs.append(rate.temperature_exponent)
@@ -89,17 +90,17 @@ def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, spe
 
 # Temperature derivative
     for k, pressure in enumerate(unique_pressures):
-        print(k)
-        print(drates_for_write_dtemperature[k])
         if k ==0:
             dchoose_text_dtemperature +=f"{indentation}/**/if (log_pressure < {np.log(pressure)}) {{ return {drates_for_write_dtemperature[k]}; }}\n"
         else:
             dchoose_text_dtemperature +=(f"{indentation}else if ({np.log(unique_pressures[k-1])} <= log_pressure && log_pressure < {np.log(pressure)})"
             f"\n{indentation}{{"
-            f"\n{indentation}{scalar} log_k1 = log_gen({rates_for_write[k-1]});"
-            f"\n{indentation}{scalar} log_k2 = log_gen({rates_for_write[k]}); "
-            f"\n{indentation}{scalar} dlog_k1_dtemperature = log_chain({rates_for_write[k-1]},{drates_for_write_dtemperature[k-1]});"
-            f"\n{indentation}{scalar} dlog_k2_dtemperature = log_chain({rates_for_write[k]},  {drates_for_write_dtemperature[k]}); "
+            f"\n{indentation}{scalar} arrhenius_1 = {rates_for_write[k-1]};"
+            f"\n{indentation}{scalar} arrhenius_2 = {rates_for_write[k]};"
+            f"\n{indentation}{scalar} log_k1 = log_gen(arrhenius_1);"
+            f"\n{indentation}{scalar} log_k2 = log_gen(arrhenius_2); "
+            f"\n{indentation}{scalar} dlog_k1_dtemperature = log_chain(arrhenius_1,  {drates_for_write_dtemperature[k-1]});"
+            f"\n{indentation}{scalar} dlog_k2_dtemperature = log_chain(arrhenius_2,  {drates_for_write_dtemperature[k]}); "
             f"\n{indentation}return dpressure_dependent_arrhenius_dtemperature(log_k1, dlog_k1_dtemperature, log_k2, dlog_k2_dtemperature, log_pressure,  {np.log(unique_pressures[k-1])}, {np.log(pressure)});\n{indentation}}}\n")
     dchoose_text_dtemperature +=f"\n{indentation}else {{ return {drates_for_write_dtemperature[-1]}; }}"
 
@@ -112,14 +113,13 @@ def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, spe
             f"\n{indentation}{{"
             f"\n{indentation}{scalar} log_k1 = log_gen({rates_for_write[k-1]});"
             f"\n{indentation}{scalar} log_k2 = log_gen({rates_for_write[k]}); "
-            f"\n{indentation}return dpressure_dependent_arrhenius_dpressure(log_k1, log_k2, log_pressure, dlog_pressure_dpressure {np.log(unique_pressures[k-1])}, {np.log(pressure)});\n{indentation}}}\n")
+            f"\n{indentation}return dpressure_dependent_arrhenius_dpressure(log_k1, log_k2, log_pressure, dlog_pressure_dpressure, {np.log(unique_pressures[k-1])}, {np.log(pressure)});\n{indentation}}}\n")
     dchoose_text_dpressure +=f"\n{indentation}else {{ return {scalar_cast}(0); }}"
     return_text ="""
 {device_option}
 {scalar_function}
 call_forward_reaction_{reaction_index}({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
 {{
-        {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
         {scalar} log_pressure = log_gen(pressure);
         {scalar} rate = {scalar_cast}(0);
 {choose_text}
@@ -130,19 +130,6 @@ call_forward_reaction_{reaction_index}({scalar_parameter} temperature, {scalar_p
 {scalar_function}
 dcall_forward_reaction_{reaction_index}_dtemperature({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
 {{
-        {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
-        {scalar} log_pressure = log_gen(pressure);
-        {scalar} rate = {scalar_cast}(0);
-{dchoose_text_dtemperature}
-        return rate;
-}}
-
-{device_option}
-{scalar_function}
-dcall_forward_reaction_{reaction_index}_dlog_temperature({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
-{{
-        {scalar} inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature); 
-        {scalar} dinv_universal_gas_constant_temperature_dtemperature = inv_chain(universal_gas_constant() * temperature, universal_gas_constant()); 
         {scalar} log_pressure = log_gen(pressure);
         {scalar} rate = {scalar_cast}(0);
 {dchoose_text_dtemperature}

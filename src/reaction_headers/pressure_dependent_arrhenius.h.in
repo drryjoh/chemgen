@@ -64,7 +64,7 @@ dlog_arrhenius_diugct({scalar_parameter} log_A,
 {{
     return  
     exp_chain(log_k1 + (log_k2 - log_k1) * (log_P - log_P1) / (log_P2 - log_P1),
-              dlog_k1_dtemperature1 + (dlog_k2_dtemperature2 - dlog_k1_dtemperature) * (log_P - log_P1) / (log_P2 - log_P1));
+              dlog_k1_dtemperature + (dlog_k2_dtemperature - dlog_k1_dtemperature) * (log_P - log_P1) / (log_P2 - log_P1));
 }}
 
 {device_option}
@@ -77,5 +77,5 @@ dlog_arrhenius_diugct({scalar_parameter} log_A,
 {{
     return  
     exp_chain(log_k1 + (log_k2 - log_k1) * (log_P - log_P1) / (log_P2 - log_P1),
-              (log_k2 - log_k1) * dlog_P_dpressure / (log_P2 - log_P1));
+              (log_k2 - log_k1) / (log_P2 - log_P1)) * dlog_P_dpressure;
 }}

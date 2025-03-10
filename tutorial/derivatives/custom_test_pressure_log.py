@@ -100,13 +100,10 @@ template <typename Func>
 {index} main() {{
     std::cout << "*** ChemGen ***" <<std::endl<<std::endl;
     /*
-    reference
-third_body(double(5.903e+24), 
-           double(-3.32), 
-           double(50542720.0), 
-           temperature, 
-           log_temperature, 
-           mixture_concentration)
+    At 10132.500000000005 Pa: A = 0.0005550000000000002, b = 2.36, Ea = -757304.0,P  = 10132.500000000005
+    At 101324.99999999999 Pa: A = 0.17800000000000002, b = 1.68, Ea = 8619040.0,P  =   101324.99999999999
+    At 1013249.9999999992 Pa: A = 2370.0000000000005, b = 0.56, Ea = 25133288.0,P  =   1013249.9999999992
+    At 10132499.999999985 Pa: A = 27600000.000000004, b = -0.5, Ea = 47931904.0,P  =   10132499.999999985
 third_body(const double& A_low,  //constant
              const double& B_low, //constant
              const double& E_low,  //constant
@@ -122,7 +119,7 @@ third_body(const double& A_low,  //constant
              const double& mixture_concentration) 
     */
 
-    std::ofstream outFile("falloff_third_body.txt");  // Open a file to write
+    std::ofstream outFile("plog.txt");  // Open a file to write
     std::ostream& os = outFile;  // Alias for cleaner code
     {concentration_test}
     {scalar} temperature_ =  {temperature};
@@ -132,44 +129,72 @@ third_body(const double& A_low,  //constant
     {scalar} mixture_concentration_test = {scalar_cast}(0.5);
     {scalar} temperature_test = {scalar_cast}(1000);
     {scalar} log_temperature_test = log_gen({scalar_cast}(temperature_test));
+
     {scalar} x_test = temperature_test;
+    std::array<{scalar}, 4> pressures = {{{scalar_cast}(10132.5), {scalar_cast}(101325.0), {scalar_cast}(1013250), {scalar_cast}(10132500)}};
+    std::array<{scalar}, 4> pressure_diff = {{{scalar_cast}(1000), {scalar_cast}(10132.0), {scalar_cast}(101320), {scalar_cast}(1013200)}};
 
     
 //test temperature derivative
-    x_test = temperature_test;
+    for ( {index} i = 0; i < 4; i++)
+    {{
+        {scalar} pressure_test = pressures[i] - pressure_diff[i];
+        x_test = temperature_test;
 
-    auto my_function_0 = [&](double x) {{return third_body(A_test, B_test, E_test, x, log_temperature_test, mixture_concentration_test);}};
-    {scalar} df_dT = dthird_body_dtemperature(A_test, B_test, E_test, temperature_test, log_temperature_test, mixture_concentration_test);
-    std::cout << "third body T derivative:  " << df_dT << std::endl;
-    std::cout << "third body T derivative Check:  ";
+        auto my_function_0 = [&](double x) {{return call_forward_reaction_3(x, pressure_test);}};
+        {scalar} df_dT = dcall_forward_reaction_3_dtemperature(temperature_test, pressure_test);
+        std::cout << "pressure " << pressure_test<<std::endl;  
+        std::cout << "pressure T derivative:  " << df_dT << std::endl;
+        std::cout << "pressure T derivative Check:  ";
+        
+        os << "dcall_forward_reaction_3_dtemperature "<<pressure_test<<" :";
+        os <<df_dT;
+        os <<", " << derivative_checker(my_function_0, x_test, 100.0, 10) << std::endl;
+        std::cout << std::endl;
+    }}
+    {scalar} pressure_test = pressures[3] + pressure_diff[3];
+    x_test = temperature_test;
+    auto my_function_0 = [&](double x) {{return call_forward_reaction_3(x, pressure_test);}};
+    {scalar} df_dT = dcall_forward_reaction_3_dtemperature(temperature_test, pressure_test);
+    std::cout << "pressure " << pressure_test<<std::endl;  
+    std::cout << "pressure T derivative:  " << df_dT << std::endl;
+    std::cout << "pressure T derivative Check:  ";
     
-    os << "dthird_body_dtemperature: ";
-    os << df_dT;
+    os << "dcall_forward_reaction_3_dtemperature "<<pressure_test<<" :";
+    os <<df_dT;
     os <<", " << derivative_checker(my_function_0, x_test, 100.0, 10) << std::endl;
     std::cout << std::endl;
-
-    x_test = log_temperature_test;
-
-    auto my_function_1 = [&](double x) {{return third_body(A_test, B_test, E_test, temperature_test, x, mixture_concentration_test);}};
-    df_dT = dthird_body_dlog_temperature(A_test, B_test, E_test, temperature_test, log_temperature_test, mixture_concentration_test);
-    std::cout << "third body logT derivative:  " << df_dT << std::endl;
-    std::cout << "third body logT derivative Check:  ";
     
-    os << "dthird_body_dlog_temperature: ";
-    os << df_dT;
-    os <<", " << derivative_checker(my_function_1, x_test, log_gen(100.0), 10) << std::endl;
+//pressure derivative
+    for ( {index} i = 0; i < 4; i++)
+    {{
+        pressure_test = pressures[i] - pressure_diff[i];
+        x_test = pressure_test;
+
+        auto my_function_1 = [&](double x) {{return call_forward_reaction_3(temperature_test, x);}};
+        df_dT = dcall_forward_reaction_3_dpressure(temperature_test, pressure_test);
+        std::cout << "pressure " << pressure_test<<std::endl;  
+        std::cout << "pressure pressure derivative:  " << df_dT << std::endl;
+        std::cout << "pressure pressure derivative Check:  ";
+        
+        os << "dcall_forward_reaction_3_dpressure "<<pressure_test<<" :";
+        os <<df_dT;
+        os <<", " << derivative_checker(my_function_1, x_test, 100.0, 10) << std::endl;
+        std::cout << std::endl;
+    }}
+    pressure_test = pressures[3] + pressure_diff[3];
+    x_test = pressure_test;
+    auto my_function_1 = [&](double x) {{return call_forward_reaction_3(temperature_test, x);}};
+    df_dT = dcall_forward_reaction_3_dpressure(temperature_test, pressure_test);
+    std::cout << "pressure " << pressure_test << std::endl;  
+    std::cout << "pressure pressure derivative:  " << df_dT << std::endl;
+    std::cout << "pressure pressure derivative Check:  ";
+    
+    os << "dcall_forward_reaction_3_dtemperature "<<pressure_test<<" :";
+    os <<df_dT;
+    os <<", " << derivative_checker(my_function_1, x_test, 100.0, 10) << std::endl;
     std::cout << std::endl;
 
-    x_test = mixture_concentration_test;
-    auto my_function_2 = [&](double x) {{return third_body(A_test, B_test, E_test, temperature_test, log_temperature_test, x);}};
-    df_dT = dthird_body_dmixture_concentration(A_test, B_test, E_test, temperature_test, log_temperature_test, mixture_concentration_test);
-    std::cout << "third body M derivative:  " << df_dT << std::endl;
-    std::cout << "third body M derivative Check:  ";
-    
-    os << "dthird_body_dmixture_concentration: ";
-    os << df_dT;
-    os <<", " << derivative_checker(my_function_2, x_test, {scalar_cast}(0.5), 10) << std::endl;
-    std::cout << std::endl;
     return 0;
 
 }}
