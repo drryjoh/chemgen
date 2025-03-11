@@ -64,6 +64,13 @@ def write_thermo_transport_fit(file, name, thermo_fit_text, configuration):
 {{
     return {name}(temperature_monomial(temperature));
 }}
+
+{device_option}
+{species_function} 
+d{name}_dtemperature({scalar_parameter} temperature) {const_option} 
+{{
+    return {name}(dtemperature_monomial_dtemperature(temperature));
+}}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
 

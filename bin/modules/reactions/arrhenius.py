@@ -2,9 +2,13 @@ def arrhenius_text(i, A, B, E, configuration):
     return_text = "{device_option}\n{scalar_function} call_forward_reaction_{i}({scalar_parameter} temperature, {scalar_parameter} log_temperature) {const_option} {{ return arrhenius({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, log_temperature);}}"
     return return_text.format(**vars(configuration), i = i, A = A, E = E, B = B)
 
-def darrhenius_text(i, A, B, E, configuration):
-    print("Warning this may cause compilation mismatch in decorators")
-    return f"auto dreaction_dtemperature_{i}(const double& temperature) const {{ return darrhenius_dtemperature({A}, {B}, {E}, temperature)}}"
+def darrhenius_text_dtemperature(i, A, B, E, configuration):
+    return_text = "{device_option}\n{scalar_function} dcall_forward_reaction_{i}_dtemperature({scalar_parameter} temperature, {scalar_parameter} log_temperature) {const_option} {{ return darrhenius_dtemperature({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, log_temperature);}}"
+    return return_text.format(**vars(configuration), i = i, A = A, E = E, B = B)
+
+def darrhenius_text_dlog_temperature(i, A, B, E, configuration):
+    return_text = "{device_option}\n{scalar_function} dcall_forward_reaction_{i}_dlog_temperature({scalar_parameter} temperature, {scalar_parameter} log_temperature) {const_option} {{ return darrhenius_dlog_temperature({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, log_temperature);}}"
+    return return_text.format(**vars(configuration), i = i, A = A, E = E, B = B)
 
 def create_reaction_functions_and_calls_arrhenius(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
         if verbose:
