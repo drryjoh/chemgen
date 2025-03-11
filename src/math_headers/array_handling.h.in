@@ -32,6 +32,15 @@ scale_gen({scalar_parameter} a, {chemical_state_parameter} b_s) {const_option}
 }}
 
 {device_option}
+{reactions_function} 
+scale_gen({scalar_parameter} a, {reactions_parameter} b_s) {const_option}
+{{
+    {reactions} c_s;
+    {device_transform_inl}
+    return c_s;
+}}
+
+{device_option}
 {temperature_monomial_function} 
 scale_gen({scalar_parameter} a, {temperature_monomial_parameter} b_s) {const_option}
 {{
@@ -62,6 +71,34 @@ operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_opti
 {{
     {species} c_s;
     {species} b_s = scale_gen({scalar_cast}(-1.0), b_s_positive);
+    {device_element_sum_inl}
+    return c_s;
+}}
+
+{device_option}
+{reactions_function} 
+operator+({reactions_parameter} a_s, {reactions_parameter} b_s) {const_option}
+{{
+    {reactions} c_s;
+    {device_element_sum_inl}
+    return c_s;
+}}
+
+{device_option}
+{reactions_function} 
+operator-({reactions_parameter} a_s, {reactions_parameter} b_s_positive) {const_option}
+{{
+    {reactions} c_s;
+    {reactions} b_s = scale_gen({scalar_cast}(-1.0), b_s_positive);
+    {device_element_sum_inl}
+    return c_s;
+}}
+
+{device_option}
+{temperature_monomial_function} 
+operator+({temperature_monomial_parameter} a_s, {temperature_monomial_parameter} b_s) {const_option}
+{{
+    {temperature_monomial} c_s;
     {device_element_sum_inl}
     return c_s;
 }}

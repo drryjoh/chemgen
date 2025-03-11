@@ -99,6 +99,28 @@ template <typename Func>
 }}
 
 template <typename Func>
+{reactions_function} finite_difference_reactions(Func function, {scalar_parameter} x, {scalar_parameter} dx)
+{{
+    return scale_gen(inv_gen(2.0 * dx),
+                     function(x + dx)-function(x - dx));
+}}
+
+template <typename Func>
+{reactions_function} derivative_checker_reactions(Func function,  {scalar_parameter} x_test, {scalar_parameter} starting_dx, {index} n_refine)
+{{
+    {reactions} df_dx = {{0}};
+    for({index} i = 0; i < n_refine; i++)
+    {{
+        {scalar} dx = starting_dx * std::pow({scalar_cast}(0.5), {scalar_cast}(i));
+
+        df_dx = finite_difference_reactions(function, x_test, dx);
+        std::cout << df_dx <<" \\n";
+    }}
+    std::cout<<std::endl;
+    return df_dx;
+}}
+
+template <typename Func>
 {temperature_monomial_function} finite_difference_monomial(Func function, {scalar_parameter} x, {scalar_parameter} dx)
 {{
     return scale_gen(inv_gen(2.0 * dx),
@@ -167,9 +189,10 @@ template <typename Func>
     std::cout << "temperature monomial:  " << df_dT << std::endl;
     std::cout << "temperature monomial derivative Check:\\n";
     
-    os << "dtemperature_monomial_dtemperature  :" << df_dT;
+    os << "dtemperature_monomial_dtemperature  :\\n" << df_dT;
     auto checker = derivative_checker_monomial(my_function_0, x_test, df_dT, 100, 10);
     os <<", " <<  checker << std::endl;
+    os <<", " <<  checker-df_dT << std::endl;
 
     std::cout << error_monomial(checker, df_dT);
     std::cout << std::endl;
@@ -178,15 +201,77 @@ template <typename Func>
     auto my_function_1 = [&]({scalar} x) {{return species_specific_heat_constant_pressure_mass_specific(x);}};
     {species} dS_dT = dspecies_specific_heat_constant_pressure_mass_specific_dtemperature(temperature_test);
     std::cout << "Species Cp Derivative:  " << dS_dT << std::endl;
-    std::cout << "temperature monomial derivative Check:\\n";
+    std::cout << "Species Cp Derivative:\\n";
     
-    os << "dspecies_specific_heat_constant_pressure_mass_specific_dtemperature  :" << dS_dT;
+    os << "dspecies_specific_heat_constant_pressure_mass_specific_dtemperature  :\\n" << dS_dT;
     auto species_checker = derivative_checker_species(my_function_1, x_test, 100, 10);
     os <<", " <<  species_checker << std::endl;
+    os <<", " <<  species_checker - dS_dT << std::endl;
 
-    //std::cout << error_monomial(checker, df_dT);
     std::cout << std::endl;
 
+    //species_enthalpy_mass_specific
+    auto my_function_2 = [&]({scalar} x) {{return species_enthalpy_mass_specific(x);}};
+    dS_dT = dspecies_enthalpy_mass_specific_dtemperature(temperature_test);
+    std::cout << "Species enthalpy Derivative:  " << dS_dT << std::endl;
+    std::cout << "Species enthalpy Derivative Check:\\n";
+    
+    os << "dspecies_enthalpy_mass_specific_dtemperature  :\\n" << dS_dT;
+    species_checker = derivative_checker_species(my_function_2, x_test, 100, 10);
+    os <<", " <<  species_checker << std::endl;
+    os <<", " <<  species_checker-dS_dT << std::endl;
+    std::cout << std::endl;
+
+    //species_internal_energy_mass_specific
+    auto my_function_3 = [&]({scalar} x) {{return species_internal_energy_mass_specific(x);}};
+    dS_dT = dspecies_internal_energy_mass_specific_dtemperature(temperature_test);
+    std::cout << "Species enthalpy Derivative:  " << dS_dT << std::endl;
+    std::cout << "Species enthalpy Derivative Check:\\n";
+    
+    os << "dspecies_internal_energy_mass_specific_dtemperature  :\\n" << dS_dT;
+    species_checker = derivative_checker_species(my_function_3, x_test, 100, 10);
+    os <<", " <<  species_checker << std::endl;
+    os <<", " <<  species_checker-dS_dT << std::endl;
+    std::cout << std::endl;
+    
+    //species_entropy_mass_specific
+    auto my_function_4 = [&]({scalar} x) {{return species_entropy_mass_specific(x);}};
+    dS_dT = dspecies_entropy_mass_specific_dtemperature(temperature_test);
+    std::cout << "Species enthalpy Derivative:  " << dS_dT << std::endl;
+    std::cout << "Species enthalpy Derivative Check:\\n";
+    
+    os << "dspecies_internal_energy_mass_specific_dtemperature  :\\n" << dS_dT;
+    species_checker = derivative_checker_species(my_function_4, x_test, 100, 10);
+    os <<", " <<  species_checker << std::endl;
+    os <<", " <<  species_checker-dS_dT << std::endl;
+    std::cout << std::endl;
+
+    //species_gibbs_energy_mole_specific
+    auto my_function_5 = [&]({scalar} x) {{return species_gibbs_energy_mole_specific(x);}};
+    dS_dT = dspecies_gibbs_energy_mole_specific_dtemperature(temperature_test);
+    std::cout << "Species enthalpy Derivative:  " << dS_dT << std::endl;
+    std::cout << "Species enthalpy Derivative Check:\\n";
+    
+    os << "dspecies_internal_energy_mass_specific_dtemperature  :\\n" << dS_dT;
+    species_checker = derivative_checker_species(my_function_5, x_test, 100, 10);
+    os <<", " <<  species_checker << std::endl;
+    os <<", " <<  species_checker-dS_dT << std::endl;
+    std::cout << std::endl;
+
+    //gibbs_reaction
+    auto my_function_6 = [&]({scalar} x) {{return gibbs_reaction(x);}};
+    {scalar} log_temperature_test = log_gen(temperature_test);
+    x_test = log_temperature_test;
+    {reactions} dR_dT = dgibbs_reaction_dlog_temperature(log_temperature_test);
+    std::cout << "Species gibbs_reaction Derivative:  " << dR_dT << std::endl;
+    std::cout << "Species gibbs_reaction Derivative Check:\\n";
+    
+    os << "dgibbs_reaction_dlog_temperature  :\\n" << dR_dT;
+    auto reactions_checker = derivative_checker_reactions(my_function_6, x_test, log_gen(100), 10);
+
+    os <<"\\n" <<  reactions_checker << std::endl;
+    os <<  reactions_checker - dR_dT << std::endl;
+    std::cout << std::endl;
     return 0;
 }}
             """

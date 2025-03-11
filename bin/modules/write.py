@@ -89,6 +89,13 @@ def write_energy_thermo_transport_fit(file, name, thermo_fit_text, configuration
 {{
     return {name}(temperature_energy_monomial(temperature));
 }}
+
+{device_option}
+{species_function} 
+d{name}_dtemperature({scalar_parameter} temperature) {const_option} 
+{{
+    return {name}(dtemperature_energy_monomial_dtemperature(temperature));
+}}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
 '''
@@ -132,6 +139,13 @@ def write_entropy_thermo_transport_fit(file, name, thermo_fit_text, configuratio
 {{
     return {name}(temperature_entropy_monomial(temperature));
 }}
+
+{device_option}
+{species_function} 
+d{name}_dtemperature({scalar_parameter} temperature) {const_option} 
+{{
+    return {name}(dtemperature_entropy_monomial_dtemperature(temperature));
+}}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
 
@@ -147,6 +161,13 @@ def write_gibbs_thermo_transport_fit(file, name, thermo_fit_text, configuration)
 {device_option}
 {species_function} 
 {name}({scalar_parameter} temperature) {const_option} 
+{{
+    return {name}(temperature_gibbs_monomial(temperature));
+}}
+
+{device_option}
+{species_function} 
+d{name}_dtemperature({scalar_parameter} temperature) {const_option} 
 {{
     return {name}(temperature_gibbs_monomial(temperature));
 }}
@@ -167,6 +188,13 @@ def write_gibbs_reaction_transport_fit(file, name, thermo_fit_text, configuratio
 {name}({scalar_parameter} log_temperature) {const_option} 
 {{
     return {name}(temperature_monomial(log_temperature));
+}}
+
+{device_option}
+{reactions_function} 
+d{name}_dlog_temperature({scalar_parameter} log_temperature) {const_option} 
+{{
+    return {name}(dtemperature_monomial_dtemperature(log_temperature)); //functionality is the same
 }}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
