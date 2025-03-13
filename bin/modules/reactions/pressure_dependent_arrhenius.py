@@ -1,26 +1,6 @@
 from .reaction_utility import *
 import numpy as np
 import sys
-def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
-    reaction_rate = reaction.rate
-    pressures = []
-    As = []
-    Bs = []
-    Es = []
-
-    for P, rate in reaction.rate.rates:
-        if verbose:
-            print(f"    At {P} Pa: A = {rate.pre_exponential_factor}, "
-                f"b = {rate.temperature_exponent}, "
-                f"Ea = {rate.activation_energy},"
-                f"P  = {P}")
-        pressures.append(P)
-        As.append(rate.pre_exponential_factor)
-        Bs.append(rate.temperature_exponent)
-        Es.append(rate.activation_energy)
-
-    reaction_rates[reaction_index] = pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration)
-    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(temperature, pressure_);\n".format(**vars(configuration),reaction_index = reaction_index)    
 
 def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration):
     choose_text = ''
@@ -125,7 +105,8 @@ call_forward_reaction_{reaction_index}({scalar_parameter} temperature, {scalar_p
 {choose_text}
         return rate;
 }}
-
+    """
+    derivative_return_text ="""
 {device_option}
 {scalar_function}
 dcall_forward_reaction_{reaction_index}_dtemperature({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
@@ -147,7 +128,30 @@ dcall_forward_reaction_{reaction_index}_dpressure({scalar_parameter} temperature
 {dchoose_text_dpressure}
         return rate;
 }}
-    """
-    return return_text.format(**vars(configuration), reaction_index = reaction_index, choose_text = choose_text,
-                              dchoose_text_dpressure = dchoose_text_dpressure, dchoose_text_dtemperature = dchoose_text_dtemperature)
+"""
+    return [return_text.format(**vars(configuration), reaction_index = reaction_index, choose_text = choose_text),
+            derivative_return_text.format(**vars(configuration), reaction_index = reaction_index, dchoose_text_dpressure = dchoose_text_dpressure, dchoose_text_dtemperature = dchoose_text_dtemperature)]
                                      
+def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
+    reaction_rate = reaction.rate
+    pressures = []
+    As = []
+    Bs = []
+    Es = []
+
+    for P, rate in reaction.rate.rates:
+        if verbose:
+            print(f"    At {P} Pa: A = {rate.pre_exponential_factor}, "
+                f"b = {rate.temperature_exponent}, "
+                f"Ea = {rate.activation_energy},"
+                f"P  = {P}")
+        pressures.append(P)
+        As.append(rate.pre_exponential_factor)
+        Bs.append(rate.temperature_exponent)
+        Es.append(rate.activation_energy)
+
+    
+    [pressure_rate, pressure_rate_derivatives] = pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration)
+    reaction_rates[reaction_index] = pressure_rate
+    reaction_rates_derivatives.append(pressure_rate_derivatives)
+    reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(temperature, pressure_);\n".format(**vars(configuration),reaction_index = reaction_index)    

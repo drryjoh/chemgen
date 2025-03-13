@@ -23,6 +23,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
     species_production_on_fly_function_texts = [''] * gas.n_reactions
     species_production_jacobian = [[''] * (gas.n_species + 1)] * (gas.n_species + 1)
     reaction_rates = [''] * gas.n_reactions
+    reaction_rates_derivatives = []
     reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
     equilibrium_constants = [''] * gas.n_reactions
@@ -48,7 +49,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration, fit_gibbs_reaction)
 
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, species_production_on_fly_function_texts, reaction_index, configuration)
-        create_reaction_functions_and_calls(reaction_rates, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
+        create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
     headers = []
     with open(destination_folder/'types_inl.h','w') as file:
@@ -72,6 +73,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
     
     with open(destination_folder/'reactions.h','w') as file:
         write_reaction_rates(file, reaction_rates)
+        write_reaction_rates_derivatives(file, reaction_rates_derivatives)
         headers.append('reactions.h')
     
     with open(destination_folder/'source.h','w') as file:
