@@ -27,6 +27,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
     reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
     equilibrium_constants = [''] * gas.n_reactions
+    dequilibrium_constants_dtemperature = [''] * gas.n_reactions
     is_reversible  = [False] * gas.n_reactions
     requires_mixture_concentration = [False] * gas.n_reactions  
     molecular_weights_string = ','.join(["{scalar_cast}({mw})".format(**vars(configuration), mw=mw) for mw in gas.molecular_weights])
@@ -46,7 +47,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
 
-        create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration, fit_gibbs_reaction)
+        create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, dequilibrium_constants_dtemperature, configuration, fit_gibbs_reaction)
 
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, species_production_on_fly_function_texts, reaction_index, configuration)
         create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
@@ -87,12 +88,17 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
                                         progress_rates, is_reversible, species_production_on_fly_function_texts,
                                         species_production_function_texts, 
                                         headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+                custom_writer.write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reaction_calls, 
+                                        progress_rates, is_reversible, species_production_on_fly_function_texts,
+                                        species_production_function_texts, 
+                                        headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
             except (FileNotFoundError, AttributeError) as e:
                 print(f"Error loading custom source writer: {e}")
                 sys.exit(1)
         else:
             from .write_source_serial import SourceWriter as source_serial
             source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+            source_serial().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
 
     
     required_headers = create_headers(configuration, chemistry_solver, destination_folder)

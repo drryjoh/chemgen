@@ -57,3 +57,70 @@ class SourceWriter:
         self.write_species_production(file, species_production_texts, configuration)
         self.write_end_of_function(file)
         headers.append('source.h')
+# Jacobian
+    def write_start_of_source_function_jacobian(self, file, configuration, fit_gibbs_reaction = True):
+        if fit_gibbs_reaction:
+            gibbs = "{reactions} gibbs_reactions = gibbs_reaction(log_temperature);{reactions} dgibbs_reactions_dlog_temperature = dgibbs_reaction_dlog_temperature(log_temperature);\n".format(**vars(configuration)) 
+        else:
+            gibbs = "{species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);".format(**vars(configuration)) 
+        file.write("""
+        {device_option}
+        {species_function} source_jacobian({species_parameter} species, {scalar_parameter} temperature) {const_option} 
+        {{
+            {species} net_production_rates = {{{scalar_cast}(0)}};
+            {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
+            {scalar} dinv_universal_gas_constant_temperature_dtemperature  = inv_chain(universal_gas_constant() * temperature, universal_gas_constant());
+            {scalar} log_temperature = log_gen(temperature);
+            {scalar} dlog_temperature_dtemperature = dlog_da(temperature);
+            {gibbs}
+            {scalar} pressure_ = pressure(species, temperature);
+            {scalar} dpressure_dtemperature = dpressure_dtemperature(species, temperature); //unchecked
+            {scalar} dpressure_dtemperature = dpressure_dspecies(species, temperature); //unchecked
+            {scalar} mixture_concentration = pressure_ * inv_universal_gas_constant_temperature;
+            {scalar} dmixture_concentration_dtemperature = 
+            dpressure_dtemperature * inv_universal_gas_constant_temperature + pressure_  * dinv_universal_gas_constant_temperature_dtemperature;
+            {scalar} dmixture_concentration_dspecies = {species}{{1}}; // optimized (1/(RT))*(RT,...,RT)
+            \n""".format(**vars(configuration), gibbs = gibbs))
+    
+    def write_progress_rates_jacobian(self, file, progress_rates, is_reversible, equilibrium_constants, configuration):
+        for i, progress_rate in enumerate(progress_rates):
+            if is_reversible[i]:
+                import re
+
+                # Original string
+                original_string = f"{equilibrium_constants[i]}"
+                # New content to replace with
+                replacement = f"dgibbs_reactions_dlog_temperature[{i}]"
+                # Regular expression to match text inside the parentheses
+                pattern = r"exp_gen\(-\(.*?\)\)"
+                # Replace using re.sub
+                equilibrium_constant = re.sub(pattern, f"exp_gen(-({replacement}))", original_string)
+                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = original_string, **vars(configuration)))
+            file.write(f"        {progress_rate}\n") 
+        file.write("\n")
+        
+    def write_species_production(self, file, species_production_rates, configuration):
+        for species_index, species_production in enumerate(species_production_rates):
+            if species_production != '':
+                file.write(f"        {configuration.source_element.format(i = species_index)} = {species_production};\n") 
+            else:
+                file.write(f"        //source_{species_index} has no production term\n")
+        file.write("\n")
+
+    def write_reaction_calculations(self, file, reaction_calls, configuration):
+        for reaction_index, reaction_call in enumerate(reaction_calls):
+            file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
+
+
+    def write_end_of_function(self, file):
+        file.write("        return net_production_rates;\n    }")
+
+    def write_source_jacobian(self, file, equilibrium_constants, dequilibrium_constants_dtemperature,
+                     reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
+                     species_production_texts, headers, configuration, fit_gibbs_reaction = True): 
+        self.write_start_of_source_function(file, configuration, fit_gibbs_reaction = fit_gibbs_reaction)
+        self.write_reaction_calculations(file, reaction_calls, configuration)
+        self.write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
+        self.write_species_production(file, species_production_texts, configuration)
+        self.write_end_of_function(file)
+        headers.append('source.h')

@@ -91,30 +91,36 @@ def create_rates_of_progress(progress_rates, progress_rates_functions, reaction_
                 **vars(configuration)))
 
     progress_rates[reaction_index] = formatted_text
-def create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, configuration, fit_gibbs_reaction = True):
+def create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, dequilibrium_constants_dtemperature, configuration, fit_gibbs_reaction = True):
     scalar_cast = "{scalar_cast}".format(**vars(configuration))
     equilibrium_constant_elements = []
     sum_stoichiometric_production = np.sum(stoichiometric_production)
     
     power_term = ''
+    dpower_term_dtemperature = ''
     if sum_stoichiometric_production.is_integer():
         power_integer = int(sum_stoichiometric_production)
         if power_integer < 0:
             power_term = raise_to_power('inv_pressure_atmosphere() * universal_gas_constant() * temperature', np.abs(power_integer))
+            dpower_term_dtemperature = draise_to_power_chain('inv_pressure_atmosphere() * universal_gas_constant() * temperature', 'inv_pressure_atmosphere() * universal_gas_constant()', np.abs(power_integer))
         elif power_integer > 0:
             power_term = raise_to_power("pressure_atmosphere() * inv_universal_gas_constant_temperature",power_integer)
+            dpower_term_dtemperature = draise_to_power_chain("pressure_atmosphere() * inv_universal_gas_constant_temperature", "pressure_atmosphere() * dinv_universal_gas_constant_temperature_dtemperature", np.abs(power_integer))
         elif power_integer == 0:
             power_term = f"{scalar_cast}(1.0)"
+            dpower_term_dtemperature = f"{scalar_cast}(0.0)"
         else:
-            power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{power_integer})'
+            power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature, {power_integer})'
     else:
-        power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature,{scalar_cast}({sum_stoichiometric_production}))'
+        power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature, {scalar_cast}({sum_stoichiometric_production}))'
+        dpower_term_dtemperature = f'multiply(dpow_gen_da(pressure_atmosphere() * inv_universal_gas_constant_temperature, {scalar_cast}({sum_stoichiometric_production})), pressure_atmosphere() * dinv_universal_gas_constant_temperature_dtemperature)'
     
     for index in indexes_of_species_in_reaction:
         if stoichiometric_production[index] != 0:
             equilibrium_constant_elements.append(f"{scalar_cast}({stoichiometric_production[index]}) * gibbs_free_energies[{index}]")
 
     if fit_gibbs_reaction:
-        equilibrium_constants[reaction_index] = "exp_gen(-gibbs_reactions[{reaction_index}]) * {power_term}".format(power_term = power_term, reaction_index = reaction_index)
+        equilibrium_constants[reaction_index] = "multiply(exp_gen(-gibbs_reactions[{reaction_index}]), {power_term})".format(power_term = power_term, reaction_index = reaction_index)
+        dequilibrium_constants_dtemperature[reaction_index] = "multiply_chain(exp_gen(-gibbs_reactions[{reaction_index}]), exp_chain(-gibbs_reactions[{reaction_index}], -dgibbs_reactions_dlog_temperature[{reaction_index}]) * dlog_temperature_dtemperature, {power_term}, {dpower_term_dtemperature})".format(power_term = power_term, reaction_index = reaction_index)
     else:
         equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"), power_term=power_term)
