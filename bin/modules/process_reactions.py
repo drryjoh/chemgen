@@ -55,15 +55,20 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         species_index = index))
     species_production_on_fly_function_texts[reaction_index] = '\n'.join(on_the_fly_production)
 
-def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
+def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
     is_reversible[reaction_index] = reaction.reversible
+    
     if reaction.reaction_type == "Arrhenius":
+        reactions_depend_on[reaction_index] = ['temperature','log_temperature']
         create_reaction_functions_and_calls_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
     elif reaction.reaction_type == "three-body-Arrhenius":
+        reactions_depend_on[reaction_index] = ['temperature','species','log_temperature']
         create_reaction_functions_and_calls_third_body(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
     elif "falloff" in reaction.reaction_type:
+        reactions_depend_on[reaction_index] = ['temperature','species','log_temperature']
         create_reaction_functions_and_calls_falloff(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
     elif reaction.reaction_type == "pressure-dependent-Arrhenius":
+        reactions_depend_on[reaction_index] = ['temperature','pressure']
         create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
     elif reaction.reaction_type == "Chebyshev":
         print(f"  Chebyshev Reaction Coefficients:")
@@ -121,6 +126,6 @@ def create_equilibrium_constants(stoichiometric_production, reaction_index, inde
 
     if fit_gibbs_reaction:
         equilibrium_constants[reaction_index] = "multiply(exp_gen(-gibbs_reactions[{reaction_index}]), {power_term})".format(power_term = power_term, reaction_index = reaction_index)
-        dequilibrium_constants_dtemperature[reaction_index] = "multiply_chain(exp_gen(-gibbs_reactions[{reaction_index}]), exp_chain(-gibbs_reactions[{reaction_index}], -dgibbs_reactions_dlog_temperature[{reaction_index}]) * dlog_temperature_dtemperature, {power_term}, {dpower_term_dtemperature})".format(power_term = power_term, reaction_index = reaction_index)
+        dequilibrium_constants_dtemperature[reaction_index] = "multiply_chain(exp_gen(-gibbs_reactions[{reaction_index}]), exp_chain(-gibbs_reactions[{reaction_index}], -dgibbs_reactions_dlog_temperature[{reaction_index}]) * dlog_temperature_dtemperature, {power_term}, {dpower_term_dtemperature})".format(power_term = power_term, reaction_index = reaction_index, dpower_term_dtemperature = dpower_term_dtemperature)
     else:
         equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"), power_term=power_term)

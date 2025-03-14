@@ -32,13 +32,17 @@ def dsri_text_dlog_temperature(i, A_low, B_low, E_low, A_high, B_high, E_high, a
 
 def dsri_text_dmixture_concentration(i, A_low, B_low, E_low, A_high, B_high, E_high, a, b, c, d, e, efficiencies, species_names, configuration):
     mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)
-    return_text = ("{device_option}\n{scalar_function}\ndcall_forward_reaction_{i}_dmixture_concentration({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) "
-                  "{const_option} {{ return dfalloff_sri_dmixture_concentration({scalar_cast}({A_low}), {scalar_cast}({B_low}), {scalar_cast}({E_low}), {scalar_cast}({A_high}), {scalar_cast}({B_high}), {scalar_cast}({E_high}), "
-                  "{scalar_cast}({a}), {scalar_cast}({b}), {scalar_cast}({c}), {scalar_cast}({d}), {scalar_cast}({e}), temperature, log_temperature, {mixture_concentration});}}")
+    dmixture_concentration_dspecies = get_mixture_concentration_derivatives(efficiencies, species_names, configuration)
+    return_text = ("""{device_option}\n{species_function}\ndcall_forward_reaction_{i}_dspecies({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option} 
+    {{ 
+        {species} dmixture_concentration_dspecies = {{{dmixture_concentration_dspecies}}};
+        return scale_gen(dfalloff_sri_dmixture_concentration({scalar_cast}({A_low}), {scalar_cast}({B_low}), {scalar_cast}({E_low}), {scalar_cast}({A_high}), {scalar_cast}({B_high}), {scalar_cast}({E_high}), {scalar_cast}({a}), {scalar_cast}({b}), {scalar_cast}({c}), {scalar_cast}({d}), {scalar_cast}({e}), temperature, log_temperature, {mixture_concentration}), dmixture_concentration_dspecies );
+    }}""")
     return return_text.format(**vars(configuration), i=i, A_low = A_low, B_low = B_low, E_low = E_low,
                                      A_high = A_high, B_high = B_high, E_high = E_high, 
                                      a = a, b = b, c = c, d = d, e = e,
-                                     mixture_concentration = mixture_concentration)
+                                     mixture_concentration = mixture_concentration,
+                                     dmixture_concentration_dspecies = dmixture_concentration_dspecies)
 def create_reaction_functions_and_calls_sri(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
     reaction_rate = reaction.rate
     if verbose:

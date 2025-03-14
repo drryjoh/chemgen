@@ -31,13 +31,14 @@ def dtroe_text_dlog_temperature(i, A_low, B_low, E_low, A_high, B_high, E_high, 
 
 def dtroe_text_dmixture_concentration(i, A_low, B_low, E_low, A_high, B_high, E_high, alpha, T1, T2, T3, efficiencies, species_names, configuration):
     mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)
-    return_text = ("{device_option}\n{scalar_function}\ndcall_forward_reaction_{i}_dmixture_concentration({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) "
-                  "{const_option} {{ return dfalloff_troe_dmixture_concentration({scalar_cast}({A_low}), {scalar_cast}({B_low}), {scalar_cast}({E_low}), {scalar_cast}({A_high}), {scalar_cast}({B_high}), {scalar_cast}({E_high}), "
-                  "{scalar_cast}({alpha}), {scalar_cast}({T1}), {scalar_cast}({T2}), {scalar_cast}({T3}), temperature, log_temperature, {mixture_concentration});}}")
+    dmixture_concentration_dspecies = get_mixture_concentration_derivatives(efficiencies, species_names, configuration)
+    return_text = ("{device_option}\n{species_function}\ndcall_forward_reaction_{i}_dspecies({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) "
+                  "{const_option} {{ {species} dmixture_concentration_dspecies = {{{dmixture_concentration_dspecies}}};\nreturn scale_gen(dfalloff_troe_dmixture_concentration({scalar_cast}({A_low}), {scalar_cast}({B_low}), {scalar_cast}({E_low}), {scalar_cast}({A_high}), {scalar_cast}({B_high}), {scalar_cast}({E_high}), "
+                  "{scalar_cast}({alpha}), {scalar_cast}({T1}), {scalar_cast}({T2}), {scalar_cast}({T3}), temperature, log_temperature, {mixture_concentration}), dmixture_concentration_dspecies);}}")
     return return_text.format(**vars(configuration), i=i, A_low = A_low, B_low = B_low, E_low = E_low,
                                      A_high = A_high, B_high = B_high, E_high = E_high, 
                                      alpha = alpha, T1 = T1, T2 = T2, T3 = T3,
-                                     mixture_concentration = mixture_concentration)
+                                     mixture_concentration = mixture_concentration, dmixture_concentration_dspecies = dmixture_concentration_dspecies)
 
 def create_reaction_functions_and_calls_troe(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
     reaction_rate = reaction.rate
