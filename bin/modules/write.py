@@ -3,6 +3,7 @@ def write_type_defs(file, gas, configuration):
     n_species  = gas.n_species
     n_reactions  = gas.n_reactions
 
+
     file.write("""
 const {index} n_species = {n_species};
 const {index} n_reactions = {n_reactions};
@@ -16,7 +17,7 @@ using TemperatureEnergyMonomial = {temperature_energy_monomial_typedef};
 using TemperatureGibbsMonomial = {temperature_gibbs_monomial_typedef};
 using ThermoTable = {scalar_list}<TemperatureEnergyMonomial, n_species>;
 using ChemicalState = {chemical_state_tyedef};
-using ChemicalStateJacobian = {jacobian_typedef};
+using SpeciesJacobian = {jacobian_typedef};
 
 """.format(**vars(configuration), 
 n_species = int(n_species),

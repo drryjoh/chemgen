@@ -19,7 +19,7 @@ phases:
 - name: gas
   thermo: ideal-gas
   elements: [H, O, N]
-  species: [H2, O2, H2O, N2]
+  species: [H2, O2, H2O, N2, H]
   kinetics: gas
   reactions: all
   transport: mixture-averaged
@@ -96,6 +96,19 @@ species:
     well-depth: 97.53
     polarizability: 1.76
     rotational-relaxation: 4.0
+- name: H
+  composition: {H: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 1000.0, 6000.0]
+    data:
+    - [2.5, 0.0, 0.0, 0.0, 0.0, 2.547366e+04, -0.44668285]
+    - [2.5, 0.0, 0.0, 0.0, 0.0, 2.547366e+04, -0.44668285]
+  transport:
+    model: gas
+    geometry: atom
+    diameter: 2.05
+    well-depth: 145.0
 
 reactions:
 - equation: 2 H2 + O2 <=> 2 H2O  # Reaction 1

@@ -143,11 +143,13 @@ template <typename Func>
     std::ostream& os = outFile;  // Alias for cleaner code
     {concentration_test}
     {scalar} temperature_ =  {temperature};
-    
-    {scalar} x_test = temperature_;
-    auto my_function_0 = [&]({scalar} x) {{return source(species, x);}};
     {jacobian} dSdy = source_jacobian(species, temperature_);
     {jacobian} dSdy_check = {{{scalar_cast}(0)}};
+    /*
+    {scalar} x_test = temperature_;
+    auto my_function_0 = [&]({scalar} x) {{return source(species, x);}};
+    
+    
 
     os << "confirm derivative checker: \\n";
     os << "[";
@@ -165,9 +167,10 @@ template <typename Func>
     }}
 
     os << check_dsdy << std::endl;
+    */
 
     //test all species
-    for({index} sp = 1; sp < n_species + 1; sp++)
+    for({index} sp = 0; sp < n_species; sp++)
     {{
         {species} species_test = species;
         auto my_function_1 = [&]({species} x) {{return source(x, temperature_);}};
@@ -181,7 +184,7 @@ template <typename Func>
             os << dSdy[i][sp] <<" ";
         }}
 
-        check_dsdy =  derivative_checker_species_i(my_function_1, species_test, 1e-3, 10, sp - 1);
+        {species} check_dsdy =  derivative_checker_species_i(my_function_1, species_test, 1e-3, 10, sp);
         
 
         for({index} i =0; i<n_species; i++)
@@ -193,9 +196,9 @@ template <typename Func>
         os << check_dsdy << std::endl;
     }}
 
-    for({index} i = 0; i <n_species+1; i++)
+    for({index} i = 0; i <n_species; i++)
     {{
-        for({index} sp = 0; sp <n_species+1; sp++)
+        for({index} sp = 0; sp <n_species; sp++)
         {{
             std::cout << "dSdy["<<i<<"]["<<sp<<"]= "<< dSdy[i][sp] <<", "<<dSdy_check[i][sp]<<std::endl;
         }}

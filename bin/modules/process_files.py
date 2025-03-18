@@ -104,11 +104,17 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
                 print(f"Error loading custom source writer: {e}")
                 sys.exit(1)
         else:
-            from .write_source_serial import SourceWriter as source_serial
-            source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
-            source_serial().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
-                                                  reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
-                                                  species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+            from .write_source import SourceWriter as source
+            from .write_source_jacobian_species import SourceJacobianWriter as source_jacobian_species
+            from .write_source_jacobian_species_temperature import SourceJacobianWriter as source_jacobian_species_temperature
+            source().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+            source_jacobian_species().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
+                                                            reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
+                                                            species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+            if False: ### ENTHALPY FORMULATION
+                source_jacobian_species_temperature().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
+                                                                            reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
+                                                                            species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
 
     
     required_headers = create_headers(configuration, chemistry_solver, destination_folder)
