@@ -78,7 +78,7 @@ def get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoi
         elif len(other_species) == 1:
             dbackward_rates[backward_index] = '{0} * {1}'.format(dbackward_rate_array[i], other_species[0])
         else:
-            dbackward_rates[forward_index] = '{0}'.format(dbackward_rate_array[i])
+            dbackward_rates[backward_index] = '{0}'.format(dbackward_rate_array[i])
 
     return (dforward_rates, dbackward_rates)
 
@@ -110,6 +110,23 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         reaction_index = reaction_index,
         species_index = index))
     species_production_on_fly_function_texts[reaction_index] = '\n'.join(on_the_fly_production)
+
+def accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_texts, reactions_depend_on, reaction_index, configuration):
+    depends_on_temperature = True; depends_on_species = True
+    
+    for index in indexes_of_species_in_reaction:
+        if depends_on_temperature:
+            species_production_jacobian_texts[index] += """
+        jacobian_net_production_rates[{species_index}][0] += {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dtemperature;
+            """.format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index, species_index = index)  
+        if depends_on_species:
+            species_production_jacobian_texts[index] += """
+        for({index} i = 0; i < n_species; i++)
+        {{
+            jacobian_net_production_rates[{species_index}][i+1] += {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dspecies[i];
+        }}
+            """.format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index,  species_index = index)  
+
 
 def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
     is_reversible[reaction_index] = reaction.reversible
@@ -175,16 +192,15 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
             dbackward_rate_dspecies = ''
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
                 if dforward_rate == '1':
-                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += rate_of_progress_{reaction_index};\n"
+                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += forward_reaction_{reaction_index};\n"
                 elif dforward_rate != '0':
-                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += multiply({dforward_rate}, rate_of_progress_{reaction_index});\n"
+                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
 
             for species_index, dbackward_rate in enumerate(backward_rate_derivatives):
-                if dforward_rate == '1':
-                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] -= rate_of_progress_{reaction_index};\n"
-                elif dforward_rate != '0':
-                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] -= multiply({dbackward_rate}, rate_of_progress_{reaction_index});\n"
-
+                if dbackward_rate == '1':
+                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] -= forward_reaction_{reaction_index};\n"
+                elif dbackward_rate != '0':
+                    dforward_rate_dspecies += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] -= multiply({dbackward_rate}, forward_reaction_{reaction_index});\n"
             
             formatted_text += """
         {species} drate_of_progress_{reaction_index}_dspecies = 
@@ -200,7 +216,23 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
                     backward_rate = backward_rate, 
                     dforward_rate_dspecies = dforward_rate_dspecies,
                     dbackward_rate_dspecies = dbackward_rate_dspecies,
-                    **vars(configuration))      
+                    **vars(configuration))
+        else:
+            formatted_text += """
+        {species} drate_of_progress_{reaction_index}_dspecies = {{{scalar_cast}(0)}};
+""".format(reaction_index = reaction_index, **vars(configuration))
+            for species_index, dforward_rate in enumerate(forward_rate_derivatives):
+                if dforward_rate == '1':
+                    formatted_text += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += forward_reaction_{reaction_index};\n"
+                elif dforward_rate != '0':
+                    formatted_text += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
+
+            for species_index, dbackward_rate in enumerate(backward_rate_derivatives):
+                if dbackward_rate == '1':
+                    formatted_text += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] -= divide(forward_reaction_{reaction_index}, equilibrium_constant_{reaction_index});\n"
+                elif dbackward_rate != '0':
+                    formatted_text += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] -= multiply({dbackward_rate}, divide(forward_reaction_{reaction_index}, equilibrium_constant_{reaction_index}));\n"
+            
     else:
         if "temperature" in reactions_depend_on[reaction_index]:
             formatted_text += """

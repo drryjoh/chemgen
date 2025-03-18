@@ -21,7 +21,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
     species_production_on_fly_function_texts = [''] * gas.n_reactions
-    species_production_jacobian = [[''] * (gas.n_species + 1)] * (gas.n_species + 1)
+    species_production_jacobian_texts = [''] * gas.n_species
     reaction_rates = [''] * gas.n_reactions
     reactions_depend_on = [[]] * gas.n_reactions
     reaction_rates_derivatives = []
@@ -56,6 +56,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
         create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_depend_on, species_production_function_texts, reaction_index, forward_rate, backward_rate, forward_rate_derivatives, backward_rate_derivatives, is_reversible, configuration)
+        accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_texts, reactions_depend_on, reaction_index, configuration)
     headers = []
     with open(destination_folder/'types_inl.h','w') as file:
         write_type_defs(file, gas, configuration)
@@ -92,10 +93,13 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
                                         progress_rates, is_reversible, species_production_on_fly_function_texts,
                                         species_production_function_texts, 
                                         headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+                '''
                 custom_writer.write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on, reaction_calls, 
                                         progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts,
                                         species_production_function_texts, 
                                         headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+                ## No Custom Writer For Jacobian
+                '''    
             except (FileNotFoundError, AttributeError) as e:
                 print(f"Error loading custom source writer: {e}")
                 sys.exit(1)
@@ -104,7 +108,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
             source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
             source_serial().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                                                   reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
-                                                  species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+                                                  species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
 
     
     required_headers = create_headers(configuration, chemistry_solver, destination_folder)

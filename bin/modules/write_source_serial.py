@@ -69,15 +69,15 @@ class SourceWriter:
         {gibbs}
         
         {scalar} pressure_ = pressure(species, temperature);
-        {scalar} dpressure_dtemperature = dpressure_dtemperature(species, temperature); //unchecked
-        {species} dpressure_dspecies = dpressure_dspecies(species, temperature); //unchecked
+        {scalar} dpressure_dtemperature_ = dpressure_dtemperature(species, temperature); //unchecked
+        {species} dpressure_dspecies_ = dpressure_dspecies(species, temperature); //unchecked
         
         {scalar} mixture_concentration = 
         multiply(pressure_,
                  inv_universal_gas_constant_temperature);
         {scalar} dmixture_concentration_dtemperature = 
         multiply_chain(pressure_, 
-                       dpressure_dtemperature,
+                       dpressure_dtemperature_,
                        inv_universal_gas_constant_temperature,
                        dinv_universal_gas_constant_temperature_dtemperature);
         
@@ -99,9 +99,9 @@ class SourceWriter:
     def write_species_production_jacobian(self, file, species_production_rates, configuration):
         for species_index, species_production in enumerate(species_production_rates):
             if species_production != '':
-                file.write(f"        {configuration.source_element.format(i = species_index)} = {species_production};\n") 
+                file.write(f"{species_production}") 
             else:
-                file.write(f"        //source_{species_index} has no production term\n")
+                file.write(f"//source_{species_index} has no production term\n")
         file.write("\n")
 
     def write_reaction_calculations_jacobian(self, file, reaction_calls, reactions_depend_on, configuration):
@@ -129,19 +129,19 @@ class SourceWriter:
                     file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dlog_temperature{back} * dlog_temperature_dtemperature;")
                 if dependent_variable == "pressure":
                     file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dpressure{back} * dpressure_dtemperature;")
-                    file.write(f"        dforward_reaction_{reaction_index}_dspecies += scale_gen(d{front}_dpressure{back}, dpressure_dspecies);")
+                    file.write(f"        dforward_reaction_{reaction_index}_dspecies += scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);")
                 file.write('\n')
             file.write('\n')
 
     def write_end_of_function_jacobian(self, file):
-        file.write("        return net_production_rates;\n    }")
+        file.write("        return jacobian_net_production_rates;\n    }")
 
     def write_source_jacobian(self, file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                      reaction_calls,  progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts,
-                     species_production_texts, headers, configuration, fit_gibbs_reaction = True): 
+                     species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction = True): 
         self.write_start_of_source_function_jacobian(file, configuration, fit_gibbs_reaction = fit_gibbs_reaction)
         self.write_reaction_calculations_jacobian(file, reaction_calls, reactions_depend_on, configuration)
         self.write_progress_rates_jacobian(file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration)
-        self.write_species_production_jacobian(file, species_production_texts, configuration)
+        self.write_species_production_jacobian(file, species_production_jacobian_texts, configuration)
         self.write_end_of_function_jacobian(file)
         #headers.append('source.h')
