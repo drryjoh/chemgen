@@ -44,6 +44,12 @@ decorators:
   chemical_state_parameter: "const ChemicalState&"
   chemical_state_element: "chemical_state[{i}]"
   
+  jacobian_typedef: "std::array<ChemicalState, n_species+1>"
+  jacobian: "ChemicalStateJacobian"
+  jacobian_function: "ChemicalStateJacobian"
+  jacobian_cast: "ChemicalStateJacobian"
+  jacobian_parameter: "const ChemicalStateJacobian&"
+  
   source_element: "net_production_rates[{i}]"
   const_option: ""
   constexpr: "constexpr"

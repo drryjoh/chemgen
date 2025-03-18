@@ -32,3 +32,13 @@ def draise_to_power_chain(raise_to, draise_to, power):
             return f"multiply(dpow_gen{power_integer}_da({raise_to}), {draise_to})"
     else:
         return f"multiply(dpow_gen_da({raise_to}, {power}), {draise_to})"
+
+def draise_to_power(raise_to, power):
+    if is_integer_to_precision(power, 1e-6):
+        power_integer = int(power)
+        if power_integer == 1:
+            return "1"
+        else:
+            return f"dpow_gen{power_integer}_da({raise_to})"
+    else:
+        return f"dpow_gen_da({raise_to}, {power})"

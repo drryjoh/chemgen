@@ -108,7 +108,7 @@ Temperature Entropy Monomial at 300           : [ 1 300 90000 2.7e+07 8.1e+09 2.
 Temperature Gibbs Monomial at 300           : [ 1 300 90000 2.7e+07 8.1e+09 2.43e+12 7.29e+14 2.187e+17 6.561e+19 1711.13 ]
 ```
 
-This tests the source code and other thermodyanic properties
+This tests the source code and other thermodyanic properties, consult the `chemgen.cpp` for the source code implementation.
 
 running
 ```bash

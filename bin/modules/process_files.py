@@ -27,6 +27,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
     reaction_rates_derivatives = []
     reaction_calls = [''] * gas.n_reactions
     progress_rates = [''] * gas.n_reactions
+    progress_rates_derivatives = [''] * gas.n_reactions
     equilibrium_constants = [''] * gas.n_reactions
     dequilibrium_constants_dtemperature = [''] * gas.n_reactions
     is_reversible  = [False] * gas.n_reactions
@@ -45,6 +46,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         indexes_of_species_in_reaction = []
 
         [forward_rate, backward_rate] = get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration)
+        [forward_rate_derivatives, backward_rate_derivatives] = get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration)
         stoichiometric_production = stoichiometric_backward - stoichiometric_forward 
 
 
@@ -53,6 +55,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, species_production_on_fly_function_texts, reaction_index, configuration)
         create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
+        create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_depend_on, species_production_function_texts, reaction_index, forward_rate, backward_rate, forward_rate_derivatives, backward_rate_derivatives, is_reversible, configuration)
     headers = []
     with open(destination_folder/'types_inl.h','w') as file:
         write_type_defs(file, gas, configuration)
@@ -90,7 +93,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
                                         species_production_function_texts, 
                                         headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
                 custom_writer.write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on, reaction_calls, 
-                                        progress_rates, is_reversible, species_production_on_fly_function_texts,
+                                        progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts,
                                         species_production_function_texts, 
                                         headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
             except (FileNotFoundError, AttributeError) as e:
@@ -100,7 +103,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
             from .write_source_serial import SourceWriter as source_serial
             source_serial().write_source(file, equilibrium_constants, reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
             source_serial().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
-                                                  reaction_calls, progress_rates, is_reversible, species_production_on_fly_function_texts, 
+                                                  reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
                                                   species_production_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
 
     
