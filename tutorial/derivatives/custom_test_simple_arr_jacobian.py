@@ -204,7 +204,17 @@ template <typename Func>
         }}
     }}
 
+    std::ofstream jacobian_file("jacobian_out.txt");  // Open a file to write
+    std::ostream& jac = jacobian_file;  // Alias for cleaner code
 
+    for({index} i = 0; i <n_species; i++)
+    {{
+        for({index} sp = 0; sp<n_species-1; sp++)
+        {{
+            jac << dSdy[i][sp]<<", ";
+        }}
+        jac << dSdy[i][n_species-1] << std::endl;
+    }}
     return 0;
 }}
             """
