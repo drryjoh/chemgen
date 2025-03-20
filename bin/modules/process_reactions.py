@@ -113,24 +113,28 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
 
 def accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_texts, reactions_depend_on, reaction_index, configuration, temperature_jacobian = False):
     depends_on_temperature = True; depends_on_species = True
-    
+    begin = '0'
+    end = 'n_species'
+    if temperature_jacobian:
+        begin = '1'
+        end = 'n_species + 1'
     for index in indexes_of_species_in_reaction:
         if depends_on_temperature:
             if temperature_jacobian:
                 species_production_jacobian_texts[index] += """
-        jacobian_net_production_rates[{species_index}][0] += {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dtemperature;
-            """.format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index, species_index = index)  
+        jacobian_net_production_rates[{species_index}+{begin}][0] += {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dtemperature;
+            """.format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index, species_index = index, begin=begin)  
             else:
                 species_production_jacobian_texts[index] += """
         //jacobian_net_production_rates[{species_index}][0] += {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dtemperature;
             """.format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index, species_index = index)   
         if depends_on_species:
             species_production_jacobian_texts[index] += """
-        for({index} i = 0; i < n_species; i++)
+        for({index} i = {begin}; i < {end}; i++)
         {{
             jacobian_net_production_rates[{species_index}][i] += {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dspecies[i];
         }}
-            """.format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index,  species_index = index)  
+            """.format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index,  species_index = index, begin = begin, end = end)  
 
 
 def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False, temperature_jacobian = False):

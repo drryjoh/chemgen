@@ -38,6 +38,15 @@ def get_test_conditions(chemical_mechanism):
     return [temperature, pressure, species_string]
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 0):
+    begin = '0'
+    end = 'n_species'
+    temperature_jacobian = False
+
+    if configuration.temperature_jacobian == 'on':
+        temperature_jacobian = True
+        begin = '1'
+        end = 'n_species + 1'
+    
     test_file = destination_folder/test_file_name
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
@@ -59,7 +68,21 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         gibbs = gas.standard_gibbs_RT * gas.T * ct.gas_constant
         gibbs_reactions = gas.delta_standard_gibbs/gas.T/ct.gas_constant
         equilibrium_constants = gas.equilibrium_constants
+        if temperature_jacobian:
+            temperature_loop = """
 
+    {scalar} x_test = temperature_;
+    auto my_function_0 = [&]({scalar} x) {{return source(species, x);}};
+    {species} check_dsdT =  derivative_checker_species(my_function_0, x_test, 100, 10);
+    
+    for({index} i = 1; i < n_species + 1; i++)
+    {{
+        dSdy_check[i][0] = check_dsdT[i-1];
+    }}
+
+        """.format(**vars(configuration))
+        else:
+            temperature_loop  = ""
         content = """
 
 // Overload << operator for std::array
@@ -74,6 +97,18 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
     }}
     os << "]";
     return os;
+}}
+
+{scalar_function} safe_divide({scalar_parameter} a, {scalar_parameter} b) {const_option}
+{{
+    if(std::abs(b) <= 1e-10)
+    {{
+        return 0;
+    }}
+    else
+    {{
+        return a/b;
+    }}
 }}
 
 template <typename Func>
@@ -145,71 +180,37 @@ template <typename Func>
     {scalar} temperature_ =  {temperature};
     {jacobian} dSdy = source_jacobian(species, temperature_);
     {jacobian} dSdy_check = {{{scalar_cast}(0)}};
-    /*
-    {scalar} x_test = temperature_;
-    auto my_function_0 = [&]({scalar} x) {{return source(species, x);}};
-    
-    
-
-    os << "confirm derivative checker: \\n";
-    os << "[";
-    for({index} i = 0; i<n_species; i++)
-    {{
-        os << dSdy[i][0] <<" ";
-    }}
-    os <<"]\\n";
-
-    {species} check_dsdy =  derivative_checker_species(my_function_0, x_test, 100.0, 10);
-    
-    for({index} i =0; i<n_species; i++)
-    {{
-         dSdy_check[i][0] = check_dsdy[i];
-    }}
-
-    os << check_dsdy << std::endl;
-    */
 
     //test all species
-    for({index} sp = 0; sp < n_species; sp++)
+    for({index} sp = {begin}; sp < {end}; sp++)
     {{
         {species} species_test = species;
         auto my_function_1 = [&]({species} x) {{return source(x, temperature_);}};
-        
-
-        os << "confirm derivative checker: \\n";
-        os << "[";
-
-        for({index} i =0; i<n_species; i++)
-        {{
-            os << dSdy[i][sp] <<" ";
-        }}
-
         {species} check_dsdy =  derivative_checker_species_i(my_function_1, species_test, 1e-3, 10, sp);
         
-
-        for({index} i =0; i<n_species; i++)
+        for({index} i = 0; i < n_species; i++)
         {{
             dSdy_check[i][sp] = check_dsdy[i];
         }}
-
-        os <<"]\\n";
-        os << check_dsdy << std::endl;
     }}
 
-    for({index} i = 0; i <n_species; i++)
+{temperature_loop}
+
+    for({index} i = 0; i < {end}; i++)
     {{
-        for({index} sp = 0; sp <n_species; sp++)
+        for({index} sp = 0; sp < {end}; sp++)
         {{
-            std::cout << "dSdy["<<i<<"]["<<sp<<"]= "<< dSdy[i][sp] <<", "<<dSdy_check[i][sp]<<std::endl;
+            {scalar} difference  = safe_divide((dSdy[i][sp] - dSdy_check[i][sp]), dSdy[i][sp]);
+            std::cout << "dSdy["<<i<<"]["<<sp<<"]= "<< dSdy[i][sp] <<", "<<dSdy_check[i][sp]<<" "<<difference<<std::endl;
         }}
     }}
 
     std::ofstream jacobian_file("jacobian_out.txt");  // Open a file to write
     std::ostream& jac = jacobian_file;  // Alias for cleaner code
 
-    for({index} i = 0; i <n_species; i++)
+    for({index} i = 0; i <{end}; i++)
     {{
-        for({index} sp = 0; sp<n_species-1; sp++)
+        for({index} sp = 0; sp<{end} - 1; sp++)
         {{
             jac << dSdy[i][sp]<<", ";
         }}
@@ -220,4 +221,7 @@ template <typename Func>
             """
         file.write(content.format(**vars(configuration), 
         concentration_test = concentration_test, 
-        temperature = temperature))
+        temperature = temperature,
+        begin = begin,
+        end = end,
+        temperature_loop = temperature_loop))

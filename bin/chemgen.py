@@ -56,6 +56,7 @@ def main():
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose code generation")
     parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction")
     parser.add_argument("--jacobian-temperature", action="store_true", default=False, help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
+    parser.add_argument("--force", action="store_true", default=False, help="Force code generation despite warnings")
 
     args = parser.parse_args()
     
@@ -69,10 +70,15 @@ def main():
         print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
     
     temperature_jacobian  = False
-    if args.fit_gibbs_reaction == True:
-        fit_gibbs_reaction  = True
+    if args.jacobian_temperature == True:
+        temperature_jacobian  = True
         print("Source Jacobain will be created with temperature derivatives")
 
+    
+    force  = False
+    if args.force == True:
+        force  = True
+        print("ChemGen will continue despite warnings")
     
     # Check if the destination folder exists, if not, create it
     if not destination_folder.exists():
@@ -85,6 +91,8 @@ def main():
 
     gas = ct.Solution(chemical_mechanism)
     [configuration, configuration_file] = get_configuration(configuration_filename='configuration.yaml')
+
+    check_configuration(configuration, temperature_jacobian, force)
 
     use_third_parties = False
     third_party_path = Path(__file__).resolve().parent.parent/'third_party'

@@ -17,7 +17,7 @@ using TemperatureEnergyMonomial = {temperature_energy_monomial_typedef};
 using TemperatureGibbsMonomial = {temperature_gibbs_monomial_typedef};
 using ThermoTable = {scalar_list}<TemperatureEnergyMonomial, n_species>;
 using ChemicalState = {chemical_state_tyedef};
-using SpeciesJacobian = {jacobian_typedef};
+using {jacobian} = {jacobian_typedef};
 
 """.format(**vars(configuration), 
 n_species = int(n_species),
