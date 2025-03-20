@@ -106,7 +106,8 @@ call_forward_reaction_{reaction_index}({scalar_parameter} temperature, {scalar_p
         return rate;
 }}
     """
-    derivative_return_text ="""
+    if temperature_jacobian:
+        derivative_return_text ="""
 {device_option}
 {scalar_function}
 dcall_forward_reaction_{reaction_index}_dtemperature({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
@@ -115,8 +116,12 @@ dcall_forward_reaction_{reaction_index}_dtemperature({scalar_parameter} temperat
         {scalar} rate = {scalar_cast}(0);
 {dchoose_text_dtemperature}
         return rate;
-}}
-
+}}"""
+    else:
+        derivative_return_text +="""
+//dcall_forward_reaction_{reaction_index}_dtemperature is unused
+        """
+    derivative_return_text +="""
 {device_option}
 {scalar_function}
 dcall_forward_reaction_{reaction_index}_dpressure({scalar_parameter} temperature, {scalar_parameter} pressure) {const_option}
@@ -132,7 +137,7 @@ dcall_forward_reaction_{reaction_index}_dpressure({scalar_parameter} temperature
     return [return_text.format(**vars(configuration), reaction_index = reaction_index, choose_text = choose_text),
             derivative_return_text.format(**vars(configuration), reaction_index = reaction_index, dchoose_text_dpressure = dchoose_text_dpressure, dchoose_text_dtemperature = dchoose_text_dtemperature)]
                                      
-def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
+def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False, temperature_jacobian = False):
     reaction_rate = reaction.rate
     pressures = []
     As = []

@@ -11,27 +11,17 @@ class SourceJacobianWriter:
     {{
         {species} net_production_rates = {{{scalar_cast}(0)}};
         {jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};
-
         {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
-        {scalar} dinv_universal_gas_constant_temperature_dtemperature  = inv_chain(universal_gas_constant() * temperature, universal_gas_constant());
-        
         {scalar} log_temperature = log_gen(temperature);
-        {scalar} dlog_temperature_dtemperature = dlog_da(temperature);
         
         {gibbs}
         
         {scalar} pressure_ = pressure(species, temperature);
-        {scalar} dpressure_dtemperature_ = dpressure_dtemperature(species, temperature); //unchecked
         {species} dpressure_dspecies_ = dpressure_dspecies(species, temperature); //unchecked
         
         {scalar} mixture_concentration = 
         multiply(pressure_,
                  inv_universal_gas_constant_temperature);
-        {scalar} dmixture_concentration_dtemperature = 
-        multiply_chain(pressure_, 
-                       dpressure_dtemperature_,
-                       inv_universal_gas_constant_temperature,
-                       dinv_universal_gas_constant_temperature_dtemperature);
         
         {species} dmixture_concentration_dspecies = {species}{{1}}; // optimized (1/(RT))*(RT,...,RT)
         
@@ -42,7 +32,6 @@ class SourceJacobianWriter:
             if is_reversible[i]:
                 file.write("\n")
                 file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
-                file.write("        {scalar} dequilibrium_constant_{i}_dtemperature = {dequilibrium_constant};\n".format(i=i, dequilibrium_constant = dequilibrium_constants_dtemperature[i], **vars(configuration)))
                 file.write("\n")
             file.write(f"        {progress_rate}\n")
             file.write(f"        {progress_rates_derivatives[i]}")
@@ -74,15 +63,10 @@ class SourceJacobianWriter:
 
             dspecies_exist = False
             for dependent_variable in reactions_depend_on[reaction_index]:
-                if dependent_variable == "temperature":
-                    file.write(f"        {configuration.scalar} dforward_reaction_{reaction_index}_dtemperature = d{front}_dtemperature{back};\n")
                 if dependent_variable == "species":
                     file.write(f"        {configuration.species} dforward_reaction_{reaction_index}_dspecies = d{front}_dspecies{back};\n")
                     dspecies_exist = True
-                if dependent_variable == "log_temperature":
-                    file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dlog_temperature{back} * dlog_temperature_dtemperature;\n")
                 if dependent_variable == "pressure":
-                    file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dpressure{back} * dpressure_dtemperature_;\n")
                     if dspecies_exist:
                         file.write(f"        dforward_reaction_{reaction_index}_dspecies += scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
                     else:

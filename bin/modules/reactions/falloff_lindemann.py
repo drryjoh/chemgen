@@ -36,7 +36,7 @@ def dlindemann_text_dmixture_concentration(i, A_low, B_low, E_low, A_high, B_hig
                                      mixture_concentration = mixture_concentration, 
                                      dmixture_concentration_dspecies = dmixture_concentration_dspecies)
 
-def create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
+def create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False, temperature_jacobian = False):
     reaction_rate = reaction.rate
     if verbose:
         print(f"  Arrhenius Parameters (high pressure limit): A = {reaction_rate.high_rate.pre_exponential_factor}, "
@@ -59,18 +59,20 @@ def create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_rates
                                                     reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
                                                     reaction.efficiencies, species_names,
                                                     configuration)
-    reaction_rates_derivatives.append(dlindemann_text_dtemperature(reaction_index,
-                                                                   reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
-                                                                   reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
-                                                                   reaction.efficiencies, species_names,
-                                                                   configuration))
+    if temperature_jacobian:
+        reaction_rates_derivatives.append(dlindemann_text_dtemperature(reaction_index,
+                                                                    reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
+                                                                    reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
+                                                                    reaction.efficiencies, species_names,
+                                                                    configuration))
 
-    reaction_rates_derivatives.append(dlindemann_text_dlog_temperature(reaction_index,
-                                                                      reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
-                                                                      reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
-                                                                      reaction.efficiencies, species_names,
-                                                                      configuration))
-
+        reaction_rates_derivatives.append(dlindemann_text_dlog_temperature(reaction_index,
+                                                                        reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
+                                                                        reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
+                                                                        reaction.efficiencies, species_names,
+                                                                        configuration))
+    else:
+        reaction_rates_derivatives.append(f'//dcall_forward_reaction_{reaction_index} temperature derivative unused')
     reaction_rates_derivatives.append(dlindemann_text_dmixture_concentration(reaction_index,
                                                                              reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
                                                                              reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,

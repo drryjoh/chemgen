@@ -37,7 +37,7 @@ def dthird_body_text_dmixture_concentration(i, A, B, E, efficiencies, species_na
     return return_text.format(**vars(configuration), i = i, A = A, E = E, B = B, mixture_concentration = mixture_concentration)
 
 
-def create_reaction_functions_and_calls_third_body(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False):
+def create_reaction_functions_and_calls_third_body(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = False, temperature_jacobian = False):
     if verbose:
         print(f"  Arrhenius Parameters (3-body reaction): A = {reaction.rate.pre_exponential_factor}, "
             f"b = {reaction.rate.temperature_exponent}, "
@@ -54,8 +54,11 @@ def create_reaction_functions_and_calls_third_body(reaction_rates, reaction_rate
         third_body_multiplier = 'mixture_concentration'
         dthird_body_multiplier_dspecies_index = None 
     reaction_rates[reaction_index] = third_body_text(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, requires_mixture_concentration[reaction_index], configuration)
-    reaction_rates_derivatives.append(dthird_body_text_dtemperature(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, requires_mixture_concentration[reaction_index], configuration))
-    reaction_rates_derivatives.append(dthird_body_text_dlog_temperature(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, requires_mixture_concentration[reaction_index], configuration))
+    if temperature_jacobian:
+        reaction_rates_derivatives.append(dthird_body_text_dtemperature(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, requires_mixture_concentration[reaction_index], configuration))
+        reaction_rates_derivatives.append(dthird_body_text_dlog_temperature(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, requires_mixture_concentration[reaction_index], configuration))
+    else:
+        reaction_rates_derivatives.append(f'//dcall_forward_reaction_{reaction_index} temperature unused not needed')
     reaction_rates_derivatives.append(dthird_body_text_dmixture_concentration(reaction_index, reaction.rate.pre_exponential_factor, reaction.rate.temperature_exponent, reaction.rate.activation_energy, reaction.efficiencies, species_names, requires_mixture_concentration[reaction_index], dthird_body_multiplier_dspecies_index, configuration))
     reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, {third_body_multiplier});\n".format(**vars(configuration),reaction_index = reaction_index, third_body_multiplier = third_body_multiplier)
 

@@ -55,6 +55,7 @@ def main():
     parser.add_argument("--n-points-test", type=int, default=1000,  help="Number of points for testing (default: 1000)")
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose code generation")
     parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction")
+    parser.add_argument("--jacobian-temperature", action="store_true", default=False, help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
 
     args = parser.parse_args()
     
@@ -66,6 +67,11 @@ def main():
     if args.fit_gibbs_reaction == False:
         fit_gibbs_reaction  = False
         print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
+    
+    temperature_jacobian  = False
+    if args.fit_gibbs_reaction == True:
+        fit_gibbs_reaction  = True
+        print("Source Jacobain will be created with temperature derivatives")
 
     
     # Check if the destination folder exists, if not, create it
@@ -108,7 +114,7 @@ def main():
 
     third_parties = [use_third_parties, third_party_path, libraries]
     
-    headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction)
+    headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian)
 
     if "types_inl.h" in headers:
         headers.remove("types_inl.h")
