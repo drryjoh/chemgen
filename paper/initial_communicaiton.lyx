@@ -1944,6 +1944,7 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
+\align block
 Code generation is a well-established concept,
  with a history in chemistry applications.
  There are two publicly available code generators focused on gas-phase combustion:
@@ -3475,7 +3476,7 @@ nolink "false"
 \end_inset
 
 ,
- all of the supported functions of which chemgen supports will discussed next.
+ all of the supported functions of which ChemGen supports will discussed next.
 \end_layout
 
 \begin_layout Subsubsection

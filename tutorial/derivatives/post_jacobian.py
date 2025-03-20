@@ -9,7 +9,7 @@ def plot_heatmap(matrix):
     # Set the normalization to SymLogNorm to handle negative and small values
     norm = mcolors.SymLogNorm(linthresh=1e3, linscale=1, vmin=np.min(matrix), vmax=np.max(matrix))
 
-    sns.heatmap(matrix, annot=True, cmap="viridis", fmt="3.2e", linewidths=0.5, 
+    sns.heatmap(matrix, annot=False, cmap="jet", fmt="3.2e", linewidths=0.5, 
                 cbar=True, annot_kws={"size": 4}, norm=norm)
 
     plt.title("Jacobian at Intermediate State")
@@ -19,8 +19,8 @@ def plot_heatmap(matrix):
 
 # Load the matrix from file
 matrix = np.loadtxt("jacobian_out.txt", delimiter=',')
-eigenvalues = np.linalg.eigvals(matrix)
-print("Eigenvalues of the matrix:")
-print(eigenvalues)
+#eigenvalues = np.linalg.eigvals(matrix)
+#print("Eigenvalues of the matrix:")
+#print(eigenvalues)
 
 plot_heatmap(matrix)

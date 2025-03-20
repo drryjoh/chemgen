@@ -145,8 +145,6 @@ def check_gibbs_against_temperature(gas, temperature_min, temperature_max, n_sam
     gibbs_fit = np.zeros([gas.n_reactions, n_samples])
 
     log_T_energy_monomial_sequence = np.power(np.log(1800), np.linspace(0., order, num = order + 1))
-    print(log_T_energy_monomial_sequence)
-    print(gibbs_coefficients)
 
     for i, temperature in enumerate(temperatures):
         gas.TP = temperature, pressure_reference

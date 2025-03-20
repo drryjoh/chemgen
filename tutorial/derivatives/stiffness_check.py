@@ -99,8 +99,6 @@ std::vector<DataPoint> readDataFromFile(const std::string& filename) {{
 
 {index} main() {{
     std::cout << "*** ChemGen ***" <<std::endl<<std::endl;
-    std::ofstream outFile("simple_jacobian.txt");  // Open a file to write
-    std::ostream& os = outFile;  // Alias for cleaner code
 
     std::string filename = "{chemical_mechanism}_data.csv"; // Replace with actual filename
     std::vector<DataPoint> dataset = readDataFromFile(filename);

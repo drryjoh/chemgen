@@ -4,17 +4,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the reaction mechanism
-gas = ct.Solution("ffcm2_h2.yaml")
-gas = ct.Solution("burke.yaml")
-gas = ct.Solution("h2o2.yaml")
+mech = "FFCM2_model"
+gas = ct.Solution(f'{mech}.yaml')
+#gas = ct.Solution("burke.yaml")
+#gas = ct.Solution("h2o2.yaml")
 
 # Define initial conditions
 test_conditions = {
     "temperature": 1800,  # K
     "pressure": 101325.0,  # Pa
     "species": {
+        "C4H6":0.2,
         "O2": 0.2,
-        "N2": 0.6,
+        "N2": 0.4,
         "H2": 0.2
     }
 }
@@ -41,7 +43,7 @@ for t in time:
     network.advance(t)
     temperature.append(reactor.T)
     data.append([t, reactor.T] + list(reactor.thermo.concentrations))
-    if reactor.T > 2400 and not printed:
+    if reactor.T > 2100 and not printed:
         printed = True
         print(f"Pressure: {reactor.thermo.P}")
         print(f"Temperature: {reactor.T}")
@@ -52,7 +54,7 @@ for t in time:
 
     
 data = np.array(data)
-f = open("h2o2_data.csv","w")
+f = open(f"{mech}_data.csv","w")
 for line in data:
     line_to_write = ','.join([str(s) for s in line])
     f.write(f"{line_to_write}\n")
@@ -68,4 +70,4 @@ plt.xlabel("Time ($\mu$s)")
 plt.ylabel("Temperature (K)")
 plt.title("Temperature Evolution in Homogeneous Reactor")
 #plt.savefig("rk4.png")
-#plt.show()
+plt.show()
