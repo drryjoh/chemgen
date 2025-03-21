@@ -65,12 +65,12 @@ class SourceJacobianWriter:
             back = f"({call_split[1]}".replace(';','').replace('\n','')
 
             #assure log_temperature and pressure come after species and temperature
-            if "log_temperature" in reactions_depend_on:
-                reactions_depend_on.remove("log_temperature")
-                reactions_depend_on.append("log_temperature")
-            if "pressure" in reactions_depend_on:
-                reactions_depend_on.remove("pressure")
-                reactions_depend_on.append("pressure")
+            if "log_temperature" in reactions_depend_on[reaction_index]:
+                reactions_depend_on[reaction_index].remove("log_temperature")
+                reactions_depend_on[reaction_index].append("log_temperature")
+            if "pressure" in reactions_depend_on[reaction_index]:
+                reactions_depend_on[reaction_index].remove("pressure")
+                reactions_depend_on[reaction_index].append("pressure")
 
             for dependent_variable in reactions_depend_on[reaction_index]:
                 if dependent_variable == "temperature":
@@ -81,7 +81,10 @@ class SourceJacobianWriter:
                     file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dlog_temperature{back} * dlog_temperature_dtemperature;\n")
                 if dependent_variable == "pressure":
                     file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dpressure{back} * dpressure_dtemperature_;\n")
-                    file.write(f"        dforward_reaction_{reaction_index}_dspecies += scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
+                    if "species" not in reactions_depend_on[reaction_index]:
+                        file.write(f"        {configuration.species}   dforward_reaction_{reaction_index}_dspecies = scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
+                    else:
+                        file.write(f"        dforward_reaction_{reaction_index}_dspecies += scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
                 file.write('\n')
             file.write('\n')
 

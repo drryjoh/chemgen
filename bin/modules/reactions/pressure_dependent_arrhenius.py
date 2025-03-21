@@ -2,7 +2,7 @@ from .reaction_utility import *
 import numpy as np
 import sys
 
-def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration):
+def pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration, temperature_jacobian = False):
     choose_text = ''
     dchoose_text_dtemperature = ''
     dchoose_text_dpressure = ''
@@ -156,7 +156,7 @@ def create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_ra
         Es.append(rate.activation_energy)
 
     
-    [pressure_rate, pressure_rate_derivatives] = pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration)
+    [pressure_rate, pressure_rate_derivatives] = pressure_dependent_arrhenius_text(reaction_index, As, Bs, Es, pressures, species_names, configuration, temperature_jacobian)
     reaction_rates[reaction_index] = pressure_rate
     reaction_rates_derivatives.append(pressure_rate_derivatives)
     reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(temperature, pressure_);\n".format(**vars(configuration),reaction_index = reaction_index)    
