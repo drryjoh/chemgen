@@ -14,6 +14,8 @@
 //iverse
 {device_option} {scalar_function} inv_gen({scalar_parameter} a) {const_option} {{return {scalar_cast}(1)/a;}}
 {device_option} {scalar_function} dinv_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(-1)/pow2(a);}}
+{device_option} {scalar_function} inv_safe_gen({scalar_parameter} a) {const_option} {{return (a != {scalar_cast}(0)) ? ({scalar_cast}(1.0) / a) : {scalar_cast}(0.0);}}
+{device_option} {scalar_function} dinv_safe_da({scalar_parameter} a) {const_option} {{return (a != {scalar_cast}(0)) ? ({scalar_cast}(-1.0) / pow2(a)) : {scalar_cast}(0.0);}}
 {device_option} {scalar_function} inv_chain({scalar_parameter} a, {scalar_parameter} a_perturbation) {const_option} {{return {scalar}(-a_perturbation)/pow2(a);}}
 
 //divide

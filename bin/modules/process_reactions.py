@@ -282,8 +282,6 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
                     formatted_text += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += forward_reaction_{reaction_index};\n"
                 elif dforward_rate != '0':
                     formatted_text += f"        drate_of_progress_{reaction_index}_dspecies[{species_index}] += multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
-    if "temperature" in reactions_depend_on[reaction_index]:
-        formatted_text += f"std::cout << \"rate of progress dt for reaction {reaction_index}: \" <<drate_of_progress_{reaction_index}_dtemperature <<std::endl;\n"
     progress_rates_derivatives[reaction_index] = formatted_text
 
 def create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, dequilibrium_constants_dtemperature, configuration, fit_gibbs_reaction = True, temperature_jacobian = False):

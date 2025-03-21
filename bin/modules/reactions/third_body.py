@@ -33,7 +33,6 @@ def dthird_body_text_dmixture_concentration(i, A, B, E, efficiencies, species_na
         zero_species[dthird_body_multiplier_dspecies_index] = 'dthird_body_dmixture_concentration({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, log_temperature, {mixture_concentration})'
         single_species_return_text = '{{{joined}}}'.format(**vars(configuration), joined = ','.join(zero_species))
         return_text = "{device_option}\n{species_function} dcall_forward_reaction_{i}_dspecies({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option} {{ return" + f" {{{single_species_return_text}}}" + ";}}"
-        print(return_text)
     return return_text.format(**vars(configuration), i = i, A = A, E = E, B = B, mixture_concentration = mixture_concentration)
 
 
