@@ -4161,6 +4161,280 @@ for a in a_list:
 \end_layout
 
 \begin_layout Section
+Time Integration Strategies and Analytical Derivatives 
+\end_layout
+
+\begin_layout Standard
+The stability of the CFD time integration may be compromised by explicitly applying the source term of Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "enu:source"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ in a CFD formulation.
+ Different approaches can be utilized by time-splitting the evolution of the chemical state and retain the stability of the fluid dynamic algorithms.
+ These approaches typically do not involve the flux from either convection or diffusion.
+ By removing any spatial fluxes,
+ the conservation Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:conservation-law-strong-form"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ reduces to an ordinary differential equation,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial y_{f}}{\partial t}+\nabla\cdot\mathcal{F}\left(y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\rightarrow\frac{dy_{f}}{dt}=\mathcal{S}\left(y_{f}\right).\label{eq:conservation-law-to-ode}
+\end{equation}
+
+\end_inset
+
+By removing the spatial fluxes,
+ the fluid dynamic state is reduced to
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T}\rightarrow y_{f}=\left(0,\ldots,0,\rho u,C_{1},\ldots,C_{n_{s}}\right)^{T}\label{eq:ODE_state}
+\end{equation}
+
+\end_inset
+
+and by inspecting the source term,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{S}\left(y_{f}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:RNS_source}
+\end{equation}
+
+\end_inset
+
+the state can be reduced to be purely concentration based for time-split algorithms:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccc}
+\frac{dy}{dt}=\mathcal{S}\left(y\right); & y=\left(C_{1},\ldots,C_{n_{s}}\right)^{T}; & \mathcal{S}\left(y\right)=\left(\omega_{1},\ldots,\omega_{n_{s}}\right)^{T}.\end{array}\label{eq:extracted_problem}
+\end{equation}
+
+\end_inset
+
+In this section we will cover some tools provided by ChemGen to integrate this state in time.
+ We also comment on how ChemGen provides tools for non-time-split methods.
+\end_layout
+
+\begin_layout Subsection
+Explicit Runge-Kutta Time Integration Method
+\end_layout
+
+\begin_layout Standard
+ChemGen provides a Runge-Kutta 4th-order method for integrating the chemical state from 
+\begin_inset Formula $y^{n}$
+\end_inset
+
+ to 
+\begin_inset Formula $y^{n+1}$
+\end_inset
+
+ over an time interval of 
+\begin_inset Formula $\Delta t$
+\end_inset
+
+ for the time split state from Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:extracted_problem"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ The algorithm is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccc}
+k_{1} & = & \mathcal{S}\left(y^{n}\right)\\
+k_{2} & = & \mathcal{S}\left(y^{n}+\frac{\Delta t}{2}k_{1}\right)\\
+k_{3} & = & \mathcal{S}\left(y^{n}+\frac{\Delta t}{2}k_{2}\right)\\
+k_{4} & = & \mathcal{S}\left(y_{n}+\Delta tk_{3}\right)\\
+y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
+\end{array}\label{eq:RK4}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+##Insert Picture of RK4 comparison
+\end_layout
+
+\begin_layout Subsection
+Implicit Time Integration
+\end_layout
+
+\begin_layout Standard
+Explicit time integration methods can still have stability issues whereas an implicit time integration method can achieve stability but the overhead of the time integration scheme may be larger.
+ Consider first the backwards Euler implicit time integration methods which seeks to find a 
+\begin_inset Formula $y^{n+1}$
+\end_inset
+
+ that satisfies given an initial state 
+\begin_inset Formula $y^{n}$
+\end_inset
+
+ ,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{y^{n+1}-y^{n}}{\Delta t}=\mathcal{S}\left(y^{n+1}\right)\label{eq:Backward_euler}
+\end{equation}
+
+\end_inset
+
+The Newton's method can be used to iteratively find 
+\begin_inset Formula $y^{n+1}$
+\end_inset
+
+ by rewriting 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{-y^{n}}{\Delta t}+\frac{y^{n+1}}{\Delta t}-\mathcal{S}\left(y^{n+1}\right)=f(y^{n+1})=0\label{eq:BE-rewrite}
+\end{equation}
+
+\end_inset
+
+and solving the decrement
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta y^{n+1}=\left(y_{k+1}^{n+1}-y_{k}^{n+1}\right)=-\mathcal{J}\left(y_{k}^{n+1}\right)^{-1}f(y_{k}^{n+1})\label{eq:newtons-method}
+\end{equation}
+
+\end_inset
+
+Where 
+\begin_inset Formula $\mathcal{J}\left(y_{k}^{n+1}\right)$
+\end_inset
+
+ is the Jacobian of 
+\begin_inset Formula $f(y_{k}^{n+1})$
+\end_inset
+
+ which for this backwards Euler method is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=\partial_{ij}\Delta t-\frac{\partial\omega_{i}}{\partial C_{j}}\text{; }\delta_{ij}=\begin{cases}
+1 & i=j\\
+0 & i\ne j
+\end{cases}\label{eq:jacobian}
+\end{equation}
+
+\end_inset
+
+Which requires the partial derivative of the production term with respect to each individual species.
+ Regardless of the discretization scheme,
+ the derivatives of the production rates will be needed.
+ ChemGen was designed to include full differentiation throughout,
+ each function contains a derivative and possible chain rule.
+ 
+\end_layout
+
+\begin_layout Standard
+It is important to note that Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jacobian"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ is for the special case of time-split chemistry for a constant internal energy.
+ If a fully implicit scheme or a scheme with a source term applied to a derived energy equation (such as enthalpy) is formulated,
+ the derivatives for the source term with respect to temperature will be necessary.
+ For instance,
+ in using a fully implicit time integration scheme for fluid dynamics state 
+\begin_inset Formula $y_{f}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $\rho u$
+\end_inset
+
+ can not be eliminated from the state and thus 
+\begin_inset Formula $\frac{\partial\omega_{i}}{\partial\rho u}$
+\end_inset
+
+ will be required but easily obtained via chain rule
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\omega_{i}}{\partial\rho u}=\frac{\partial\omega_{i}}{\partial T}\left(\frac{\partial\rho u}{\partial T}\right)^{-1}+\sum_{j=1}^{n_{s}}\frac{\partial\omega_{i}}{\partial C_{j}}\left(\frac{\partial\rho u}{\partial C_{j}}\right)^{-1}\label{eq:jacobian-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Results
 \end_layout
 
