@@ -4371,7 +4371,7 @@ Where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=\partial_{ij}\Delta t-\frac{\partial\omega_{i}}{\partial C_{j}}\text{; }\delta_{ij}=\begin{cases}
+\mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=\delta_{ij}\Delta t-\frac{\partial\omega_{i}}{\partial C_{j}}\text{; }\delta_{ij}=\begin{cases}
 1 & i=j\\
 0 & i\ne j
 \end{cases}\label{eq:jacobian}
@@ -4403,7 +4403,7 @@ nolink "false"
 
 \end_inset
 
- is for the special case of time-split chemistry for a constant internal energy.
+ is for the special case of time-split chemistry for a constant internal energy which acts as a global variable and is not part of the state.
  If a fully implicit scheme or a scheme with a source term applied to a derived energy equation (such as enthalpy) is formulated,
  the derivatives for the source term with respect to temperature will be necessary.
  For instance,
@@ -4426,12 +4426,70 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\omega_{i}}{\partial\rho u}=\frac{\partial\omega_{i}}{\partial T}\left(\frac{\partial\rho u}{\partial T}\right)^{-1}+\sum_{j=1}^{n_{s}}\frac{\partial\omega_{i}}{\partial C_{j}}\left(\frac{\partial\rho u}{\partial C_{j}}\right)^{-1}\label{eq:jacobian-1}
+\frac{\partial\omega_{i}}{\partial\rho u}=\frac{\partial\omega_{i}}{\partial T}\left(\frac{\partial\rho u}{\partial T}\right)^{-1}+\sum_{j=1}^{n_{s}}\frac{\partial\omega_{i}}{\partial C_{j}}\left(\frac{\partial\rho u}{\partial C_{j}}\right)^{-1}\label{eq:chain_int_energy}
 \end{equation}
 
 \end_inset
 
+Chemgen provides the necessary derivatives for Equation
+\begin_inset space ~
+\end_inset
 
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jacobian"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ in a singular matrix as well as a larger matrix that can be generated to utilize the chain rule from Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:chain_int_energy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{a}\left(C_{i},T\right)_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}\text{ and }\mathcal{J}_{b}\left(C_{i},T\right)_{ij}=\begin{cases}
+\frac{\partial\omega_{i}}{\partial T} & i=1\dots n_{s};j=1\\
+\frac{\partial\omega_{i}}{\partial C_{j-1}} & i=1\dots n_{s};j=2\dots n_{s}+1;
+\end{cases}\label{eq:derivative_matrices}
+\end{equation}
+
+\end_inset
+
+Thus 
+\begin_inset Formula $\mathcal{J}_{a}$
+\end_inset
+
+ or 
+\begin_inset Formula $\mathcal{J}_{b}$
+\end_inset
+
+ can be used to assemble the necessary Jacobian,
+ 
+\begin_inset Formula $\mathcal{J}$
+\end_inset
+
+,
+ provided other derivatives are available beyond the source terms.
 \end_layout
 
 \begin_layout Section
