@@ -1,3 +1,4 @@
+#!python3
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -9,7 +10,7 @@ def plot_heatmap(matrix, file, i):
     # Set the normalization to SymLogNorm to handle negative and small values
     norm = mcolors.SymLogNorm(linthresh=1e3, linscale=1, vmin=np.min(matrix), vmax=np.max(matrix))
 
-    sns.heatmap(matrix, annot=True, cmap="viridis", fmt="3.2e", linewidths=0.5, 
+    sns.heatmap(matrix, annot=False, cmap="viridis", fmt="3.2e", linewidths=0.5, 
                 cbar=True, annot_kws={"size": 4}, norm=norm)
 
     plt.title("Jacobian at Intermediate State")
@@ -18,8 +19,8 @@ def plot_heatmap(matrix, file, i):
     plt.savefig(f"images/{file}_{i}.png")
 
 # Load the matrix from file
-file = "h2o2"
-n_time_steps = 300
+file = "FFCM2_model"
+n_time_steps = 200
 stiffness = np.zeros(n_time_steps)
 condition = np.zeros(n_time_steps)
 for i in range(n_time_steps):

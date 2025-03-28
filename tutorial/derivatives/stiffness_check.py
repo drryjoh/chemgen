@@ -122,13 +122,13 @@ std::vector<DataPoint> readDataFromFile(const std::string& filename) {{
         std::string jacobian_filename = filename_stream.str();
         std::ofstream jacobian_file(jacobian_filename);
         std::ostream& jac = jacobian_file;  // Alias for cleaner code
-        
+ /*       
         {scalar} dt = {scalar_cast}(6.688963210702341e-07);
         for({index} i = 0; i <n_species; i++)
         {{
             dSdy[i][i] = dSdy[i][i]  - 1/dt;
         }}
-        
+ */       
         for({index} i = 0; i <n_species; i++)
         {{
             for({index} sp = 0; sp<n_species-1; sp++)

@@ -6,25 +6,30 @@ import matplotlib.pyplot as plt
 # Load the reaction mechanism
 mech = "FFCM2_model"
 gas = ct.Solution(f'{mech}.yaml')
-#gas = ct.Solution("burke.yaml")
-#gas = ct.Solution("h2o2.yaml")
+
 
 # Define initial conditions
 test_conditions = {
-    "temperature": 1800,  # K
+    "temperature": 2200,  # K
     "pressure": 101325.0,  # Pa
     "species": {
-        "C4H6":0.2,
+        "C2H4":0.2,
         "O2": 0.2,
         "N2": 0.4,
         "H2": 0.2
     }
 }
 
-gas.TPX = (
+fuel = 'C2H4'
+oxidizer = 'O2:1, N2:3.76'
+
+# Set the equivalence ratio
+phi = 1.0
+gas.set_equivalence_ratio(phi, fuel, oxidizer)
+
+gas.TP= (
     test_conditions["temperature"],
-    test_conditions["pressure"],
-    test_conditions["species"]
+    test_conditions["pressure"]
 )
 
 # Create a reactor and insert the gas
@@ -32,8 +37,8 @@ reactor = ct.IdealGasReactor(gas)
 network = ct.ReactorNet([reactor])
 
 # Define simulation time (in seconds)
-time_end = 200000 * 1e-9  # Convert ns to seconds
-n_steps = 300  # Number of time steps
+time_end = 10000 * 1e-9  # Convert ns to seconds
+n_steps = 200  # Number of time steps
 time = np.linspace(0, time_end, n_steps)
 
 temperature = []

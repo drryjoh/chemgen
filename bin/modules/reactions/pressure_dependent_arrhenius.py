@@ -118,6 +118,9 @@ dcall_forward_reaction_{reaction_index}_dtemperature({scalar_parameter} temperat
         return rate;
 }}"""
     else:
+        derivative_return_text ="""
+//dcall_forward_reaction_{reaction_index}_dtemperature is unused
+        """
         derivative_return_text +="""
 //dcall_forward_reaction_{reaction_index}_dtemperature is unused
         """
