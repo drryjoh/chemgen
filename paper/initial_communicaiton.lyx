@@ -4492,6 +4492,171 @@ Thus
  provided other derivatives are available beyond the source terms.
 \end_layout
 
+\begin_layout Subsection
+Higher-Order Implicit Time Integration
+\end_layout
+
+\begin_layout Subsubsection
+SDIRK-2
+\end_layout
+
+\begin_layout Standard
+The method has two stages resulting 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\Gamma_{1} & = & \mathcal{S}\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)\label{eq:SDIRK2}\\
+\Gamma_{2} & = & \mathcal{S}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)\nonumber \\
+y_{n+1} & = & y_{n}+\Delta t\left[(1-\gamma)\Gamma_{1}+\gamma\Gamma_{2}\right]\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+For the first stage 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+f\left(\Gamma_{1}\right)=\Gamma_{1}-\mathcal{S}\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta\Gamma_{1}=\left(\Gamma_{1,k+1}-\Gamma_{1,k}\right)=-\mathcal{J}\left(\Gamma_{1,k}\right)^{-1}f(\Gamma_{1,k})\label{eq:newtons-method-sdirk2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(\Gamma_{1,k}\right)\delta\Gamma_{1}=-f(\Gamma_{1,k})\label{eq:newtons-method-sdirk2-1}
+\end{equation}
+
+\end_inset
+
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{ij}\left(\Gamma_{1,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+\gamma\Delta t\Gamma_{1,k}\right)}{\partial\left(\Gamma_{1,k}\right)_{j}}\label{eq:newtons-method-sdirk2-1-1}
+\end{equation}
+
+\end_inset
+
+Here 
+\begin_inset Formula $\omega_{i}$
+\end_inset
+
+ is evaluated from the initial guess of 
+\begin_inset Formula $\Gamma_{1,k=1}=\mathcal{S}\left(y_{n}\right)$
+\end_inset
+
+ with subsequent 
+\begin_inset Formula $\Gamma_{1,k}$
+\end_inset
+
+ coming from the iterated for decrement,
+ 
+\begin_inset Formula $\Gamma_{1,k+1}=\Gamma_{1,k}+\delta\Gamma_{1}$
+\end_inset
+
+.
+ Once 
+\begin_inset Formula $\Gamma_{1,k}$
+\end_inset
+
+ is realized the next stage can be solved for in a similar manner
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+f\left(\Gamma_{2}\right)=\Gamma_{2}-\mathcal{S}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta\Gamma_{2}=\left(\Gamma_{2,k+1}-\Gamma_{2,k}\right)=-\mathcal{J}\left(\Gamma_{2,k}\right)^{-1}f(\Gamma_{2,k})\label{eq:newtons-method-sdirk2-2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(\Gamma_{2,k}\right)\delta\Gamma_{2}=-f(\Gamma_{2,k})\label{eq:newtons-method-sdirk2-1-2}
+\end{equation}
+
+\end_inset
+
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{ij}\left(\Gamma_{2,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2,k}\right)}{\partial\left(\Gamma_{2,k}\right)_{j}}\label{eq:newtons-method-sdirk2-1-1-1}
+\end{equation}
+
+\end_inset
+
+Here 
+\begin_inset Formula $\omega_{i}$
+\end_inset
+
+ is evaluated from the initial guess of 
+\begin_inset Formula $\Gamma_{2,k=1}=\mathcal{S}\left(y_{n}\right)$
+\end_inset
+
+ with subsequent 
+\begin_inset Formula $\Gamma_{2,k}$
+\end_inset
+
+ coming from the iterated for decrement,
+ 
+\begin_inset Formula $\Gamma_{2,k+1}=\Gamma_{2,k}+\delta\Gamma_{2}$
+\end_inset
+
+.
+ Once 
+\begin_inset Formula $\Gamma_{2,k}$
+\end_inset
+
+ is realized the next stage can be solved for in a similar manner.
+\end_layout
+
+\begin_layout Subsubsection
+SDIRK-4
+\end_layout
+
+\begin_layout Subsubsection
+Rosenbrock
+\end_layout
+
 \begin_layout Section
 Results
 \end_layout
