@@ -97,73 +97,109 @@ def sdirk4(y0, dt, n_time_steps, n_newton=5):
     I = np.eye(len(y0))
 
     # Coefficients for Kaps–Rentrop SDIRK-4 method
-    gamma = 0.4358665215  # diagonal elements a_ii for all stages
+    
+    #0.20
+    #0.15 0.20
+    #0.78518518518519 0.98518518518519 0.20
+    #0.70671936788942 0.19819311123659 0.09147374364765 0.20
+    #0.4074074074074 0.4074074074074 0.10714285714286 0.46851851851852
+    
+    gamma = .26666666666666666666666666666666670
 
-    a21 = 0.5529291481
-    a31 = 0.2466725606
-    a32 = 0.4265742951
-    a41 = 0.1881405927
-    a42 = 0.6211338564
-    a43 = -0.0680079704
+    a11 = .26666666666666666666666666666666670
+    a21 = .50000000000000000000000000000000000
+    a22 = .26666666666666666666666666666666670
+    a31 = .35415395284327323162274618585298200
+    a32 = -.5415395284327323162274618585298197e-1
+    a33 = .26666666666666666666666666666666670
+    a41 = .8515494131138652076337791881433756e-1
+    a42 = -.6484332287891555171683963466229754e-1
+    a43 = .7915325296404206392428857585141242e-1
+    a44 = .26666666666666666666666666666666670
+    a51 = 2.1001157005669327779706120559990740
+    a52 = -.76778002844459768133431021850622760
+    a53 = 2.3998163610800263980947462052738800
+    a54 = -2.9988186998690281613977147094333940
+    a55 = .26666666666666666666666666666666670
 
-    b1  = 0.1881405927
-    b2  = 0.6211338564
-    b3  = -0.0680079704
-    b4  = 0.2587335203
+    b1   = 2.1001157005669327779706120559990740
+    b2   = -.76778002844459768133431021850622760
+    b3   = 2.3998163610800263980947462052738800
+    b4   = -2.9988186998690281613977147094333940
+    b5   = .26666666666666666666666666666666670
+
+    #gamma = 0.4358665215  # diagonal elements a_ii for all stages
+    #a21 = 0.5529291481
+    #a31 = 0.2466725606
+    #a32 = 0.4265742951
+    #a41 = 0.1881405927
+    #a42 = 0.6211338564
+    #a43 = -0.0680079704
+
+    #b1  = 0.1881405927
+    #b2  = 0.6211338564
+    #b3  = -0.0680079704
+    #b4  = 0.2587335203
 
     for t in range(n_time_steps):
-        k = [np.zeros_like(yn) for _ in range(4)]
+        k = [source_1pt3(yn) for _ in range(5)]
 
         # Stage 1
-        a_ii = gamma
         for _ in range(n_newton):
-            y_stage = yn + dt * a_ii * k[0]
+            y_stage = yn + dt * gamma * k[0]
             f = source_1pt3(y_stage)
             res = k[0] - f
-            J = I - dt * a_ii * dsource_1pt3_dy(y_stage)
+            J = I - dt * gamma * dsource_1pt3_dy(y_stage)
             delta, _ = gmres(J, -res)
             k[0] += delta
             if np.linalg.norm(res) < 1e-10:
                 break
 
         # Stage 2
-        a_ii = gamma
         for _ in range(n_newton):
-            y_stage = yn + dt * (a21 * k[0] + a_ii * k[1])
+            y_stage = yn + dt * (a21 * k[0] + gamma * k[1])
             f = source_1pt3(y_stage)
             res = k[1] - f
-            J = I - dt * a_ii * dsource_1pt3_dy(y_stage)
+            J = I - dt * gamma * dsource_1pt3_dy(y_stage)
             delta, _ = gmres(J, -res)
             k[1] += delta
             if np.linalg.norm(res) < 1e-10:
                 break
 
         # Stage 3
-        a_ii = gamma
         for _ in range(n_newton):
-            y_stage = yn + dt * (a31 * k[0] + a32 * k[1] + a_ii * k[2])
+            y_stage = yn + dt * (a31 * k[0] + a32 * k[1] + gamma * k[2])
             f = source_1pt3(y_stage)
             res = k[2] - f
-            J = I - dt * a_ii * dsource_1pt3_dy(y_stage)
+            J = I - dt * gamma * dsource_1pt3_dy(y_stage)
             delta, _ = gmres(J, -res)
             k[2] += delta
             if np.linalg.norm(res) < 1e-10:
                 break
 
         # Stage 4
-        a_ii = gamma
         for _ in range(n_newton):
-            y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + a_ii * k[3])
+            y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + gamma * k[3])
             f = source_1pt3(y_stage)
             res = k[3] - f
-            J = I - dt * a_ii * dsource_1pt3_dy(y_stage)
+            J = I - dt * gamma * dsource_1pt3_dy(y_stage)
             delta, _ = gmres(J, -res)
             k[3] += delta
             if np.linalg.norm(res) < 1e-10:
                 break
-
+    
+        # Stage 5
+        for _ in range(n_newton):
+            y_stage = yn + dt * (a51 * k[0] + a52 * k[1] + a53 * k[2] +a54 * k[3] + gamma * k[4])
+            f = source_1pt3(y_stage)
+            res = k[4] - f
+            J = I - dt * gamma * dsource_1pt3_dy(y_stage)
+            delta, _ = gmres(J, -res)
+            k[4] += delta
+            if np.linalg.norm(res) < 1e-10:
+                break
         # Final update
-        yn = yn + dt * (b1 * k[0] + b2 * k[1] + b3 * k[2] + b4 * k[3])
+        yn = yn + dt * (b1 * k[0] + b2 * k[1] + b3 * k[2] + b4 * k[3] + b5 * k[4])
         ys.append(yn)
         time.append(time[-1] + dt)
 
