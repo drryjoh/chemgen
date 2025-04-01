@@ -205,33 +205,61 @@ def sdirk4(y0, dt, n_time_steps, n_newton=5):
 
     return np.array(time), np.array(ys)
 
+def rosenbrock2(y0, dt, n_time_steps):
+    yn = y0.copy()
+    ys = [y0]
+    time = [0.0]
+    I = np.eye(len(y0))
+
+    gamma = 1.0 + 1.0 / np.sqrt(2)  # ~0.2928932188
+    alpha = 1.0/gamma
+    beta = -2/gamma
+    m1 = 3.0/(2.0*gamma)
+    m2 = 1.0/(2*gamma)
+
+    for t in range(n_time_steps):
+        J = dsource_1pt3_dy(yn)  # Jacobian at y_n
+        G = (1.0/(gamma* dt)) * I - J   # shared for all stages
+
+        # Stage 1
+        rhs1 = source_1pt3(yn)
+        k1, _ = gmres(G, rhs1)
+
+        # Stage 2
+        y_stage = yn + alpha * k1
+        rhs2 = source_1pt3(y_stage) + beta/dt *k1 #source_1pt3(y_stage) - J @ (a21 * dt * k1)
+        k2, _ = gmres(G, rhs2)
+
+        # Combine stages
+        yn = yn + m1 * k1 + m2 * k2
+        ys.append(yn)
+        time.append(time[-1] + dt)
+
+    return np.array(time), np.array(ys)
+
 
 y0 = np.array([1.0, 0.0, 0.0])
-dt = 1e-2
+dt = 1e-3
 time_final = 0.3
 n_time_steps = int(time_final / dt)
 
-#time_be, y_be = backwards_euler(y0, dt, n_time_steps, n_newton = 5)
-#time_be_h2, y_be_h2 = backwards_euler(y0, dt/2.0, 2 * n_time_steps, n_newton = 5)
-#time_be_h4, y_be_h4 = backwards_euler(y0, dt/4.0, 4 * n_time_steps, n_newton = 5)
-time_be_h8, y_be_h8 = backwards_euler(y0, dt/8.0, 8 * n_time_steps, n_newton = 5)
-time_sdirk2, y_sdirk2 = sdirk2(y0, dt/8.0, 8*n_time_steps, n_newton = 5)
-time_sdirk4, y_sdirk4 = sdirk4(y0, dt/8.0, 8*n_time_steps, n_newton = 5)
-time_be_h16, y_be_h16 = backwards_euler(y0, dt/16.0, 16 * n_time_steps, n_newton = 5)
-time_be_h32, y_be_h32 = backwards_euler(y0, dt/100.0, 100 * n_time_steps, n_newton = 5)
-time_sdirk2_16, y_sdirk2_16 = sdirk2(y0, dt/16.0, 16*n_time_steps, n_newton = 5)
-# Plot y[1] (middle component)
-#plt.plot(time_be, y_be[:, 1])
-#plt.plot(time_be_h2, y_be_h2[:, 1])
-#plt.plot(time_be_h4, y_be_h4[:, 1])
-plt.plot(time_be_h8, y_be_h8[:, 1],'-r')
+time_be, y_be = backwards_euler(y0, dt, n_time_steps, n_newton = 5)
+time_sdirk2, y_sdirk2 = sdirk2(y0, dt, n_time_steps, n_newton = 5)
+time_sdirk4, y_sdirk4 = sdirk4(y0, dt, n_time_steps, n_newton = 5)
+time_be_h2, y_be_h2 = backwards_euler(y0, dt/2.0, 2 * n_time_steps, n_newton = 5)
+time_be_h10, y_be_h10 = backwards_euler(y0, dt/10.0, 10 * n_time_steps, n_newton = 5)
+time_sdirk2_h2, y_sdirk2_h2 = sdirk2(y0, dt/2, 2*n_time_steps, n_newton = 5)
+time_ros2, y_ros2 = rosenbrock2(y0, dt, n_time_steps)
+
+plt.plot(time_be, y_be[:, 1],'-r')
 plt.plot(time_sdirk2, y_sdirk2[:, 1],'-k')
 plt.plot(time_sdirk4, y_sdirk4[:, 1],'-b')
-plt.plot(time_be_h16, y_be_h16[:, 1],'--r')
-plt.plot(time_be_h32, y_be_h32[:, 1],'-.r')
-plt.plot(time_sdirk2_16, y_sdirk2_16[:, 1],'--k')
-plt.ylim([3.625e-5, 3.66e-5])
-plt.xlim([0, 0.05])
+plt.plot(time_be_h2, y_be_h2[:, 1],'--r')
+plt.plot(time_be_h10, y_be_h10[:, 1],'-.r')
+plt.plot(time_sdirk2_h2, y_sdirk2_h2[:, 1],'--k')
+plt.plot(time_ros2, y_ros2[:, 1],'--g')
+plt.ylim([3.636e-5, 3.65e-5])
+plt.xlim([0, 0.03])
 plt.xlabel("Time")
 plt.ylabel("y[1]")
 plt.title("Implicit GMRES Solve of dy/dt = source(y)")

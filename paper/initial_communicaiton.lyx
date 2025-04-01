@@ -4653,8 +4653,91 @@ Here
 SDIRK-4
 \end_layout
 
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+y_{n+1} & = & y_{n}+\Delta t\sum_{i=1}^{5}b_{i}\Gamma_{i}\\
+\Gamma_{p} & = & \mathcal{S}\left(y_{n}+\sum_{j=1}^{i}a_{pj}\Delta t\Gamma_{j}\right)
+\end{eqnarray*}
+
+\end_inset
+
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccccc}
+a_{ii}=0.2\bar{6} & a_{21}=0.5 & a_{31}=3.541539\times10^{-1} & a_{32}=-5.415395\times10^{-2} & a_{41}=8.515494\times10^{-2}\\
+a_{42}=-6.484332\times10^{-2} & a_{43}=7.915325\times10^{-2} & a_{51}=2.100115 & a_{53}=2.399816 & a_{54}=-2.998818\\
+b_{1}=2.100115 & b_{2}=-7.677800\times10^{-1} & b_{3}=2.399816 & b_{4}=-2.998818 & b_{5}=2\bar{6}
+\end{array}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+f\left(\Gamma_{p}\right)=\Gamma_{p}-\mathcal{S}\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\Gamma_{j}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta\Gamma_{p}=\left(\Gamma_{p,k+1}-\Gamma_{p,k}\right)=-\mathcal{J}\left(\Gamma_{p,k}\right)^{-1}f(\Gamma_{p,k})\label{eq:newtons-method-sdirk2-2-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(\Gamma_{p,k}\right)\delta\Gamma_{p}=-f(\Gamma_{p,k})\label{eq:newtons-method-sdirk2-1-2-1}
+\end{equation}
+
+\end_inset
+
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{ij}\left(\Gamma_{p,k}\right)=\delta_{ij}-a_{pp}\Delta t\frac{\partial\omega_{i}\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\left(\Gamma_{j}\right)_{k}\right)}{\partial\left(\Gamma_{p,k}\right)_{j}}\label{eq:newtons-method-sdirk2-1-1-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Rosenbrock
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{1}{\gamma} & = & y_{n}+\Delta t\sum_{i=1}^{5}b_{i}\Gamma_{i}\\
+\Gamma_{p} & = & \mathcal{S}\left(y_{n}+\sum_{j=1}^{i}a_{pj}\Delta t\Gamma_{j}\right)
+\end{eqnarray*}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
