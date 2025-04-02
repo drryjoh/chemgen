@@ -45,6 +45,7 @@ decorators:
   powmath: "std::pow"
   logmath: "std::log"
   log10math: "std::log10"
+  sqrtmath: "std::sqrt"
 
   device_sum: "std::accumulate(a_s.begin(), a_s.end(), {scalar_cast}(0.0))"
   device_fill: "std::fill(b_s.begin(), b_s.end(), a)"
@@ -54,6 +55,7 @@ decorators:
   sum: "sum_gen"
   fill: "fill_gen"
   scale: "scale_gen"
+  sqrt: "sqrt_gen"
 
 build:
   chemgen_smp: None 

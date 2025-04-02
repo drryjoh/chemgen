@@ -33,9 +33,15 @@ def create_headers(configuration, chemistry_solver, destination_folder):
 
     if chemistry_solver:
         code_directory = Path('src') / 'solvers'
-        if chemistry_solver == "rk4":
+        file_names = []
+        if chemistry_solver.lower() == "rk4":
             file_names = ['rk4.h.in']
-            make_headers(code_directory, file_names, headers, configuration, destination_folder)
+        elif chemistry_solver.lower() = "backwards_euler":
+            file_names = ['backwards_euler.h.in']
+        else:
+            print("Chemistry Solver not recognized")
+            exit()
+        make_headers(code_directory, file_names, headers, configuration, destination_folder)
     return headers
 
 def clear_headers(directory):

@@ -1,11 +1,11 @@
 decorators:
-  scalar: "float"
-  scalar_function: "float"
-  scalar_cast: "float"
-  scalar_parameter: "const float&"
+  scalar: "double"
+  scalar_function: "double"
+  scalar_cast: "double"
+  scalar_parameter: "const double&"
   n_thermo_order: "7"
   scalar_list: "std::array"
-  temperature_monomial_typedef: "std::array<float, n_order_thermo>"
+  temperature_monomial_typedef: "std::array<double, n_order_thermo>"
   temperature_monomial_function: "TemperatureMonomial"
   temperature_monomial: "TemperatureMonomial"
   temperature_monomial_parameter: "const TemperatureMonomial&"
@@ -21,7 +21,7 @@ decorators:
   index: "int"
   string: "std::string"
 
-  species_typedef: "std::array<float, n_species>"
+  species_typedef: "std::array<double, n_species>"
   species: "Species"
   species_function: "Species"
   species_cast: "Species"
@@ -30,20 +30,20 @@ decorators:
   
   arbitrary_element: "{name}[{{i}}]"
 
-  reactions_typedef: "std::array<float, n_reactions>"
+  reactions_typedef: "std::array<double, n_reactions>"
   reactions: "Reactions"
   reactions_function: "Reactions"
   reactions_cast: "Reactions"
   reactions_parameter: "const Reactions&"
   reactions_element: "reactions[{i}]"
 
-  chemical_state_typedef: "std::array<float, n_species+1>"
+  chemical_state_typedef: "std::array<double, n_species+1>"
   chemical_state: "ChemicalState"
   chemical_state_function: "ChemicalState"
   chemical_state_cast: "ChemicalState"
   chemical_state_parameter: "const ChemicalState&"
   chemical_state_element: "chemical_state[{i}]"
-  
+
   jacobian_typedef: "std::array<Species, n_species>"
   jacobian: "SpeciesJacobian"
   jacobian_function: "SpeciesJacobian"
@@ -54,7 +54,7 @@ decorators:
   source_element: "net_production_rates[{i}]"
   const_option: ""
   constexpr: "constexpr"
-  device_option: ""
+  device_option: "__kokkos__"
   expmath: "std::exp"
   powmath: "std::pow"
   logmath: "std::log"
@@ -75,3 +75,5 @@ build:
   chemgen_smp: None 
   chemgen_optimized: O2
 
+solver:
+  chemistry_solver: backwards_euler 

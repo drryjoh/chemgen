@@ -26,3 +26,7 @@
 //derivatives * increment
 {device_option} {scalar_function} divide_chain({scalar_parameter} a, {scalar_parameter} a_perturbation, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{return a_perturbation / b + -a / pow2(b) * b_perturbation;}}
 
+{device_option} {scalar_function} sqrt_gen({scalar_parameter} a) {const_option} {{return {sqrt_math}(a);}}
+{device_option} {scalar_function} dsqrt_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(0.5) * inv_gen({sqrt_math}(a));}}
+{device_option} {scalar_function} sqrt_chain({scalar_parameter} a, {scalar_parameter} da) {const_option} {{return {scalar_cast}(0.5) * da * inv_gen({sqrt_math}(a));}}
+
