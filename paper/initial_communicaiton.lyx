@@ -4725,15 +4725,43 @@ Where
 \end_layout
 
 \begin_layout Subsubsection
-Rosenbrock
+2nd order Rosenbrock
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
-\frac{1}{\gamma} & = & y_{n}+\Delta t\sum_{i=1}^{5}b_{i}\Gamma_{i}\\
-\Gamma_{p} & = & \mathcal{S}\left(y_{n}+\sum_{j=1}^{i}a_{pj}\Delta t\Gamma_{j}\right)
+\left(\frac{1}{\Delta t\gamma_{11}}\mathcal{I}-J_{n}\right)\Gamma_{1} & = & \mathcal{S}\left(y_{n}\right)\\
+\left(\frac{1}{\Delta t\gamma_{22}}\mathcal{I}-J_{n}\right)\Gamma_{2} & = & \mathcal{S}\left(y_{n}+\alpha\Gamma_{1}\right)+\frac{\beta}{\Delta t}\Gamma_{1}\\
+y_{n+1} & = & y_{n}+m_{1}\Gamma_{1}+m_{2}\Gamma_{2}
 \end{eqnarray*}
+
+\end_inset
+
+Where 
+\begin_inset Formula $J_{n}$
+\end_inset
+
+ is the Jacobian held constant for both stages - the time discretization,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{n,ij}\left(\Gamma_{p,k}\right)=\frac{\partial\omega_{i}\left(y_{n}\right)}{\partial y_{n,j}}\label{eq:newtons-method-sdirk2-1-1-1-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccccc}
+\gamma_{ii}=\gamma= & 1+\frac{1}{\sqrt{2}}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}
+\end{equation}
 
 \end_inset
 
