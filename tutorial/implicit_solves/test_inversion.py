@@ -1,7 +1,98 @@
 #!/usr/bin/env python3
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.sparse.linalg import gmres
+import time
+
+import numpy as np
+
+def back_substitution(R, b):
+    """
+    Solves Rx = b where R is upper triangular.
+    """
+    n = len(b)
+    x = np.zeros_like(b)
+    for i in reversed(range(n)):
+        x[i] = (b[i] - np.dot(R[i, i+1:], x[i+1:])) / R[i, i]
+    return x
+
+def least_squares_qr(A, b):
+    """
+    Solves min ||Ax - b|| using QR decomposition (full-rank).
+    Equivalent to np.linalg.lstsq(A, b)[0]
+    """
+    Q, R = np.linalg.qr(A)
+    Qt_b = Q.T @ b
+    x = back_substitution(R, Qt_b)
+    return x
+
+def norm2(x):
+    return np.sqrt(np.sum(x**2))
+
+def gmres_custom(A, b, x0=None, tol=1e-10, max_iter=100):
+    """
+    Minimal GMRES solver for Ax = b.
+
+    Parameters:
+        A        : function or matrix (2D ndarray or callable that applies A to a vector)
+        b        : right-hand side vector
+        x0       : initial guess (default is zero)
+        tol      : residual tolerance
+        max_iter : max number of iterations
+
+    Returns:
+        x        : approximate solution
+        info     : 0 if converged, 1 otherwise
+    """
+    n = len(b)
+    if x0 is None:
+        x0 = np.zeros_like(b)
+
+    def matvec(v):
+        return A @ v if callable(getattr(A, '__matmul__', None)) else A(v)
+
+    r0 = b - matvec(x0)
+    beta = norm2(r0)
+    if beta < tol:
+        return x0, 0
+
+    V = np.zeros((n, max_iter + 1))
+    H = np.zeros((max_iter + 1, max_iter))
+    V[:, 0] = r0 / beta
+    g = np.zeros(max_iter + 1)
+    g[0] = beta
+
+    for j in range(max_iter):
+        w = matvec(V[:, j])
+
+        # Modified Gram-Schmidt
+        for i in range(j + 1):
+            H[i, j] = np.dot(V[:, i], w)
+            w -= H[i, j] * V[:, i]
+
+        H[j + 1, j] = norm2(w)
+        if H[j + 1, j] != 0 and j + 1 < n:
+            V[:, j + 1] = w / H[j + 1, j]
+
+        # Solve the least squares problem min ||g - H y||
+        y = least_squares_qr(H[:j + 2, :j + 1], g[:j + 2])
+        x = x0 + V[:, :j + 1] @ y
+        residual = norm2(matvec(x) - b)
+
+        if residual < tol:
+            return x, 0
+
+    return x, 1  # Did not converge
+
+
+def timeit_solver(name, func, *args, **kwargs):
+    print(f"Running {name}...")
+    t0 = time.perf_counter()
+    result = func(*args, **kwargs)
+    t1 = time.perf_counter()
+    elapsed = t1 - t0
+    print(f"{name} completed in {elapsed:.4f} seconds\n")
+    return result, elapsed
+
 
 def source_1pt3(y_n):
     y_n = np.asarray(y_n).flatten()
@@ -38,9 +129,9 @@ def backwards_euler(y0, dt, n_time_steps, n_newton = 5):
         for _ in range(n_newton):
             res = (y_guess - yn) / dt - source_1pt3(y_guess)
             J = I / dt - dsource_1pt3_dy(y_guess)
-            dy, info = gmres(J, -res)
+            dy, info = gmres_custom(J, -res)
             y_guess = y_guess + dy
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
         yn = y_guess
         ys.append(yn)
@@ -67,9 +158,9 @@ def sdirk2(y0, dt, n_time_steps, n_newton=5):
             f_val = source_1pt3(y_stage)
             res = k1 - f_val
             J = I - gamma * dt * dsource_1pt3_dy(y_stage)
-            delta, info = gmres(J, -res)
+            delta, info = gmres_custom(J, -res)
             k1 = k1 + delta
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
 
         # Stage 2: Solve for k2 in k2 = f(y_n + (1-gamma)*dt*k1 + gamma*dt*k2)
@@ -79,9 +170,9 @@ def sdirk2(y0, dt, n_time_steps, n_newton=5):
             f_val = source_1pt3(y_stage)
             res = k2 - f_val
             J = I - gamma * dt * dsource_1pt3_dy(y_stage)
-            delta, info = gmres(J, -res)
+            delta, info = gmres_custom(J, -res)
             k2 = k2 + delta
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
 
         yn = yn + dt * (one_minus_gamma * k1 + gamma * k2)
@@ -150,9 +241,9 @@ def sdirk4(y0, dt, n_time_steps, n_newton=5):
             f = source_1pt3(y_stage)
             res = k[0] - f
             J = I - dt * gamma * dsource_1pt3_dy(y_stage)
-            delta, _ = gmres(J, -res)
+            delta, _ = gmres_custom(J, -res)
             k[0] += delta
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
 
         # Stage 2
@@ -161,9 +252,9 @@ def sdirk4(y0, dt, n_time_steps, n_newton=5):
             f = source_1pt3(y_stage)
             res = k[1] - f
             J = I - dt * gamma * dsource_1pt3_dy(y_stage)
-            delta, _ = gmres(J, -res)
+            delta, _ = gmres_custom(J, -res)
             k[1] += delta
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
 
         # Stage 3
@@ -172,9 +263,9 @@ def sdirk4(y0, dt, n_time_steps, n_newton=5):
             f = source_1pt3(y_stage)
             res = k[2] - f
             J = I - dt * gamma * dsource_1pt3_dy(y_stage)
-            delta, _ = gmres(J, -res)
+            delta, _ = gmres_custom(J, -res)
             k[2] += delta
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
 
         # Stage 4
@@ -183,9 +274,9 @@ def sdirk4(y0, dt, n_time_steps, n_newton=5):
             f = source_1pt3(y_stage)
             res = k[3] - f
             J = I - dt * gamma * dsource_1pt3_dy(y_stage)
-            delta, _ = gmres(J, -res)
+            delta, _ = gmres_custom(J, -res)
             k[3] += delta
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
     
         # Stage 5
@@ -194,9 +285,9 @@ def sdirk4(y0, dt, n_time_steps, n_newton=5):
             f = source_1pt3(y_stage)
             res = k[4] - f
             J = I - dt * gamma * dsource_1pt3_dy(y_stage)
-            delta, _ = gmres(J, -res)
+            delta, _ = gmres_custom(J, -res)
             k[4] += delta
-            if np.linalg.norm(res) < 1e-10:
+            if norm2(res) < 1e-10:
                 break
         # Final update
         yn = yn + dt * (b1 * k[0] + b2 * k[1] + b3 * k[2] + b4 * k[3] + b5 * k[4])
@@ -223,12 +314,13 @@ def rosenbrock2(y0, dt, n_time_steps):
 
         # Stage 1
         rhs1 = source_1pt3(yn)
-        k1, _ = gmres(G, rhs1)
+        k1, _ = gmres_custom(G, rhs1)
 
         # Stage 2
         y_stage = yn + alpha * k1
-        rhs2 = source_1pt3(y_stage) + beta/dt *k1 #source_1pt3(y_stage) - J @ (a21 * dt * k1)
-        k2, _ = gmres(G, rhs2)
+        rhs2 = source_1pt3(y_stage) + beta/dt *k1 - G @ k1 #source_1pt3(y_stage) - J @ (a21 * dt * k1)
+        dk2, _ = gmres_custom(G, rhs2)
+        k2 = k1 + dk2
 
         # Combine stages
         yn = yn + m1 * k1 + m2 * k2
@@ -243,25 +335,39 @@ dt = 1e-3
 time_final = 0.3
 n_time_steps = int(time_final / dt)
 
-time_be, y_be = backwards_euler(y0, dt, n_time_steps, n_newton = 5)
-time_sdirk2, y_sdirk2 = sdirk2(y0, dt, n_time_steps, n_newton = 5)
-time_sdirk4, y_sdirk4 = sdirk4(y0, dt, n_time_steps, n_newton = 5)
-time_be_h2, y_be_h2 = backwards_euler(y0, dt/2.0, 2 * n_time_steps, n_newton = 5)
-time_be_h10, y_be_h10 = backwards_euler(y0, dt/10.0, 10 * n_time_steps, n_newton = 5)
-time_sdirk2_h2, y_sdirk2_h2 = sdirk2(y0, dt/2, 2*n_time_steps, n_newton = 5)
-time_ros2, y_ros2 = rosenbrock2(y0, dt, n_time_steps)
+#time_be, y_be = backwards_euler(y0, dt, n_time_steps, n_newton = 5)
+#time_sdirk2, y_sdirk2 = sdirk2(y0, dt, n_time_steps, n_newton = 5)
+#time_sdirk4, y_sdirk4 = sdirk4(y0, dt, n_time_steps, n_newton = 5)
+#time_be_h2, y_be_h2 = backwards_euler(y0, dt/2.0, 2 * n_time_steps, n_newton = 5)
+#time_be_h10, y_be_h10 = backwards_euler(y0, dt/10.0, 10 * n_time_steps, n_newton = 5)
+#time_sdirk2_h2, y_sdirk2_h2 = sdirk2(y0, dt/2, 2*n_time_steps, n_newton = 5)
+#time_ros2, y_ros2 = rosenbrock2(y0, dt, n_time_steps)
+(time_be, y_be), t_be = timeit_solver("Backward Euler", backwards_euler, y0, dt, n_time_steps, n_newton=5)
+(time_sdirk2, y_sdirk2), t_sdirk2 = timeit_solver("SDIRK2", sdirk2, y0, dt, n_time_steps, n_newton=5)
+(time_sdirk4, y_sdirk4), t_sdirk4 = timeit_solver("SDIRK4", sdirk4, y0, dt, n_time_steps, n_newton=5)
+(time_be_h2, y_be_h2), t_be_h2 = timeit_solver("Backward Euler (h/2)", backwards_euler, y0, dt/2.0, 2*n_time_steps, n_newton=5)
+(time_be_h10, y_be_h10), t_be_h10 = timeit_solver("Backward Euler (h/10)", backwards_euler, y0, dt/10.0, 10*n_time_steps, n_newton=5)
+(time_sdirk2_h2, y_sdirk2_h2), t_sdirk2_h2 = timeit_solver("SDIRK2 (h/2)", sdirk2, y0, dt/2, 2*n_time_steps, n_newton=5)
+(time_ros2, y_ros2), t_ros2 = timeit_solver("Rosenbrock2", rosenbrock2, y0, dt, n_time_steps)
+(time_ros2_h2, y_ros2_h2), t_ros2_h2 = timeit_solver("Rosenbrock2", rosenbrock2, y0, dt/2, 2*n_time_steps)
 
-plt.plot(time_be, y_be[:, 1],'-r')
-plt.plot(time_sdirk2, y_sdirk2[:, 1],'-k')
-plt.plot(time_sdirk4, y_sdirk4[:, 1],'-b')
-plt.plot(time_be_h2, y_be_h2[:, 1],'--r')
-plt.plot(time_be_h10, y_be_h10[:, 1],'-.r')
-plt.plot(time_sdirk2_h2, y_sdirk2_h2[:, 1],'--k')
-plt.plot(time_ros2, y_ros2[:, 1],'--g')
+
+plt.plot(time_be, y_be[:, 1], '-r', label=f'Backward Euler\ntime = {t_be:.2e}')
+plt.plot(time_sdirk2, y_sdirk2[:, 1], '-k', label=f'SDIRK2\ntime = {t_sdirk2:.2e}')
+plt.plot(time_ros2, y_ros2[:, 1], '-g', label=f'Rosenbrock2\ntime = {t_ros2:.2e}')
+plt.plot(time_sdirk4, y_sdirk4[:, 1], '-b', label=f'SDIRK4\ntime = {t_sdirk4:.2e}')
+plt.plot(time_be_h2, y_be_h2[:, 1], '--r', label=f'Backward Euler, dt/2\ntime = {t_be_h2:.2e}')
+plt.plot(time_sdirk2_h2, y_sdirk2_h2[:, 1], '--k', label=f'SDIRK2, dt/2\ntime = {t_sdirk2_h2:.2e}')
+plt.plot(time_ros2_h2, y_ros2_h2[:, 1], '--g', label=f'Rosenbrock2, dt/2\ntime = {t_ros2_h2:.2e}')
+plt.plot(time_be_h10, y_be_h10[:, 1], '-.r', label=f'Backward Euler, dt/10\ntime = {t_be_h10:.2e}')
+
+
+
 plt.ylim([3.636e-5, 3.65e-5])
 plt.xlim([0, 0.03])
+plt.legend(loc=1, ncol=2, fontsize=8)
 plt.xlabel("Time")
-plt.ylabel("y[1]")
-plt.title("Implicit GMRES Solve of dy/dt = source(y)")
+plt.ylabel("$y_2$")
+plt.title("Implicit Solve of dy/dt = S(y)")
 plt.grid(True)
 plt.show()
