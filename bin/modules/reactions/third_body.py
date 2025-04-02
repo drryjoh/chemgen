@@ -15,7 +15,7 @@ def create_reaction_functions_and_calls_third_body(reaction_rates, reaction_call
         print(f"  Arrhenius Parameters (3-body reaction): A = {reaction.rate.pre_exponential_factor}, "
             f"b = {reaction.rate.temperature_exponent}, "
             f"Ea = {reaction.rate.activation_energy}")
-        print(f"  Collision Partner Efficiencies: {efficiencies}")
+        print(f"  Collision Partner Efficiencies: {get_efficiencies(reaction)}")
     if reaction.third_body_name !='M':
         requires_mixture_concentration[reaction_index] = False
         third_body_multiplier = "species[{index}]".format(index = species_names.index(reaction.third_body_name))
