@@ -20,7 +20,7 @@ def create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_calls
     reaction_rates[reaction_index] = lindemann_text(reaction_index,
                                                     reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
                                                     reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
-                                                    reaction.efficiencies, species_names,
+                                                    get_efficiencies(reaction), species_names,
                                                     configuration)
                             
     reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, {third_body_multiplier});\n".format(**vars(configuration),reaction_index = reaction_index, third_body_multiplier = third_body_multiplier)    
