@@ -10,7 +10,7 @@ from modules.process_files import *
 from modules.configuration import *
 from modules.headers import *
 from modules.compile_and_run import *
-
+ 
 def find_chemical_mechanism(file_name):
     # Get the path to the current script (chemgen.py)
     script_path = Path(__file__).resolve()
@@ -41,6 +41,11 @@ def find_chemical_mechanism(file_name):
 
 # Define functions or classes here
 def main():
+    cantera_version = ct.__version__
+    major_version = cantera_version[0]
+    if major_version != '3':
+        print("We support cantera versions >3 please install cantera >3\n pip3 install cantera 3.0.0")
+        exit()
     """
     Main function where the core logic of the script runs.
     """

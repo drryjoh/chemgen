@@ -67,7 +67,7 @@ def create_reaction_functions_and_calls_troe(reaction_rates, reaction_rates_deri
                                                reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
                                                reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
                                                alpha, T1, T2, T3,
-                                               reaction.efficiencies, species_names,
+                                               get_efficiencies(reaction), species_names,
                                                configuration)
     if temperature_jacobian:
         reaction_rates_derivatives.append(dtroe_text_dtemperature(reaction_index,
