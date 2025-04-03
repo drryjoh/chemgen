@@ -46,6 +46,19 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <algorithm>\n")
         file.write("#include <array>\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
+        file.write("""
+        
+// Overload << operator for std::array
+template <typename T, std::size_t N>
+std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
+    for (const auto& value : arr) 
+    {
+        os << value << " ";
+    }
+    return os;
+}
+        
+        """)
         for header in headers:
             file.write(f"#include \"{header}\"\n")
 
@@ -57,15 +70,6 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
 
         content = """
 
-// Overload << operator for std::array
-template <typename T, std::size_t N>
-std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
-    for (const auto& value : arr) 
-    {{
-        os << value << " ";
-    }}
-    return os;
-}}
 
 {index}
 main()
@@ -77,7 +81,7 @@ main()
     {scalar} dt = 1e-8;
     {scalar} simple = 1;
     {scalar} t = 0;
-
+    
     std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
     for({index} i = 0; i < 1; i++)
     {{

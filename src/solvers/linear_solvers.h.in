@@ -6,7 +6,6 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10,
     {species} r = b - (A * x);
 
     if (norm2(r) < tol) return x;
-	std::cout <<"GMRES: "<<norm2(r) <<std::endl;
     {species} delta = r;  // no Arnoldi/Krylov here, minimal GMRES for small n_species
     {jacobian} AI = A; // shallow copy for inversion
 
@@ -29,3 +28,88 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10,
     }}
     return delta;
 }}
+
+{device_option}
+{species_function}
+gmres_solve_2({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10) 
+{{
+	{index} max_iter = 100;
+    {species} x = {{}};
+	{species} cs = {{}};
+	{species} sn = {{}};
+
+    {species} r = b - (A * x);
+	{scalar} norm2_r = norm2(r);
+    if (norm2_r < tol) return x;
+
+    std::vector<{species}> V;
+    V.emplace_back(scale_gen(inv_gen(norm2_r), r));
+
+    std::array<std::array<{scalar}, n_species+1>, n_species> H = {{}};
+    std::array<{scalar}, n_species + 1> g = {{}};
+    g[0] = norm2(r);
+
+	{index} final_iter = 0;
+
+    for ({index} j = 0; j < n_species+1; ++j)
+    {{
+		final_iter = j;
+        {species} w = A * V[j];
+
+        // Modified Gram-Schmidt
+        for ({index} i = 0; i <= j; ++i)
+        {{
+            H[i][j] = dot(V[i], w);
+            w = w - H[i][j] * V[i];
+        }}
+
+        H[j+1][j] = norm2(w);
+        if (H[j+1][j] < tol)
+            break;
+        V.emplace_back(scale_gen(inv_gen(H[j+1][j]),w));
+
+		// Apply Givens rotations to new column of H
+		for (int i = 0; i < j; ++i)
+		{{
+			{scalar} temp = cs[i] * H[i][j] + sn[i] * H[i+1][j];
+			H[i+1][j] = -sn[i] * H[i][j] + cs[i] * H[i+1][j];
+			H[i][j] = temp;
+		}}
+        // Compute new Givens rotation
+        {scalar} a = H[j][j];
+        {scalar} b_h = H[j+1][j];
+        {scalar} r_val = std::sqrt(a * a + b_h * b_h);
+        cs[j] = a / r_val;
+        sn[j] = b_h / r_val;
+
+        // Apply to H and g
+        H[j][j] = r_val;
+        H[j+1][j] = 0.0;
+		
+		g[j+1] = 0.0; // Ensure valid memory before rotation
+        {scalar} temp_g = cs[j] * g[j] + sn[j] * g[j+1];
+        g[j+1] = -sn[j] * g[j] + cs[j] * g[j+1];
+        g[j] = temp_g;
+		
+        // Convergence check
+        if (std::abs(g[j+1]) < tol)
+            break;
+    }}
+
+    // Solve least squares problem Hy = g using back-substitution on H (upper triangular approx)
+    std::array<{scalar}, n_species> y = {{}};
+    for ({index} i = n_species - 1; i >= 0; --i)
+    {{
+        {scalar} sum = 0;
+        for ({index} j = i + 1; j < n_species; ++j)
+            sum += H[i][j] * y[j];
+        y[i] = (g[i] - sum) / H[i][i];
+    }}
+
+    {species} result = {{}};
+    for ({index} i = 0; i < n_species; ++i)
+        result = result + y[i] * V[i];
+
+    return result;
+}}
+

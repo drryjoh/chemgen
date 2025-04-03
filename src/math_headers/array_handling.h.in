@@ -215,6 +215,15 @@ template <typename T>
 }}
 
 {device_option}
+{scalar_function} dot({species_parameter} a, {species_parameter} b) 
+{{
+    {scalar} dot_sum = {scalar_cast}(0.0);
+    for ({index} i = 0; i < n_species; ++i) dot_sum += a[i]*b[i];
+    return dot_sum;
+}}
+
+
+{device_option}
 {jacobian_function} 
 jacobian_I() 
 {{

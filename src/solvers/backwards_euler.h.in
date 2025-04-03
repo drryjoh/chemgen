@@ -6,9 +6,10 @@ backwards_euler({chemical_state} y,
                 {index} max_iter = 10) 
 {{
         {species} y_guess = get_species(y);
+        {species} y_init = get_species(y);
         for (int iter = 0; iter < 5; ++iter) 
         {{
-            {scalar} temperature_ = temperature(y[0], get_species(y));
+            {scalar} temperature_ = temperature(y[0], y_guess);
             {species} f = source(y_guess, temperature_);
             {jacobian} J = source_jacobian(y_guess, temperature_);
             {jacobian} I = jacobian_I();
@@ -26,10 +27,10 @@ backwards_euler({chemical_state} y,
             
             for (int i = 0; i < n_species; ++i)
             {{
-                res[i] = (y_guess[i] - y[i]) / dt - f[i];
+                res[i] = -(y_guess[i] - y_init[i]) / dt + f[i];
             }}
             
-            {species} dy = gmres_solve(A, res);
+            {species} dy = gmres_solve_2(A, res);
 
             for (int i = 0; i < n_species; ++i)
             {{
@@ -39,7 +40,6 @@ backwards_euler({chemical_state} y,
             {{
                 return set_chemical_state(y[0], y_guess);
             }};
-            std::cout << norm2(res) <<std::endl;
         }}
         return set_chemical_state(y[0], y_guess); //sets energy to zero to signal integration broke
 }}
