@@ -162,6 +162,10 @@ def main():
     if "backwards_euler.h" in headers:
         headers.remove("backwards_euler.h")
         headers.append("backwards_euler.h")
+    
+    if "sdirk.h" in headers:
+        headers.remove("sdirk.h")
+        headers.append("sdirk.h")
     test_file = ''
     
     if args.custom_test:

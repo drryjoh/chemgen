@@ -77,6 +77,7 @@ main()
     // ----- Open CSV output files -----
     std::ofstream be_file("backward_euler.txt");
     std::ofstream rk4_file("rk4.txt");
+    std::ofstream sdirk2_file("sdirk2.txt");
 
 
     {concentration_test}
@@ -103,6 +104,27 @@ main()
     auto be_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> be_duration = be_end - be_start;
     std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
+    
+    y = y_init;
+    dt = 5e-7;
+    simple = 1;
+    t = 0;
+    sdirk2_file << t << " " << temperature(y);
+    for (const auto& val : get_species(y)) sdirk2_file << " " << val;
+    sdirk2_file << "\\n";
+    
+    auto sdirk2_start = std::chrono::high_resolution_clock::now();
+    for({index} i = 0; i < 800; i++)
+    {{
+        y = sdirk2(y, dt);
+        t = t + dt;
+        sdirk2_file << t << " " << temperature(y);
+        for (const auto& val : get_species(y)) sdirk2_file << " " << val;
+        sdirk2_file << "\\n";
+    }}
+    auto sdirk2_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> sdirk2_duration = sdirk2_end - sdirk2_start;
+    std::cout << "[SDIRK] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
 
     y = y_init;
     dt = 5e-8;

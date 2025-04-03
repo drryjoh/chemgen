@@ -28,7 +28,7 @@ reactor = ct.IdealGasReactor(gas)
 network = ct.ReactorNet([reactor])
 
 # Define simulation time (in seconds)
-time_end = 200000 * 1e-9  # Convert ns to seconds
+time_end = 40000 * 1e-8  # Convert ns to seconds
 n_steps = 500  # Number of time steps
 time = np.linspace(0, time_end, n_steps)
 
@@ -43,9 +43,14 @@ data = np.array(data)
 # Save results to file
 
 # Plot results
-d = np.loadtxt("backward_euler.txt")
 plt.plot(data[:, 0]*1000.0, data[:, 1],'-r', label = "Cantera")
-plt.plot(d[:, 0]*1000.0, d[:, 1],'--k', label = "ChemGen")
+d = np.loadtxt("backward_euler.txt")
+plt.plot(d[:, 0]*1000.0, d[:, 1],'--k', label = "ChemGen Backward Euler")
+d = np.loadtxt("rk4.txt")
+plt.plot(d[:, 0]*1000.0, d[:, 1],'--g', label = "ChemGen RK4")
+d = np.loadtxt("sdirk2.txt")
+plt.plot(d[:, 0]*1000.0, d[:, 1],'-.b', label = "ChemGen SDIRK2")
+
 plt.legend()
 plt.xlabel("Time ($\mu$s)")
 plt.ylabel("Temperature (K)")

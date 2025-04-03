@@ -12,30 +12,22 @@ backwards_euler({chemical_state} y,
             {scalar} temperature_ = temperature(y[0], y_guess);
             {species} f = source(y_guess, temperature_);
             {jacobian} J = source_jacobian(y_guess, temperature_);
-            {jacobian} I = jacobian_I();
-            {jacobian} A = I;
-
-            for (int i = 0; i < n_species; ++i)
-            {{
-                for (int j = 0; j < n_species; ++j)
-                {{
-                    A[i][j] = I[i][j] / dt - J[i][j];
-                }}
-            }}
-
+            {jacobian} A = jacobian_I();
             {species} res = {{}};
             
-            for (int i = 0; i < n_species; ++i)
-            {{
-                res[i] = -(y_guess[i] - y_init[i]) / dt + f[i];
-            }}
-            
-            {species} dy = gmres_solve_2(A, res);
+            //LHS
+            for (int i = 0; i < n_species; ++i) A[i][i] = A[i][i]/dt; 
+            A = A - J;
 
-            for (int i = 0; i < n_species; ++i)
-            {{
-                y_guess[i] += dy[i];
-            }}
+            //RHS
+            res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
+            
+            //Solve
+            {species} dy = gmres_solve_2(A, res);
+            
+            //Increment
+            y_guess = y_guess + dy;
+
             if (norm2(res) < 1e-10)
             {{
                 return set_chemical_state(y[0], y_guess);

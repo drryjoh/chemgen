@@ -57,12 +57,44 @@ scale_gen({scalar_parameter} a, {scalar_parameter} b) {const_option}
 }}
 
 {device_option}
+{jacobian_function} 
+scale_gen({scalar_parameter} a, {jacobian_parameter} b) {const_option}
+{{
+    {jacobian} c = {{}};
+
+    for ({index} i = 0; i<{jacobian_end}; i++)
+    {{
+        for ({index} j = 0; j<{jacobian_end}; j++)
+        {{
+            c[i][j] = a * b[i][j];
+        }}
+    }}
+    return c;
+}}
+
+{device_option}
 {species_function} 
 operator+({species_parameter} a_s, {species_parameter} b_s) {const_option}
 {{
     {species} c_s;
     {device_element_sum_inl}
     return c_s;
+}}
+
+{device_option}
+{jacobian_function} 
+operator+({jacobian_parameter} a, {jacobian_parameter} b) {const_option}
+{{
+    {jacobian} c = {{}};
+
+    for ({index} i = 0; i<{jacobian_end}; i++)
+    {{
+        for ({index} j = 0; j<{jacobian_end}; j++)
+        {{
+            c[i][j] = a[i][j] + b[i][j];
+        }}
+    }}
+    return c;
 }}
 
 {device_option}
@@ -93,6 +125,23 @@ operator-({reactions_parameter} a_s, {reactions_parameter} b_s_positive) {const_
     {device_element_sum_inl}
     return c_s;
 }}
+
+{device_option}
+{jacobian_function} 
+operator-({jacobian_parameter} a, {jacobian_parameter} b) {const_option}
+{{
+    {jacobian} c = {{}};
+
+    for ({index} i = 0; i<{jacobian_end}; i++)
+    {{
+        for ({index} j = 0; j<{jacobian_end}; j++)
+        {{
+            c[i][j] = a[i][j] - b[i][j];
+        }}
+    }}
+    return c;
+}}
+
 
 {device_option}
 {temperature_monomial_function} 

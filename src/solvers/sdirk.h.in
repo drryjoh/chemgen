@@ -1,0 +1,55 @@
+{device_option}
+{chemical_state} 
+sdirk2({chemical_state} y,  
+       {scalar_parameter} dt, 
+       {scalar} tol = 1e-10, 
+       {index} max_iter = 10) 
+{{
+        {species} y_init = get_species(y);
+        {scalar} gamma = 1.0 - 1.0 / sqrt_gen({scalar}(2));
+        {scalar} one_minus_gamma = 1.0 - gamma;
+        {scalar} temperature_init = temperature(y[0], y_init);
+        {species} k1 = source(y_init, temperature_init);
+        {species} k2 = source(y_init, temperature_init);
+
+        //stage1
+        for (int iter = 0; iter < 5; ++iter) 
+        {{
+            {species} y_stage = y_init + scale_gen(gamma * dt, k1);
+            {scalar} temperature_ = temperature(y[0], y_stage);
+            {species} f_val = source(y_stage, temperature_);
+            {species} res = f_val - k1;
+            {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            
+            {species} dk = gmres_solve_2(J, res);
+            k1 = k1 + dk;
+
+            if (norm2(res) < 1e-10)
+            {{
+                break;
+            }};
+        }}
+
+        //stage2
+        for (int iter = 0; iter < 5; ++iter) 
+        {{
+            //y_stage = yn + dt * (one_minus_gamma * k1 + gamma * k2)
+            {species} y_stage = y_init + scale_gen(one_minus_gamma * dt, k1) + scale_gen(gamma * dt, k2);
+            {scalar} temperature_ = temperature(y[0], y_stage);
+            {species} f_val = source(y_stage, temperature_);
+            {species} res = f_val - k2;
+            {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            
+            {species} dk = gmres_solve_2(J, res);
+            k2 = k2 + dk;
+
+            if (norm2(res) < 1e-10)
+            {{
+                break;
+            }};
+        }}
+
+        return 
+        set_chemical_state(y[0], 
+                           y_init + scale_gen(dt * one_minus_gamma, k1) + scale_gen(gamma * dt, k2));
+}}
