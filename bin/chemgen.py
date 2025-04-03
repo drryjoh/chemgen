@@ -121,7 +121,7 @@ def main():
         elif chemistry_solver.lower() == "backwards_euler":
             linear_solver = configuration_file.get('solver', {}).get('linear_solver', None)
             print("Backwards Euler chemistry solver chosen")
-            if linear_solver.lower() == "gmres":
+            if linear_solver!=None and linear_solver.lower() == "gmres":
                 print("GMRES linear solver chosen")
             else:
                 print("linear solver not recognized, defaulting to GMRES")
@@ -147,6 +147,10 @@ def main():
     if "rk4.h" in headers:
         headers.remove("rk4.h")
         headers.append("rk4.h")
+
+    if "linear_solvers.h" in headers:
+        headers.remove("linear_solvers.h")
+        headers.append("linear_solvers.h")
 
     if "backwards_euler.h" in headers:
         headers.remove("backwards_euler.h")

@@ -54,7 +54,7 @@ decorators:
   source_element: "net_production_rates[{i}]"
   const_option: ""
   constexpr: "constexpr"
-  device_option: "__kokkos__"
+  device_option: ""
   expmath: "std::exp"
   powmath: "std::pow"
   logmath: "std::log"

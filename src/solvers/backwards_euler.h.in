@@ -1,7 +1,7 @@
 {device_option}
-{species_function} 
+{chemical_state} 
 backwards_euler({chemical_state} y,  
-                {species_parameter} dt, 
+                {scalar_parameter} dt, 
                 {scalar} tol = 1e-10, 
                 {index} max_iter = 10) 
 {{
@@ -11,7 +11,8 @@ backwards_euler({chemical_state} y,
             {scalar} temperature_ = temperature(y[0], get_species(y));
             {species} f = source(y_guess, temperature_);
             {jacobian} J = source_jacobian(y_guess, temperature_);
-            {jacobian} A = jacobian_I();
+            {jacobian} I = jacobian_I();
+            {jacobian} A = I;
 
             for (int i = 0; i < n_species; ++i)
             {{
@@ -21,16 +22,16 @@ backwards_euler({chemical_state} y,
                 }}
             }}
 
-            {species} res = {};
+            {species} res = {{}};
             
             for (int i = 0; i < n_species; ++i)
             {{
-                res[i] = (y_guess[i] - yn[i]) / dt - f[i];
+                res[i] = (y_guess[i] - y[i]) / dt - f[i];
             }}
             
             {species} dy = gmres_solve(A, res);
 
-            for (int i = 0; i < N; ++i)
+            for (int i = 0; i < n_species; ++i)
             {{
                 y_guess[i] += dy[i];
             }}
@@ -38,6 +39,7 @@ backwards_euler({chemical_state} y,
             {{
                 return set_chemical_state(y[0], y_guess);
             }};
+            std::cout << norm2(res) <<std::endl;
         }}
         return set_chemical_state(y[0], y_guess); //sets energy to zero to signal integration broke
 }}

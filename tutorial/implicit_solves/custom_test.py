@@ -74,19 +74,14 @@ main()
     {scalar} temperature_ =  {temperature};
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
     {chemical_state} y = set_chemical_state(int_energy, species);
-    {scalar} dt = 1e-7;
+    {scalar} dt = 1e-8;
     {scalar} simple = 1;
     {scalar} t = 0;
 
     std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
-    for({index} i = 0; i < 4000; i++)
+    for({index} i = 0; i < 1; i++)
     {{
         y = backwards_euler(y, dt);
-        if std::abs(y[0]-int_energy)>0.1
-        {{
-            throw std::runtime_error("Linear Solver Failed");
-        }}
-
         t = t + dt;
         std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
     }}

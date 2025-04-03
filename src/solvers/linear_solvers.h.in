@@ -4,22 +4,24 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10,
 {{
     {species} x = {{}};
     {species} r = b - (A * x);
+
     if (norm2(r) < tol) return x;
-    {species} delta = r;  // no Arnoldi/Krylov here, minimal GMRES for small N
+	std::cout <<"GMRES: "<<norm2(r) <<std::endl;
+    {species} delta = r;  // no Arnoldi/Krylov here, minimal GMRES for small n_species
     {jacobian} AI = A; // shallow copy for inversion
 
     // Gaussian elimination (for small 3x3 systems)
-    for ({index} i = 0; i < N; ++i) 
+    for ({index} i = 0; i < n_species; ++i) 
 	{{
         {scalar} pivot = AI[i][i];
-        for (int j = 0; j < N; ++j) AI[i][j] /= pivot;
+        for (int j = 0; j < n_species; ++j) AI[i][j] /= pivot;
         delta[i] /= pivot;
-        for (int k = 0; k < N; ++k) 
+        for (int k = 0; k < n_species; ++k) 
 		{{
             if (k != i) 
 			{{
                 {scalar} factor = AI[k][i];
-                for (int j = 0; j < N; ++j)
+                for (int j = 0; j < n_species; ++j)
                     AI[k][j] -= factor * AI[i][j];
                 delta[k] -= factor * delta[i];
             }}

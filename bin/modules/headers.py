@@ -36,8 +36,8 @@ def create_headers(configuration, chemistry_solver, destination_folder):
         file_names = []
         if chemistry_solver.lower() == "rk4":
             file_names = ['rk4.h.in']
-        elif chemistry_solver.lower() = "backwards_euler":
-            file_names = ['backwards_euler.h.in']
+        elif chemistry_solver.lower() == "backwards_euler":
+            file_names = ['backwards_euler.h.in', 'linear_solvers.h.in']
         else:
             print("Chemistry Solver not recognized")
             exit()

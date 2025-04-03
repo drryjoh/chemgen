@@ -187,17 +187,17 @@ set_chemical_state({scalar_parameter} internal_energy,
 {device_option}
 template <typename T>
 {scalar_function} norm2(const T& x) 
-{
+{{
     {scalar} sum = {scalar_cast}(0.0);
     for (const auto& xi : x)
         sum += xi * xi;
     return sqrt_gen(sum);
-}
+}}
 
 {device_option}
 {species_function} operator*({jacobian_parameter} A, {species_parameter} x) 
 {{
-    {species} r = {};
+    {species} r = {{}};
     for ({index} i = 0; i < n_species; ++i)
     {{
         for ({index} j = 0; j < n_species; ++j)
