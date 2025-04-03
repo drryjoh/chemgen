@@ -44,8 +44,8 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
     with open(test_file, 'w') as file:
         file.write("#include <cmath>\n")
         file.write("#include <algorithm>\n")
-        file.write("#include <array>\n")
-        file.write("#include <iostream>  // For printing the result to the console\n")
+        file.write("#include <array>\n#include <chrono>\n")
+        file.write("#include <iostream>  // For printing the result to the console\n#include <fstream>\n")
         file.write("""
         
 // Overload << operator for std::array
@@ -74,21 +74,56 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 {index}
 main()
 {{
+    // ----- Open CSV output files -----
+    std::ofstream be_file("backward_euler.txt");
+    std::ofstream rk4_file("rk4.txt");
+
+
     {concentration_test}
     {scalar} temperature_ =  {temperature};
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
-    {chemical_state} y = set_chemical_state(int_energy, species);
-    {scalar} dt = 1e-8;
+    {chemical_state} y_init = set_chemical_state(int_energy, species);
+    {chemical_state} y = y_init;
+    {scalar} dt = 5e-8;
     {scalar} simple = 1;
     {scalar} t = 0;
     
-    std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
-    for({index} i = 0; i < 1; i++)
+    be_file << t << " " << temperature(y);
+    for (const auto& val : get_species(y)) be_file << " " << val;
+    be_file << "\\n";
+    auto be_start = std::chrono::high_resolution_clock::now();
+    for({index} i = 0; i < 8000; i++)
     {{
         y = backwards_euler(y, dt);
         t = t + dt;
-        std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;
+        be_file << t << " " << temperature(y);
+        for (const auto& val : get_species(y)) be_file << " " << val;
+        be_file << "\\n";
     }}
+    auto be_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> be_duration = be_end - be_start;
+    std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
+
+    y = y_init;
+    dt = 5e-8;
+    simple = 1;
+    t = 0;
+    rk4_file << t << " " << temperature(y);
+    for (const auto& val : get_species(y)) rk4_file << " " << val;
+    rk4_file << "\\n";
+    
+    auto rk4_start = std::chrono::high_resolution_clock::now();
+    for({index} i = 0; i < 8000; i++)
+    {{
+        y = rk4(y, dt);
+        t = t + dt;
+        rk4_file << t << " " << temperature(y);
+        for (const auto& val : get_species(y)) rk4_file << " " << val;
+        rk4_file << "\\n";
+    }}
+    auto rk4_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> rk4_duration = rk4_end - rk4_start;
+    std::cout << "[RK4] Time elapsed: " << rk4_duration.count() << " seconds" << std::endl;
 
     return 0;
 }}

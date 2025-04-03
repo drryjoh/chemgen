@@ -45,13 +45,13 @@ gmres_solve_2({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-1
     std::vector<{species}> V;
     V.emplace_back(scale_gen(inv_gen(norm2_r), r));
 
-    std::array<std::array<{scalar}, n_species+1>, n_species> H = {{}};
+    std::array<std::array<{scalar}, n_species + 1>, n_species + 1> H = {{}};
     std::array<{scalar}, n_species + 1> g = {{}};
     g[0] = norm2(r);
 
 	{index} final_iter = 0;
 
-    for ({index} j = 0; j < n_species+1; ++j)
+    for ({index} j = 0; j < n_species; ++j)
     {{
 		final_iter = j;
         {species} w = A * V[j];
@@ -92,20 +92,22 @@ gmres_solve_2({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-1
         g[j] = temp_g;
 		
         // Convergence check
+
         if (std::abs(g[j+1]) < tol)
             break;
     }}
 
+
     // Solve least squares problem Hy = g using back-substitution on H (upper triangular approx)
     std::array<{scalar}, n_species> y = {{}};
-    for ({index} i = n_species - 1; i >= 0; --i)
+    for ({index} i = final_iter; i >= 0; --i)
     {{
         {scalar} sum = 0;
-        for ({index} j = i + 1; j < n_species; ++j)
+		for ({index} j = i + 1; j <= final_iter; ++j)
             sum += H[i][j] * y[j];
         y[i] = (g[i] - sum) / H[i][i];
-    }}
 
+    }}
     {species} result = {{}};
     for ({index} i = 0; i < n_species; ++i)
         result = result + y[i] * V[i];

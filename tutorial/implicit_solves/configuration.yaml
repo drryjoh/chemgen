@@ -76,4 +76,4 @@ build:
   chemgen_optimized: O2
 
 solver:
-  chemistry_solver: backwards_euler 
+  chemistry_solver: all 

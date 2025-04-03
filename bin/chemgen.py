@@ -125,6 +125,13 @@ def main():
                 print("GMRES linear solver chosen")
             else:
                 print("linear solver not recognized, defaulting to GMRES")
+        elif chemistry_solver.lower() == "all":
+            linear_solver = configuration_file.get('solver', {}).get('linear_solver', None)
+            print("All solver options will be compiled in")
+            if linear_solver!=None and linear_solver.lower() == "gmres":
+                print("GMRES linear solver chosen")
+            else:
+                print("linear solver not recognized, defaulting to GMRES")
         else:
             print("Chemistry solver unsupported. Please choose from [rk4, backwards_euler].")
             exit()
