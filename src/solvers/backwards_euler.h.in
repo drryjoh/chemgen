@@ -23,7 +23,7 @@ backwards_euler({chemical_state} y,
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
             
             //Solve
-            {species} dy = gmres_solve_2(A, res);
+            {species} dy = gmres_solve(A, res);
             
             //Increment
             y_guess = y_guess + dy;

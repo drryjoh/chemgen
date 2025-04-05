@@ -78,6 +78,7 @@ main()
     std::ofstream be_file("backward_euler.txt");
     std::ofstream rk4_file("rk4.txt");
     std::ofstream sdirk2_file("sdirk2.txt");
+    std::ofstream sdirk4_file("sdirk4.txt");
 
 
     {concentration_test}
@@ -85,7 +86,7 @@ main()
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
     {chemical_state} y_init = set_chemical_state(int_energy, species);
     {chemical_state} y = y_init;
-    {scalar} dt = 5e-8;
+    {scalar} dt = 1e-7;
     {scalar} simple = 1;
     {scalar} t = 0;
     
@@ -93,7 +94,7 @@ main()
     for (const auto& val : get_species(y)) be_file << " " << val;
     be_file << "\\n";
     auto be_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < 8000; i++)
+    for({index} i = 0; i < 4000; i++)
     {{
         y = backwards_euler(y, dt);
         t = t + dt;
@@ -124,10 +125,10 @@ main()
     }}
     auto sdirk2_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> sdirk2_duration = sdirk2_end - sdirk2_start;
-    std::cout << "[SDIRK] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
+    std::cout << "[SDIRK2] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
 
     y = y_init;
-    dt = 5e-8;
+    dt = 2.5e-8;
     simple = 1;
     t = 0;
     rk4_file << t << " " << temperature(y);
@@ -135,7 +136,7 @@ main()
     rk4_file << "\\n";
     
     auto rk4_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < 8000; i++)
+    for({index} i = 0; i < 16000; i++)
     {{
         y = rk4(y, dt);
         t = t + dt;
@@ -146,6 +147,27 @@ main()
     auto rk4_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> rk4_duration = rk4_end - rk4_start;
     std::cout << "[RK4] Time elapsed: " << rk4_duration.count() << " seconds" << std::endl;
+
+    y = y_init;
+    dt = 25e-8;
+    simple = 1;
+    t = 0;
+    sdirk4_file << t << " " << temperature(y);
+    for (const auto& val : get_species(y)) sdirk4_file << " " << val;
+    sdirk4_file << "\\n";
+    
+    auto sdirk4_start = std::chrono::high_resolution_clock::now();
+    for({index} i = 0; i < 1600; i++)
+    {{
+        y = sdirk4(y, dt);
+        t = t + dt;
+        sdirk4_file << t << " " << temperature(y);
+        for (const auto& val : get_species(y)) sdirk4_file << " " << val;
+        sdirk4_file << "\\n";
+    }}
+    auto sdirk4_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> sdirk4_duration = sdirk4_end - sdirk4_start;
+    std::cout << "[SDIRK4] Time elapsed: " << sdirk4_duration.count() << " seconds" << std::endl;
 
     return 0;
 }}

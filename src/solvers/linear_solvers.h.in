@@ -1,37 +1,43 @@
 {device_option}
-{species_function} 
-gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10, {index} max_iter = 10) 
+{jacobian_function} inverse_diagonal({jacobian_function} J) {const_option}
 {{
-    {species} x = {{}};
-    {species} r = b - (A * x);
-
-    if (norm2(r) < tol) return x;
-    {species} delta = r;  // no Arnoldi/Krylov here, minimal GMRES for small n_species
-    {jacobian} AI = A; // shallow copy for inversion
-
-    // Gaussian elimination (for small 3x3 systems)
-    for ({index} i = 0; i < n_species; ++i) 
-	{{
-        {scalar} pivot = AI[i][i];
-        for (int j = 0; j < n_species; ++j) AI[i][j] /= pivot;
-        delta[i] /= pivot;
-        for (int k = 0; k < n_species; ++k) 
-		{{
-            if (k != i) 
-			{{
-                {scalar} factor = AI[k][i];
-                for (int j = 0; j < n_species; ++j)
-                    AI[k][j] -= factor * AI[i][j];
-                delta[k] -= factor * delta[i];
-            }}
-        }}
+    {jacobian} M_inv = {{}};
+    for ({index} i = 0; i < n_species; ++i)
+    {{
+        M_inv[i][i] = std::abs(J[i][i]) > 1e-14 ? 1.0 / J[i][i] : 0.0;
     }}
-    return delta;
+    return M_inv;
 }}
 
 {device_option}
+{jacobian_function} apply_diagonal({jacobian_function} P, {jacobian_function} A) {const_option}
+{{
+    {jacobian} M = {{}};
+    for ({index} i = 0; i < n_species; ++i)
+    {{
+        for ({index} j = 0; j < n_species; ++j)
+        {{
+            M[i][j] = P[i][i] * A[i][j];
+        }}
+    }}
+    return M;
+}}
+
+{device_option}
+{species_function} apply_diagonal({jacobian_function} P, {species} b) {const_option}
+{{
+    {species} m = {{}};
+    for ({index} i = 0; i < n_species; ++i)
+    {{
+        m[i] = P[i][i] * b[i];
+    }}
+    return m;
+}}
+
+
+{device_option}
 {species_function}
-gmres_solve_2({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10) 
+gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10) 
 {{
 	{index} max_iter = 100;
     {species} x = {{}};
