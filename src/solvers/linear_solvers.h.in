@@ -34,6 +34,24 @@
     return m;
 }}
 
+{device_option}
+{species_function}
+apply_gauss_seidel({jacobian_function} A, {species_function} v)
+{{
+	{species} z = {{}};
+    for ({index} i = 0; i < n_species; ++i)
+    {{
+        {scalar} sum = 0.0;
+        for ({index} j = 0; j < i; ++j)
+            sum += A[i][j] * z[j]; // Already computed values of z
+
+        // Diagonal + lower
+        {scalar} diag = A[i][i];
+        z[i] = (v[i] - sum) / (std::abs(diag) > 1e-14 ? diag : 1.0); // Avoid div by zero
+    }}
+    return z;
+}}
+
 
 {device_option}
 {species_function}

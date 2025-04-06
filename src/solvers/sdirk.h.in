@@ -120,7 +120,7 @@ sdirk4({chemical_state} y,
         for (int iter = 0; iter < 5; ++iter) 
         {{
             //y_stage = yn + dt * (one_minus_gamma * k1 + gamma * k2)
-            {species} y_stage = y_init + scale_gen(a21 * dt, k1) + scale_gen(gamma * dt, k2);
+            {species} y_stage = y_init + scale_gen(dt, scale_gen(a21, k1) + scale_gen(gamma, k2));
             {scalar} temperature_ = temperature(y[0], y_stage);
             {species} f_val = source(y_stage, temperature_);
             {species} res = f_val - k2;
@@ -139,7 +139,7 @@ sdirk4({chemical_state} y,
         for (int iter = 0; iter < 5; ++iter) 
         {{
             //y_stage = yn + dt * (a31 * k[0] + a32 * k[1] + gamma * k[2])
-            {species} y_stage = y_init + scale_gen(a31 * dt, k1) + scale_gen(a32 * dt, k2) + scale_gen(gamma * dt, k3);
+            {species} y_stage = y_init + scale_gen(dt, scale_gen(a31, k1) + scale_gen(a32, k2) + scale_gen(gamma, k3));
             {scalar} temperature_ = temperature(y[0], y_stage);
             {species} f_val = source(y_stage, temperature_);
             {species} res = f_val - k3;
@@ -159,7 +159,8 @@ sdirk4({chemical_state} y,
         for (int iter = 0; iter < 5; ++iter) 
         {{
             //y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + gamma * k[3])
-            {species} y_stage = y_init + scale_gen(a41 * dt, k1) + scale_gen(a42 * dt, k2) + scale_gen(a43 * dt, k3) + scale_gen(gamma * dt, k4);
+            {species} y_stage = y_init +
+            scale_gen(dt, scale_gen(a41, k1) + scale_gen(a42, k2) + scale_gen(a43, k3) + scale_gen(gamma, k4));
             {scalar} temperature_ = temperature(y[0], y_stage);
             {species} f_val = source(y_stage, temperature_);
             {species} res = f_val - k4;
@@ -179,7 +180,8 @@ sdirk4({chemical_state} y,
         for (int iter = 0; iter < 5; ++iter) 
         {{
             //y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + gamma * k[3])
-            {species} y_stage = y_init + scale_gen(a51 * dt, k1) + scale_gen(a52 * dt, k2) + scale_gen(a53 * dt, k3) + scale_gen(a54 * dt, k4)+ scale_gen(gamma * dt, k5);
+            {species} y_stage = y_init + 
+            scale_gen(dt, scale_gen(a51, k1) + scale_gen(a52, k2) + scale_gen(a53, k3) + scale_gen(a54, k4)+ scale_gen(gamma, k5));
             {scalar} temperature_ = temperature(y[0], y_stage);
             {species} f_val = source(y_stage, temperature_);
             {species} res = f_val - k5;
