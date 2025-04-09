@@ -30,7 +30,11 @@ sdirk2({chemical_state} y,
                 break;
             }};
             {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {species} dk = invert_jacobian(J) * res;
+            #else
             {species} dk = gmres_solve(J, res);
+            #endif
             k1 = k1 + dk;
         }}
 
@@ -47,7 +51,11 @@ sdirk2({chemical_state} y,
                 break;
             }};
             {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {species} dk = invert_jacobian(J) * res;
+            #else
             {species} dk = gmres_solve(J, res);
+            #endif
             k2 = k2 + dk;
         }}
 
@@ -109,7 +117,11 @@ sdirk4({chemical_state} y,
                 break;
             }};
             {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {species} dk = invert_jacobian(J) * res;
+            #else
             {species} dk = gmres_solve(J, res);
+            #endif
             k1 = k1 + dk;
         }}
 
@@ -129,7 +141,11 @@ sdirk4({chemical_state} y,
                 break;
             }};
             {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {species} dk = invert_jacobian(J) * res;
+            #else
             {species} dk = gmres_solve(J, res);
+            #endif
             k2 = k2 + dk;
         }}
         /*
@@ -148,7 +164,11 @@ sdirk4({chemical_state} y,
                 break;
             }};
             {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {species} dk = invert_jacobian(J) * res;
+            #else
             {species} dk = gmres_solve(J, res);
+            #endif
             k3 = k3 + dk;
         }}
 
@@ -169,7 +189,11 @@ sdirk4({chemical_state} y,
                 break;
             }};
             {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {species} dk = invert_jacobian(J) * res;
+            #else
             {species} dk = gmres_solve(J, res);
+            #endif
             k4 = k4 + dk;
         }}
 
@@ -190,7 +214,13 @@ sdirk4({chemical_state} y,
                 break;
             }};
             {jacobian} J = jacobian_I() - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {species} dk = invert_jacobian(J) * res;
+            #else
             {species} dk = gmres_solve(J, res);
+            #endif
+
+
             k5 = k5 + dk;
         }}
 

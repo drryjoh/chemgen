@@ -200,3 +200,68 @@ def rosenbrock2(y0, dt, n_time_steps):
         time.append(time[-1] + dt)
 
     return np.array(time), np.array(ys)
+
+def seulex_adaptive(y0, dt_init, t_final, rtol=1e-6, atol=1e-10, n_stages=3, n_newton=5):
+    yn = y0.copy()
+    ys = [y0]
+    time = [0.0]
+    I = np.eye(len(y0))
+
+    t = 0.0
+    dt = dt_init
+
+    while t < t_final:
+        if t + dt > t_final:
+            dt = t_final - t
+
+        # Extrapolation table
+        U = [np.copy(yn) for _ in range(n_stages)]
+        m_vals = [k + 1 for k in range(n_stages)]
+
+        # Stage loop
+        for k, m in enumerate(m_vals):
+            h = dt / m
+            y_k = yn.copy()
+
+            for _ in range(m):
+                y_guess = y_k + 1e-4 * np.ones_like(y_k)
+                for _ in range(n_newton):
+                    res = (y_guess - y_k) / h - source(y_guess)
+                    J = I / h - dsource_dy(y_guess)
+                    dy, _ = gmres_custom(J, -res)
+                    y_guess += dy
+                    if np.linalg.norm(res) < 1e-10:
+                        break
+                y_k = y_guess
+
+            U[k] = y_k
+
+        # Extrapolation (Neville–Aitken)
+        for j in range(1, n_stages):
+            for k in range(n_stages - 1, j - 1, -1):
+                factor = m_vals[k] / m_vals[k - j] - 1.0
+                U[k] = U[k] + (U[k] - U[k - 1]) / factor
+
+        y_extrapolated = U[n_stages - 1]
+        y_lower = U[n_stages - 2]
+
+        # Error estimation
+        scale = atol + rtol * np.maximum(np.abs(y_extrapolated), np.abs(yn))
+        error = np.linalg.norm((y_extrapolated - y_lower) / scale) / np.sqrt(len(y0))
+
+        # Accept step
+        if error <= 1.0:
+            t += dt
+            yn = y_extrapolated
+            ys.append(yn)
+            time.append(t)
+
+        # Compute next dt (Hairer's suggestion)
+        safety = 0.9
+        if error == 0.0:
+            dt = dt * 2.0
+        else:
+            dt = dt * min(5.0, max(0.1, safety * error ** (-1.0 / (n_stages + 1))))
+
+    return np.array(time), np.array(ys)
+

@@ -111,10 +111,12 @@ def main():
 
     generate_chemistry_solver = False
     chemistry_solver = configuration_file.get('solver', {}).get('chemistry_solver', None)
+    chemistry_solver_preconditioner = configuration_file.get('solver', {}).get('preconditioner', None)
+    direct_solver = ''
     if chemistry_solver:
         generate_chemistry_solver = True
         if chemistry_solver.lower() == "none":
-            print("none was specified for chemistry_solver in configuration file, no solver will be generated")
+            print("none was specified for solver: chemistry_solver in configuration file, no solver will be generated")
             generate_chemistry_solver = False
         elif chemistry_solver.lower() == "rk4":
             print("RK4 chemistry solver chosen")
@@ -123,6 +125,9 @@ def main():
             print("Backwards Euler chemistry solver chosen")
             if linear_solver!=None and linear_solver.lower() == "gmres":
                 print("GMRES linear solver chosen")
+            if linear_solver!=None and linear_solver.lower() == "direct":
+                print("Direct solver chosen for Jacobian inversion")
+                direct_solver = "#define CHEMGEN_DIRECT_SOLVER"
             else:
                 print("linear solver not recognized, defaulting to GMRES")
         elif chemistry_solver.lower() == "all":
@@ -130,6 +135,9 @@ def main():
             print("All solver options will be compiled in")
             if linear_solver!=None and linear_solver.lower() == "gmres":
                 print("GMRES linear solver chosen")
+            if linear_solver!=None and linear_solver.lower() == "direct":
+                print("Direct solver chosen for Jacobian inversion")
+                direct_solver = "#define CHEMGEN_DIRECT_SOLVER"
             else:
                 print("linear solver not recognized, defaulting to GMRES")
         else:
@@ -138,6 +146,25 @@ def main():
     else:
         generate_chemistry_solver = False
         print("Not generating with a chemgen chemistry solver.")
+    
+    preconditioner = ""
+    if chemistry_solver_preconditioner and chemistry_solver:
+        
+        if chemistry_solver_preconditioner.lower() == "none":
+            print("none was specified for solver: preconditioner in configuration file, no preconditioner will be used")
+            preconditioner = ""
+        elif chemistry_solver_preconditioner.lower() == "gauss_seidel":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL"
+        elif chemistry_solver_preconditioner.lower() == "jacobi":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_JACOBI"
+        else:
+            print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
+            exit()
+    
+    setattr(configuration, "preconditioner",  preconditioner)
+    setattr(configuration, "direct_solver",  direct_solver)
+        
+
 
     third_parties = [use_third_parties, third_party_path, libraries]
     

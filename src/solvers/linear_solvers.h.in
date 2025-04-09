@@ -1,3 +1,7 @@
+{preconditioner}
+{direct_solver}
+
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
 {device_option}
 {jacobian_function} inverse_diagonal({jacobian_function} J) {const_option}
 {{
@@ -33,7 +37,9 @@
     }}
     return m;
 }}
+#endif
 
+#ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 {device_option}
 {species_function}
 apply_gauss_seidel({jacobian_function} A, {species_function} v)
@@ -51,7 +57,7 @@ apply_gauss_seidel({jacobian_function} A, {species_function} v)
     }}
     return z;
 }}
-
+#endif
 
 {device_option}
 {species_function}
@@ -61,8 +67,16 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10)
     {species} x = {{}};
 	{species} cs = {{}};
 	{species} sn = {{}};
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+	{jacobian} P = inverse_diagonal(A);
+	{jacobian} A_ = apply_diagonal(P, A);
+	{species} b_ = apply_diagonal(P, b);
+#else
+	{jacobian} A_ = A;
+	{species} b_ = b;
+#endif
 
-    {species} r = b - (A * x);
+    {species} r = b_ - (A_ * x);
 	{scalar} norm2_r = norm2(r);
     if (norm2_r < tol) return x;
 
@@ -78,7 +92,7 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10)
     for ({index} j = 0; j < n_species; ++j)
     {{
 		final_iter = j;
-        {species} w = A * V[j];
+        {species} w = A_ * V[j];
 
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
