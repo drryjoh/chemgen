@@ -18,7 +18,7 @@ using TemperatureGibbsMonomial = {temperature_gibbs_monomial_typedef};
 using ThermoTable = {scalar_list}<TemperatureEnergyMonomial, n_species>;
 using ChemicalState = {chemical_state_tyedef};
 using {jacobian} = {jacobian_typedef};
-using SpeciesReaction = std::array<std::array<{scalar}, n_reaction>, n_species>;
+using ReactionSpecies = std::array<std::array<{scalar}, n_species>, n_reactions>;
 
 """.format(**vars(configuration), 
 n_species = int(n_species),

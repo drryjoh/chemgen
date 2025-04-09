@@ -126,13 +126,11 @@ def accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiom
                 else:
                     species_production_jacobian_temperature_texts[index] += "+ {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dtemperature".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)  
         if depends_on_species:
-                print(species_production_jacobian_species_texts[index])
                 species_production_jacobian_species_texts[index].append( "{stoichiometric_production}".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)) 
                 species_production_jacobian_species_indexes[index].append("{reaction_index}".format(reaction_index= reaction_index))
 
 
 def add_to_loops(species_production_jacobian_texts, species_production_jacobian_species_texts, species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, configuration, temperature_jacobian = False):
-    print(species_production_jacobian_species_texts)
     begin = '0'
     end = 'n_species'
     jacobian_temperature = ""
@@ -150,7 +148,7 @@ def add_to_loops(species_production_jacobian_texts, species_production_jacobian_
             jacobian_species_texts = """
             const {index} n_rates_of_progres_species_jacobian_{species_index} = {n_coefficients};
             static constexpr {scalar_list}<{scalar}, n_rates_of_progres_species_jacobian_{species_index}> coefficients_{species_index} = {{{coeffs}}};
-            static constexpr {scalar_list}<{index}, n_rates_of_progres_species_jacobian_{species_index}> idx_{species_index} = {{{indexes}}}
+            static constexpr {scalar_list}<{index}, n_rates_of_progres_species_jacobian_{species_index}> idx_{species_index} = {{{indexes}}};
             """.format(**vars(configuration), n_coefficients = n_coefficients, coeffs = ','.join(jacobian_texts), indexes = ",".join(species_production_jacobian_species_indexes[i]), species_index = i)
             species_production_jacobian_texts[i] = """
         {jacobian_temperature}
@@ -264,7 +262,7 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
                     **vars(configuration))
         else:
             formatted_text += """
-        drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
+        //drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
 """.format(reaction_index = reaction_index, **vars(configuration))
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
                 if dforward_rate == '1':
@@ -307,7 +305,7 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
                     **vars(configuration))
         else:
             formatted_text += """
-        drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
+        //drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
 """.format(reaction_index = reaction_index, **vars(configuration))
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
                 if dforward_rate == '1':
