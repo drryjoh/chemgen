@@ -11,6 +11,7 @@ class SourceJacobianWriter:
     {{
         {species} net_production_rates = {{{scalar_cast}(0)}};
         {jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};
+        ReactionSpecies drate_of_progress_dspecies = {{{scalar_cast}(0)}};
 
         {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
         {scalar} dinv_universal_gas_constant_temperature_dtemperature  = inv_chain(universal_gas_constant() * temperature, universal_gas_constant());
