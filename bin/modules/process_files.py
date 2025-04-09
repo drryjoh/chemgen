@@ -22,6 +22,8 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
     species_production_function_texts = [''] * gas.n_species
     species_production_on_fly_function_texts = [''] * gas.n_reactions
     species_production_jacobian_texts = [''] * gas.n_species
+    species_production_jacobian_species_texts = [''] * gas.n_species
+    species_production_jacobian_temperature_texts = [''] * gas.n_species
     reaction_rates = [''] * gas.n_reactions
     reactions_depend_on = [[]] * gas.n_reactions
     reaction_rates_derivatives = []
@@ -56,7 +58,9 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
         create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_depend_on, species_production_function_texts, reaction_index, forward_rate, backward_rate, forward_rate_derivatives, backward_rate_derivatives, is_reversible, configuration, temperature_jacobian = temperature_jacobian)
-        accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_texts, reactions_depend_on, reaction_index, configuration, temperature_jacobian = temperature_jacobian)
+        
+        accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_species_texts, species_production_jacobian_temperature_texts, reactions_depend_on, reaction_index, configuration, temperature_jacobian = temperature_jacobian)
+    add_to_loops(species_production_jacobian_texts, species_production_jacobian_species_texts, species_production_jacobian_temperature_texts, configuration, temperature_jacobian = False)
     headers = []
     with open(destination_folder/'types_inl.h','w') as file:
         write_type_defs(file, gas, configuration)
