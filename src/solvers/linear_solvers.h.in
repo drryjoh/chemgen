@@ -61,7 +61,7 @@ apply_gauss_seidel({jacobian_function} A, {species_function} v)
 
 {device_option}
 {species_function}
-gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10) 
+gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-6) 
 {{
 	{index} max_iter = 100;
     {species} x = {{}};
@@ -80,8 +80,8 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10)
 	{scalar} norm2_r = norm2(r);
     if (norm2_r < tol) return x;
 
-    std::vector<{species}> V;
-    V.emplace_back(scale_gen(inv_gen(norm2_r), r));
+    std::array<Species, n_species + 1> V = {{}};
+    V[0] = scale_gen(inv_gen(norm2_r), r);
 
     std::array<std::array<{scalar}, n_species + 1>, n_species + 1> H = {{}};
     std::array<{scalar}, n_species + 1> g = {{}};
@@ -104,7 +104,7 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-10)
         H[j+1][j] = norm2(w);
         if (H[j+1][j] < tol)
             break;
-        V.emplace_back(scale_gen(inv_gen(H[j+1][j]),w));
+        V[j+1] = scale_gen(inv_gen(H[j+1][j]),w);
 
 		// Apply Givens rotations to new column of H
 		for (int i = 0; i < j; ++i)
