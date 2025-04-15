@@ -14,6 +14,7 @@ class SourceJacobianWriter:
         {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
         {scalar} log_temperature = log_gen(temperature);
         {scalar} drate_of_progress_dspecies  = {scalar_cast}(0);
+        {scalar} equilibrium_constant  = {scalar_cast}(0);
         {species} drate_of_progress_dspecies_all_species  = {{{scalar_cast}(0)}};
         
         {gibbs}
@@ -32,9 +33,7 @@ class SourceJacobianWriter:
     def write_progress_rates_jacobian(self, file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("\n")
-                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
-                file.write("\n")
+                file.write("equilibrium_constant = {equilibrium_constant};//chaching\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
             file.write(f"        {progress_rates_derivatives[i]}")
         file.write("\n")
         
