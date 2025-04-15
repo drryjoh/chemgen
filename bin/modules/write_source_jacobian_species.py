@@ -11,9 +11,10 @@ class SourceJacobianWriter:
     {{
         {species} net_production_rates = {{{scalar_cast}(0)}};
         {jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};
-        ReactionSpecies drate_of_progress_dspecies = {{{scalar_cast}(0)}};
         {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
         {scalar} log_temperature = log_gen(temperature);
+        {scalar} drate_of_progress_dspecies  = {scalar_cast}(0);
+        {species} drate_of_progress_dspecies_all_species  = {{{scalar_cast}(0)}};
         
         {gibbs}
         
@@ -34,7 +35,6 @@ class SourceJacobianWriter:
                 file.write("\n")
                 file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
                 file.write("\n")
-            file.write(f"        {progress_rate}\n")
             file.write(f"        {progress_rates_derivatives[i]}")
         file.write("\n")
         
