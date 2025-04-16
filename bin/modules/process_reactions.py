@@ -287,8 +287,7 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
                     all_species = add_to_jacobian_all("drate_of_progress_dspecies_all_species", indexes_of_species_in_reaction, stoichiometric_production),
                     **vars(configuration))
         else:
-            formatted_text += """
-        //drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
+            formatted_text += """        //drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
 """.format(reaction_index = reaction_index, **vars(configuration))
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
                 if dforward_rate == '1':

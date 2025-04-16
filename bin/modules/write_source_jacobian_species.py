@@ -33,7 +33,7 @@ class SourceJacobianWriter:
     def write_progress_rates_jacobian(self, file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("equilibrium_constant = {equilibrium_constant};//chaching\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
+                file.write("        equilibrium_constant = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
             file.write(f"        {progress_rates_derivatives[i]}")
         file.write("\n")
         
