@@ -215,14 +215,14 @@ def create_rates_of_progress(progress_rates, progress_rates_functions, reaction_
 def add_to_jacobian(variable, index_with_respect_to, indexes_of_species_in_reaction, stoichiometric_production):
     running_text = []
     for i, species_index in enumerate(indexes_of_species_in_reaction):
-        #if stoichiometric_production[i]!=0:
-        running_text.append(f"        jacobian_net_production_rates[{species_index}][{index_with_respect_to}] += {stoichiometric_production[species_index]}*{variable};\n")
+        if stoichiometric_production[species_index]!=0:
+            running_text.append(f"        jacobian_net_production_rates[{species_index}][{index_with_respect_to}] += {stoichiometric_production[species_index]}*{variable};\n")
     return ''.join(running_text)
 def add_to_jacobian_all(variable, indexes_of_species_in_reaction, stoichiometric_production):
     running_text = []
     for i, species_index in enumerate(indexes_of_species_in_reaction):
-        #if stoichiometric_production[i]!=0:
-        running_text.append(f"        jacobian_net_production_rates[{species_index}] = jacobian_net_production_rates[{species_index}] + scale_gen({stoichiometric_production[species_index]}, {variable});\n")
+        if stoichiometric_production[species_index]!=0:
+            running_text.append(f"        jacobian_net_production_rates[{species_index}] = jacobian_net_production_rates[{species_index}] + scale_gen({stoichiometric_production[species_index]}, {variable});\n")
     return ''.join(running_text)
 def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_depend_on, progress_rates_functions, 
                                          reaction_index, forward_rate, backward_rate, forward_rate_derivatives,
