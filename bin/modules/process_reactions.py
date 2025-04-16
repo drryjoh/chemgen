@@ -320,10 +320,10 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
             dforward_rate_dspecies = ''
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
                 if dforward_rate == '1':
-                    dforward_rate_dspecies += f"        drate_of_progress_dspecies += forward_reaction_{reaction_index};\n"
+                    dforward_rate_dspecies += f"        drate_of_progress_dspecies = forward_reaction_{reaction_index};\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production)
                 elif dforward_rate != '0':
-                    dforward_rate_dspecies += f"        drate_of_progress_dspecies+= multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
+                    dforward_rate_dspecies += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production)
 
             formatted_text += """
