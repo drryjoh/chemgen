@@ -72,9 +72,7 @@ decorators:
   sqrt: "sqrt_gen"
 
 build:
-  chemgen_smp: None 
-  chemgen_input: yaml 
-  chemgen_optimized: O2
+  chemgen_optimized: O3
 
 solver:
   chemistry_solver: all

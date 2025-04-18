@@ -9,7 +9,7 @@ backwards_euler({chemical_state} y,
         
         {species} y_init = get_species(y);
         {scalar} temperature_guess = temperature(y[0], y_init);
-        {species} y_guess = get_species(y) + {scalar_cast}(1e-6) * get_species(y);
+        {species} y_guess = get_species(y);
         for ({index} iter = 0; iter < 5; ++iter) 
         {{
             {scalar} temperature_ = temperature(y[0], y_guess);
@@ -24,20 +24,20 @@ backwards_euler({chemical_state} y,
 
             //RHS
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
-            
             //Solve
             #ifdef CHEMGEN_DIRECT_SOLVER
             {species} dy = invert_jacobian(A) * res;
             #else
-            {species} dy = gmres_solve(A, res);
+            {species} dy = gmres_solve(A, res, tol = 1e-10);
             #endif
-            
+
             //Increment
             y_guess = y_guess + dy;
 
-            if (norm2(res) < 1e-10)
+            if (norm2(dy) < 1e-10)
             {{
-                return set_chemical_state(y[0], y_guess);
+                std::cout << iter <<std::endl;
+                return set_chemical_state(y[0], y_guess); 
             }};
         }}
         return set_chemical_state(y[0], y_guess); //sets energy to zero to signal integration broke

@@ -12,9 +12,8 @@ test_conditions = {
     "pressure": 101325.0,  # Pa
     "species": {
         "O2": 0.2,
-        "N2": 0.4,
+        "N2": 0.6,
         "H2": 0.2,
-        "C2H4": 0.2
     }
 }
 

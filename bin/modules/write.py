@@ -50,6 +50,19 @@ def write_species_names(file, species_names, configuration):
         constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
         return names[index]; // Return the name of the requested species
     }}
+    // Return the species name for a given index
+    {index} species_index_gen(const char* name)
+    {{
+        constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
+        for({index} i = 0; i<n_species; i++)
+        {{
+            if (std::strcmp(names[i], name) == 0)
+            {{
+                return i;
+            }}
+        }}
+        return -1;
+    }}
     """.format(**vars(configuration), species_list = ', '.join([f"\"{name}\"" for name in species_names]), n_species = len(species_names)))
 
 def write_thermo_transport_fit(file, name, thermo_fit_text, configuration):
