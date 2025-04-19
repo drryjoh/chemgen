@@ -16,7 +16,7 @@ def load_custom_sourcewriter(filepath):
     # Return the SourceWriter class from the custom module
     return custom_module.SourceWriter
 
-def process_cantera_file(gas, configuration, destination_folder, args, chemistry_solver, verbose = False, fit_gibbs_reaction = True, temperature_jacobian = False):
+def process_cantera_file(gas, configuration, destination_folder, args, chemistry_solver, verbose = False, fit_gibbs_reaction = True, temperature_jacobian = False, remove_reactions = False):
     species_names  = gas.species_names
     species_production_texts = [''] * gas.n_species
     species_production_function_texts = [''] * gas.n_species
@@ -122,9 +122,10 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
                 source_jacobian_species().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                                                             reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
                                                             species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
-                source_jacobian_species_R().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
-                                                            reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
-                                                            species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
+                if remove_reactions:
+                    source_jacobian_species_R().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
+                                                                      reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
+                                                                      species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction =  fit_gibbs_reaction)
     
     required_headers = create_headers(configuration, chemistry_solver, destination_folder)
     
