@@ -3,3 +3,5 @@ data_fast/
 VTK/
 src
 jacobians
+0.0002/polyMesh
+bin/chemgen

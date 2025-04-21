@@ -5,6 +5,6 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(chemwrapper, m) {
-    m.def("scale_species", &scale_species, "Scale species vector by a factor");
+    m.def("source_jacobian", &source_jacobain, "Scale species vector by a factor");
 }
 
