@@ -10,7 +10,7 @@ def pybind_extract_functions_from_header(file_path):
 def pybind_format_binding(return_type, func_name, args):
     return f'    m.def("{func_name}", &{func_name}, "{func_name} function");'
 
-def create_pybind(gas, headers, configuration, destination_folder):
+def create_pybind(gas, headers, configuration, destination_folder, remove_reactions = False):
     includes = headers
     bindings = []
     bindings_file = Path(destination_folder) / Path("chemgen_pybind.cpp")     # generated binding file\
@@ -29,6 +29,33 @@ def create_pybind(gas, headers, configuration, destination_folder):
         f.write("#include <iostream>  // For printing the result to the console\n")
         for header in headers:
             f.write(f"#include \"{header}\"\n")
+        remove_reactions_text = ""
+        if remove_reactions:
+            remove_reactions_text = """
+std::vector<std::vector<{scalar}>> source_jacobian_remove_reaction_py(const std::vector<{scalar}>& species, {scalar} temperature, std::vector<std::vector<{scalar}>>& J, {index} i) 
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+
+    {jacobian} Js;
+    for (int i = 0; i < n_species; ++i)
+        for (int j = 0; j < n_species; ++j)
+            Js[i][j] = J[i][j];  // Manual element-wise copy
+
+    {jacobian} jac = source_jacobian_R(sp, temperature, Js, i);
+
+    for (int i = 0; i < n_species; ++i) std::copy(J[i].begin(), J[i].end(), Js[i].begin());
+
+    std::vector<std::vector<{scalar}>> jac_out(n_species, std::vector<{scalar}>(n_species));
+    for (int i = 0; i < n_species; ++i)
+        for (int j = 0; j < n_species; ++j)
+            jac_out[i][j] = jac[i][j];
+
+    return jac_out;
+}}
+            """.format(**vars(configuration))
+            remove_reactions_call_text = """    m.def("source_jacobian_remove_reaction", &source_jacobian_remove_reaction_py, "source_jacobian with reaction removed function");"""
+
 
         f.write("""
 namespace py = pybind11;
@@ -55,14 +82,15 @@ std::vector<std::vector<{scalar}>> source_jacobian_py(const std::vector<{scalar}
 
     return jac_out;
 }}
-
+{remove_reactions}
 PYBIND11_MODULE(chemgen, m)
 {{ 
     m.def("source", &source_py, "source function");
     m.def("source_jacobian", &source_jacobian_py, "source_jacobian function");
+    {remove_reactions_call}
 }}
 
-        """.format(**vars(configuration)))
+        """.format(**vars(configuration), remove_reactions = remove_reactions_text, remove_reactions_call = remove_reactions_call_text))
     
     with open(setup_file, "w") as f:
         f.write("""

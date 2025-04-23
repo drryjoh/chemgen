@@ -221,7 +221,7 @@ def main():
     if not args.compile and args.cmake:
         compile(test_file, configuration_file, destination_folder, third_parties, compile=False)
     if args.pybind:
-        create_pybind(gas, headers, configuration, destination_folder)
+        create_pybind(gas, headers, configuration, destination_folder, remove_reactions = args.remove_reactions)
 if __name__ == "__main__":
     main()
 
