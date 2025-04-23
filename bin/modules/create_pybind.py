@@ -13,7 +13,6 @@ def pybind_format_binding(return_type, func_name, args):
 def create_pybind(gas, headers, configuration, destination_folder):
     includes = headers
     bindings = []
-    bindings_file = Path(destination_folder) / Path("chemgen_bindings.cpp")     # generated binding file\
     bindings_file = Path(destination_folder) / Path("chemgen_pybind.cpp")     # generated binding file\
     setup_file = Path(destination_folder) / Path("setup_chemgen.py")     # generated binding file
 
@@ -31,11 +30,39 @@ def create_pybind(gas, headers, configuration, destination_folder):
         for header in headers:
             f.write(f"#include \"{header}\"\n")
 
-        f.write('namespace py = pybind11;\n\n')
-        f.write(f'PYBIND11_MODULE(chemgen, m)\n')
-        f.write("{")
-        f.write('\n'.join(bindings))
-        f.write('\n}\n')
+        f.write("""
+namespace py = pybind11;
+
+std::vector<{scalar}> source_py(const std::vector<{scalar}>& species, {scalar} temperature) 
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+    auto result = source(sp, temperature);
+    return std::vector<{scalar}>(result.begin(), result.end());
+}}
+
+std::vector<std::vector<{scalar}>> source_jacobian_py(const std::vector<{scalar}>& species, {scalar} temperature) 
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+
+    SpeciesJacobian jac = source_jacobian(sp, temperature);
+
+    std::vector<std::vector<{scalar}>> jac_out(n_species, std::vector<{scalar}>(n_species));
+    for (int i = 0; i < n_species; ++i)
+        for (int j = 0; j < n_species; ++j)
+            jac_out[i][j] = jac[i][j];
+
+    return jac_out;
+}}
+
+PYBIND11_MODULE(chemgen, m)
+{{ 
+    m.def("source", &source_py, "source function");
+    m.def("source_jacobian", &source_jacobian_py, "source_jacobian function");
+}}
+
+        """.format(**vars(configuration)))
     
     with open(setup_file, "w") as f:
         f.write("""
@@ -56,7 +83,7 @@ ext_modules = [
 setup(
     name='chemgen',
     version='1.0',
-    author='Ryan Johnson',
+    author='Ryan F. Johnson',
     description='Pybind11 bindings for C++ ChemGen',
     ext_modules=ext_modules,
 )
