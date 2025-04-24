@@ -1,0 +1,6 @@
+test_conditions:
+  temperature: 1800
+  pressure: 101325.0
+  species:
+    - name: CH4 
+      MoleFraction: 1.0
