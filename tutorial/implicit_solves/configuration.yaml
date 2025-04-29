@@ -73,9 +73,10 @@ decorators:
 
 build:
   chemgen_smp: None 
+  chemgen_input: yaml 
   chemgen_optimized: O2
 
 solver:
   chemistry_solver: all
-  linear_solver: direct 
+  linear_solver: gmres 
   preconditioner: jacobi 

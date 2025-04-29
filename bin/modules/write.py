@@ -18,6 +18,7 @@ using TemperatureGibbsMonomial = {temperature_gibbs_monomial_typedef};
 using ThermoTable = {scalar_list}<TemperatureEnergyMonomial, n_species>;
 using ChemicalState = {chemical_state_tyedef};
 using {jacobian} = {jacobian_typedef};
+using ReactionSpecies = std::array<std::array<{scalar}, n_species>, n_reactions>;
 
 """.format(**vars(configuration), 
 n_species = int(n_species),
@@ -48,6 +49,19 @@ def write_species_names(file, species_names, configuration):
     {{
         constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
         return names[index]; // Return the name of the requested species
+    }}
+    // Return the species name for a given index
+    {index} species_index_gen(const char* name)
+    {{
+        constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
+        for({index} i = 0; i<n_species; i++)
+        {{
+            if (std::strcmp(names[i], name) == 0)
+            {{
+                return i;
+            }}
+        }}
+        return -1;
     }}
     """.format(**vars(configuration), species_list = ', '.join([f"\"{name}\"" for name in species_names]), n_species = len(species_names)))
 

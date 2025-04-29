@@ -10,6 +10,7 @@ from modules.process_files import *
 from modules.configuration import *
 from modules.headers import *
 from modules.compile_and_run import *
+from modules.create_pybind import *
  
 def find_chemical_mechanism(file_name):
     # Get the path to the current script (chemgen.py)
@@ -59,9 +60,11 @@ def main():
     parser.add_argument("--cmake", action="store_true", help="Compile the source writer code")
     parser.add_argument("--n-points-test", type=int, default=1000,  help="Number of points for testing (default: 1000)")
     parser.add_argument("--verbose", action="store_true", default=False, help="Verbose code generation")
+    parser.add_argument("--remove_reactions", action="store_true", default=False, help="Generate the ability to remove single reaction from jacobian")
     parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction")
     parser.add_argument("--jacobian-temperature", action="store_true", default=False, help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
     parser.add_argument("--force", action="store_true", default=False, help="Force code generation despite warnings")
+    parser.add_argument("--pybind", action="store_true", default=False, help="Create pybind linker")
 
     args = parser.parse_args()
     
@@ -168,7 +171,7 @@ def main():
 
     third_parties = [use_third_parties, third_party_path, libraries]
     
-    headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian)
+    headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian, remove_reactions = args.remove_reactions)
 
     if "types_inl.h" in headers:
         headers.remove("types_inl.h")
@@ -205,12 +208,11 @@ def main():
         except (FileNotFoundError, AttributeError) as e:
             print(f"Error loading custom test writer: {e}")
             sys.exit(1)
-
     else: #replace with run time argument
         test_file = 'chemgen.cpp'
         from modules.default_test import create_test
         create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
-    
+
     if args.compile:
         compile(test_file, configuration_file, destination_folder, third_parties)
 
@@ -218,7 +220,8 @@ def main():
         compile(test_file, configuration_file, destination_folder, third_parties)
     if not args.compile and args.cmake:
         compile(test_file, configuration_file, destination_folder, third_parties, compile=False)
-
+    if args.pybind:
+        create_pybind(gas, headers, configuration, destination_folder, remove_reactions = args.remove_reactions)
 if __name__ == "__main__":
     main()
 

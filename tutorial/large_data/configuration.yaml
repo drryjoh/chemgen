@@ -1,0 +1,80 @@
+decorators:
+  scalar: "double"
+  scalar_function: "double"
+  scalar_cast: "double"
+  scalar_parameter: "const double&"
+  n_thermo_order: "7"
+  scalar_list: "std::array"
+  temperature_monomial_typedef: "std::array<double, n_order_thermo>"
+  temperature_monomial_function: "TemperatureMonomial"
+  temperature_monomial: "TemperatureMonomial"
+  temperature_monomial_parameter: "const TemperatureMonomial&"
+
+  temperature_energy_monomial_function: "TemperatureEnergyMonomial"
+  temperature_energy_monomial: "TemperatureEnergyMonomial"
+  temperature_energy_monomial_parameter: "const TemperatureEnergyMonomial&"
+
+  temperature_gibbs_monomial_function: "TemperatureGibbsMonomial"
+  temperature_gibbs_monomial: "TemperatureGibbsMonomial"
+  temperature_gibbs_monomial_parameter: "const TemperatureGibbsMonomial&"
+
+  index: "int"
+  string: "std::string"
+
+  species_typedef: "std::array<double, n_species>"
+  species: "Species"
+  species_function: "Species"
+  species_cast: "Species"
+  species_parameter: "const Species&"
+  species_element: "species[{i}]"
+  
+  arbitrary_element: "{name}[{{i}}]"
+
+  reactions_typedef: "std::array<double, n_reactions>"
+  reactions: "Reactions"
+  reactions_function: "Reactions"
+  reactions_cast: "Reactions"
+  reactions_parameter: "const Reactions&"
+  reactions_element: "reactions[{i}]"
+
+  chemical_state_typedef: "std::array<double, n_species+1>"
+  chemical_state: "ChemicalState"
+  chemical_state_function: "ChemicalState"
+  chemical_state_cast: "ChemicalState"
+  chemical_state_parameter: "const ChemicalState&"
+  chemical_state_element: "chemical_state[{i}]"
+
+  jacobian_typedef: "std::array<Species, n_species>"
+  jacobian: "SpeciesJacobian"
+  jacobian_function: "SpeciesJacobian"
+  jacobian_cast: "SpeciesJacobian"
+  jacobian_parameter: "const SpeciesJacobian&"
+  jacobian_end: "n_species"
+
+  source_element: "net_production_rates[{i}]"
+  const_option: ""
+  constexpr: "constexpr"
+  device_option: ""
+  expmath: "std::exp"
+  powmath: "std::pow"
+  logmath: "std::log"
+  log10math: "std::log10"
+  sqrtmath: "std::sqrt"
+
+  device_sum: "std::accumulate(a_s.begin(), a_s.end(), {scalar_cast}(0.0))"
+  device_fill: "std::fill(b_s.begin(), b_s.end(), a)"
+  device_transform: "std::transform(b_s.begin(), b_s.end(), c_s.begin(), [&a]({scalar} s) {{ return a * s; }});"
+  device_element_sum: "std::transform(a_s.begin(), a_s.end(), b_s.begin(), c_s.begin(), []({scalar_parameter} a, {scalar_parameter} b) {{ return a + b; }});"
+  device_element_multiply: "std::transform(a_s.begin(), a_s.end(), b_s.begin(), c_s.begin(), []({scalar_parameter} a, {scalar_parameter} b) {{ return a * b; }});"
+  sum: "sum_gen"
+  fill: "fill_gen"
+  scale: "scale_gen"
+  sqrt: "sqrt_gen"
+
+build:
+  chemgen_optimized: O3
+
+solver:
+  chemistry_solver: all
+  linear_solver: gmres 
+  preconditioner: jacobi 

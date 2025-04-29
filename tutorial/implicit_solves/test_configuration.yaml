@@ -5,6 +5,6 @@ test_conditions:
     - name: O2
       MoleFraction: 0.2
     - name: N2
-      MoleFraction: 0.6
+      MoleFraction: 0.4
     - name: H2
       MoleFraction: 0.2  

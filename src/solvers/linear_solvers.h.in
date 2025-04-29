@@ -61,7 +61,7 @@ apply_gauss_seidel({jacobian_function} A, {species_function} v)
 
 {device_option}
 {species_function}
-gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-6) 
+gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-9) 
 {{
 	{index} max_iter = 100;
     {species} x = {{}};
@@ -78,7 +78,10 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-6)
 
     {species} r = b_ - (A_ * x);
 	{scalar} norm2_r = norm2(r);
-    if (norm2_r < tol) return x;
+    if (norm2_r < tol)
+    {{
+        return x;
+    }}
 
     std::array<Species, n_species + 1> V = {{}};
     V[0] = scale_gen(inv_gen(norm2_r), r);

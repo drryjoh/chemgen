@@ -142,6 +142,22 @@ operator-({jacobian_parameter} a, {jacobian_parameter} b) {const_option}
     return c;
 }}
 
+{device_option}
+{scalar_function} 
+L2({jacobian_parameter} a) {const_option}
+{{
+    {scalar} sum = {scalar_cast}(0.0);
+
+    for ({index} i = 0; i<{jacobian_end}; i++)
+    {{
+        for ({index} j = 0; j<{jacobian_end}; j++)
+        {{
+            sum+= pow2(a[i][j]);
+        }}
+    }}
+    return sqrt_gen(sum);
+}}
+
 
 {device_option}
 {temperature_monomial_function} 
