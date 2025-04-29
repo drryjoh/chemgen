@@ -41,13 +41,14 @@ for t in time:
     Jtotal = np.array(cg.source_jacobian(C, T))
     smallest_time_scale_total = find_eigs(Jtotal)
 
-    fastest_reaction_at_time = [smallest_time_scale_total]  # include total baseline
+    #fastest_reaction_at_time = [smallest_time_scale_total]  # include total baseline
+    fastest_reaction_at_time = []
     fastest_times.append(smallest_time_scale_total)
     for i in range(gas.n_reactions):
         J = np.array(cg.source_jacobian_remove_reaction(C, T, Jtotal, i))
         time_at_i = find_eigs(J)
-        if time_at_i - smallest_time_scale_total > 0:
-            fastest_reaction_at_time.append(time_at_i)
+        if (time_at_i)/smallest_time_scale_total > 0.1:
+            fastest_reaction_at_time.append(i)
 
     fastest_times_removed.append(fastest_reaction_at_time)
 
@@ -65,8 +66,8 @@ plt.title("Temperature evolution")
 plt.subplot(2, 1, 2)
 for i, fastest_reactions_at_time in enumerate(fastest_times_removed):
     for reaction in fastest_reactions_at_time:
-        plt.semilogy(time[i], reaction, 'ok')
-plt.semilogy(time, fastest_times,'-r')
+        plt.plot(time[i], reaction, 'ok')
+#plt.semilogy(time, fastest_times,'-r')
 plt.ylabel("Fastest Reactions")
 plt.xlabel("Time [s]")
 plt.title("Inverse of largest non-zero eigenvalue")

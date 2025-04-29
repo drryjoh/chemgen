@@ -4357,6 +4357,17 @@ and solving the decrement
 
 \end_inset
 
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y_{k}^{n+1}\right)\left(y_{k+1}^{n+1}-y_{k}^{n+1}\right)=-f(y_{k}^{n+1})\label{eq:newtons-method-2}
+\end{equation}
+
+\end_inset
+
 Where 
 \begin_inset Formula $\mathcal{J}\left(y_{k}^{n+1}\right)$
 \end_inset
@@ -4746,6 +4757,7 @@ Where
 \end_layout
 
 \begin_layout Standard
+x
 \begin_inset Formula 
 \begin{equation}
 \mathcal{J}_{n,ij}\left(\Gamma_{p,k}\right)=\frac{\partial\omega_{i}\left(y_{n}\right)}{\partial y_{n,j}}\label{eq:newtons-method-sdirk2-1-1-1-1-1}
@@ -4774,6 +4786,95 @@ Results
 
 \begin_layout Subsection
 Thermodynamics
+\end_layout
+
+\begin_layout Subsection
+Implementation into OpenFOAM
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\phi^{n+1}-\phi^{n}}{\Delta t}+\mathcal{F}_{\text{FVM}}\left(\phi^{n+1}\right)=\mathcal{R}\label{eq:Backward_euler-1}
+\end{equation}
+
+\end_inset
+
+The Newton's method can be used to iteratively find 
+\begin_inset Formula $\phi^{n+1}$
+\end_inset
+
+ by rewriting 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{-\phi^{n}}{\Delta t}+\frac{\phi^{n+1}}{\Delta t}+\mathcal{F}_{\text{FVM}}\left(\phi^{n+1}\right)-\mathcal{R}=f(\phi^{n+1})=0\label{eq:BE-rewrite-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta\phi^{n+1}=\left(\phi_{k+1}^{n+1}-\phi_{k}^{n+1}\right)=-\mathcal{J}\left(\phi_{k}^{n+1}\right)^{-1}f(\phi_{k}^{n+1})\label{eq:newtons-method-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(\phi_{k}^{n+1}\right)=\frac{\phi^{n+1}}{\Delta t}+\frac{\partial\mathcal{F}_{\text{FVM}}}{\partial\phi^{n+1}}\left(\phi^{n+1}\right)-0\label{eq:BE-rewrite-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\phi=\rho Y_{i}\label{eq:BE-rewrite-1-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+R=\frac{C_{i}^{n+1}-C_{i}^{n+1}}{\Delta t}\label{eq:BE-rewrite-1-1-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+y=\left(C_{1},\dots,C_{n_{s}}\right)\label{eq:Backward_euler-2}
+\end{equation}
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection

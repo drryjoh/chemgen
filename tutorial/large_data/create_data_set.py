@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 gas = ct.Solution("H2_FFCM1_O3_Ar.yaml")
 data = []
-for name in [ "T", "p", *gas.species_names]:
+for name in [ "Cx","Cy", "T", "p", *gas.species_names]:
     print(f"processing {name}")
     f = open(f'0.0002/{name}','r')
     reading = False
@@ -31,7 +31,7 @@ for name in [ "T", "p", *gas.species_names]:
     data.append(d)
 data = np.array(data).transpose()
 
-f = open("consolidated.csv","w")
+f = open("consolidated_with_xy.csv","w")
 for line in data:
     str_line = [str(d) for d in line]
     f.write("{0}\n".format(", ".join(str_line)))
