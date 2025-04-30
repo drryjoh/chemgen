@@ -47,7 +47,7 @@ for t in time:
     for i in range(gas.n_reactions):
         J = np.array(cg.source_jacobian_remove_reaction(C, T, Jtotal, i))
         time_at_i = find_eigs(J)
-        if (time_at_i)/smallest_time_scale_total > 0.1:
+        if (time_at_i - smallest_time_scale_total)/smallest_time_scale_total > 0.1:
             fastest_reaction_at_time.append(i)
 
     fastest_times_removed.append(fastest_reaction_at_time)
