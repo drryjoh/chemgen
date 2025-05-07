@@ -41,7 +41,8 @@ plt.plot(time_sdirk4, y_sdirk4[:, 1], '-ob', label=f'SDIRK4\ntime = {t_sdirk4:.2
 plt.plot(time_be_h2, y_be_h2[:, 1], '-^r', label=f'Backward Euler, dt/2\ntime = {t_be_h2:.2e}', mfc = "white")
 plt.plot(time_sdirk2_h2, y_sdirk2_h2[:, 1], '-^k', label=f'SDIRK2, dt/2\ntime = {t_sdirk2_h2:.2e}', mfc = "white")
 plt.plot(time_ros2_h2, y_ros2_h2[:, 1], '-^g', label=f'Rosenbrock2, dt/2\ntime = {t_ros2_h2:.2e}', mfc = "white")
-plt.plot(time_seulex, y_seulex[:, 1], '-^r', label=f'SEULEX, dt/2\ntime = {t_seulex:.2e}', mfc = "white")
+plt.plot(time_seulex, y_seulex[:, 1], '--r', label=f'SEULEX \ntime = {t_seulex:.2e}', mfc = "white",lw=1)
+plt.plot(time_yass, y_yass[:, 1], '--k', label=f'Yass\ntime = {t_ros2:.2e}', mfc = "white", lw=1)
 
 np.save("time_sdirk4_h10.npy", time_sdirk4_h10)
 np.save("y_sdirk4_h10.npy", y_sdirk4_h10)
@@ -74,8 +75,4 @@ plt.xlabel("Time")
 plt.ylabel("$y_2$")
 plt.title("Implicit Solve of dy/dt = S(y)")
 plt.grid(True)
-plt.figure()
-
-plt.plot(time_seulex, y_seulex[:, 1], '-^r', label=f'SEULEX, dt/2\ntime = {t_seulex:.2e}', mfc = "white")
-plt.plot(time_yass, y_yass[:, 1], '--k', label=f'Yass\ntime = {t_ros2:.2e}', mfc = "white", lw=1)
 plt.show()
