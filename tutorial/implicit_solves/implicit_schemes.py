@@ -200,6 +200,73 @@ def rosenbrock2(y0, dt, n_time_steps):
         time.append(time[-1] + dt)
 
     return np.array(time), np.array(ys)
+'''
+def yass(y0, dt, n_time_steps):
+    yn = y0.copy()
+    ys = [y0]
+    time = [0.0]
+    I = np.eye(len(y0))
+
+    for t in range(n_time_steps):
+        
+        J = dsource_dy(yn)  # Jacobian at y_n
+        G = I - dt * J   # shared for all stages
+
+        # Stage 1
+        rhs1 = source(yn) * dt
+        dy, _ = gmres_custom(G, rhs1, tol=1e-12, max_iter=100)
+        
+        # Stage 2
+        yn+=dy
+        ys.append(yn)
+        
+        time.append(time[-1] + dt)
+
+    return np.array(time), np.array(ys)
+'''
+def yass(y0, dt, n_time_steps, max_norm=1e-6, min_dt=1e-10):
+    """
+    Backward Euler integrator with adaptive timestep control based on dy norm.
+
+    Parameters:
+        y0         : np.ndarray – initial state (e.g. shape (3,))
+        dt         : float      – initial timestep
+        n_time_steps : int      – total number of time steps
+        max_norm   : float      – maximum allowable norm of dy
+        min_dt     : float      – minimum allowed dt to avoid stagnation
+
+    Returns:
+        time : np.ndarray – time points
+        ys   : np.ndarray – solution snapshots
+    """
+    yn = y0.copy()
+    ys = [y0.copy()]
+    time = [0.0]
+    max_time = n_time_steps * dt
+    I = np.eye(len(y0))
+
+    step = 0
+    while time[step] < max_time:
+        J = dsource_dy(yn)
+        G = I - dt * J
+        rhs = source(yn) * dt
+
+        dy, _ = gmres_custom(G, rhs, tol=1e-12, max_iter=100)
+        dy_norm = np.linalg.norm(dy)
+
+        if dy_norm > max_norm:
+            dt *= 0.5
+            if dt < min_dt:
+                raise RuntimeError(f"Timestep too small (dt = {dt:.2e}) at step {step}")
+            continue  # retry this step from the same yn with reduced dt
+
+        # Accept the step
+        yn += dy
+        ys.append(yn.copy())
+        time.append(time[-1] + dt)
+        step += 1
+
+    return np.array(time), np.array(ys)
 
 def seulex_adaptive(y0, dt_init, t_final, rtol=1e-6, atol=1e-10, n_stages=3, n_newton=5):
     yn = y0.copy()
