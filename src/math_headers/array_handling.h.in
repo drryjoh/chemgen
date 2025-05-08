@@ -250,14 +250,30 @@ set_chemical_state({scalar_parameter} internal_energy,
 }}
 
 {device_option}
-template <typename T>
-{scalar_function} norm2(const T& x) 
+{scalar_function} norm2({species_parameter} x) 
 {{
     {scalar} sum = {scalar_cast}(0.0);
-    for (const auto& xi : x)
-        sum += xi * xi;
+    for ({index} i  = 0; i<n_species; i++)
+    {{
+        sum += x[i] * x[i]; 
+    }}
     return sqrt_gen(sum);
 }}
+
+{device_option}
+{scalar_function} norm2({jacobian_parameter} x) 
+{{
+    {scalar} sum = {scalar_cast}(0.0);
+    for ({index} i  = 0; i<n_species; i++)
+    {{
+        for ({index} j  = 0; j<n_species; j++)
+        {{
+            sum += x[i][j] * x[i][j]; 
+        }}
+    }}
+    return sqrt_gen(sum);
+}}
+
 
 {device_option}
 {species_function} operator*({jacobian_parameter} A, {species_parameter} x) 
