@@ -29,6 +29,7 @@ rk4_simple({scalar_parameter}  y_n,
 				   k4);
 }}
 
+/*
 {device_option}
 template<typename T>
 T rk4(const T& y_n, {scalar_parameter} dt) {const_option}
@@ -56,3 +57,37 @@ T rk4(const T& y_n, {scalar_parameter} dt) {const_option}
 				   {scale}({scalar_cast}(2), k3) + 
 				   k4);
 }}
+*/
+
+{device_option}
+{chemical_state}
+rk4({chemical_state} y, {scalar_parameter} dt) {const_option}
+{{
+	{species} y_n = get_species(y);
+	{scalar} temperature_ = temperature(y[0], y_n);
+
+	{species} k1  = source(y_n, temperature_);
+
+	{species} y_n_2 = y_n +  {scale}(dt * {scalar_cast}(0.5), k1);
+	temperature_ = temperature(y[0], y_n_2);
+	{species} k2  = source(y_n_2, temperature_);
+	
+
+	{species} y_n_3 = y_n +  {scale}(dt * {scalar_cast}(0.5), k2);
+	temperature_ = temperature(y[0], y_n_3);
+	{species} k3  = source(y_n_3, temperature_);
+
+	{species} y_n_4 = y_n +  {scale}(dt, k3);
+	temperature_ = temperature(y[0], y_n_4);
+	{species} k4  = source(y_n_4, temperature_);
+
+    return 
+	set_chemical_state(y[0],
+	y_n +
+	       {scale}(dt * {scalar_cast}(0.16666666666666666), 
+		           k1 + 
+				   {scale}({scalar_cast}(2), k2) +
+				   {scale}({scalar_cast}(2), k3) + 
+				   k4));
+}}
+

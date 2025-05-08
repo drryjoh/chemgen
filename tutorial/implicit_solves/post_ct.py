@@ -12,8 +12,9 @@ test_conditions = {
     "pressure": 101325.0,  # Pa
     "species": {
         "O2": 0.2,
-        "N2": 0.6,
+        "N2": 0.4,
         "H2": 0.2,
+        "C2H4": 0.2,
     }
 }
 
@@ -28,8 +29,11 @@ reactor = ct.IdealGasReactor(gas)
 network = ct.ReactorNet([reactor])
 
 # Define simulation time (in seconds)
-time_end = 200 * 2e-7  # Convert ns to seconds
-n_steps = 200  # Number of time steps
+time_end = 2e-5
+dt_small = 1e-7
+n_steps = int(time_end/dt_small)
+#time_end = 200 * 2e-7  # Convert ns to seconds
+#n_steps = 200  # Number of time steps
 time = np.linspace(0, time_end, n_steps)
 
 temperature = []
@@ -46,15 +50,17 @@ data = np.array(data)
 # Save results to file
 
 # Plot results
-plt.plot(data[:, 0]*1000.0, data[:, 1],'-r', label = "Cantera")
+plt.plot(data[:, 0]*1000.0, data[:, 1],'-r', label = "Cantera", lw=4)
 d = np.loadtxt("backward_euler.txt")
-plt.plot(d[:, 0]*1000.0, d[:, 1],'-ok', label = "ChemGen Backward Euler", markevery=500)
-d = np.loadtxt("rk4.txt")
-plt.plot(d[:, 0]*1000.0, d[:, 1],'-^g', label = "ChemGen RK4", markevery=500)
+plt.plot(d[:, 0]*1000.0, d[:, 1],'-k', label = "ChemGen Backward Euler", markevery=50)
+#d = np.loadtxt("rk4.txt")
+#plt.plot(d[:, 0]*1000.0, d[:, 1],'--k', label = "ChemGen RK4", markevery=50)
 d = np.loadtxt("sdirk2.txt")
-plt.plot(d[:, 0]*1000.0, d[:, 1],'-db', label = "ChemGen SDIRK2", markevery=500)
+plt.plot(d[:, 0]*1000.0, d[:, 1],'-b', label = "ChemGen SDIRK2", markevery=50)
 d = np.loadtxt("sdirk4.txt")
-plt.plot(d[:, 0]*1000.0, d[:, 1],'sr', label = "ChemGen SDIRK4")
+plt.plot(d[:, 0]*1000.0, d[:, 1],'-g', label = "ChemGen SDIRK4", markersize=3)
+d = np.loadtxt("ros.txt")
+plt.plot(d[:, 0]*1000.0, d[:, 1],'-',color='purple', label = "ChemGen Rosenbroc", markersize = 3)
 
 plt.legend()
 plt.xlabel("Time ($\mu$s)")
