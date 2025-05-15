@@ -110,7 +110,7 @@ theorems-std
 
 \begin_layout Title
 ChemGen:
- Malleable Chemistry Code Generation with Applications to High Performance Computational Fluid Dynamics
+ Malleable Chemistry Code Generation with Applications to Computational Fluid Dynamics
 \begin_inset ERT
 status open
 
@@ -4295,6 +4295,23 @@ k_{3} & = & \mathcal{S}\left(y^{n}+\frac{\Delta t}{2}k_{2}\right)\\
 k_{4} & = & \mathcal{S}\left(y_{n}+\Delta tk_{3}\right)\\
 y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
 \end{array}\label{eq:RK4}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccc}
+k_{1} & = & \mathcal{R}\left(y^{n}\right)\\
+k_{2} & = & \mathcal{R}\left(y^{n}+\frac{\Delta t}{2}k_{1}\right)\\
+k_{3} & = & \mathcal{R}\left(y^{n}+\frac{\Delta t}{2}k_{2}\right)\\
+k_{4} & = & \mathcal{R}\left(y_{n}+\Delta tk_{3}\right)\\
+y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
+\end{array}\label{eq:RK4-1}
 \end{equation}
 
 \end_inset

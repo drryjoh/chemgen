@@ -108,6 +108,28 @@ operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_opti
 }}
 
 {device_option}
+{species_function} 
+safe_inv({species_parameter} a_s) {const_option}
+{{
+    {species} b = {{}};
+    for ({index} i = 0; i<n_species; i++)
+    {{
+        b[i] = inv_safe_gen(a_s[i]);
+    }}
+    return b;
+}}
+
+{device_option}
+{species_function} 
+safe_divide({species_parameter} a_s, {species_parameter} b_s_divide) {const_option}
+{{
+    {species} c_s;
+    {species} b_s = safe_inv(b_s_divide);
+    {device_element_multiply_inl}
+    return c_s;
+}}
+
+{device_option}
 {reactions_function} 
 operator+({reactions_parameter} a_s, {reactions_parameter} b_s) {const_option}
 {{

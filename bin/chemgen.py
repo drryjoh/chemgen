@@ -196,9 +196,14 @@ def main():
     if "sdirk.h" in headers:
         headers.remove("sdirk.h")
         headers.append("sdirk.h")
+
     if "rosenbroc.h" in headers:
         headers.remove("rosenbroc.h")
         headers.append("rosenbroc.h")
+    
+    if "yass.h" in headers:
+        headers.remove("yass.h")
+        headers.append("yass.h")
     test_file = ''
     
     if args.custom_test:
