@@ -1,3 +1,4 @@
+/*
 {device_option}
 {chemical_state} 
 yass({chemical_state} y,  
@@ -50,3 +51,4 @@ yass({chemical_state} y,
     set_chemical_state(y[0], 
                         y_n); 
 }}
+*/
