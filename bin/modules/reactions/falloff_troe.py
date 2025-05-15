@@ -74,14 +74,14 @@ def create_reaction_functions_and_calls_troe(reaction_rates, reaction_rates_deri
                                                 reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
                                                 reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
                                                 alpha, T1, T2, T3,
-                                                reaction.efficiencies, species_names,
+                                                get_efficiencies(reaction), species_names,
                                                 configuration))
 
         reaction_rates_derivatives.append(dtroe_text_dlog_temperature(reaction_index,
                                                 reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
                                                 reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
                                                 alpha, T1, T2, T3,
-                                                reaction.efficiencies, species_names,
+                                                get_efficiencies(reaction), species_names,
                                                 configuration))
     else:
         reaction_rates_derivatives.append(f'//dcall_forward_reaction_{reaction_index} temperature derivative unused')
@@ -89,7 +89,7 @@ def create_reaction_functions_and_calls_troe(reaction_rates, reaction_rates_deri
                                                reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
                                                reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
                                                alpha, T1, T2, T3,
-                                               reaction.efficiencies, species_names,
+                                               get_efficiencies(reaction), species_names,
                                                configuration))
                             
     reaction_calls[reaction_index] = " call_forward_reaction_{reaction_index}(species, temperature, log_temperature, {third_body_multiplier});\n".format(**vars(configuration),reaction_index = reaction_index, third_body_multiplier = third_body_multiplier)    
