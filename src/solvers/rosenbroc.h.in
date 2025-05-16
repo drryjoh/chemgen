@@ -1,0 +1,46 @@
+{device_option}
+{chemical_state} 
+rosenbroc({chemical_state} y,  
+          {scalar_parameter} dt, 
+          {scalar} tol = 1e-10,
+          {index} max_iter = 10) 
+{{
+        //constants
+        {species} y_init = get_species(y);
+        {scalar} gamma = 1.0 + 1.0 / sqrt_gen({scalar}(2));
+        {scalar} alpha = 1.0/gamma;
+        {scalar} beta = -2.0/gamma;
+        {scalar} m1 = 3.0/(2.0 * gamma);
+        {scalar} m2 = 1.0/(2.0 * gamma);
+        {scalar} one_minus_gamma = 1.0 - gamma;
+
+        {scalar} temperature_ = temperature(y[0], y_init);
+        const {jacobian} I = jacobian_I();
+        {jacobian} J = source_jacobian(y_init, temperature_);
+        {jacobian} G = scale_gen((1.0/(gamma* dt)),  I) - J;// shared for all stages
+
+        // Stage 1
+        {species} rhs1 = source(y_init, temperature_);
+        #ifdef CHEMGEN_DIRECT_SOLVER
+        {species} k1 = invert_jacobian(G) * rhs1;
+        #else
+        {species} k1 = gmres_solve(G, rhs1);
+        #endif
+        
+        // Stage 2
+        {species} y_stage = y_init + alpha * k1;
+        {scalar} temperature_stage = temperature(y[0], y_stage);
+
+        {species} rhs2 = source(y_stage, temperature_stage) + beta/dt * k1 - G * k1; //source(y_stage) - J @ (a21 * dt * k1)
+
+        #ifdef CHEMGEN_DIRECT_SOLVER
+        {species} dk = invert_jacobian(G) * rhs2;
+        #else
+        {species} dk = gmres_solve(G, rhs2);
+        #endif
+
+        {species} k2 = k1 + dk;
+        return 
+        set_chemical_state(y[0], 
+                           y_init + scale_gen(m1, k1) + scale_gen(m2, k2)); //yn = yn + m1 * k1 + m2 * k2
+}}

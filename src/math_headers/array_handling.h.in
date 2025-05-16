@@ -108,6 +108,28 @@ operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_opti
 }}
 
 {device_option}
+{species_function} 
+safe_inv({species_parameter} a_s) {const_option}
+{{
+    {species} b = {{}};
+    for ({index} i = 0; i<n_species; i++)
+    {{
+        b[i] = inv_safe_gen(a_s[i]);
+    }}
+    return b;
+}}
+
+{device_option}
+{species_function} 
+safe_divide({species_parameter} a_s, {species_parameter} b_s_divide) {const_option}
+{{
+    {species} c_s;
+    {species} b_s = safe_inv(b_s_divide);
+    {device_element_multiply_inl}
+    return c_s;
+}}
+
+{device_option}
 {reactions_function} 
 operator+({reactions_parameter} a_s, {reactions_parameter} b_s) {const_option}
 {{
@@ -250,14 +272,30 @@ set_chemical_state({scalar_parameter} internal_energy,
 }}
 
 {device_option}
-template <typename T>
-{scalar_function} norm2(const T& x) 
+{scalar_function} norm2({species_parameter} x) 
 {{
     {scalar} sum = {scalar_cast}(0.0);
-    for (const auto& xi : x)
-        sum += xi * xi;
+    for ({index} i  = 0; i<n_species; i++)
+    {{
+        sum += x[i] * x[i]; 
+    }}
     return sqrt_gen(sum);
 }}
+
+{device_option}
+{scalar_function} norm2({jacobian_parameter} x) 
+{{
+    {scalar} sum = {scalar_cast}(0.0);
+    for ({index} i  = 0; i<n_species; i++)
+    {{
+        for ({index} j  = 0; j<n_species; j++)
+        {{
+            sum += x[i][j] * x[i][j]; 
+        }}
+    }}
+    return sqrt_gen(sum);
+}}
+
 
 {device_option}
 {species_function} operator*({jacobian_parameter} A, {species_parameter} x) 

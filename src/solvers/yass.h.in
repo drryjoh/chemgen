@@ -1,0 +1,54 @@
+
+{device_option}
+{chemical_state} 
+yass({chemical_state} y,  
+     {scalar_parameter} dt, 
+     {scalar} max_norm  = 0.1,
+     {scalar} min_dt  = 1e-10,
+     {index} max_iter = 20) 
+{{
+
+    {species} y_init = get_species(y);
+    {species} y_n = y_init;
+    {scalar} dt_ = dt;
+    {scalar} time = 0;
+    {index} iteration = 0;
+    const {jacobian} I = jacobian_I();
+
+    while(time < dt && iteration < max_iter)
+    {{
+
+        {scalar} temperature_ = temperature(y[0], y_n);
+        {jacobian} J = source_jacobian(y_n, temperature_);
+        {jacobian} G = I - scale_gen(dt_, J);
+        {species} rhs1 = scale_gen(dt_, source(y_n, temperature_));
+
+        #ifdef CHEMGEN_DIRECT_SOLVER
+        {species} dy = invert_jacobian(G) * rhs1;
+        #else
+        {species} dy = gmres_solve(G, rhs1);
+        #endif
+
+        {scalar} dy_norm  = norm2(dy);
+
+        if (dy_norm > max_norm)
+        {{
+            dt_ *= {scalar_cast}(0.5);
+            if (dt_ < min_dt)
+            {{
+                    return set_chemical_state({scalar_cast}(0.0), scale_gen({scalar_cast}(0.0), y_n)); //return garbage
+            }}
+        }}
+        else
+        {{
+            time+=dt_;
+            y_n = y_n + dy; 
+        }}
+
+        iteration++;
+    }}
+
+    return 
+    set_chemical_state(y[0], 
+                        y_n); 
+}}

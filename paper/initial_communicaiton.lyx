@@ -110,7 +110,7 @@ theorems-std
 
 \begin_layout Title
 ChemGen:
- Malleable Chemistry Code Generation with Applications to High Performance Computational Fluid Dynamics
+ Malleable Chemistry Code Generation with Applications to Computational Fluid Dynamics
 \begin_inset ERT
 status open
 
@@ -4303,6 +4303,23 @@ y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccc}
+k_{1} & = & \mathcal{R}\left(y^{n}\right)\\
+k_{2} & = & \mathcal{R}\left(y^{n}+\frac{\Delta t}{2}k_{1}\right)\\
+k_{3} & = & \mathcal{R}\left(y^{n}+\frac{\Delta t}{2}k_{2}\right)\\
+k_{4} & = & \mathcal{R}\left(y_{n}+\Delta tk_{3}\right)\\
+y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
+\end{array}\label{eq:RK4-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 ##Insert Picture of RK4 comparison
 \end_layout
 
@@ -4858,7 +4875,7 @@ Where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-R=\frac{C_{i}^{n+1}-C_{i}^{n+1}}{\Delta t}\label{eq:BE-rewrite-1-1-1-1}
+R=\frac{C_{i}^{n+1}-C_{i}^{n}}{\Delta t}\label{eq:BE-rewrite-1-1-1-1}
 \end{equation}
 
 \end_inset
@@ -4872,6 +4889,79 @@ R=\frac{C_{i}^{n+1}-C_{i}^{n+1}}{\Delta t}\label{eq:BE-rewrite-1-1-1-1}
 y=\left(C_{1},\dots,C_{n_{s}}\right)\label{eq:Backward_euler-2}
 \end{equation}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Given 
+\begin_inset Formula $Y$
+\end_inset
+
+,
+ 
+\begin_inset Formula $\rho e_{t}$
+\end_inset
+
+,
+ and 
+\begin_inset Formula $\rho\vec{v}$
+\end_inset
+
+:
+ Solve chemistry evolution ODEs:
+ 
+\begin_inset Formula $\frac{\partial y_{c}}{\partial t}=S(y_{c})\rightarrow R_{i}=\frac{C_{i}^{n+1}-C_{i}^{n}}{\Delta t}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $C_{i}^{n}$
+\end_inset
+
+ comes from 
+\begin_inset Formula $Y_{i}=\frac{W_{i}C_{i}^{n}}{\rho}$
+\end_inset
+
+ 
+\begin_inset Formula $T^{n}$
+\end_inset
+
+ comes from 
+\begin_inset Formula $\rho e_{t}\rightarrow\rho u(Y_{i},T)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Solve Species TRANSPORT Equation given 
+\begin_inset Formula $\frac{\partial\rho Y_{i}}{\partial t}+\nabla\cdot(\rho Y_{i}\vec{v})=R_{i}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Solve Momentum transport equation (blind of 
+\begin_inset Formula $R$
+\end_inset
+
+)
+\begin_inset Formula $\frac{\partial\rho\vec{v}}{\partial t}+\nabla\cdot(\rho Y_{i}\vec{v}\otimes\vec{v})=p\mathcal{I}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Solve Energy transport equations (using an energy source term derived from 
+\begin_inset Formula $\frac{\partial\rho e_{t}}{\partial t}+\nabla\cdot(\rho e_{t}\vec{v}+p\vec{v})=Q$
+\end_inset
+
+ where 
+\begin_inset Formula $Q=\sum_{i=1}^{n_{s}}R_{i}h_{i}^{c}$
 \end_inset
 
 
@@ -5474,6 +5564,72 @@ In this section we utilize these architectures in on several systems with two ma
 
 \begin_layout Subsubsection
 CPU Based Parallelism 
+\end_layout
+
+\begin_layout Standard
+Stiffness
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=-\frac{\partial\omega_{i}}{\partial C_{j}}\label{eq:jacobian-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\tau_{min}=\text{min}\left(Re\left(\lambda_{j}\left(\mathcal{J}\right)\right)^{-1}\right)\label{eq:jacobian-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=\sum_{k=1}^{n_{r}}\nu_{kij}q_{k}\label{eq:jacobian-1-2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y_{k}^{n+1}\right)_{\ne R}=\sum_{k=1,k\ne R}^{n_{r}}\nu_{kij}q_{k}\label{eq:jacobian-1-2-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\tau_{min}=\text{min}\left(Re\left(\lambda_{j}\left(\mathcal{J}_{\ne R}\right)\right)^{-1}\right)\label{eq:jacobian-1-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $ $
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection*

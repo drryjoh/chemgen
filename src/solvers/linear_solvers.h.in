@@ -61,7 +61,7 @@ apply_gauss_seidel({jacobian_function} A, {species_function} v)
 
 {device_option}
 {species_function}
-gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-9) 
+gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
 {{
 	{index} max_iter = 100;
     {species} x = {{}};
@@ -78,7 +78,9 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-9)
 
     {species} r = b_ - (A_ * x);
 	{scalar} norm2_r = norm2(r);
-    if (norm2_r < tol)
+    {scalar} norm2_A = norm2(A_);
+    
+    if (norm2_r < abs_tol)
     {{
         return x;
     }}
@@ -105,7 +107,7 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-9)
         }}
 
         H[j+1][j] = norm2(w);
-        if (H[j+1][j] < tol)
+        if (H[j+1][j] < abs_tol * norm2_A)
             break;
         V[j+1] = scale_gen(inv_gen(H[j+1][j]),w);
 
@@ -133,8 +135,8 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} tol = 1e-9)
         g[j] = temp_g;
 		
         // Convergence check
-
-        if (std::abs(g[j+1]) < tol)
+        {scalar} res_norm = std::abs(g[j+1]);
+        if (res_norm < abs_tol || res_norm < rel_tol * norm2_r)
             break;
     }}
 

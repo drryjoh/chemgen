@@ -36,7 +36,6 @@ backwards_euler({chemical_state} y,
 
             if (norm2(dy) < 1e-10)
             {{
-                std::cout << iter <<std::endl;
                 return set_chemical_state(y[0], y_guess); 
             }};
         }}
