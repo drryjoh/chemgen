@@ -73,7 +73,7 @@ decorators:
 
 build:
   chemgen_smp: None 
-  chemgen_input: yaml 
+  chemgen_input: "-lyaml-cpp"
   chemgen_optimized: O2
 
 solver:

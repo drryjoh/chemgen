@@ -27,17 +27,12 @@ def compile_cpp_code(build_dir, source_files, config):
     """Compile C++ code using g++ or other compilers."""
     os.makedirs(build_dir, exist_ok=True)
     os.makedirs(build_dir/"bin", exist_ok=True)
-    tbb_option = ''
-    yaml_option = ''
-    if config['build'].get('chemgen_smp') == 'TBB':
-        tbb_option = '-ltbb'
+    build_option = ''
     if config['build'].get('chemgen_input'):
-        if config['build'].get('chemgen_input').lower()== 'yaml':
-            yaml_option = '-lyaml-cpp'
-        else:
-            print("input format not recognized")
+        build_option = config['build'].get('chemgen_input')
+        print(f"building with opentions: {build_option}")
     # Command to compile C++ code
-    compile_command = f"clang++ -std=c++17 {tbb_option} {yaml_option} -O3 -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+    compile_command = f"clang++ -std=c++17 {build_option} -O3 -o {build_dir}/bin/chemgen {' '.join(source_files)}"
     print(compile_command)
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
