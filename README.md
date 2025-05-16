@@ -51,7 +51,7 @@ Once you have your unique python environment, you can install the requirements v
    If you don’t have a `requirements.txt` file, you can manually install the dependencies as follows:
 
    ```bash
-   python3 -m pip install cantera pyyaml
+   python3 -m pip install cantera pyyaml matplotlib
    ```
 
 ## Usage
