@@ -1,9 +1,10 @@
-/*
+
 {device_option}
 {chemical_state} 
 yass({chemical_state} y,  
      {scalar_parameter} dt, 
-     {scalar} max_norm  = 0.01,
+     {scalar} max_norm  = 0.1,
+     {scalar} min_dt  = 1e-10,
      {index} max_iter = 20) 
 {{
 
@@ -14,7 +15,7 @@ yass({chemical_state} y,
     {index} iteration = 0;
     const {jacobian} I = jacobian_I();
 
-    while(time < dt || iteration < max_iter)
+    while(time < dt && iteration < max_iter)
     {{
 
         {scalar} temperature_ = temperature(y[0], y_n);
@@ -41,14 +42,13 @@ yass({chemical_state} y,
         else
         {{
             time+=dt_;
-            y_n 
+            y_n = y_n + dy; 
         }}
 
         iteration++;
     }}
-    
+
     return 
     set_chemical_state(y[0], 
                         y_n); 
 }}
-*/

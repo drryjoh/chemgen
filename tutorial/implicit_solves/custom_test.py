@@ -86,6 +86,7 @@ Species read_species_from_yaml(const std::string& filename,
                                {scalar}& dt_sdirk2,
                                {scalar}& dt_sdirk4,
                                {scalar}& dt_ros,
+                               {scalar}& dt_yass,
                                {scalar}& dt_rk4,
                                {scalar}& end_time) 
 {{
@@ -98,6 +99,7 @@ Species read_species_from_yaml(const std::string& filename,
     dt_ros = read_scalar_or_default(test_conditions, "dt_ros", 5e-7);
     dt_sdirk4 = read_scalar_or_default(test_conditions, "dt_sdirk4", 2e-6);
     dt_rk4    = read_scalar_or_default(test_conditions, "dt_rk4",    1e-8);
+    dt_yass    = read_scalar_or_default(test_conditions, "dt_yass",  1e-8);
     end_time  = read_scalar_or_default(test_conditions, "end_time",  1e-5);
 
     Species species = {{}}; // Zero-initialize the entire species vector
@@ -166,19 +168,21 @@ main()
     std::ofstream sdirk2_file("sdirk2.txt");
     std::ofstream sdirk4_file("sdirk4.txt");
     std::ofstream ros_file("ros.txt");
+    std::ofstream yass_file("yass.txt");
 
     {scalar} temperature_;
     {scalar} pressure_;
     {scalar} dt_be;
     {scalar} dt_sdirk2;
     {scalar} dt_ros;
+    {scalar} dt_yass;
     {scalar} dt_sdirk4;
     {scalar} dt_rk4;
     {scalar} end_time;
 
     Species species = 
     read_species_from_yaml("test.yaml", temperature_, pressure_, 
-                           dt_be, dt_sdirk2, dt_sdirk4, dt_ros, dt_rk4, 
+                           dt_be, dt_sdirk2, dt_sdirk4, dt_ros, dt_yass, dt_rk4, 
                            end_time);
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
 
@@ -245,6 +249,27 @@ main()
     auto ros_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<{scalar}> ros_duration = ros_end - ros_start;
     std::cout << "[ROSENBROC] Time elapsed: " << ros_duration.count() << " seconds" << std::endl;
+
+    y = y_init;
+    dt = dt_yass;
+    t = 0;
+    n_run = {index}(end_time/dt_yass);
+    yass_file << t << " " << temperature(y);
+    for (const auto& val : get_species(y)) yass_file << " " << val;
+    yass_file << "\\n";
+    
+    auto yass_start = std::chrono::high_resolution_clock::now();
+    for({index} i = 0; i < n_run; i++)
+    {{
+        y = yass(y, dt);
+        t = t + dt;
+        yass_file << t << " " << temperature(y);
+        for (const auto& val : get_species(y)) yass_file << " " << val;
+        yass_file << "\\n";
+    }}
+    auto yass_end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<{scalar}> yass_duration = yass_end - yass_start;
+    std::cout << "[YASS] Time elapsed: " << yass_duration.count() << " seconds" << std::endl;
 
     y = y_init;
     dt = dt_rk4;

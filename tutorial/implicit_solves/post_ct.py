@@ -62,6 +62,9 @@ plt.plot(d[:, 0]*1000.0, d[:, 1],'-og', label = "ChemGen SDIRK4", markevery=int(
 d = np.loadtxt("ros.txt")
 plt.plot(d[:, 0]*1000.0, d[:, 1],'-o',color='purple', label = "ChemGen Rosenbroc", markevery=int(len(d[:, 0])/10))
 
+d = np.loadtxt("yass.txt")
+plt.plot(d[:, 0]*1000.0, d[:, 1],'-d',color='orange', label = "ChemGen YASS", markevery=int(len(d[:, 0])/10))
+
 plt.legend()
 plt.xlabel("Time ($\mu$s)")
 plt.ylabel("Temperature (K)")

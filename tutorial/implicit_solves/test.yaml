@@ -16,3 +16,4 @@ test_conditions:
   dt_sdirk2: 1e-6
   dt_ros: 1e-7
   dt_rk4: 1e-7
+  dt_yass: 1e-7
