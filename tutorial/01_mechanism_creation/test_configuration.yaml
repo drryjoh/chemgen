@@ -4,7 +4,5 @@ test_conditions:
   species:
     - name: O2
       MoleFraction: 0.2
-    - name: N2
-      MoleFraction: 0.6
     - name: H2
       MoleFraction: 0.1  
