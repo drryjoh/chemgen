@@ -128,7 +128,7 @@ def main():
             print("Backwards Euler chemistry solver chosen")
             if linear_solver!=None and linear_solver.lower() == "gmres":
                 print("GMRES linear solver chosen")
-            if linear_solver!=None and linear_solver.lower() == "direct":
+            elif linear_solver!=None and linear_solver.lower() == "direct":
                 print("Direct solver chosen for Jacobian inversion")
                 direct_solver = "#define CHEMGEN_DIRECT_SOLVER"
             else:
@@ -138,7 +138,7 @@ def main():
             print("All solver options will be compiled in")
             if linear_solver!=None and linear_solver.lower() == "gmres":
                 print("GMRES linear solver chosen")
-            if linear_solver!=None and linear_solver.lower() == "direct":
+            elif linear_solver!=None and linear_solver.lower() == "direct":
                 print("Direct solver chosen for Jacobian inversion")
                 direct_solver = "#define CHEMGEN_DIRECT_SOLVER"
             else:
