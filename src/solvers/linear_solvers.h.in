@@ -88,7 +88,7 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
     std::array<Species, n_species + 1> V = {{}};
     V[0] = scale_gen(inv_gen(norm2_r), r);
 
-    std::array<std::array<{scalar}, n_species + 1>, n_species + 1> H = {{}};
+    std::array<std::array<{scalar}, n_species + 1>, n_species> H = {{}};
     std::array<{scalar}, n_species + 1> g = {{}};
     g[0] = norm2(r);
 
