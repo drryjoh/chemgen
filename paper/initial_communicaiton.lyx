@@ -110,7 +110,7 @@ theorems-std
 
 \begin_layout Title
 ChemGen:
- Malleable Chemistry Code Generation with Applications to Computational Fluid Dynamics
+ Malleable Chemistry Reaction Code Generation for Computational Physics
 \begin_inset ERT
 status open
 
@@ -1638,17 +1638,73 @@ name "sec:Introduction"
 \end_layout
 
 \begin_layout Standard
-Computational fluid dynamics (CFD) is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
- and analytical solutions do not exist.
+Chemical reactions are at the heart of many engineering applications,
+ including propulsion,
+ energy conversion,
+ materials processing,
+ and environmental control.
+ These reactions govern how energy is released,
+ how materials are transformed,
+ and ultimately how the performance and efficiency of a system are determined.
+ In many of these environments,
+ the underlying physics are too complex for simplified analytical approaches,
+ as chemical time scales are often orders of magnitude shorter than those of the overall system which can also be geometrically complex.
+ These complexities necessitate the use of computational physics,
+ leveraging advanced software and high-performance computing to achieve predictive capabilities.
+ One of the most prominent areas where chemistry and computation intersect is in the modeling of reactive fluid flows.
+ In such systems,
+ from ground-based power-generating combustors to high-speed propulsion devices,
+ the interaction between fluid dynamics and chemical kinetics is tightly coupled and highly nonlinear.
+ Accurately capturing this behavior requires computational fluid dynamics (CFD) frameworks capable of resolving not only the conservation of mass,
+ momentum,
+ and energy,
+ but also the detailed evolution of reacting species.
+\end_layout
+
+\begin_layout Standard
+CFD is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
+ and analytical solutions do not exist
+\begin_inset CommandInset citation
+LatexCommand citet
+key "And95,Fer02,Hir07"
+literal "false"
+
+\end_inset
+
+.
  The core function of CFD is to solve for conserved quantities,
  such as mass,
  momentum,
  and energy that satisfy conservation equations in space and time across a defined domain.
  This requires discretizing the conservation equations,
  such as the Navier-Stokes equations,
- using methods such as the finite volume,
- finite difference,
- or finite element approaches.
+ using methods such as the finite volume
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Pat80,Ver07,Mou16"
+literal "false"
+
+\end_inset
+
+,
+ finite difference
+\begin_inset CommandInset citation
+LatexCommand citet
+key "LeV07"
+literal "false"
+
+\end_inset
+
+,
+ or finite element approaches
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Don03,Zie05"
+literal "false"
+
+\end_inset
+
+.
  CFD relies on large volumes of data to describe the fluid,
  stored at specific points within the domain,
  known as degrees of freedom (DoF).
@@ -1665,15 +1721,22 @@ Developing robust CFD software is an accomplishment in itself,
  and managing complex geometries.
  Additionally,
  there are significant numerical challenges,
- such as stability-preserving methods,
- flux representation strategies,
- temporal integration techniques,
- and the development of robust boundary conditions.
- There is not one CFD software that seamlessly addresses all these diverse issues,
- giving rise to continued research into a variety of computational and numerical approaches to accelerate CFD while simultaneously modeling a fluid robustly.
- This gives rise to a family of CFD codes,
- ranging from experimental in-house codes for demonstrating new technologies,
- to established off-the-shelf softwares used for production level engineering simulations.
+ such as stability-preserving methods
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Kar94,Abg96,Bil03,Lv15,Lv17,Joh20,Chi22,Chi22_2"
+literal "false"
+
+\end_inset
+
+ as well as flux representation strategies.
+ In general,
+ complexities also arise in applicable temporal integration techniques.
+ There is no single CFD software that seamlessly addresses all these diverse challenges,
+ prompting continued research into a wide range of computational and numerical strategies aimed at accelerating simulations while maintaining robust fluid modeling.
+ As a result,
+ a broad family of CFD codes has emerged,
+ ranging from experimental in-house tools used to demonstrate new technologies to established commercial software suites employed in production-level engineering simulations.
 \end_layout
 
 \begin_layout Standard
@@ -1724,9 +1787,33 @@ CFD focuses on the conservation variables related to mass,
 \begin_inset Formula $n_{r}\approx5n_{s}$
 \end_inset
 
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Lu09"
+literal "false"
+
+\end_inset
+
 .
  The number of species increases with the complexity of the fuel,
- for instance the ___ model for hydrogen is 10 chemical species with ## reactions and the __ model for JP-10 is ## species with ## reactions.
+ for instance the model for hydrogen is 10 chemical species with 17 reactions
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Wes82,Chi22_2"
+literal "false"
+
+\end_inset
+
+ and the FFCM2 model for simple hydrocarbons (up to four carbons per chemical species) is 96 species with 1054 reactions
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1759,9 +1846,9 @@ name "enu:thermo"
 The ability to compute a source term.
  
 \series default
-The simplest CFD Navier-Stokes models typically do not include a source term,
- as it is not inherently part of the formulation.
- In these models,
+Other than external forcing or simple bouyancy forces,
+ the simplest CFD Navier-Stokes models typically do not include a source term.
+ In most models,
  momentum,
  energy,
  and mass have no sources or sinks to add or remove them from the domain;
@@ -1787,6 +1874,7 @@ Mixture based transport quantities,
  would need to be adapted to multicomponent mixture models.
  In addition,
  the diffusion of each species needs to be considered with a transport method as well.
+ These terms or structured similar to that of conductive and viscous fluxes that follow a Fickian diffusion assumption.
 \end_layout
 
 \begin_layout Standard
@@ -1795,7 +1883,15 @@ There are several approaches to integrate these features,
 \end_layout
 
 \begin_layout Enumerate
-Locate and adapt existing Fortran code from early versions of Chemkin (cite) or Senkin (cite) for the target CFD.
+Locate and adapt existing Fortran code from early versions of Chemkin
+\begin_inset CommandInset citation
+LatexCommand citet
+key "chemkin89"
+literal "false"
+
+\end_inset
+
+ for the target CFD.
 \begin_inset CommandInset label
 LatexCommand label
 name "enu:chemkin"
@@ -1808,7 +1904,15 @@ name "enu:chemkin"
 \begin_layout Enumerate
 Use the more widely adopted,
  open-source,
- and actively maintained Cantera (cite),
+ and actively maintained Cantera 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "cantera"
+literal "false"
+
+\end_inset
+
+,
  which can serve as a third-party library in C++ and Fortran source codes,
  as well as in interpretive languages like Python and MATLAB.
 \begin_inset CommandInset label
@@ -1896,9 +2000,9 @@ nolink "false"
 
 ,
  although the package is excellent for property calculations and other critical combustion scenarios,
- it is a third-party library,
- limiting control over functions.
- Data would need to be transferred back and forth between the CFD's degrees of freedom (DoF) and Cantera,
+ it is a third-party library and could lead to limited control over software funcionality.
+ Imbedding cantera is certainly possible,
+ but in some cases data would need to be transferred back and forth between the CFD's degrees of freedom (DoF) and Cantera,
  potentially restricting access to essential computational acceleration techniques.
  Additionally,
  relying on a third-party library like Cantera may hinder compatibility with targeted architectures that Cantera developers cannot directly access.
@@ -1940,7 +2044,8 @@ nolink "false"
 \end_inset
 
 ,
- a tool that can generate source code compatible with the existing ecosystem of the target CFD software
+ a tool that can generate source code that is compatible with the existing ecosystem of a target code base,
+ with initial focus on CFD.
 \end_layout
 
 \begin_layout Standard
@@ -1948,17 +2053,37 @@ nolink "false"
 Code generation is a well-established concept,
  with a history in chemistry applications.
  There are two publicly available code generators focused on gas-phase combustion:
- PyJac (https://github.com/SLACKHA/pyJac) and Pyrometheus (https://github.com/ecisneros8/PyPrometheus).
+ PyJac 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Nie17"
+literal "false"
+
+\end_inset
+
+ and Pyrometheus 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Cis25"
+literal "false"
+
+\end_inset
+
+.
  PyJac specializes in generating analytical source term Jacobians for non-fluid-based states,
  which can be used to speed up the computation of chemical species evolution.
- However,
- PyJac's last public commit was six years ago.
  Pyrometheus generates either C++ header files or Python files for gas-phase combustion calculations,
  incorporating several on-the-fly optimizations to enhance scalability for high-performance computing in CFD.
- Although Pyrometheus's last public commit was four years ago,
- we are in contact with the developers,
- who are actively working on a private GitHub project to continue Pyrometheus's development.
- Mutation++?
+ Another chemistry based package is Mutation++
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Sco20"
+literal "false"
+
+\end_inset
+
+,
+ which focus on the thermodynamic and transport properties with emphasis on ionized gases.
 \end_layout
 
 \begin_layout Standard
@@ -1968,69 +2093,30 @@ In this work,
  ChemGen utilizes decorators,
  discussed in detail in Section 3,
  to enable flexible C++ code generation tailored to existing software ecosystems.
- It also offers versatility in reaction rate calculations,
- allowing them to be evaluated in pure serial or adapted for parallel execution by modifying a few key functions.
- ChemGen currently focuses on thermodynamic properties and source term generation.
- Future versions will aim to incorporate detailed transport calculations,
- provide fully chemically reacting flow states,
- offer rapid analytical Jacobians for fluid dynamic states,
- and deliver scalable solvers for chemical state evolution.
+ ChemGen currently focuses on thermodynamic properties and source term generation and their analytical derivatives.
+ The analytical derivatives gives access to Jacobian assembly for various time integration strategies appropriate for CFD.
+ In addition,
+ compact linear solvers area also supplied by ChemGen to allow problem specific tailoring.
 \end_layout
 
 \begin_layout Standard
 This paper is organized as follows.
- First,
- we provide an in-depth background on high-performance computing in CFD,
- focusing on how various computational architectures can accelerate CFD and how chemistry can be cohesively implemented.
+ We begin with an overview of the chemically reacting flow conservation equations used in CFD,
+ highlighting where chemistry fits within these formulations,
+ including details on multi-species thermodynamics and chemical reaction rates.
  Next,
- we offer an overview of ChemGen’s current capabilities and its application within CFD software.
- We then discuss the formulation in the context of compressible,
- chemically reacting flows,
- covering the thermodynamic relationships for multi-species fluids,
- accepted reaction rate formulations,
- and the creation of source terms.
- Following this,
- we introduce several publicly available C++ codes and the concept of decorators as implemented in ChemGen.
-\end_layout
-
-\begin_layout Standard
-We demonstrate ChemGen’s standalone code generation with examples showcasing its adaptability for distributed computing using MPI,
- Thread Building Blocks (TBB),
- and GPU-based threading,
- with a discussion on its integration potential with existing CFD models.
+ we discuss implicit time integration strategies,
+ focusing on operator splitting approaches that reduce the problem to a system of ordinary differential equations for chemical state evolution,
+ as well as fully coupled formulations.
+ We then introduce the code generation process,
+ emphasizing how malleability is achieved through the use of decorators.
  Finally,
- we illustrate the integration of a ChemGen-generated source term within the open-source CFD code NEKRS
-\end_layout
-
-\begin_layout Subsection
-Background
-\end_layout
-
-\begin_layout Subsubsection
-High Performance Computing in CFD
-\end_layout
-
-\begin_layout Subsubsection
-Diversity found in C++ Software
-\end_layout
-
-\begin_layout Subsection
-ChemGen Prospectus
-\end_layout
-
-\begin_layout Standard
-ODE:
-\end_layout
-
-\begin_layout Standard
-As The CFD algorithm can be simplified by solving the chemical mass action separately from the fluid transport.
- This approximation allows the chemical kinetics problem at each grid cell or vertex to be integrated independently over the specified time step size δt.
- At each element,
- the Ns mass fractions and enthalpy (or temperature) are solved as a system of Ns+1 stiff ordinary differential equations (ODEs).
- Even with the preceding simplification,
- the cost of solving the ODEs can be prohibitive.
- New algorithmic and computer science techniques such as massive parallel computing can significantly reduce the computational cost and are therefore of great interest to combustion simulation developers throughout the propulsion and power community.
- An alternative approach exploits the available 
+ we present results validating the accuracy of source term evaluation,
+ Jacobian computation,
+ and implicit time integration strategies.
+ We demonstrate ChemGen’s performance by replacing OpenFOAM’s existing ODE-based chemical integrator in a detonation simulation,
+ showing significant speedups enabled by ChemGen’s specialized,
+ generated source code.
 \end_layout
 
 \begin_layout Section
@@ -2045,11 +2131,13 @@ name "sec:governing_equations"
 \end_layout
 
 \begin_layout Standard
-ChemGen is suitable for low-Mach flows that decouple pressure from the energy equation;
- however,
- in this work,
- we focus on a compressible CFD formulation without viscous terms.
- Here,
+On this work,
+ we focus on a compressible CFD formulation without viscous terms for simplicity,
+ as we only seek to contextualize chemistry in the environment of fluid dynamics.
+ It is important to note that ChemGen is suitable for low-Mach flows that decouple pressure from the energy equation,
+ to which we comment on later in this section.
+ In addition,
+ we also provide a path forward to incorporate Here,
  we primarily highlight the interaction between the fluid dynamic state,
  
 \begin_inset Formula $y_{f}$
@@ -2062,18 +2150,11 @@ ChemGen is suitable for low-Mach flows that decouple pressure from the energy eq
 \end_inset
 
 .
- By using the source term and thermodynamics described in the following sections,
- code generated by ChemGen can effectively transition a single-component,
- calorically perfect Euler formulation to a chemically reacting Euler formulation.
- In Section ###,
- we discuss how a chemically reacting Euler formulation can be adapted to a simplified reacting Navier-Stokes formulation by making assumptions about the mixture's transport properties.
- Future versions of ChemGen will support diffusive and convective flux models,
- but here we demonstrate ChemGen's role in generating source terms for integration with existing CFD codes.
  
 \end_layout
 
 \begin_layout Standard
-The multicomponent chemically reacting Euler equations are given as
+The multicomponent chemically reacting compressible Euler equations are given as
 \begin_inset Formula 
 \begin{equation}
 \frac{\partial y_{f}}{\partial t}+\nabla\cdot\mathcal{F}\left(y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\label{eq:conservation-law-strong-form}
@@ -2173,7 +2254,7 @@ where
 \begin_inset Formula $i$
 \end_inset
 
-th species.
+-th species.
  The mass fraction of the 
 \begin_inset Formula $i$
 \end_inset
@@ -2244,7 +2325,7 @@ The chemical state is
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-y_{c}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}},\right)^{T},\label{eq:reacting-navier-stokes-state-1}
+y_{c}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state-1}
 \end{equation}
 
 \end_inset
@@ -2301,7 +2382,7 @@ M_{c}=\sum_{i=1}^{n_{s}}C_{i}=\frac{p}{R^{o}T},
 
 is utilized in various reactions,
  such as third body reactions with no specified efficiencies.
- ChemGen creates this chemical state in the source term function prior to any other evaluations so that their values are readily available.
+ 
 \end_layout
 
 \begin_layout Subsection
@@ -2402,7 +2483,7 @@ literal "false"
 
 .
  For efficiency purposes,
- ChemGen re-fits the polynomial for 
+ ChemGen fits the polynomial for 
 \begin_inset Formula $c_{p,i}$
 \end_inset
 
@@ -2423,8 +2504,8 @@ nolink "false"
 
 \end_inset
 
-,
- thus the following relationships are used with pre-computed coefficients,
+.
+ The following relationships are used with pre-computed coefficients,
 \end_layout
 
 \begin_layout Standard
@@ -2447,7 +2528,7 @@ u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T=\sum_{
 \end_inset
 
 Here we target 
-\begin_inset Formula $h_{i}(T=298\text{K})$
+\begin_inset Formula $h_{i}(T=298.15\text{K})$
 \end_inset
 
  as a standard enthalpy that can be obtained from the existing NASA coefficients or from utilizing any number of thermodynamics packages,
@@ -2644,7 +2725,7 @@ g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}\label{eq:gibbs-polynomial}
 
 \end_inset
 
-This gives two new temperature monomials additional elements,
+This gives two new temperature monomials with additional elements,
  one to the power 
 \begin_inset Formula $n_{p}$
 \end_inset
@@ -3049,8 +3130,7 @@ h_{\text{ref},i} & k=0.
 \end_layout
 
 \begin_layout Standard
-Full differentiability will be the focus of future ChemGen releases,
- however it is efficient to utilize the Newton method to extract temperature from internal energy which requires its derivative.
+It is efficient to utilize the Newton method to extract temperature from internal energy which requires its derivative.
  Internal energy is typically part of a conserved state,
  for instance,
  the total energy formulation as outlined above would have the conserved variable of total energy as:
@@ -3089,7 +3169,7 @@ where the term
 
 \end_inset
 
-Newton's method are extremely accurate once converged and can be quite efficient when using exact derivatives,
+Newton's method are accurate once converged and can be quite efficient when using exact derivatives,
  especially for scalar functions such as energy as a function of temperature,
  which does not require the inversion of a matrix.
  Included in ChemGen is a Newton iteration that is of the form
@@ -3160,6 +3240,11 @@ and
 
 \end_inset
 
+
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
 In the iteration for temperature an optimization can be made considering that the species,
  
 \begin_inset Formula $C_{i}$
@@ -3170,7 +3255,7 @@ In the iteration for temperature an optimization can be made considering that th
  The coefficients can be pre-computed before the iterations to remove the need of extra contractions,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \boldsymbol{C}_{i}^{\dagger}=(W_{i}C_{i}c_{i,0},W_{i}C_{i}c_{i,1},W_{i}C_{i}c_{i,2},\dots,W_{i}C_{i}c_{i,n_{p}+1})
@@ -3181,11 +3266,16 @@ In the iteration for temperature an optimization can be made considering that th
 which results in
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 T_{n+1}=T_{n}-\frac{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\boldsymbol{T}_{n_{p}+1}\right>}{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}\right>}
 \end{equation}
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -3476,7 +3566,7 @@ nolink "false"
 \end_inset
 
 ,
- all of the supported functions of which ChemGen supports will discussed next.
+ all of the supported functions of which ChemGen supports will be discussed next.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3533,6 +3623,10 @@ literal "false"
  function is unavoidable,
  we can utilize the precomputed 
 \begin_inset Formula $\ln T$
+\end_inset
+
+ in 
+\begin_inset Formula $y_{c}$
 \end_inset
 
  and insert an additional term in the exponent
@@ -4115,49 +4209,6 @@ This results in
 \end_inset
 
  source terms.
-\end_layout
-
-\begin_layout Section
-Code Generation
-\end_layout
-
-\begin_layout Standard
-In the ChemGen software there are three main file types.
- The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
- The second file type are static code that are ingested by the python code and reformatted to the desired target software.
- The remaining file types is a mixture of python code used to exercise tests,
- most of which covered in the results section,
- Section 5,
- and yaml files that contain kinetic data.
-\end_layout
-
-\begin_layout Subsection
-The concept of decorators
-\end_layout
-
-\begin_layout Standard
-C++ code takes on many forms.
- For instance...
-\end_layout
-
-\begin_layout Standard
-\begin_inset listings
-inline false
-status open
-
-\begin_layout Plain Layout
-
-for a in a_list:
-\end_layout
-
-\begin_layout Plain Layout
-
-	a*a
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section
@@ -4791,6 +4842,49 @@ x
 \begin{array}{ccccc}
 \gamma_{ii}=\gamma= & 1+\frac{1}{\sqrt{2}}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}
 \end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Code Generation
+\end_layout
+
+\begin_layout Standard
+In the ChemGen software there are three main file types.
+ The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
+ The second file type are static code that are ingested by the python code and reformatted to the desired target software.
+ The remaining file types is a mixture of python code used to exercise tests,
+ most of which covered in the results section,
+ Section 5,
+ and yaml files that contain kinetic data.
+\end_layout
+
+\begin_layout Subsection
+The concept of decorators
+\end_layout
+
+\begin_layout Standard
+C++ code takes on many forms.
+ For instance...
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+for a in a_list:
+\end_layout
+
+\begin_layout Plain Layout
+
+	a*a
+\end_layout
 
 \end_inset
 
