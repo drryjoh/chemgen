@@ -170,36 +170,43 @@ main()
     int  n_run = int(end_time/dt_be);
     double t = 0;
 
-    //###############################################################################################
+    //######################################################################################################################################
     be_file << t << " " << temperature(y);
     for (const auto& val : get_species(y)) be_file << " " << val;
     be_file << "\n";
+    std::chrono::duration<double> NN_total_time; // FOR JAY TRYING TO TIME NN CALCULATIONS
+    std::chrono::duration<double> P_total_time; // FOR JAY TRYING TO TIME NN CALCULATIONS
     auto be_start = std::chrono::high_resolution_clock::now();
     for(int i = 0; i < n_run; i++)
     {
 
-        y = backwards_euler(y, dt);
-        t = t + dt;
-        be_file << t << " " << temperature(y);
-        for (const auto& val : get_species(y)) be_file << " " << val;
-        be_file << "\n";
+        // y = backwards_euler(y, dt);
+        // t = t + dt;
+        // be_file << t << " " << temperature(y);
+        // for (const auto& val : get_species(y)) be_file << " " << val;
+        // be_file << "\n";
 
         //=====================================================================
         ////////////////////////////////////////////
         //// THIS IS USED FOR TRAINING PURPOSES ////
         ////////////////////////////////////////////
         // bool last_step = (i == n_run - 1);
-        // y = backwards_euler(y, dt, 1e-10, 10, last_step);
-        // t = t + dt;
-        // be_file << t << " " << temperature(y);
-        // for (const auto& val : get_species(y)) be_file << " " << val;
-        // be_file << "\n";
+        // y = backwards_euler(y, dt, 1e-10, 10, last_step, NN_total_time);
+        y = backwards_euler(y, dt, 1e-12, 10, NN_total_time, P_total_time);
+        t = t + dt;
+        be_file << t << " " << temperature(y);
+        for (const auto& val : get_species(y)) be_file << " " << val;
+        be_file << "\n";
         //=====================================================================
+
     }
+    std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
+    std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
     auto be_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> be_duration = be_end - be_start;
+    be_duration = be_duration - NN_total_time - P_total_time;
     std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
-    //###############################################################################################
+    //######################################################################################################################################
 
     y = y_init;
     dt = dt_sdirk2;

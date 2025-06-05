@@ -58,7 +58,7 @@
 //                         const Scalar input_val = inputs[input_base + ic];
 //                         const Scalar *w_ptr = weights + weight_base + ic * out_channels;
 
-//                         #pragma unroll
+//                         // #pragma unroll
 //                         for (int oc = 0; oc < out_channels; ++oc) {
 //                             sum_buf[oc] += input_val * w_ptr[oc];
 //                         }
@@ -129,7 +129,6 @@ void Conv2D(Scalar * __restrict outputs, const Scalar * __restrict inputs,
                 }
             }
 
-            // Apply activation function and store results
             Scalar *out_pixel_ptr = outputs + ((oh * out_width + ow) * out_channels);
             for (int oc = 0; oc < out_channels; ++oc) {
                 activation_function(out_pixel_ptr[oc], sum_buf[oc], alpha);

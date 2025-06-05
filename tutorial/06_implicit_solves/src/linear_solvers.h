@@ -1,4 +1,4 @@
-#define CHEMGEN_PRECONDITIONER_JACOBI
+// #define CHEMGEN_PRECONDITIONER_JACOBI
 
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 
@@ -36,6 +36,8 @@ Species apply_diagonal(SpeciesJacobian P, Species b)
 }
 #endif
 
+// #define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
+
 #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 
 Species apply_gauss_seidel(SpeciesJacobian A, Species v)
@@ -67,6 +69,11 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     SpeciesJacobian P = inverse_diagonal(A);
     SpeciesJacobian A_ = apply_diagonal(P, A);
     Species b_ = apply_diagonal(P, b);
+//////////////////////////////////////////
+//// JAY - "may not be correct" ////
+// #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
+//     SpeciesJacobian A_ = 
+//////////////////////////////////////////
 #else
     SpeciesJacobian A_ = A;
     Species b_ = b;

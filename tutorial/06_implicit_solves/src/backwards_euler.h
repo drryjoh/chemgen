@@ -1,18 +1,18 @@
 ChemicalState 
 backwards_euler(ChemicalState y,  
                 const double& dt,
-                double tol = 1e-10, 
-                int max_iter = 10
+                double tol, 
+                int max_iter,
                 //=====================================================================
                 ////////////////////////////////////////////
                 //// THIS IS USED FOR TRAINING PURPOSES ////
                 ////////////////////////////////////////////
-                // bool final_step = false
+                // bool final_step,
+                std::chrono::duration<double>& NN_total_time,
+                std::chrono::duration<double>& P_total_time
                 //=====================================================================
                 ) 
-{
-// all within one sub time step
-        
+{        
         // initialize y^n_k
         Species y_init = get_species(y);
 
@@ -22,26 +22,31 @@ backwards_euler(ChemicalState y,
         // initialize species guess y^{n+1}_k
         Species y_guess = get_species(y);
 
-        //===================================================================
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         SpeciesJacobian J_init = source_jacobian(y_guess, temperature_guess); 
         SpeciesJacobian A_init = jacobian_I();
         for (int i = 0; i < n_species; ++i) A_init[i][i] = A_init[i][i]/dt; 
             A_init = A_init - J_init; 
+
         auto NN_start = std::chrono::high_resolution_clock::now();
+
         SpeciesJacobian P = cnn_2(A_init);
+
         auto NN_end = std::chrono::high_resolution_clock::now();
+
         std::chrono::duration<double> NN_duration = NN_end - NN_start;
-        std::cout << "[NN Part] Time elapsed: " << NN_duration.count() << " seconds" << std::endl;
-        //===================================================================
+        // std::cout << "[NN Part] Time elapsed: " << NN_duration.count() << " seconds" << std::endl;
+        NN_total_time += NN_duration;
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
         //=====================================================================
-        ////////////////////////////////////////////
-        //// THIS IS USED FOR TRAINING PURPOSES ////
-        ////////////////////////////////////////////
+        // ////////////////////////////////////////////
+        // //// THIS IS USED FOR TRAINING PURPOSES ////
+        // ////////////////////////////////////////////
         // SpeciesJacobian last_A;
         // Species last_res;
         // Species last_dy;
-        ////===================================================================
+        //===================================================================
 
         /* 
         - solve dy/dt - S(y) = 0 
@@ -88,14 +93,17 @@ backwards_euler(ChemicalState y,
             - or to be exact: [I/dt - (dS(y^{n+1}_k) / y^{n+1}_k)] * dy = - 1/dt * (y^{n+1}_k - y^{n_k}) + S(y^{n+1}_k)
             - we use a linear solver (GMRES) to approx dy
             */
-            //===================================================================================================
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             auto P_start = std::chrono::high_resolution_clock::now();
+
             A = operator*(P, A);
             res = operator*(P, res);
+
             auto P_end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> P_duration = P_end - P_start;
-            std::cout << "[Preconditioning Part] Time elapsed: " << P_duration.count() << " seconds" << std::endl;
-            //===================================================================================================
+            // std::cout << "[Preconditioning Part] Time elapsed: " << P_duration.count() << " seconds" << std::endl;
+            P_total_time += P_duration;
+            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             #ifdef CHEMGEN_DIRECT_SOLVER
             Species dy = invert_jacobian(A) * res;
             #else
@@ -103,13 +111,13 @@ backwards_euler(ChemicalState y,
             #endif
 
             //=====================================================================
-            ////////////////////////////////////////////
-            //// THIS IS USED FOR TRAINING PURPOSES ////
-            ////////////////////////////////////////////
-            // last_A = A;
+            // ////////////////////////////////////////////
+            // //// THIS IS USED FOR TRAINING PURPOSES ////
+            // ////////////////////////////////////////////
+            // last_A = invert_jacobian(A);
             // last_res = res;
             // last_dy = dy;
-            ////===================================================================
+            //===================================================================
 
             //Increment
             // y^{n+1}_{k+1} = y^{n+1}_k + dy
@@ -120,15 +128,15 @@ backwards_euler(ChemicalState y,
             {
 
                 //=====================================================================
-                ////////////////////////////////////////////
-                //// THIS IS USED FOR TRAINING PURPOSES ////
-                ////////////////////////////////////////////
+                // ////////////////////////////////////////////
+                // //// THIS IS USED FOR TRAINING PURPOSES ////
+                // ////////////////////////////////////////////
                 // if (final_step)
                 // {
                 //     std::string output_dir = "./neural_net/data/"; 
 
                 //     // save A
-                //     std::ofstream A_file(output_dir + "A.csv");
+                //     std::ofstream A_file(output_dir + "A_inv.csv");
                 //     if (A_file.is_open())
                 //     {
                 //         for (int i = 0; i < n_species; ++i)
