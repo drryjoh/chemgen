@@ -42,6 +42,9 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "chemical_state_functions.h"
 #include "rk4.h"
 #include "linear_solvers.h"
+/////////////////////////////////////////////
+#include "./neural_net/cnn_2.h"
+/////////////////////////////////////////////
 #include "backwards_euler.h"
 #include "sdirk.h"
 #include "rosenbroc.h"
@@ -174,20 +177,23 @@ main()
     auto be_start = std::chrono::high_resolution_clock::now();
     for(int i = 0; i < n_run; i++)
     {
-        // y = backwards_euler(y, dt);
-        // t = t + dt;
-        // be_file << t << " " << temperature(y);
-        // for (const auto& val : get_species(y)) be_file << " " << val;
-        // be_file << "\n";
 
-        //=====================================================================
-        //// THIS IS USED FOR TRAINING PURPOSES ////
-        bool last_step = (i == n_run - 1);
-        y = backwards_euler(y, dt, 1e-10, 10, last_step);
+        y = backwards_euler(y, dt);
         t = t + dt;
         be_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) be_file << " " << val;
         be_file << "\n";
+
+        //=====================================================================
+        ////////////////////////////////////////////
+        //// THIS IS USED FOR TRAINING PURPOSES ////
+        ////////////////////////////////////////////
+        // bool last_step = (i == n_run - 1);
+        // y = backwards_euler(y, dt, 1e-10, 10, last_step);
+        // t = t + dt;
+        // be_file << t << " " << temperature(y);
+        // for (const auto& val : get_species(y)) be_file << " " << val;
+        // be_file << "\n";
         //=====================================================================
     }
     auto be_end = std::chrono::high_resolution_clock::now();

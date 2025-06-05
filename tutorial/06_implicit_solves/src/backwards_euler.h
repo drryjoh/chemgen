@@ -1,12 +1,13 @@
-
 ChemicalState 
 backwards_euler(ChemicalState y,  
                 const double& dt,
                 double tol = 1e-10, 
-                int max_iter = 10,
+                int max_iter = 10
                 //=====================================================================
+                ////////////////////////////////////////////
                 //// THIS IS USED FOR TRAINING PURPOSES ////
-                bool final_step = false
+                ////////////////////////////////////////////
+                // bool final_step = false
                 //=====================================================================
                 ) 
 {
@@ -21,11 +22,25 @@ backwards_euler(ChemicalState y,
         // initialize species guess y^{n+1}_k
         Species y_guess = get_species(y);
 
+        //===================================================================
+        SpeciesJacobian J_init = source_jacobian(y_guess, temperature_guess); 
+        SpeciesJacobian A_init = jacobian_I();
+        for (int i = 0; i < n_species; ++i) A_init[i][i] = A_init[i][i]/dt; 
+            A_init = A_init - J_init; 
+        auto NN_start = std::chrono::high_resolution_clock::now();
+        SpeciesJacobian P = cnn_2(A_init);
+        auto NN_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> NN_duration = NN_end - NN_start;
+        std::cout << "[NN Part] Time elapsed: " << NN_duration.count() << " seconds" << std::endl;
+        //===================================================================
+
         //=====================================================================
+        ////////////////////////////////////////////
         //// THIS IS USED FOR TRAINING PURPOSES ////
-        SpeciesJacobian last_A;
-        Species last_res;
-        Species last_dy;
+        ////////////////////////////////////////////
+        // SpeciesJacobian last_A;
+        // Species last_res;
+        // Species last_dy;
         ////===================================================================
 
         /* 
@@ -73,6 +88,14 @@ backwards_euler(ChemicalState y,
             - or to be exact: [I/dt - (dS(y^{n+1}_k) / y^{n+1}_k)] * dy = - 1/dt * (y^{n+1}_k - y^{n_k}) + S(y^{n+1}_k)
             - we use a linear solver (GMRES) to approx dy
             */
+            //===================================================================================================
+            auto P_start = std::chrono::high_resolution_clock::now();
+            A = operator*(P, A);
+            res = operator*(P, res);
+            auto P_end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> P_duration = P_end - P_start;
+            std::cout << "[Preconditioning Part] Time elapsed: " << P_duration.count() << " seconds" << std::endl;
+            //===================================================================================================
             #ifdef CHEMGEN_DIRECT_SOLVER
             Species dy = invert_jacobian(A) * res;
             #else
@@ -80,10 +103,12 @@ backwards_euler(ChemicalState y,
             #endif
 
             //=====================================================================
+            ////////////////////////////////////////////
             //// THIS IS USED FOR TRAINING PURPOSES ////
-            last_A = A;
-            last_res = res;
-            last_dy = dy;
+            ////////////////////////////////////////////
+            // last_A = A;
+            // last_res = res;
+            // last_dy = dy;
             ////===================================================================
 
             //Increment
@@ -95,68 +120,70 @@ backwards_euler(ChemicalState y,
             {
 
                 //=====================================================================
+                ////////////////////////////////////////////
                 //// THIS IS USED FOR TRAINING PURPOSES ////
-                if (final_step)
-                {
-                    std::string output_dir = "../neural_net/data/"; 
+                ////////////////////////////////////////////
+                // if (final_step)
+                // {
+                //     std::string output_dir = "./neural_net/data/"; 
 
-                    // save A
-                    std::ofstream A_file(output_dir + "A.csv");
-                    if (A_file.is_open())
-                    {
-                        for (int i = 0; i < n_species; ++i)
-                        {
-                            for (int j = 0; j < n_species; ++j)
-                            {
-                                A_file << last_A[i][j];
-                                if (j != n_species - 1)
-                                    A_file << ",";
-                            }
-                            A_file << "\n";
-                        }
-                        A_file.close();
-                    }
-                    else
-                    {
-                        std::cerr << "Error opening file for A output!" << std::endl;
-                    }
+                //     // save A
+                //     std::ofstream A_file(output_dir + "A.csv");
+                //     if (A_file.is_open())
+                //     {
+                //         for (int i = 0; i < n_species; ++i)
+                //         {
+                //             for (int j = 0; j < n_species; ++j)
+                //             {
+                //                 A_file << last_A[i][j];
+                //                 if (j != n_species - 1)
+                //                     A_file << ","; // builds reach row
+                //             }
+                //             A_file << "\n";
+                //         }
+                //         A_file.close();
+                //     }
+                //     else
+                //     {
+                //         std::cerr << "Error opening file for A output!" << std::endl;
+                //     }
                     
-                    //save r
-                    std::ofstream res_file(output_dir + "res.csv");
-                    if (res_file.is_open())
-                    {
-                        for (int j = 0; j < n_species; ++j)
-                        {
-                            res_file << last_res[j];
-                            if (j != n_species - 1)
-                                res_file << ",";
-                        }
-                        res_file << "\n";
-                        res_file.close();
-                    }
-                    else
-                    {
-                        std::cerr << "Error opening file for residual output!" << std::endl;
-                    }
+                //     //save r
+                //     std::ofstream res_file(output_dir + "res.csv");
+                //     if (res_file.is_open())
+                //     {
+                //         for (int j = 0; j < n_species; ++j)
+                //         {
+                //             res_file << last_res[j];
+                //             if (j != n_species - 1)
+                //                 res_file << ",";
+                //         }
+                //         res_file << "\n";
+                //         res_file.close();
+                //     }
+                //     else
+                //     {
+                //         std::cerr << "Error opening file for residual output!" << std::endl;
+                //     }
 
-                    // Save dy (1D vector)
-                    std::ofstream dy_file(output_dir + "dy.csv");
-                    if (dy_file.is_open())
-                    {
-                        for (int j = 0; j < n_species; ++j)
-                        {
-                            dy_file << last_dy[j];
-                            if (j != n_species - 1)
-                                dy_file << ",";
-                        }
-                        dy_file << "\n";
-                        dy_file.close();
-                    }
-                    else
-                    {
-                        std::cerr << "Error opening file for dy output!" << std::endl;
-                    }
-                }
+                //     // Save dy (1D vector)
+                //     std::ofstream dy_file(output_dir + "dy.csv");
+                //     if (dy_file.is_open())
+                //     {
+                //         for (int j = 0; j < n_species; ++j)
+                //         {
+                //             dy_file << last_dy[j];
+                //             if (j != n_species - 1)
+                //                 dy_file << ",";
+                //         }
+                //         dy_file << "\n";
+                //         dy_file.close();
+                //     }
+                //     else
+                //     {
+                //         std::cerr << "Error opening file for dy output!" << std::endl;
+                //     }
+                // }
                 //=====================================================================
 
                 return set_chemical_state(y[0], y_guess); 
