@@ -4251,6 +4251,21 @@ This results in
 
 \end_layout
 
+\begin_layout Subsection
+Extension to Navier-Stokes
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Diffusive_flows"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+...add about how you can use lewis number schmidt number with viscosity fit to create an estimated diffusive function
+\end_layout
+
 \begin_layout Section
 Time Integration Strategies
 \end_layout
@@ -4908,7 +4923,7 @@ a_{ii}=0.2\bar{6} & a_{21}=0.5 & a_{31}=3.541539\times10^{-1}\\
 a_{32}=-5.415395\times10^{-2} & a_{41}=8.515494\times10^{-2} & a_{42}=-6.484332\times10^{-2}\\
 a_{43}=7.915325\times10^{-2} & a_{51}=2.100115 & a_{53}=2.399816\\
 a_{54}=-2.998818 & b_{1}=2.100115 & b_{2}=-7.677800\times10^{-1}\\
-b_{3}=2.399816 & b_{4}=-2.998818 & b_{5}=2\bar{6}
+b_{3}=2.399816 & b_{4}=-2.998818 & b_{5}=0.2\bar{6}
 \end{array}
 \end{equation}
 
@@ -5094,7 +5109,7 @@ where
 \end_layout
 
 \begin_layout Subsubsection
-Other implicit schemes
+Other Time Integration Schemes
 \end_layout
 
 \begin_layout Standard
@@ -5140,6 +5155,223 @@ literal "false"
 
 \begin_layout Subsection
 Linear Solvers
+\end_layout
+
+\begin_layout Standard
+An inversion of a Jacobian matrix is required in all of the previously covered implicit methods which look like
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\delta\Gamma=-f(\Gamma)\rightarrow\delta\Gamma=-\mathcal{J}^{-1}f(\Gamma).\label{eq:matrix_example_1}
+\end{equation}
+
+\end_inset
+
+This is the same as the familiar linear algebra expression
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Ax=b\rightarrow x=A^{-1}b.\label{eq:matrix_example_1-1}
+\end{equation}
+
+\end_inset
+
+It is well established that a direct inversion of the Jacobian,
+ 
+\begin_inset Formula $\mathcal{J\rightarrow J}^{-1}$
+\end_inset
+
+,
+ requires on the order 
+\begin_inset Formula $\mathcal{O}\left(n^{3}\right)$
+\end_inset
+
+-operations for an 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ square matrix,
+ which in the case of chemistry is 
+\begin_inset Formula $\mathcal{O}\left(n_{s}^{3}\right)$
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Gol13"
+literal "false"
+
+\end_inset
+
+.
+ In CFD,
+ such operations can be particularly challenging,
+ as simulations often involve millions to billions of degrees of freedom,
+ making each linear system solve computationally a core cost.
+ Moreover,
+ these inversions are not performed just once per time step.
+ For example,
+ backward Euler may require around five linear solves per time step to converge the Newton iteration.
+ In comparison,
+ SDIRK-2 and SDIRK-4 require a Newton solve per stage,
+ which by the same example is roughly 10 and 25 linear solves per step,
+ respectively.
+ This makes Rosenbrock and YASS appealing time integration strategies,
+ as they eliminate the need for a full Newton solve.
+ Rosenbrock methods typically require two linear solves per step,
+ while YASS,
+ without adaptation,
+ requires only one.
+ Regardless,
+ the minimization of the 
+\begin_inset Formula $\mathcal{O}\left(n^{3}\right)$
+\end_inset
+
+ operations is a necessity to accelerate chemistry integration.
+ 
+\end_layout
+
+\begin_layout Standard
+ChemGen supplies a standalone Generalized Minimal Residual (GMRES) method as its default linear solver
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Saa86"
+literal "false"
+
+\end_inset
+
+.
+ GMRES is a Krylov subspace method designed to solve non-symmetric linear systems of the form 
+\begin_inset Formula $Ax=b$
+\end_inset
+
+.
+ Unlike direct solvers,
+ GMRES builds an orthonormal basis of the Krylov subspace and minimizes the residual over this subspace at each iteration,
+ making it particularly well-suited for the types of stiff and poorly conditioned systems that arise in chemically reacting flow simulations.
+ The solver iterates for 
+\begin_inset Formula $x$
+\end_inset
+
+ in the linear system rather than trying to invert 
+\begin_inset Formula $A$
+\end_inset
+
+.
+ The order of operations needed for GMRES is 
+\begin_inset Formula $\mathcal{O}\left(kn_{s}^{2}+k^{2}n_{s}+k^{3}\right)$
+\end_inset
+
+ where 
+\begin_inset Formula $k$
+\end_inset
+
+ is the number of iterations required to converge.
+ For well conditioned matrix the 
+\begin_inset Formula $n_{s}^{2}$
+\end_inset
+
+ term can dominate thus reducing the overall cost of the linear solve.
+\end_layout
+
+\begin_layout Standard
+The number of GMRES iterations,
+ 
+\begin_inset Formula $k$
+\end_inset
+
+,
+ is directly related to the condition number of matrix 
+\begin_inset Formula $A$
+\end_inset
+
+ .
+ ChemGen provides some standard preconditioners to assist in convergence of the GMRES solve 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Gol13"
+literal "false"
+
+\end_inset
+
+.
+ The most simple is the inversion of the diagonal of 
+\begin_inset Formula $\mathcal{J}$
+\end_inset
+
+ in Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:matrix_example_1"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ and applying it to both sides of the system.
+ This is known at the Jacobi preconditioner this is a fast preconditioner calculation as it only inverts the diaganolas and scan be directly applied to the existing system.
+ In addition,
+ the Gauss-Seidel preconditioner is also supplied which inverts a matrix converged of the lower and diagonal components of 
+\begin_inset Formula $A$
+\end_inset
+
+ and applies it as a preconditioner to the system.
+ For more advanced chemical kinetics based preconditioners see 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Wal23"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+ChemGen is not intended to serve as a comprehensive linear solver library.
+ For more advanced or scalable linear solver capabilities,
+ ChemGen can be interfaced with external libraries such as Eigen 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Gue10"
+literal "false"
+
+\end_inset
+
+ or PETSc 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Bal97"
+literal "false"
+
+\end_inset
+
+,
+ which offer efficient preconditioned Krylov solvers and direct sparse solvers for large systems.
+ Additionally,
+ while ChemGen includes several implicit time integration strategies (e.g.,
+ backward Euler,
+ SDIRK methods),
+ offloading the integration of stiff ODE systems to established libraries like CVODES
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Ser05"
+literal "false"
+
+\end_inset
+
+ is also a reasonable approach.
+ Such packages allow user-supplied source terms and Jacobians that can then be integrated in time.
 \end_layout
 
 \begin_layout Section
