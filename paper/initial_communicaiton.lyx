@@ -2281,7 +2281,7 @@ The
 th spatial convective flux component is written as
 \begin_inset Formula 
 \begin{equation}
-\mathcal{F_{k}}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
+\mathcal{F}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
 \end{equation}
 
 \end_inset
@@ -4263,7 +4263,247 @@ name "subsec:Diffusive_flows"
 \end_layout
 
 \begin_layout Standard
-...add about how you can use lewis number schmidt number with viscosity fit to create an estimated diffusive function
+An immediate way to extend the above formulation to include diffusion and thus approximate the chemically reacting Navier-Stokes equation is to use constant Schmidt and Lewis number approximations.
+ The Navier-Stokes equations are of the form
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial y_{f}}{\partial t}+\nabla\cdot F\left(y_{f},\nabla y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\label{eq:conservation-law-strong-form-1}
+\end{equation}
+
+\end_inset
+
+Which has the addition of the viscous flux,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+F\left(y,\nabla y\right)=\left(\mathcal{F}^{}\left(y\right)-\mathcal{F}^{v}\left(y,\nabla y\right)\right)\label{eq:flux_function}
+\end{equation}
+
+\end_inset
+
+Where 
+\begin_inset Formula $\mathcal{F}^{}\left(y\right)$
+\end_inset
+
+ is consistent with the flux function from Equation 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:reacting-navier-stokes-spatial-convective-flux-component"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ and the viscous flux is 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{F}_{k}^{v}\left(y,\nabla y\right)=\left(\tau_{1k},\ldots,\tau_{dk},\sum_{j=1}^{d}\tau_{kj}v_{j}-W_{i}C_{i}h_{i}V_{ik}-q_{k},C_{1}V_{1k},\ldots,C_{n_{s}}V_{n_{s}k}\right),\label{eq:navier-stokes-viscous-flux-spatial-component}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+where 
+\begin_inset Formula $q:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d}$
+\end_inset
+
+ is the thermal heat flux,
+ 
+\begin_inset Formula $\tau:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d\times d}$
+\end_inset
+
+ is the viscous stress tensor,
+ 
+\begin_inset Formula $\left(h_{1},\ldots,h_{n_{s}}\right):\mathbb{R}^{m}\rightarrow\mathbb{R}^{n_{s}}$
+\end_inset
+
+ are the species specific enthalpies,
+ and 
+\begin_inset Formula $\left(\left(V_{11},\dots,V_{1d}\right),\dots,\left(V_{n_{s}1},\dots,V_{n_{s}d}\right)\right):\mathbb{R}^{m}\times\mathbb{R}^{n_{s}\times d}\rightarrow\mathbb{R}^{n_{s}\times d}$
+\end_inset
+
+ are the species diffusion velocities.
+ The 
+\begin_inset Formula $k$
+\end_inset
+
+-th spatial component of the viscous stress tensor is given by
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Formula 
+\begin{equation}
+\tau_{k}\left(y,\nabla y\right)=\mu\left(\frac{\partial v_{1}}{\partial x_{k}}+\frac{\partial v_{k}}{\partial x_{1}}-\delta_{k1}\frac{2}{3}\sum_{j=1}^{d}\frac{\partial v_{j}}{\partial x_{j}},\ldots,\frac{\partial v_{d}}{\partial x_{k}}+\frac{\partial v_{k}}{\partial x_{d}}-\delta_{kd}\frac{2}{3}\sum_{j=1}^{d}\frac{\partial v_{j}}{\partial x_{j}}\right),\label{eq:reacting-navier-stokes-viscous-stress-tensor-component}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+where 
+\begin_inset Formula $\mu:\mathbb{R}^{m}\rightarrow\mathbb{R}$
+\end_inset
+
+ is the dynamic viscosity.
+ The 
+\begin_inset Formula $k$
+\end_inset
+
+-th spatial component of the heat flux is given as
+\begin_inset Formula 
+\begin{eqnarray*}
+q_{k}\left(y,\nabla y\right) & = & -\lambda\frac{\partial T}{\partial x_{k}}.
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\lambda:\mathbb{R}^{m}\rightarrow\mathbb{R}$
+\end_inset
+
+ is the thermal conductivity.
+\end_layout
+
+\begin_layout Standard
+Up to this point,
+ the formulation presented is consistent with the a single component Navier-Stokes formulation.
+ In a detailed transport approach,
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ would be functions of both temperature and species concentration.
+ To remove this,
+ specialized models can be created for an average or temperature varying viscosity 
+\begin_inset Formula $\mu$
+\end_inset
+
+ by using a Prandtl number approximation,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Pr=\frac{c_{p}\mu}{\lambda}.\label{eq:Pr_number}
+\end{equation}
+
+\end_inset
+
+Remaining is the species diffusion velocity,
+ which can be estimated from either a species specific Schmidt number,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Sc_{i}=\frac{\mu}{\rho\bar{D}_{i}}.\label{eq:Sc_number}
+\end{equation}
+
+\end_inset
+
+or,
+ in some cases,
+ a species specific Lewis number,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Le_{i}=\frac{\lambda}{\rho c_{p}\bar{D}_{i}}.\label{eq:Sc_number-1}
+\end{equation}
+
+\end_inset
+
+The species mixture averaged diffusion coefficient,
+ 
+\begin_inset Formula $\bar{D}_{i}$
+\end_inset
+
+,
+ is used in 
+\begin_inset Formula $k$
+\end_inset
+
+-th spatial component of the diffusion velocity for the 
+\begin_inset Formula $i$
+\end_inset
+
+-th species is given as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+V_{ik}=\frac{\bar{D}_{i}}{C_{i}}\frac{\partial C_{i}}{\partial x_{k}}-\frac{\bar{D}_{i}}{\rho}\frac{\partial\rho}{\partial x_{k}}.\label{eq:diffusion_velocity}
+\end{equation}
+
+\end_inset
+
+These transport quantities complete the necessary components to extend the single-component Navier-Stokes to a multi-component formulation.
+ An even more reduced case would be to assume a singular value for the species dependent quantities,
+ 
+\begin_inset Formula $Le_{i}=Le$
+\end_inset
+
+ and 
+\begin_inset Formula $Sc_{i}=Sc$
+\end_inset
+
+.
+ For the species dependent detailed mixture averaged quantities see 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Joh20"
+literal "false"
+
+\end_inset
+
+ which is based on 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Kee05"
+literal "false"
+
+\end_inset
+
+.
+ In addition,
+ Reynolds Averaged Navier Stokes and subgrid scale modeling have effective transport quantities where these nondimensionalized numbers can be modified in accordance
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Coo98,Hei06"
+literal "false"
+
+\end_inset
+
+.
+ Therefore,
+ under these assumptions,
+ along with the thermodynamics and chemical source terms provided by ChemGen,
+ it is possible to approximate the solution of the chemically reacting Navier–Stokes equations starting from a single component formulation.
 \end_layout
 
 \begin_layout Section
@@ -4353,7 +4593,7 @@ the state can be reduced to be purely concentration based for time-split algorit
 
 In this section we will cover some tools provided by ChemGen to integrate this state in time.
  We also comment on how ChemGen provides tools for fully coupled methods.
- For the time-split integration approaches provided by ChemGen the source term is calculated utilizing a global 
+ For the compressible time-split integration approaches provided by ChemGen the source term is calculated utilizing a global 
 \begin_inset Formula $\rho u$
 \end_inset
 
@@ -4368,6 +4608,62 @@ In this section we will cover some tools provided by ChemGen to integrate this s
 \end_inset
 
 .
+ 
+\end_layout
+
+\begin_layout Subsection
+Constant Pressure Strategy
+\end_layout
+
+\begin_layout Standard
+In CFD,
+ it is typically assumed that the volume of a cell remains constant over time.
+ This assumption influences the allowable time integration strategies and,
+ in compressible flows,
+ permits pressure to rise in response to changes in species.
+ However,
+ in incompressible or low-Mach solvers,
+ pressure is treated differently:
+ it is assumed to adjust instantaneously,
+ effectively decoupling it from the time evolution and thus remain constant at some thermodynamic value.
+ This means pressure is held constant in time,
+ which imposes a constraint on the energy conservation.
+ Specifically,
+ if pressure does not evolve,
+ then the enthalpy,
+ 
+\begin_inset Formula $\rho h=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}$
+\end_inset
+
+ ,
+ must also remain constant in time.
+ This constraint becomes clear when examining the thermodynamic relationship between internal energy,
+ enthalpy,
+ and pressure,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\rho u=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}-R^{o}T\sum_{i=1}^{n_{s}}C_{i}=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}-p=\rho h-p,\label{eq:int_energy_enthalpy}
+\end{equation}
+
+\end_inset
+
+and applying a time derivative
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\rho u}{\partial t}=\frac{\partial\rho h}{\partial t}-\cancelto{0}{\frac{\partial p}{\partial t}}=0\rightarrow\frac{\partial\rho h}{\partial t}=0.\label{eq:int_energy_enthalpy-1}
+\end{equation}
+
+\end_inset
+
+Therefore,
+ the constant pressure assumption can be enforced by treating enthalpy as a globally constant,
+ while leaving the rest of the system formulation unchanged.
 \end_layout
 
 \begin_layout Subsection
@@ -5087,7 +5383,7 @@ where
 \end_inset
 
 ,
- then the YASS integration is time step is reduced to 
+ then the YASS integration's time step is reduced to 
 \begin_inset Formula $\Delta t_{s+1}=\frac{1}{2}\Delta t_{s}$
 \end_inset
 
@@ -5158,7 +5454,8 @@ Linear Solvers
 \end_layout
 
 \begin_layout Standard
-An inversion of a Jacobian matrix is required in all of the previously covered implicit methods which look like
+An inversion of a Jacobian matrix is required in all of the previously covered implicit methods,
+ which generally take the form
 \end_layout
 
 \begin_layout Standard
@@ -5251,8 +5548,7 @@ literal "false"
 
 .
  Unlike direct solvers,
- GMRES builds an orthonormal basis of the Krylov subspace and minimizes the residual over this subspace at each iteration,
- making it particularly well-suited for the types of stiff and poorly conditioned systems that arise in chemically reacting flow simulations.
+ GMRES builds an orthonormal basis of the Krylov subspace and minimizes the residual over this subspace at each iteration.
  The solver iterates for 
 \begin_inset Formula $x$
 \end_inset
@@ -5319,7 +5615,7 @@ nolink "false"
 \end_inset
 
  and applying it to both sides of the system.
- This is known at the Jacobi preconditioner this is a fast preconditioner calculation as it only inverts the diaganolas and scan be directly applied to the existing system.
+ This is known at the Jacobi preconditioner this is a fast preconditioner calculation as it only inverts the diagonals and can be directly applied to the existing system.
  In addition,
  the Gauss-Seidel preconditioner is also supplied which inverts a matrix converged of the lower and diagonal components of 
 \begin_inset Formula $A$
@@ -5388,8 +5684,8 @@ name "sec:Code-Generation"
 \begin_layout Standard
 In the ChemGen software there are three main file types.
  The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
- The second file type are static code that are ingested by the python code and reformatted to the desired target software.
- The remaining file types is a mixture of python code used to exercise tests,
+ The second file type are static code that are ingested by python code and reformatted to the desired target software.
+ The remaining file types are a mixture of python code used to exercise tutorals,
  most of which covered in the results section,
  Section 5,
  and yaml files that contain kinetic data.
@@ -5400,8 +5696,30 @@ The concept of decorators
 \end_layout
 
 \begin_layout Standard
-C++ code takes on many forms.
- For instance...
+C++ is a malleable language that allows developers to abstract underlying data structures through type aliases (
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{using scalar = float;}
+\end_layout
+
+\end_inset
+
+) and operator overloading.
+ As a result,
+ variables may appear to be simple scalars while in fact representing complex types with custom behavior.
+ This flexibility enables expressive,
+ domain-specific syntax,
+ but means that there is not one set of generated code that would work for imedding existing C++ software.
+ 
+\end_layout
+
+\begin_layout Standard
+For instance the function
 \end_layout
 
 \begin_layout Standard
@@ -5411,12 +5729,763 @@ status open
 
 \begin_layout Plain Layout
 
-for a in a_list:
+float sqr (float a){return a*a;} 
+\backslash
+
+\backslash
+example function 1
+\end_layout
+
+\end_inset
+
+may be more suitable for the developer to have the function as a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{const}
+\end_layout
+
+\end_inset
+
+ in a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{struct}
+\end_layout
+
+\end_inset
+
+ or 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{class}
+\end_layout
+
+\end_inset
+
+.
+ In addition,
+ the scalar 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{float}
+\end_layout
+
+\end_inset
+
+ could also be 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{double}
+\end_layout
+
+\end_inset
+
+ and the parameters of the function may be desired to pass in by
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{const}
+\end_layout
+
+\end_inset
+
+ reference 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{float a}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{const float
+\backslash
+& a}
+\end_layout
+
+\end_inset
+
+.
+ a function annotation may also be desirable,
+ such as the preprocessor macro used in the Kokkos library 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Tro22"
+literal "false"
+
+\end_inset
+
+.
+ Thus,
+ the operations necessary to compute the math in this function may look totally different based on the developers desire,
+ turning the above example to
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+KOKKOS_INLINE_FUNCTION
 \end_layout
 
 \begin_layout Plain Layout
 
-	a*a
+float sqr (const float& a) const {return a*a;}
+\backslash
+
+\backslash
+example function 2
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+ChemGen utilizes 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+emph{decorators}
+\end_layout
+
+\end_inset
+
+ To assist in the flexibility of generating desirable C++ code.
+ The above example can be changed to a python formattable python string
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+{device_function}
+\end_layout
+
+\begin_layout Plain Layout
+
+{scalar_function} sqr ({scalar_parameter} a) {const_option} {{return a*a;}} 
+\backslash
+
+\backslash
+python formattable
+\end_layout
+
+\end_inset
+
+ChemGen utilizes these decorators throughout the code generation process.
+ When the code generation takes place,
+ a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{configuration.yaml}
+\end_layout
+
+\end_inset
+
+ file is utilized that replaces the decorators with the appropriate text.
+ So for example function 1:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+decorators:
+\end_layout
+
+\begin_layout Plain Layout
+
+  scalar_function:
+ "float"
+\end_layout
+
+\begin_layout Plain Layout
+
+  scalar_parameter:
+ "float"
+\end_layout
+
+\begin_layout Plain Layout
+
+  device_option:
+ ""
+\end_layout
+
+\begin_layout Plain Layout
+
+  const_option:
+ ""
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and for example function 2:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+decorators:
+\end_layout
+
+\begin_layout Plain Layout
+
+  scalar_function:
+ "float"
+\end_layout
+
+\begin_layout Plain Layout
+
+  scalar_parameter:
+ "const float&"
+\end_layout
+
+\begin_layout Plain Layout
+
+  device_option:
+ "KOKKOS_INLINE_FUNCTION"
+\end_layout
+
+\begin_layout Plain Layout
+
+  const_option:
+ "const"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The configuration file also includes the ability to switch from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{std::array}
+\end_layout
+
+\end_inset
+
+ to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{std::vector}
+\end_layout
+
+\end_inset
+
+ and allow other data types such as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{Views}
+\end_layout
+
+\end_inset
+
+ from Kokkos or 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{std::tuple}
+\end_layout
+
+\end_inset
+
+ derived types for the arrays of data concerning species or temperature monomials.
+ 
+\end_layout
+
+\begin_layout Subsection
+Derivatives
+\end_layout
+
+\begin_layout Standard
+ChemGen makes use of mechanical differentiation approach where the underlying mathematics for essential problems have supply their derivatives and chain rules when necessary.
+ This means that a functions derivative,
+ when added to the static code base,
+ should be immediately accessible giving the access to the underlying derivatives supplied by chemgen.
+ For instance,
+ the Arrhenius function as generated using a default configuration in ChemGen is
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+double
+\end_layout
+
+\begin_layout Plain Layout
+
+arrhenius(const double& A,
+ const double& B,
+ const double& E,
+ const double& temperature) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+        double pow_term = pow_gen(temperature,
+ B);
+\end_layout
+
+\begin_layout Plain Layout
+
+        double exp_term = exp_gen(divide(-E,
+ universal_gas_constant() * temperature));
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        return multiply(A,
+\end_layout
+
+\begin_layout Plain Layout
+
+                        multiply(pow_term,
+\end_layout
+
+\begin_layout Plain Layout
+
+                                 exp_term));
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+ChemGen supplies the derivatives for the mathematical operations in that function.
+ For instances,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{pow
+\backslash
+_gen}
+\end_layout
+
+\end_inset
+
+'s derivatives given that it has two parameters would yield two derivatives and one chain rule:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+double dpow_da(const double& a,
+ const double& b)  
+\end_layout
+
+\begin_layout Plain Layout
+
+{return b * std::pow(a,
+ b - double(1));}
+\end_layout
+
+\begin_layout Plain Layout
+
+double dpow_db(const double& a,
+ const double& b)  
+\end_layout
+
+\begin_layout Plain Layout
+
+{return std::pow(a,
+ b) * std::log(a);}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+double
+\end_layout
+
+\begin_layout Plain Layout
+
+pow_gen_chain(const double& a,
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+              const double& a_perturbation,
+\end_layout
+
+\begin_layout Plain Layout
+
+              const double& b,
+\end_layout
+
+\begin_layout Plain Layout
+
+              const double& b_perturbation) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 
+\end_layout
+
+\begin_layout Plain Layout
+
+    return dpow_da(a,
+ b) * a_perturbation + dpow_db(a,
+ b) * b_perturbation;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+The same derivatives,
+ partial derivative per parameter and a chain rule contracting the partials with a perturbation,
+ can assumed to be accessible when developing higher level functions.
+ Assuming this capability,
+ the derivative of the Arrhenius function with respect to temperature is 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+double
+\end_layout
+
+\begin_layout Plain Layout
+
+darrhenius_dtemperature(const double& A,
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+                        const double& B,
+\end_layout
+
+\begin_layout Plain Layout
+
+                        const double& E,
+\end_layout
+
+\begin_layout Plain Layout
+
+                        const double& temperature) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+        double pow_term = pow_gen(temperature,
+ B);
+\end_layout
+
+\begin_layout Plain Layout
+
+        double dpow_term_dtemperature = dpow_da(temperature,
+ B);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        double exp_term =
+\end_layout
+
+\begin_layout Plain Layout
+
+            exp_gen(divide(-E,
+\end_layout
+
+\begin_layout Plain Layout
+
+                           universal_gas_constant() * temperature));
+\end_layout
+
+\begin_layout Plain Layout
+
+        double dexp_term_dtemperature =
+\end_layout
+
+\begin_layout Plain Layout
+
+            exp_chain(divide(-E,
+\end_layout
+
+\begin_layout Plain Layout
+
+                             universal_gas_constant() * temperature),
+\end_layout
+
+\begin_layout Plain Layout
+
+                      ddivide_db(-E,
+\end_layout
+
+\begin_layout Plain Layout
+
+                                 universal_gas_constant() * temperature));
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+        return multiply(A,
+\end_layout
+
+\begin_layout Plain Layout
+
+                        multiply_chain(pow_term,
+\end_layout
+
+\begin_layout Plain Layout
+
+                                       dpow_term_dtemperature,
+\end_layout
+
+\begin_layout Plain Layout
+
+                                       exp_term,
+\end_layout
+
+\begin_layout Plain Layout
+
+                                       dexp_term_dtemperature));
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We found that this mechanical differentiation approach is both efficient and more readable compared to symbolic differentiation,
+ where derivatives are discovered through symbolic manipulation using tools like SymPy.
+ While symbolic differentiation can be valuable,
+ especially for higher-level expressions,
+ we found the mechanical approach better suited for organizing and maintaining ChemGen’s code generation process.
+ Regardless,
+ since the functions are available in C++ once generated packages like autodiff 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Lea18"
+literal "false"
+
+\end_inset
+
+ can be implemented to use a wider variety of differentiable functionality.
+ For a mathematical overview of the derivatives needed for chemically reacting flow,
+ see 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Nie17"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Generation Process
+\end_layout
+
+\begin_layout Standard
+The code generation process using ChemGen is as minimal as possible.
+ ChemGen relies on cantera for interpreting chemistry files.
+ Cantera performs several essential functions,
+ it parses the chemistry data,
+ it converts units to SI,
+ and it provides the thermodynamic relationships that be refit.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename chemgen_flowchart.pdf
+	draft
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:flowchart"
+
+\end_inset
+
+ChemGen flowchart
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -5425,15 +6494,23 @@ for a in a_list:
 \end_layout
 
 \begin_layout Section
-Results
+Results and Demonstration Cases
 \end_layout
 
 \begin_layout Subsection
-Thermodynamics
+Error Analysis
 \end_layout
 
 \begin_layout Subsection
-Implementation into OpenFOAM
+Jacobian Analysis
+\end_layout
+
+\begin_layout Subsection
+Time Integration Comparisons
+\end_layout
+
+\begin_layout Subsection
+Detonation using detonationEulerFoam
 \end_layout
 
 \begin_layout Standard
@@ -6269,7 +7346,7 @@ Stiffness
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 btprint "btPrintCited"
-bibfiles "citations"
+bibfiles "citations,citations_runover"
 options "elsarticle-num"
 encoding "default"
 
