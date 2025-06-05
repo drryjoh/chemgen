@@ -547,7 +547,7 @@ Concentration of species
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\boldsymbol{C}$
+\begin_inset Formula $C$
 \end_inset
 
 
@@ -1307,7 +1307,7 @@ Temperature of gas,
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\boldsymbol{\tau}$
+\begin_inset Formula $\tau$
 \end_inset
 
 
@@ -1395,7 +1395,7 @@ Internal energy,
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\boldsymbol{v}$
+\begin_inset Formula $v$
 \end_inset
 
 
@@ -1439,7 +1439,7 @@ Velocity,
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $\boldsymbol{V}_{i}$
+\begin_inset Formula $V_{i}$
 \end_inset
 
 
@@ -2159,7 +2159,7 @@ On this work,
 The multicomponent chemically reacting compressible Euler equations are given as
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\boldsymbol{y_{f}}}{\partial t}+\nabla\cdot\boldsymbol{\mathcal{F}}\left(\boldsymbol{y_{f}}\right)-\boldsymbol{\mathcal{S}}\left(\boldsymbol{y_{f}}\right)=0\label{eq:conservation-law-strong-form}
+\frac{\partial y_{f}}{\partial t}+\nabla\cdot\mathcal{F}\left(y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\label{eq:conservation-law-strong-form}
 \end{equation}
 
 \end_inset
@@ -2170,21 +2170,21 @@ where
 
  is time,
  
-\begin_inset Formula $\boldsymbol{y_{f}}(\boldsymbol{x},t):\mathbb{R}^{d}\times\mathbb{R}^{+}\rightarrow\mathbb{R}^{m}$
+\begin_inset Formula $y_{f}(x,t):\mathbb{R}^{d}\times\mathbb{R}^{+}\rightarrow\mathbb{R}^{m}$
 \end_inset
 
  is the conservative state vector (with 
-\begin_inset Formula $\boldsymbol{x}=(x_{1},\ldots,x_{d})$
+\begin_inset Formula $x=(x_{1},\ldots,x_{d})$
 \end_inset
 
  denoting the physical coordinates),
  
-\begin_inset Formula $\mathcal{F}(\boldsymbol{y_{f}}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m\times d}$
+\begin_inset Formula $\mathcal{F}(y_{f}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m\times d}$
 \end_inset
 
  is the convective flux,
  
-\begin_inset Formula $\boldsymbol{\mathcal{S}}(\boldsymbol{y_{f}}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m}$
+\begin_inset Formula $\mathcal{S}(y_{f}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m}$
 \end_inset
 
  is the chemical source term.
@@ -2194,7 +2194,7 @@ where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{y_{f}}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state}
+y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state}
 \end{equation}
 
 \end_inset
@@ -2214,7 +2214,7 @@ where
 
  is density,
  
-\begin_inset Formula $\boldsymbol{v}=\left(v_{1},\ldots,v_{d}\right)$
+\begin_inset Formula $v=\left(v_{1},\ldots,v_{d}\right)$
 \end_inset
 
  is the velocity,
@@ -2224,7 +2224,7 @@ where
 
  is the mass-specific total energy,
  and 
-\begin_inset Formula $\boldsymbol{C}=\left(C_{1},\ldots,C_{n_{s}}\right)$
+\begin_inset Formula $C=\left(C_{1},\ldots,C_{n_{s}}\right)$
 \end_inset
 
  are the species concentrations.
@@ -2281,7 +2281,7 @@ The
 th spatial convective flux component is written as
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{\mathcal{F}_{k}}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
+\mathcal{F_{k}}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
 \end{equation}
 
 \end_inset
@@ -2327,13 +2327,13 @@ The chemical state is
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{y_{c}}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state-1}
+y_{c}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state-1}
 \end{equation}
 
 \end_inset
 
 which is the complete state needed to calculate 
-\begin_inset Formula $\mathcal{S}\left(y\right)$
+\begin_inset Formula $\mathcal{S}\left(y_{f}\right)$
 \end_inset
 
 .
@@ -2346,7 +2346,7 @@ which is the complete state needed to calculate
  are all conserved quantities and can be extracted readily extracted from the fluid dynamic state.
  In the next section we expand on how to calculate temperature from internal energy using a nonlinear solve,
  
-\begin_inset Formula $\rho u\left(\boldsymbol{C},T\right)\rightarrow T$
+\begin_inset Formula $\rho u\left(C,T\right)\rightarrow T$
 \end_inset
 
 ,
@@ -2580,7 +2580,7 @@ This integration requires two monomial sequences for temperature,
 
 ,
  
-\begin_inset Formula $\boldsymbol{T}_{n_{p}}=\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
+\begin_inset Formula $T_{n_{p}}=\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
 \end_inset
 
  and one to the power 
@@ -2589,16 +2589,16 @@ This integration requires two monomial sequences for temperature,
 
 ,
  
-\begin_inset Formula $\boldsymbol{T}_{n_{p}+1}=\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$
+\begin_inset Formula $T_{n_{p}+1}=\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$
 \end_inset
 
  which can then be simply contracted with the respective array of coefficients,
  for example 
-\begin_inset Formula $u_{i}=\left<\boldsymbol{A}_{i},\boldsymbol{T}_{n_{p}+1}\right>$
+\begin_inset Formula $u_{i}=\left<A_{i},T_{n_{p}+1}\right>$
 \end_inset
 
  where 
-\begin_inset Formula $\boldsymbol{A}_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})$
+\begin_inset Formula $A_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})$
 \end_inset
 
 .
@@ -2738,7 +2738,7 @@ This gives two new temperature monomials with additional elements,
 
 ,
  
-\begin_inset Formula $\boldsymbol{T}_{n_{p},\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}},\ln T\right)$
+\begin_inset Formula $T_{n_{p},\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}},\ln T\right)$
 \end_inset
 
  and one to the power 
@@ -2747,24 +2747,24 @@ This gives two new temperature monomials with additional elements,
 
 ,
  
-\begin_inset Formula $\boldsymbol{T}_{n_{p}+1,T\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}+1},-T\ln T\right)$
+\begin_inset Formula $T_{n_{p}+1,T\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}+1},-T\ln T\right)$
 \end_inset
 
  which can then be simply contracted with the respective array of coefficients,
  
-\begin_inset Formula $s_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p},\ln T}\right>$
+\begin_inset Formula $s_{i}=\left<C_{i},T_{n_{p},\ln T}\right>$
 \end_inset
 
  where 
-\begin_inset Formula $\boldsymbol{C}_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{0})$
+\begin_inset Formula $C_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{0})$
 \end_inset
 
  and 
-\begin_inset Formula $g_{i}=\left<\boldsymbol{C}_{i},\boldsymbol{T}_{n_{p}+1,T\ln T}\right>$
+\begin_inset Formula $g_{i}=\left<C_{i},T_{n_{p}+1,T\ln T}\right>$
 \end_inset
 
  where 
-\begin_inset Formula $\boldsymbol{C}_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{0})$
+\begin_inset Formula $C_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{0})$
 \end_inset
 
 .
@@ -3204,7 +3204,7 @@ is the current guess (starting from
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\rho u(\boldsymbol{C},T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<\boldsymbol{A}_{i},\boldsymbol{T}_{n_{p}+1}\right>
+\rho u(C,T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},T_{n_{p}+1}\right>
 \end{equation}
 
 \end_inset
@@ -3215,7 +3215,7 @@ is the current guess (starting from
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\rho u(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<\boldsymbol{A}_{i},\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}\right>
+\frac{\partial\rho u(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{n_{p}+1}}{\partial T}\right>
 \end{equation}
 
 \end_inset
@@ -3226,7 +3226,7 @@ with
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{A}_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})
+A_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})
 \end{equation}
 
 \end_inset
@@ -3237,7 +3237,7 @@ and
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}=\left(0,1,2T,\dots,\left(n_{p}+1\right)T^{n_{p}}\right)
+\frac{\partial T_{n_{p}+1}}{\partial T}=\left(0,1,2T,\dots,\left(n_{p}+1\right)T^{n_{p}}\right)
 \end{equation}
 
 \end_inset
@@ -3260,7 +3260,7 @@ In the iteration for temperature an optimization can be made considering that th
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{C}_{i}^{\dagger}=(W_{i}C_{i}c_{i,0},W_{i}C_{i}c_{i,1},W_{i}C_{i}c_{i,2},\dots,W_{i}C_{i}c_{i,n_{p}+1})
+C_{i}^{\dagger}=(W_{i}C_{i}c_{i,0},W_{i}C_{i}c_{i,1},W_{i}C_{i}c_{i,2},\dots,W_{i}C_{i}c_{i,n_{p}+1})
 \end{equation}
 
 \end_inset
@@ -3271,7 +3271,7 @@ which results in
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
-T_{n+1}=T_{n}-\frac{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\boldsymbol{T}_{n_{p}+1}\right>}{\sum_{i=1}^{n_{s}}\left<\boldsymbol{C}_{i}^{\dagger},\frac{\partial\boldsymbol{T}_{n_{p}+1}}{\partial T}\right>}
+T_{n+1}=T_{n}-\frac{\sum_{i=1}^{n_{s}}\left<C_{i}^{\dagger},T_{n_{p}+1}\right>}{\sum_{i=1}^{n_{s}}\left<C_{i}^{\dagger},\frac{\partial T_{n_{p}+1}}{\partial T}\right>}
 \end{equation}
 
 \end_inset
@@ -3359,7 +3359,7 @@ literal "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{\mathcal{S}}\left(\boldsymbol{y_{f}}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-source-term}
+\mathcal{S}\left(y_{f}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-source-term}
 \end{equation}
 
 \end_inset
@@ -3700,7 +3700,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \[
-k_{j}^{f}=k_{TB,j}^{f}(\boldsymbol{C},M_{c},T,\ln T)=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f}(T,\ln T)=\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right)k_{A,j}^{f}(T,\ln T)
+k_{j}^{f}=k_{TB,j}^{f}(C,M_{c},T,\ln T)=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f}(T,\ln T)=\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right)k_{A,j}^{f}(T,\ln T)
 \]
 
 \end_inset
@@ -3814,7 +3814,7 @@ Unimolecular/recombination fall-off reactions incorporate a dependence on pressu
  is computed as
 \begin_inset Formula 
 \begin{equation}
-k_{j}^{f}=k_{FO,j}^{f}(\boldsymbol{C},M_{c},T,\ln T)=k_{A,\infty,j}(T,\ln T)\left(\frac{P_{r}(C,M_{c},T,\ln T)}{1+P_{r}(C,M_{c},T,\ln T)}\right)F,\label{eq:falloff-reaction}
+k_{j}^{f}=k_{FO,j}^{f}(C,M_{c},T,\ln T)=k_{A,\infty,j}(T,\ln T)\left(\frac{P_{r}(C,M_{c},T,\ln T)}{1+P_{r}(C,M_{c},T,\ln T)}\right)F,\label{eq:falloff-reaction}
 \end{equation}
 
 \end_inset
@@ -3827,7 +3827,7 @@ where
  defined as
 \begin_inset Formula 
 \[
-P_{r}(\boldsymbol{C},M_{c},T,\ln T)=\frac{k_{A,0,j}(T,\ln T)}{k_{A,\infty,j}(T,\ln T)}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right).
+P_{r}(C,M_{c},T,\ln T)=\frac{k_{A,0,j}(T,\ln T)}{k_{A,\infty,j}(T,\ln T)}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right).
 \]
 
 \end_inset
@@ -4107,13 +4107,13 @@ There are several ways the reactions rates can be accrued to create the actual s
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)\label{eq:forward_rates_vector}
+k_{p}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)\label{eq:forward_rates_vector}
 \end{equation}
 
 \end_inset
 
 Here we represent the entirity of forward reactions as 
-\begin_inset Formula $\boldsymbol{k_{p}}$
+\begin_inset Formula $k_{p}$
 \end_inset
 
  where the subscript 
@@ -4137,7 +4137,7 @@ represents a particularly degree of freedom.
 \begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right),\label{eq:progress_rates_vector}
+q_{p}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right),\label{eq:progress_rates_vector}
 \end{equation}
 
 \end_inset
@@ -4223,7 +4223,7 @@ Finally,
 \begin_layout Plain Layout
 \begin_inset Formula 
 \[
-\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right),
+\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right),
 \]
 
 \end_inset
@@ -4296,7 +4296,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\boldsymbol{y_{f}}}{\partial t}+\nabla\cdot\boldsymbol{\mathcal{F}}\left(\boldsymbol{y_{f}}\right)-\boldsymbol{\mathcal{S}}\left(\boldsymbol{y_{f}}\right)=0\rightarrow\frac{d\boldsymbol{y_{f}}}{dt}=\boldsymbol{\mathcal{S}}\left(\boldsymbol{y_{f}}\right).\label{eq:conservation-law-to-ode}
+\frac{\partial y_{f}}{\partial t}+\nabla\cdot\mathcal{F}\left(y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\rightarrow\frac{dy_{f}}{dt}=\mathcal{S}\left(y_{f}\right).\label{eq:conservation-law-to-ode}
 \end{equation}
 
 \end_inset
@@ -4308,7 +4308,7 @@ By removing the spatial fluxes,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{y_{f}}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T}\rightarrow\boldsymbol{y_{f}}=\left(0,\ldots,0,\rho u,C_{1},\ldots,C_{n_{s}}\right)^{T}\label{eq:ODE_state}
+y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T}\rightarrow y_{f}=\left(0,\ldots,0,\rho u,C_{1},\ldots,C_{n_{s}}\right)^{T}\label{eq:ODE_state}
 \end{equation}
 
 \end_inset
@@ -4319,7 +4319,7 @@ and by inspecting the source term,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{\mathcal{S}}\left(\boldsymbol{y_{f}}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:RNS_source}
+\mathcal{S}\left(y_{f}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:RNS_source}
 \end{equation}
 
 \end_inset
@@ -4331,13 +4331,28 @@ the state can be reduced to be purely concentration based for time-split algorit
 \begin_inset Formula 
 \begin{equation}
 \begin{array}{ccc}
-\frac{d\boldsymbol{y}}{dt}=\boldsymbol{S}\left(\boldsymbol{y}\right); & \boldsymbol{y}=\left(C_{1},\ldots,C_{n_{s}}\right)^{T}; & \boldsymbol{S}\left(\boldsymbol{y}\right)=\left(\omega_{1},\ldots,\omega_{n_{s}}\right)^{T}.\end{array}\label{eq:extracted_problem}
+\frac{dy}{dt}=S\left(y\right); & y=\left(C_{1},\ldots,C_{n_{s}}\right)^{T}; & S\left(y\right)=\left(\omega_{1},\ldots,\omega_{n_{s}}\right)^{T}.\end{array}\label{eq:extracted_problem}
 \end{equation}
 
 \end_inset
 
 In this section we will cover some tools provided by ChemGen to integrate this state in time.
- We also comment on how ChemGen provides tools for fully coupled methods
+ We also comment on how ChemGen provides tools for fully coupled methods.
+ For the time-split integration approaches provided by ChemGen the source term is calculated utilizing a global 
+\begin_inset Formula $\rho u$
+\end_inset
+
+ and the derived chemical state,
+ 
+\begin_inset Formula $y_{c}$
+\end_inset
+
+,
+ was used to produce 
+\begin_inset Formula $S\left(y\right)$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -4346,11 +4361,11 @@ Explicit Runge-Kutta Time Integration Method
 
 \begin_layout Standard
 ChemGen provides a Runge-Kutta 4th-order method (RK4) for integrating the chemical state from 
-\begin_inset Formula $\boldsymbol{y}^{n}$
+\begin_inset Formula $y^{n}$
 \end_inset
 
  to 
-\begin_inset Formula $\boldsymbol{y}^{n+1}$
+\begin_inset Formula $y^{n+1}$
 \end_inset
 
  over an time interval of 
@@ -4373,9 +4388,17 @@ nolink "false"
 \end_inset
 
 .
- This explicit time integration scheme approximates the solution by evaluating the source term at four intermediate stages within each time step.
+ This explicit time integration scheme approximates the solution by evaluating the source term at four intermediate stages within each time step
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Hai96"
+literal "false"
+
+\end_inset
+
+.
  Given a current state 
-\begin_inset Formula $\boldsymbol{y}_{n}$
+\begin_inset Formula $y_{n}$
 \end_inset
 
  at time 
@@ -4384,7 +4407,7 @@ nolink "false"
 
 ,
  the RK4 update to the next state 
-\begin_inset Formula $\boldsymbol{y}^{n+1}$
+\begin_inset Formula $y^{n+1}$
 \end_inset
 
  at time 
@@ -4399,11 +4422,11 @@ nolink "false"
 \begin_inset Formula 
 \begin{equation}
 \begin{array}{ccc}
-\boldsymbol{k_{1}} & = & \boldsymbol{S}\left(\boldsymbol{y}^{n}\right)\\
-\boldsymbol{k_{2}} & = & \boldsymbol{S}\left(\boldsymbol{y}^{n}+\frac{\Delta t}{2}\boldsymbol{k_{1}}\right)\\
-\boldsymbol{k_{3}} & = & \boldsymbol{S}\left(\boldsymbol{y}^{n}+\frac{\Delta t}{2}\boldsymbol{k_{2}}\right)\\
-\boldsymbol{k_{4}} & = & \boldsymbol{S}\left(\boldsymbol{y}^{n}+\Delta t\boldsymbol{k_{3}}\right)\\
-\boldsymbol{y}^{n+1} & = & \boldsymbol{y}^{n}+\frac{\Delta t}{6}\left(\boldsymbol{k_{1}}+2\boldsymbol{k_{2}}+2\boldsymbol{k_{3}}+\boldsymbol{k_{4}}\right)
+k_{1} & = & S\left(y^{n}\right)\\
+k_{2} & = & S\left(y^{n}+\frac{\Delta t}{2}k_{1}\right)\\
+k_{3} & = & S\left(y^{n}+\frac{\Delta t}{2}k_{2}\right)\\
+k_{4} & = & S\left(y^{n}+\Delta tk_{3}\right)\\
+y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
 \end{array}\label{eq:RK4}
 \end{equation}
 
@@ -4450,7 +4473,7 @@ Although explicit methods like RK4 offer high accuracy,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\boldsymbol{y}^{n+1}-\boldsymbol{y}^{n}}{\Delta t}=\boldsymbol{S}\left(\boldsymbol{y}^{n+1}\right)\label{eq:Backward_euler}
+\frac{y^{n+1}-y^{n}}{\Delta t}=S\left(y^{n+1}\right)\label{eq:Backward_euler}
 \end{equation}
 
 \end_inset
@@ -4465,7 +4488,7 @@ The Newton's method can be used to iteratively find
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{-\boldsymbol{y}^{n}}{\Delta t}+\frac{\boldsymbol{y}^{n+1}}{\Delta t}-\boldsymbol{S}\left(\boldsymbol{y}^{n+1}\right)=\boldsymbol{f}(\boldsymbol{y}^{n+1})=0\label{eq:BE-rewrite}
+\frac{-y^{n}}{\Delta t}+\frac{y^{n+1}}{\Delta t}-S\left(y^{n+1}\right)=f(y^{n+1})=0\label{eq:BE-rewrite}
 \end{equation}
 
 \end_inset
@@ -4476,7 +4499,7 @@ and solving the decrement
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\delta\boldsymbol{y}^{n+1}=\left(\boldsymbol{y}_{k+1}^{n+1}-\boldsymbol{y}_{k}^{n+1}\right)=-\mathcal{J}\left(\boldsymbol{y}_{k}^{n+1}\right)^{-1}\boldsymbol{f}(\boldsymbol{y}_{k}^{n+1})\label{eq:newtons-method}
+\delta y^{n+1}=\left(y_{k+1}^{n+1}-y_{k}^{n+1}\right)=-\mathcal{J}\left(y_{k}^{n+1}\right)^{-1}f(y_{k}^{n+1})\label{eq:newtons-method}
 \end{equation}
 
 \end_inset
@@ -4487,17 +4510,17 @@ and solving the decrement
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\boldsymbol{\mathcal{J}}\left(\boldsymbol{y}_{k}^{n+1}\right)\left(\boldsymbol{y}_{k+1}^{n+1}-\boldsymbol{y}_{k}^{n+1}\right)=-\boldsymbol{f}(\boldsymbol{y}_{k}^{n+1})\label{eq:newtons-method-2}
+\mathcal{J}\left(y_{k}^{n+1}\right)\left(y_{k+1}^{n+1}-y_{k}^{n+1}\right)=-f(y_{k}^{n+1})\label{eq:newtons-method-2}
 \end{equation}
 
 \end_inset
 
 Where 
-\begin_inset Formula $\boldsymbol{\mathcal{J}}\left(\boldsymbol{y}_{k}^{n+1}\right)$
+\begin_inset Formula $\mathcal{J}\left(y_{k}^{n+1}\right)$
 \end_inset
 
  is the Jacobian of 
-\begin_inset Formula $\boldsymbol{f}(\boldsymbol{y}_{k}^{n+1})$
+\begin_inset Formula $f(y_{k}^{n+1})$
 \end_inset
 
  which for this backwards Euler method is
@@ -4506,7 +4529,7 @@ Where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}\left(\boldsymbol{y}_{k}^{n+1}\right)_{ij}=\delta_{ij}\Delta t-\frac{\partial\omega_{i}\left(\boldsymbol{y}_{k}^{n+1}\right)}{\partial C_{j}}\text{; }\delta_{ij}=\begin{cases}
+\mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=\delta_{ij}\Delta t-\frac{\partial\omega_{i}\left(y_{k}^{n+1}\right)}{\partial C_{j}}\text{; }\delta_{ij}=\begin{cases}
 1 & i=j\\
 0 & i\ne j
 \end{cases}\label{eq:jacobian}
@@ -4517,8 +4540,8 @@ Where
 Which requires the partial derivative of the production term with respect to each individual species.
  Regardless of the discretization scheme,
  the derivatives of the production rates will be needed.
- ChemGen was designed to include full differentiation throughout,
- each function contains a derivative and possible chain rule with examples detailed in Equation
+ ChemGen was designed to include full differentiation throughout;
+ each function contains a derivative and possible chain rule with examples detailed in Section
 \begin_inset space ~
 \end_inset
 
@@ -4669,15 +4692,26 @@ SDIRK-2
 \end_layout
 
 \begin_layout Standard
-The Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method methods belong to a class of implicit Runge-Kutta schemes where staging is utilized to build a higher order time integrations.
- The staged method is as follows
+The two stage Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method belongs to a class of implicit Runge-Kutta schemes where staging is utilized like that of RK4 but implicit strategies are used at each stage
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Hai96,Fran97"
+literal "false"
+
+\end_inset
+
+.
+ These methods are both stable and have higher order of accuracy than backward Euler.
+ However,
+ the Jacobian inversion approaches increase inherent cost of the method.
+ The staged SDIRK-2 method is as follows
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-\Gamma_{1} & = & \mathcal{S}\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)\label{eq:SDIRK2}\\
-\Gamma_{2} & = & \mathcal{S}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)\nonumber \\
+\Gamma_{1} & = & S\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)\label{eq:SDIRK2}\\
+\Gamma_{2} & = & S\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)\nonumber \\
 y_{n+1} & = & y_{n}+\Delta t\left[(1-\gamma)\Gamma_{1}+\gamma\Gamma_{2}\right]\nonumber 
 \end{eqnarray}
 
@@ -4689,7 +4723,7 @@ For the first stage
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-f\left(\Gamma_{1}\right)=\Gamma_{1}-\mathcal{S}\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)
+f\left(\Gamma_{1}\right)=\Gamma_{1}-S\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)
 \end{equation}
 
 \end_inset
@@ -4722,7 +4756,7 @@ Where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{ij}\left(\Gamma_{1,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+\gamma\Delta t\Gamma_{1,k}\right)}{\partial\left(\Gamma_{1,k}\right)_{j}}\label{eq:newtons-method-sdirk2-1-1}
+\mathcal{J}_{ij}\left(\Gamma_{1,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+\gamma\Delta t\Gamma_{1,k}\right)}{\partial C_{j}}\label{eq:newtons-method-sdirk2-1-1}
 \end{equation}
 
 \end_inset
@@ -4749,13 +4783,18 @@ Here
 \begin_inset Formula $\Gamma_{1,k}$
 \end_inset
 
- is realized the next stage can be solved for in a similar manner
+ is realized by the decrement being less than a prescribed tolerance,
+\begin_inset Formula $||\delta\Gamma_{1,k}||<\epsilon$
+\end_inset
+
+,
+ the next stage can be solved for in a similar manner,
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-f\left(\Gamma_{2}\right)=\Gamma_{2}-\mathcal{S}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)
+f\left(\Gamma_{2}\right)=\Gamma_{2}-S\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)
 \end{equation}
 
 \end_inset
@@ -4788,7 +4827,7 @@ Where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{ij}\left(\Gamma_{2,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2,k}\right)}{\partial\left(\Gamma_{2,k}\right)_{j}}\label{eq:newtons-method-sdirk2-1-1-1}
+\mathcal{J}_{ij}\left(\Gamma_{2,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2,k}\right)}{\partial C_{j}}\label{eq:newtons-method-sdirk2-1-1-1}
 \end{equation}
 
 \end_inset
@@ -4816,6 +4855,19 @@ Here
 \end_inset
 
  is realized the next stage can be solved for in a similar manner.
+ Chemgen utilizes 
+\begin_inset Formula $\gamma=1-\sqrt{2}/2$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha14"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -4823,15 +4875,29 @@ SDIRK-4
 \end_layout
 
 \begin_layout Standard
+The four stage Singly Diagonally Implicit Runge-Kutta (SDIRK-4) follows the same structure as SDIRK-2 with additional stages which requires a set of coefficients.
+ We utilize the coefficients implemented by FATODE 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha14"
+literal "false"
+
+\end_inset
+
+ which have shown stability for stiff problems and achieve 4th order accuracy.
+ The SDIRK-4 method is
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray*}
 y_{n+1} & = & y_{n}+\Delta t\sum_{i=1}^{5}b_{i}\Gamma_{i}\\
-\Gamma_{p} & = & \mathcal{S}\left(y_{n}+\sum_{j=1}^{i}a_{pj}\Delta t\Gamma_{j}\right)
+\Gamma_{p} & = & S\left(y_{n}+\sum_{j=1}^{i}a_{pj}\Delta t\Gamma_{j}\right)
 \end{eqnarray*}
 
 \end_inset
 
-Where
+with coefficients
 \end_layout
 
 \begin_layout Standard
@@ -4848,13 +4914,13 @@ b_{3}=2.399816 & b_{4}=-2.998818 & b_{5}=2\bar{6}
 
 \end_inset
 
-
+The implicit strategy is similar to SDIRK-2 but written more generally here
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-f\left(\Gamma_{p}\right)=\Gamma_{p}-\mathcal{S}\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\Gamma_{j}\right)
+f\left(\Gamma_{p}\right)=\Gamma_{p}-S\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\Gamma_{j}\right)
 \end{equation}
 
 \end_inset
@@ -4887,7 +4953,85 @@ Where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{ij}\left(\Gamma_{p,k}\right)=\delta_{ij}-a_{pp}\Delta t\frac{\partial\omega_{i}\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\left(\Gamma_{j}\right)_{k}\right)}{\partial\left(\Gamma_{p,k}\right)_{j}}\label{eq:newtons-method-sdirk2-1-1-1-1}
+\mathcal{J}_{ij}\left(\Gamma_{p,k}\right)=\delta_{ij}-a_{pp}\Delta t\frac{\partial\omega_{i}\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\left(\Gamma_{j}\right)_{k}\right)}{\partial C_{j}}.\label{eq:newtons-method-sdirk2-1-1-1-1}
+\end{equation}
+
+\end_inset
+
+Like SDIRK-2,
+ the subsequent 
+\begin_inset Formula $\Gamma_{p,k}$
+\end_inset
+
+ coming from the iterated for decrement,
+ 
+\begin_inset Formula $\Gamma_{p,k+1}=\Gamma_{p,k}+\delta\Gamma_{p}$
+\end_inset
+
+.
+ Once 
+\begin_inset Formula $\Gamma_{p,k}$
+\end_inset
+
+ is realized by the decrement being less than a prescribed tolerance,
+\begin_inset Formula $||\delta\Gamma_{p}||<\epsilon$
+\end_inset
+
+,
+ the next stage can be solved for in a similar manner.
+\end_layout
+
+\begin_layout Subsubsection
+2nd order Rosenbrock
+\end_layout
+
+\begin_layout Standard
+Rosenbrock schemes are another attractive time integration strategy but removes the need of multiple Jacobian inversions that are required in a Newton solve per stage as shown in the prior SDIRK based methods.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left(\frac{1}{\Delta t\gamma_{11}}\mathcal{I}-J_{n}\right)\Gamma_{1} & = & S\left(y_{n}\right)\\
+\left(\frac{1}{\Delta t\gamma_{22}}\mathcal{I}-J_{n}\right)\Gamma_{2} & = & S\left(y_{n}+\alpha\Gamma_{1}\right)+\frac{\beta}{\Delta t}\Gamma_{1}-S\left(y_{n}\right)\\
+y_{n+1} & = & y_{n}+m_{1}\Gamma_{1}+m_{2}\Gamma_{2}
+\end{eqnarray*}
+
+\end_inset
+
+Here 
+\begin_inset Formula $J_{n}$
+\end_inset
+
+ is the Jacobian held constant for both stages,
+ thus removing the need for multiple Jacobian evaluations,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{n,ij}\left(\Gamma_{p,k}\right)=\frac{\partial\omega_{i}\left(y_{n}\right)}{\partial y_{n,j}}.\label{eq:newtons-method-sdirk2-1-1-1-1-1}
+\end{equation}
+
+\end_inset
+
+Again we utilize the coefficients from FATODE
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha14"
+literal "false"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccccc}
+\gamma_{ii}=\gamma= & 1+\frac{\sqrt{2}}{2}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}
 \end{equation}
 
 \end_inset
@@ -4896,47 +5040,106 @@ Where
 \end_layout
 
 \begin_layout Subsubsection
-2nd order Rosenbrock
+YASS
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\left(\frac{1}{\Delta t\gamma_{11}}\mathcal{I}-J_{n}\right)\Gamma_{1} & = & \mathcal{S}\left(y_{n}\right)\\
-\left(\frac{1}{\Delta t\gamma_{22}}\mathcal{I}-J_{n}\right)\Gamma_{2} & = & \mathcal{S}\left(y_{n}+\alpha\Gamma_{1}\right)+\frac{\beta}{\Delta t}\Gamma_{1}\\
-y_{n+1} & = & y_{n}+m_{1}\Gamma_{1}+m_{2}\Gamma_{2}
-\end{eqnarray*}
-
+Yet another stiff solver (YASS) is an appealing solver that only uses one linear solve to predict the species evolution.
+ YASS is equivalent to one Newton step for backwards Euler that relies on sub-stepping if the change in 
+\begin_inset Formula $y_{n}$
 \end_inset
 
-Where 
-\begin_inset Formula $J_{n}$
-\end_inset
-
- is the Jacobian held constant for both stages - the time discretization,
+ is too large.
+ The integration is
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{n,ij}\left(\Gamma_{p,k}\right)=\frac{\partial\omega_{i}\left(y_{n}\right)}{\partial y_{n,j}}\label{eq:newtons-method-sdirk2-1-1-1-1-1}
+\left(\mathcal{I}-\Delta t\mathcal{J}\right)\delta y_{n}=\Delta tS\left(y_{n}\right)
 \end{equation}
 
 \end_inset
 
+where 
+\begin_inset Formula $y_{n+1}=y_{n}+\delta y_{n}$
+\end_inset
 
+.
+ If the norm of the decrement is larger than some scalar value,
+ 
+\begin_inset Formula $||\delta y_{n}||>\alpha$
+\end_inset
+
+,
+ then the YASS integration is time step is reduced to 
+\begin_inset Formula $\Delta t_{s+1}=\frac{1}{2}\Delta t_{s}$
+\end_inset
+
+ where 
+\begin_inset Formula $\Delta t_{s}=\Delta t$
+\end_inset
+
+ in the first integration.
+ This means that there is am appealing chance that the solver is performing a minimum of one linear solve.
+ This necessitates restricting the solver to fail if the time step reaches a minimum value,
+ 
+\begin_inset Formula $\Delta t_{s+1}<\Delta t_{\text{min}}$
+\end_inset
+
+ ,
+ to where a possible higher order method can be utilized.
+ This is especially useful when stability is desired for time-split chemistry solves of very small times steps where the chemical state is not expected to evolve much,
+ but the stiffness of the problem necessitates stability.
+\end_layout
+
+\begin_layout Subsubsection
+Other implicit schemes
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\begin{array}{ccccc}
-\gamma_{ii}=\gamma= & 1+\frac{1}{\sqrt{2}}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}
-\end{equation}
+Other time integration strategies not yet implemented in ChemGen can certainly be added using the same framework as the existing methods.
+ These include,
+ but are not limited to,
+ multi-step implicit methods such as backward differentiation formulas ,
+ which utilize information from previous time steps,
+ and higher-order Rosenbrock methods 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha14"
+literal "false"
 
 \end_inset
 
+,
+ which require multiple stages and carefully assigned coefficients.
+ Some implicit methods,
+ such as DGODE 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Joh20"
+literal "false"
 
+\end_inset
+
+ and CHEMEQ2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Mot01"
+literal "false"
+
+\end_inset
+
+,
+ may be more challenging to implement.
+ DGODE is based on a finite element formulation and is tightly integrated with finite element numerics.
+ In contrast,
+ CHEMEQ2 requires the source term to be separated into distinct production and consumption components,
+ introducing additional complexity that is not currently addressed by ChemGen.
+\end_layout
+
+\begin_layout Subsection
+Linear Solvers
 \end_layout
 
 \begin_layout Section
@@ -5163,11 +5366,15 @@ Solve Energy transport equations (using an energy source term derived from
 Reaction Rates
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
 Parallelism
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Several optimizations can be made in the code generation of the source term calculations.
  The overall target of Chemgen is to be used in CFD,
  wether to calculate source terms on the fly or to calculate in post processing independent of the CFD solver.
@@ -5180,7 +5387,7 @@ Several optimizations can be made in the code generation of the source term calc
  In The Results section we utilize the malleability given by code generation to implement each of these parallelizations for chemical reaction mechanisms of various sizes and comment on the choice of each algorithm.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Using the above description the following steps can be used in serial to calculate all source terms
 \end_layout
 
@@ -5205,7 +5412,7 @@ Calculate chemical state
 \begin_layout Enumerate
 Calculate all forward reactions,
  
-\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\begin_inset Formula $k_{p}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
 \end_inset
 
 
@@ -5213,11 +5420,11 @@ Calculate all forward reactions,
 
 \begin_layout Enumerate
 Using 
-\begin_inset Formula $\boldsymbol{k_{p}}$
+\begin_inset Formula $k_{p}$
 \end_inset
 
  calculate all rates of progress 
-\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\begin_inset Formula $q_{p}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
 \end_inset
 
 
@@ -5225,14 +5432,14 @@ Using
 
 \begin_layout Enumerate
 Calculate all production rates 
-\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
  
 \end_layout
 
 \end_deeper
-\begin_layout Standard
+\begin_layout Plain Layout
 The algorithm above when done in serial is 
 \begin_inset Formula $2\left(n_{dof}\times n_{r}\right)+\left(n_{dof}\times n_{s}\right)$
 \end_inset
@@ -5258,7 +5465,7 @@ S
  the source term may become to cumbersome to execute in serial over all degrees of freedom.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Using the first level of parallelization,
  
 \series bold
@@ -5267,7 +5474,7 @@ S
  could be decompose the domain of degrees of freedom and equally distribute the work using the following algorithm
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 S-d
 \end_layout
 
@@ -5316,7 +5523,7 @@ Calculate Chemical state
 \begin_layout Enumerate
 Calculate all forward reactions,
  
-\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\begin_inset Formula $k_{p}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
 \end_inset
 
 
@@ -5324,11 +5531,11 @@ Calculate all forward reactions,
 
 \begin_layout Enumerate
 Using 
-\begin_inset Formula $\boldsymbol{k_{p}}$
+\begin_inset Formula $k_{p}$
 \end_inset
 
  calculate all rates of progress 
-\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\begin_inset Formula $q_{p}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
 \end_inset
 
 
@@ -5336,7 +5543,7 @@ Using
 
 \begin_layout Enumerate
 Calculate all production rates 
-\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
  
@@ -5345,14 +5552,14 @@ Calculate all production rates
 \end_deeper
 \begin_layout Enumerate
 Gather 
-\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\begin_inset Formula $\omega_{p}$
 \end_inset
 
  to assimilate full set for all degrees of freedom (if necessary).
 \end_layout
 
 \end_deeper
-\begin_layout Standard
+\begin_layout Plain Layout
 This yields the same number of operations but each domain performs 
 \begin_inset Formula $\left(\frac{1}{n_{d}}\right)\left(2\left(n_{dof}\times n_{r}\right)+\left(n_{dof}\times n_{s}\right)\right)$
 \end_inset
@@ -5364,7 +5571,7 @@ S-d
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 If available,
  another tier of parallelization can utilized in multiple ways,
  for instance the calculations can be further decomposed into individual launches for threaded operations.
@@ -5418,7 +5625,7 @@ Thread over the
 
  calculations to calculate forward reactions,
  
-\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\begin_inset Formula $k_{p}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
 \end_inset
 
 
@@ -5430,7 +5637,7 @@ Thread over the
 \end_inset
 
  calculations to calculate all rates of progress 
-\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\begin_inset Formula $q_{p}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
 \end_inset
 
  in domain 
@@ -5446,7 +5653,7 @@ Thread over the
 \end_inset
 
  calculations to calculate all production rates 
-\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
  
@@ -5455,14 +5662,14 @@ Thread over the
 \end_deeper
 \begin_layout Enumerate
 Gather 
-\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\begin_inset Formula $\omega_{p}$
 \end_inset
 
  to assimilate full set for all degrees of freedom (if necessary).
 \end_layout
 
 \end_deeper
-\begin_layout Standard
+\begin_layout Plain Layout
 We refer to this parallelization as 
 \series bold
 T1.
@@ -5527,7 +5734,7 @@ Thread over each chemical state in the subdomain
 \begin_layout Enumerate
 Calculate the reactions,
  
-\begin_inset Formula $\boldsymbol{k_{p}}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
+\begin_inset Formula $k_{p}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)$
 \end_inset
 
 
@@ -5535,7 +5742,7 @@ Calculate the reactions,
 
 \begin_layout Enumerate
 Calculate the rates of progress 
-\begin_inset Formula $\boldsymbol{q_{p}}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
+\begin_inset Formula $q_{p}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right)$
 \end_inset
 
  in domain 
@@ -5547,7 +5754,7 @@ Calculate the rates of progress
 
 \begin_layout Enumerate
 Calculate all production rates 
-\begin_inset Formula $\boldsymbol{\omega_{p}}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
+\begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
  
@@ -5557,14 +5764,14 @@ Calculate all production rates
 \end_deeper
 \begin_layout Enumerate
 Gather 
-\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\begin_inset Formula $\omega_{p}$
 \end_inset
 
  to assimilate full set for all degrees of freedom (if necessary).
 \end_layout
 
 \end_deeper
-\begin_layout Standard
+\begin_layout Plain Layout
 This performs the source term at every threaded degree of freedom in serial.
  We refer to the parallelization as 
 \series bold
@@ -5573,7 +5780,7 @@ T2
 .
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 With some rearranging the source term can be assembled over one 
 \begin_inset Formula $n_{r}$
 \end_inset
@@ -5626,7 +5833,7 @@ Assemble the source term for each chemical state in the subdomain
 \begin_deeper
 \begin_layout Enumerate
 Create 
-\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\begin_inset Formula $\omega_{p}$
 \end_inset
 
  for storage (if it doesn't already exist)
@@ -5676,7 +5883,7 @@ for
 
  to the existing source term,
  
-\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\begin_inset Formula $\omega_{p}$
 \end_inset
 
 ,
@@ -5691,21 +5898,21 @@ for
 \end_deeper
 \begin_layout Enumerate
 Gather 
-\begin_inset Formula $\boldsymbol{\omega_{p}}$
+\begin_inset Formula $\omega_{p}$
 \end_inset
 
  to assimilate full set for all degrees of freedom (if necessary).
 \end_layout
 
 \end_deeper
-\begin_layout Standard
+\begin_layout Plain Layout
 This creates on launch per degree of freedom but increases the compute on each thread.
  We refer to this parallelization as 
 \series bold
 T3.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 For all approaches 
 \series bold
 S
@@ -5744,7 +5951,7 @@ there is bound to be a trade off.
  
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 In this section we utilize these architectures in on several systems with two main approaches,
  the first is to use CPU based parallelism with the threading is done using the logical cores on a given node and the second is using GPU based parallelism.
  These approaches are mainly to showcase that the generated code can be arranged to fit the needs of the user;
@@ -5758,11 +5965,11 @@ In this section we utilize these architectures in on several systems with two ma
 CPU Based Parallelism 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Stiffness
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=-\frac{\partial\omega_{i}}{\partial C_{j}}\label{eq:jacobian-1}
@@ -5773,7 +5980,7 @@ Stiffness
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \tau_{min}=\text{min}\left(Re\left(\lambda_{j}\left(\mathcal{J}\right)\right)^{-1}\right)\label{eq:jacobian-1-1}
@@ -5784,7 +5991,7 @@ Stiffness
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \mathcal{J}\left(y_{k}^{n+1}\right)_{ij}=\sum_{k=1}^{n_{r}}\nu_{kij}q_{k}\label{eq:jacobian-1-2}
@@ -5795,7 +6002,7 @@ Stiffness
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \mathcal{J}\left(y_{k}^{n+1}\right)_{\ne R}=\sum_{k=1,k\ne R}^{n_{r}}\nu_{kij}q_{k}\label{eq:jacobian-1-2-1}
@@ -5806,7 +6013,7 @@ Stiffness
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \tau_{min}=\text{min}\left(Re\left(\lambda_{j}\left(\mathcal{J}_{\ne R}\right)\right)^{-1}\right)\label{eq:jacobian-1-1-1}
@@ -5817,36 +6024,13 @@ Stiffness
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula $ $
+\begin_layout Plain Layout
+
+\end_layout
+
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsubsection*
-Serial Performance,
- S
-\end_layout
-
-\begin_layout Subsubsection*
-MPI Decomposed Performance,
- S-d
-\end_layout
-
-\begin_layout Subsubsection*
-Threading Performance,
- T1
-\end_layout
-
-\begin_layout Subsubsection*
-MPI and Threading Performance,
- T2
-\end_layout
-
-\begin_layout Subsubsection*
-MPI and Threading Performance,
- T3
 \end_layout
 
 \begin_layout Standard
