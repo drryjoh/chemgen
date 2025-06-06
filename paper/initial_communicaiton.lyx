@@ -6442,13 +6442,274 @@ Generation Process
 \end_layout
 
 \begin_layout Standard
-The code generation process using ChemGen is as minimal as possible.
- ChemGen relies on cantera for interpreting chemistry files.
- Cantera performs several essential functions,
- it parses the chemistry data,
- it converts units to SI,
- and it provides the thermodynamic relationships that be refit.
+The code generation process in ChemGen is designed to be as minimal and streamlined as possible.
+ ChemGen relies on Cantera to interpret chemical mechanism files.
+ Cantera performs several key tasks:
+ parsing the chemistry data,
+ converting units to the International System of Units (SI),
+ and providing thermodynamic relationships that can be refit into the desired polynomial form.
+ As a well-maintained and widely used tool in the combustion community,
+ with over 750 references in Combustion and Flame at the time of writing,
+ Cantera provides a dependable foundation for ChemGen.
+ Nevertheless,
+ should Cantera become unavailable,
+ ChemGen could be extended to handle data parsing,
+ unit conversion,
+ and polynomial re-fitting internally.
+\end_layout
+
+\begin_layout Standard
+Once past the Cantera step,
+ ChemGen begins to generate source code.
+ The state size is hardcoded with several automatically generated variables,
  
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{Species}
+\end_layout
+
+\end_inset
+
+,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{ChemicalState}
+\end_layout
+
+\end_inset
+
+,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{Jacobian}
+\end_layout
+
+\end_inset
+
+ which are size 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $n_{s}+1$
+\end_inset
+
+,
+ and 
+\begin_inset Formula $n_{s}\times n_{s}$
+\end_inset
+
+ or 
+\begin_inset Formula $n_{s}\times\left(n_{s}+1\right)$
+\end_inset
+
+ depending on selection of 
+\begin_inset Formula $\mathcal{J}_{a}$
+\end_inset
+
+ or
+\begin_inset Formula $\mathcal{J}_{b}$
+\end_inset
+
+,
+ respectively.
+ The stoichemetric coefficients 
+\begin_inset Formula $\nu_{ij}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $\nu_{ij}^{f}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $\nu_{ij}^{r}$
+\end_inset
+
+and reaction types and their coefficients for each reaction are then accrued.
+ Each reaction rate is generated into a
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{reactions.h}
+\end_layout
+
+\end_inset
+
+ header file,
+ for example a reaction if the first reaction a cantera based yaml file is
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- equation:
+ H + O2 <=> O + OH
+\end_layout
+
+\begin_layout Plain Layout
+
+rate-constant:
+ {A:
+ 1.0399e+11,
+ b:
+ 0.0,
+ Ea:
+ 6.405704e+07}
+\end_layout
+
+\end_inset
+
+then the following code is generated with default configuration settings,
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+double call_forward_reaction_0(const double& temperature,
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+                              const double& log_temperature) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{ 
+\end_layout
+
+\begin_layout Plain Layout
+
+	return arrhenius(103990000000.0,
+ 64057040.0,
+ temperature,
+ log_temperature);
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+Once all reactions are generated a source term file is then generated.
+ The source file begins by calculating 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $\ln T$
+\end_inset
+
+,
+\begin_inset Formula $p$
+\end_inset
+
+,
+ from 
+\begin_inset Formula $C$
+\end_inset
+
+ and 
+\begin_inset Formula $T$
+\end_inset
+
+,
+ as well as the 
+\begin_inset Formula $\Delta G_{j}'$
+\end_inset
+
+ for all reactions,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{gibbs_reactions}
+\end_layout
+
+\end_inset
+
+.
+ and then looping through all reactions and generating the necessary code if a reverse reaction rate is needed.
+ In the above example a reverse reaction is necessary and so ChemGen would generate
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+double forward_reaction_0 = call_forward_reaction_0(temperature,
+ log_temperature);
+\end_layout
+
+\begin_layout Plain Layout
+
+double equilibrium_constant_0 = exp_gen(-gibbs_reactions[0]);
+\end_layout
+
+\begin_layout Plain Layout
+
+double rate_of_progress_0 = 
+\end_layout
+
+\begin_layout Plain Layout
+
+species[0] * species[3] * forward_reaction_0 
+\end_layout
+
+\begin_layout Plain Layout
+
+- species[2] * species[4] * forward_reaction_0/equilibrium_constant_0;
+\end_layout
+
+\end_inset
+
+Where the rates of progress for each reaction,
+ 
+\begin_inset Formula $q_{i}$
+\end_inset
+
+,
+ rely on the stoichiometric coefficients and are generated 
 \end_layout
 
 \begin_layout Standard
@@ -6457,7 +6718,7 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
