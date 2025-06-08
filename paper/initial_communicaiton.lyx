@@ -3963,7 +3963,7 @@ The previous fall-off reaction rates seek to fit between two reaction rates betw
  some rates have several pressure dependent zones which cannot be accurately represented by a single or two Arrhenius expressions.The pressure-dependent Arrhenius rate expressions was introduced to utilize pressure-dependent reaction rates by logarithmically interpolating between Arrhenius rate expressions at various pressures 
 \begin_inset CommandInset citation
 LatexCommand citet
-key "Gou11"
+key "Gou11_b"
 literal "false"
 
 \end_inset
