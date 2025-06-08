@@ -1,5 +1,4 @@
 // #define CHEMGEN_PRECONDITIONER_JACOBI
-
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 
 SpeciesJacobian inverse_diagonal(SpeciesJacobian J)
@@ -37,7 +36,6 @@ Species apply_diagonal(SpeciesJacobian P, Species b)
 #endif
 
 // #define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
-
 #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 
 Species apply_gauss_seidel(SpeciesJacobian A, Species v)
@@ -58,6 +56,41 @@ Species apply_gauss_seidel(SpeciesJacobian A, Species v)
 }
 #endif
 
+//=====================================================================
+#define CHEMGEN_PRECONDITIONER_NN
+#ifdef CHEMGEN_PRECONDITIONER_NN
+
+SpeciesJacobian nn_precondition(SpeciesJacobian A)
+{
+    SpeciesJacobian P = mlp_1(A);
+    return P;
+}
+
+SpeciesJacobian apply_diagonal(SpeciesJacobian P, SpeciesJacobian A)
+{
+    SpeciesJacobian M = {};
+    for (int i = 0; i < n_species; ++i)
+    {
+        for (int j = 0; j < n_species; ++j)
+        {
+            M[i][j] = P[i][i] * A[i][j];
+        }
+    }
+    return M;
+}
+
+Species apply_diagonal(SpeciesJacobian P, Species b)
+{
+    Species m = {};
+    for (int i = 0; i < n_species; ++i)
+    {
+        m[i] = P[i][i] * b[i];
+    }
+    return m;
+}
+#endif
+//=====================================================================
+
 Species gmres_solve(const SpeciesJacobian &A, const Species &b,
                     double abs_tol = 1e-8, double rel_tol = 1e-4)
 {
@@ -65,15 +98,19 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     Species x = {};
     Species cs = {};
     Species sn = {};
-#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+#if defined(CHEMGEN_PRECONDITIONER_JACOBI)
     SpeciesJacobian P = inverse_diagonal(A);
     SpeciesJacobian A_ = apply_diagonal(P, A);
     Species b_ = apply_diagonal(P, b);
-//////////////////////////////////////////
-//// JAY - "may not be correct" ////
-// #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
-//     SpeciesJacobian A_ = 
-//////////////////////////////////////////
+#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+    SpeciesJacobian A_ = A;
+    Species b_ = apply_gauss_seidel(A, b);
+//===============================================
+#elif defined(CHEMGEN_PRECONDITIONER_NN)
+    SpeciesJacobian P = nn_precondition(A);
+    SpeciesJacobian A_ = apply_diagonal(P, A);
+    Species b_ = apply_diagonal(P, b);
+//===============================================
 #else
     SpeciesJacobian A_ = A;
     Species b_ = b;

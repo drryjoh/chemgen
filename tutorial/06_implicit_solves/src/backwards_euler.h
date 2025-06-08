@@ -1,16 +1,18 @@
 ChemicalState 
 backwards_euler(ChemicalState y,  
                 const double& dt,
-                double tol, 
-                int max_iter,
                 //=====================================================================
-                ////////////////////////////////////////////
-                //// THIS IS USED FOR TRAINING PURPOSES ////
-                ////////////////////////////////////////////
-                // bool final_step,
+                // ////////////////////////////////////////////
+                // //// THIS IS USED FOR TRAINING PURPOSES ////
+                // ////////////////////////////////////////////
+                // bool final_step
+                //=====================================================================
+                //============================================
                 std::chrono::duration<double>& NN_total_time,
-                std::chrono::duration<double>& P_total_time
-                //=====================================================================
+                std::chrono::duration<double>& P_total_time,
+                //============================================
+                double tol = 1e-12, 
+                int max_iter = 10
                 ) 
 {        
         // initialize y^n_k
@@ -23,20 +25,20 @@ backwards_euler(ChemicalState y,
         Species y_guess = get_species(y);
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        SpeciesJacobian J_init = source_jacobian(y_guess, temperature_guess); 
-        SpeciesJacobian A_init = jacobian_I();
-        for (int i = 0; i < n_species; ++i) A_init[i][i] = A_init[i][i]/dt; 
-            A_init = A_init - J_init; 
+        // SpeciesJacobian J_init = source_jacobian(y_guess, temperature_guess); 
+        // SpeciesJacobian A_init = jacobian_I();
+        // for (int i = 0; i < n_species; ++i) A_init[i][i] = A_init[i][i]/dt; 
+        //     A_init = A_init - J_init; 
 
-        auto NN_start = std::chrono::high_resolution_clock::now();
+        // auto NN_start = std::chrono::high_resolution_clock::now();
 
-        SpeciesJacobian P = cnn_2(A_init);
+        // SpeciesJacobian P = cnn_2(A_init);
 
-        auto NN_end = std::chrono::high_resolution_clock::now();
+        // auto NN_end = std::chrono::high_resolution_clock::now();
 
-        std::chrono::duration<double> NN_duration = NN_end - NN_start;
-        // std::cout << "[NN Part] Time elapsed: " << NN_duration.count() << " seconds" << std::endl;
-        NN_total_time += NN_duration;
+        // std::chrono::duration<double> NN_duration = NN_end - NN_start;
+        // // std::cout << "[NN Part] Time elapsed: " << NN_duration.count() << " seconds" << std::endl;
+        // NN_total_time += NN_duration;
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
         //=====================================================================
@@ -94,15 +96,15 @@ backwards_euler(ChemicalState y,
             - we use a linear solver (GMRES) to approx dy
             */
             //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            auto P_start = std::chrono::high_resolution_clock::now();
+            // auto P_start = std::chrono::high_resolution_clock::now();
 
-            A = operator*(P, A);
-            res = operator*(P, res);
+            // A = operator*(P, A);
+            // res = operator*(P, res);
 
-            auto P_end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> P_duration = P_end - P_start;
-            // std::cout << "[Preconditioning Part] Time elapsed: " << P_duration.count() << " seconds" << std::endl;
-            P_total_time += P_duration;
+            // auto P_end = std::chrono::high_resolution_clock::now();
+            // std::chrono::duration<double> P_duration = P_end - P_start;
+            // // std::cout << "[Preconditioning Part] Time elapsed: " << P_duration.count() << " seconds" << std::endl;
+            // P_total_time += P_duration;
             //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             #ifdef CHEMGEN_DIRECT_SOLVER
             Species dy = invert_jacobian(A) * res;

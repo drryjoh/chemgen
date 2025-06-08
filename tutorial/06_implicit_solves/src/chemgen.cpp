@@ -41,10 +41,10 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "source.h"
 #include "chemical_state_functions.h"
 #include "rk4.h"
+/////////////////////////////////////////////
+#include "./neural_net/mlp_1.h"
+/////////////////////////////////////////////
 #include "linear_solvers.h"
-/////////////////////////////////////////////
-#include "./neural_net/cnn_2.h"
-/////////////////////////////////////////////
 #include "backwards_euler.h"
 #include "sdirk.h"
 #include "rosenbroc.h"
@@ -190,9 +190,9 @@ main()
         ////////////////////////////////////////////
         //// THIS IS USED FOR TRAINING PURPOSES ////
         ////////////////////////////////////////////
-        // bool last_step = (i == n_run - 1);
-        // y = backwards_euler(y, dt, 1e-10, 10, last_step, NN_total_time);
-        y = backwards_euler(y, dt, 1e-12, 10, NN_total_time, P_total_time);
+        bool last_step = (i == n_run - 1);
+        // y = backwards_euler(y, dt, 1e-10, 10, last_step);
+        y = backwards_euler(y, dt,  NN_total_time, P_total_time, 1e-12, 10);
         t = t + dt;
         be_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) be_file << " " << val;
@@ -200,12 +200,13 @@ main()
         //=====================================================================
 
     }
+    auto be_end = std::chrono::high_resolution_clock::now();
     std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
     std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
-    auto be_end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> be_duration = be_end - be_start;
-    be_duration = be_duration - NN_total_time - P_total_time;
     std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
+    auto be_adjusted_duration = be_duration - NN_total_time - P_total_time;
+    std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl;
     //######################################################################################################################################
 
     y = y_init;
