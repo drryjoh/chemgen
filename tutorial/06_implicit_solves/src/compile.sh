@@ -8,5 +8,5 @@
 # DO NOT TOUCH AT ALL
 rm -rf test
 export DYLD_LIBRARY_PATH=/Users/jsampa/miniconda3/envs/chemgen/lib:$DYLD_LIBRARY_PATH
-clang++ -O3 -march=native -fopenmp -I/Users/jsampa/miniconda3/envs/chemgen/include -L/Users/jsampa/miniconda3/envs/chemgen/lib -lyaml-cpp  chemgen.cpp -o test
+clang++ -O3 -march=native -I/Users/jsampa/miniconda3/envs/chemgen/include -L/Users/jsampa/miniconda3/envs/chemgen/lib -lyaml-cpp  chemgen.cpp -o test
 ./test

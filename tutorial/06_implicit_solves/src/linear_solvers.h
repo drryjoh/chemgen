@@ -56,7 +56,7 @@ Species apply_gauss_seidel(const SpeciesJacobian &A, const Species &v)
 }
 #endif
 
-//=====================================================================
+//..................................................................
 #define CHEMGEN_PRECONDITIONER_NN
 #ifdef CHEMGEN_PRECONDITIONER_NN
 
@@ -83,7 +83,7 @@ Species apply_diagonal(SpeciesJacobian P, Species b)
     return m;
 }
 #endif
-//=====================================================================
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Species gmres_solve(const SpeciesJacobian &A, const Species &b,
                     double abs_tol = 1e-8, double rel_tol = 1e-4)
@@ -101,12 +101,12 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     SpeciesJacobian A_ = A;
     Species b_ = apply_gauss_seidel(A, b);
     GS = true;
-//===============================================
+//.............................................
 #elif defined(CHEMGEN_PRECONDITIONER_NN)
-    SpeciesJacobian P = mlp_1(A);
-    SpeciesJacobian A_ = operator*(P, A);
+    SpeciesJacobian P = mlp_all(A);
+    SpeciesJacobian A_ = apply_diagonal(P, A);
     Species b_ = apply_diagonal(P, b);
-//===============================================
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #else
     SpeciesJacobian A_ = A;
     Species b_ = b;

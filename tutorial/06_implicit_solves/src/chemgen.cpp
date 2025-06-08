@@ -41,9 +41,9 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "source.h"
 #include "chemical_state_functions.h"
 #include "rk4.h"
-/////////////////////////////////////////////
-#include "./neural_net/mlp_1.h"
-/////////////////////////////////////////////
+//.............................
+#include "./neural_net/mlp_all.h"
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #include "linear_solvers.h"
 #include "backwards_euler.h"
 #include "sdirk.h"
@@ -170,12 +170,12 @@ main()
     int  n_run = int(end_time/dt_be);
     double t = 0;
 
-    //######################################################################################################################################
+    //..............................................................................................................................
     be_file << t << " " << temperature(y);
     for (const auto& val : get_species(y)) be_file << " " << val;
     be_file << "\n";
-    std::chrono::duration<double> NN_total_time; // FOR JAY TRYING TO TIME NN CALCULATIONS
-    std::chrono::duration<double> P_total_time; // FOR JAY TRYING TO TIME NN CALCULATIONS
+    std::chrono::duration<double> NN_total_time; // FOR JAY
+    std::chrono::duration<double> P_total_time; // FOR JAY
     auto be_start = std::chrono::high_resolution_clock::now();
     for(int i = 0; i < n_run; i++)
     {
@@ -186,28 +186,32 @@ main()
         // for (const auto& val : get_species(y)) be_file << " " << val;
         // be_file << "\n";
 
-        //=====================================================================
-        ////////////////////////////////////////////
-        //// THIS IS USED FOR TRAINING PURPOSES ////
-        ////////////////////////////////////////////
-        bool last_step = (i == n_run - 1);
-        // y = backwards_euler(y, dt, 1e-10, 10, last_step);
-        y = backwards_euler(y, dt,  NN_total_time, P_total_time, 1e-12, 10);
+        //..................................................................
+        // bool last_step = (i == n_run - 1);
+        // int cvs_iter = i;
+        y = backwards_euler(y, 
+                            dt,  
+                            // bool last_step,
+                            // cvs_iter,
+                            NN_total_time, 
+                            P_total_time, 
+                            1e-12, 
+                            10);
         t = t + dt;
         be_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) be_file << " " << val;
         be_file << "\n";
-        //=====================================================================
+        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     }
     auto be_end = std::chrono::high_resolution_clock::now();
-    // std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
-    // std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
+    // std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY
+    // std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY
     std::chrono::duration<double> be_duration = be_end - be_start;
     std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
     auto be_adjusted_duration = be_duration - NN_total_time - P_total_time;
-    // std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl;
-    //######################################################################################################################################
+    // std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl // FOR JAY
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     y = y_init;
     dt = dt_sdirk2;
