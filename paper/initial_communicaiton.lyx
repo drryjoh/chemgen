@@ -6660,7 +6660,9 @@ status open
 
 
 \backslash
-texttt{gibbs_reactions}
+texttt{gibbs
+\backslash
+_reactions}
 \end_layout
 
 \end_inset
@@ -6932,13 +6934,72 @@ Solve Energy transport equations (using an energy source term derived from
 
 \end_layout
 
+\begin_layout Standard
+Analysis of time scales
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y\right)_{ij}=-\frac{\partial\omega_{i}}{\partial C_{j}}\label{eq:jacobian-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\tau_{min}=\text{min}\left(Re\left(\lambda_{j}\left(\mathcal{J}\right)\right)^{-1}\right)\label{eq:jacobian-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y\right)_{ij}=\sum_{k=1}^{n_{r}}\nu_{kij}\mathcal{R}_{k}\label{eq:jacobian-1-2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(y\right)_{\ne R}=\sum_{k=1,k\ne R}^{n_{r}}\nu_{kij}\mathcal{R}_{k}\label{eq:jacobian-1-2-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\tau_{min}=\text{min}\left(Re\left(\lambda_{j}\left(\mathcal{J}_{\ne R}\right)\right)^{-1}\right)\label{eq:jacobian-1-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Reaction Rates
 \end_layout
 
 \begin_layout Standard
 \begin_inset Note Comment
-status collapsed
+status open
 
 \begin_layout Plain Layout
 Parallelism
