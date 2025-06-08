@@ -43,6 +43,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "rk4.h"
 //.............................
 #include "./neural_net/mlp_all.h"
+#include "./neural_net/pinn.h"
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #include "linear_solvers.h"
 #include "backwards_euler.h"

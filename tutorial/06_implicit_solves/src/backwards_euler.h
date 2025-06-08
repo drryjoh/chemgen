@@ -99,6 +99,11 @@ backwards_euler(ChemicalState y,
 
             #ifdef CHEMGEN_DIRECT_SOLVER
             Species dy = invert_jacobian(A) * res;
+            //.............................
+            // NOT WORKING (DO NOT USE)
+            #elif CHEMGEN_DIRECT_PINN
+            Species dy = train_pinn(A,res);
+            //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
             #else
             Species dy = gmres_solve(A, res, tol = 1e-10);
             #endif
