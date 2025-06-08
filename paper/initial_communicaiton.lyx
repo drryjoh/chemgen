@@ -3914,6 +3914,350 @@ literal "false"
 .
 \end_layout
 
+\begin_layout Subsubsection*
+SRI Broadening
+\end_layout
+
+\begin_layout Standard
+In the SRI 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Ste89"
+literal "false"
+
+\end_inset
+
+ broadening approach 
+\begin_inset Formula $F$
+\end_inset
+
+ is replaced entirely by
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+F(T,P_{r})=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e},
+\]
+
+\end_inset
+
+where coefficients 
+\begin_inset Formula $a$
+\end_inset
+
+ through 
+\begin_inset Formula $e$
+\end_inset
+
+ are specified for each reaction.
+\end_layout
+
+\begin_layout Subsubsection
+Pressure-Dependent Arrhenius Rate Expressions 
+\end_layout
+
+\begin_layout Standard
+The previous fall-off reaction rates seek to fit between two reaction rates between a low and a high pressure.
+ However,
+ some rates have several pressure dependent zones which cannot be accurately represented by a single or two Arrhenius expressions.The pressure-dependent Arrhenius rate expressions was introduced to utilize pressure-dependent reaction rates by logarithmically interpolating between Arrhenius rate expressions at various pressures 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Gou11"
+literal "false"
+
+\end_inset
+
+.
+ In short it is known as the P-log reaction rate.
+ Given two rate known Arrhenius reaction rates at two specific pressures,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+p_{i}:k_{i}(T) & = & A_{i}T^{b_{i}}\exp\left(-E_{i}/RT\right)\text{ and }\label{eq:plog_p1_p2}\\
+p_{i+1}:k_{i+1}(T) & = & A_{i+1}T^{b_{i+1}}\exp\left(-E_{i+1}/RT\right),\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+the rate at an intermediate pressure is computed as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\ln k_{plog}(T,p)=\ln k_{i}(T)+\bigl(\ln k_{i+1}(T)-\ln k_{i}(T)\bigr)\frac{\ln p-\ln p_{i}}{\ln p_{i+1}-\ln p_{i}}.\label{eq:plog_rate}
+\end{equation}
+
+\end_inset
+
+An additional complexity is that multiple rate expressions may be given at the same pressure,
+ in which case the rate used in the interpolation formula is the sum of all the rates given at that pressure.
+ For pressures outside the given range,
+ the rate expression at the nearest bounded pressure is used.
+ In ChemGen the 
+\begin_inset Formula $\log p_{i}$
+\end_inset
+
+ are calculated during code generation.
+ This along with the addition of a 
+\begin_inset Formula $\log k$
+\end_inset
+
+ Arrhenius expression,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\ln k(T,\ln T)=\ln A+b\ln T+-E/RT,\label{eq:logK}
+\end{equation}
+
+\end_inset
+
+with precomputed 
+\begin_inset Formula $\ln A$
+\end_inset
+
+ avoids overuse of the 
+\begin_inset Formula $\ln$
+\end_inset
+
+ function.
+ 
+\end_layout
+
+\begin_layout Standard
+To further optimize this rate,
+ consider for example,
+ the 81st reaction in FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+- equation:
+ CH2(S) + H2O <=> CH2O + H2  # Reaction 81
+\end_layout
+
+\begin_layout Plain Layout
+
+  type:
+ pressure-dependent-Arrhenius
+\end_layout
+
+\begin_layout Plain Layout
+
+  rate-constants:
+\end_layout
+
+\begin_layout Plain Layout
+
+  - {P:
+ 0.1 atm,
+ A:
+ 3.36e+22,
+ b:
+ -3.33,
+ Ea:
+ 3950.0}
+\end_layout
+
+\begin_layout Plain Layout
+
+  - {P:
+ 1.0 atm,
+ A:
+ 4.8e+23,
+ b:
+ -3.63,
+ Ea:
+ 5220.0}
+\end_layout
+
+\begin_layout Plain Layout
+
+  - {P:
+ 3.0 atm,
+ A:
+ 6.85e+23,
+ b:
+ -3.66,
+ Ea:
+ 5820.0}
+\end_layout
+
+\begin_layout Plain Layout
+
+  - {P:
+ 10.0 atm,
+ A:
+ 1.53e+24,
+ b:
+ -3.73,
+ Ea:
+ 6820.0}
+\end_layout
+
+\begin_layout Plain Layout
+
+  - {P:
+ 30.0 atm,
+ A:
+ 8.75e+23,
+ b:
+ -3.62,
+ Ea:
+ 7655.0}
+\end_layout
+
+\begin_layout Plain Layout
+
+  - {P:
+ 100.0 atm,
+ A:
+ 1.27e+22,
+ b:
+ -3.06,
+ Ea:
+ 7950.0},
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+which requires seven boolean conditionals be checked,
+ 
+\begin_inset Formula $p\leq0.1$
+\end_inset
+
+,
+ 
+\begin_inset Formula $0.1<p\leq1.0$
+\end_inset
+
+,
+ 
+\begin_inset Formula $1.0<p\leq3.0$
+\end_inset
+
+,
+ 
+\begin_inset Formula $3.0<p\leq10.0$
+\end_inset
+
+,
+ 
+\begin_inset Formula $10.0<p\leq30.0$
+\end_inset
+
+,
+ 
+\begin_inset Formula $30.0<p\leq100.0$
+\end_inset
+
+,
+ 
+\begin_inset Formula $p>100.0$
+\end_inset
+
+ where 
+\begin_inset Formula $p$
+\end_inset
+
+ is in atm.
+ We explored an optimization in ChemGen where 
+\begin_inset Formula $\ln p$
+\end_inset
+
+ is pre-calculated before traversing over the booleans,
+ where its value is checked against the pre-calculated 
+\begin_inset Formula $\ln p_{i}$
+\end_inset
+
+ values.
+ This can be coordinated with the pre-calculated 
+\begin_inset Formula $\ln T$
+\end_inset
+
+,
+ and generated 
+\begin_inset Formula $\ln A_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ln A_{i+1}$
+\end_inset
+
+ with 
+\begin_inset Formula $\ln k\left(T,\ln T\right)$
+\end_inset
+
+,
+ to avoid overuse of 
+\begin_inset Formula $\ln$
+\end_inset
+
+.
+ We found that,
+ since these reaction rates are rare,
+ that fully optimizing these boolean checks and 
+\begin_inset Formula $\ln$
+\end_inset
+
+ calls wasn't required,
+ and thus only utilize the generated 
+\begin_inset Formula $\ln p_{i}$
+\end_inset
+
+ as removing 12 
+\begin_inset Formula $\ln$
+\end_inset
+
+ calls was still useful and optimal for differentiation.
+ The use of Equation 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:logK"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ is still possible for future iterations.
+ Beyond this,
+ another optimization could be using a fit to determine the approximate bin in which 
+\begin_inset Formula $p$
+\end_inset
+
+ falls along with a bisection search,
+ thus optimizing convergence,
+ which could potentially avoid warp divergence where different degrees of freedom may check a different number of booleans to be nearly one to two evaluated conditionals.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Note Comment
 status collapsed
@@ -3978,110 +4322,11 @@ with the remaining features,
 
 ,
  computed in the same way the Troe formulation.
- 
 \end_layout
 
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsubsection*
-SRI Broadening
-\end_layout
-
-\begin_layout Standard
-In the SRI 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Ste89"
-literal "false"
-
-\end_inset
-
- broadening approach 
-\begin_inset Formula $F$
-\end_inset
-
- is replaced entirely by
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-F(T,P_{r})=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e},
-\]
-
-\end_inset
-
-where coefficients 
-\begin_inset Formula $a$
-\end_inset
-
- through 
-\begin_inset Formula $e$
-\end_inset
-
- are specified for each reaction.
-\end_layout
-
-\begin_layout Subsubsection
-Chemically activated bimolecular reactions
-\end_layout
-
-\begin_layout Standard
-Reactions of this type are also pressure-dependent,
- but the reaction rates typically decrease with increasing pressure.
- The rate constants are computed as
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Kee96"
-literal "false"
-
-\end_inset
-
-
-\begin_inset Formula 
-\[
-k=k_{0}\left(\frac{1}{1+P_{r}}\right)F,
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $k_{0}$
-\end_inset
-
-,
- 
-\begin_inset Formula $P_{r}$
-\end_inset
-
-,
- and 
-\begin_inset Formula $F$
-\end_inset
-
- are calculated as in Section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:fall-off-reactions"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -6999,7 +7244,7 @@ Reaction Rates
 
 \begin_layout Standard
 \begin_inset Note Comment
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Parallelism
