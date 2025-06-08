@@ -38,19 +38,19 @@ Species apply_diagonal(SpeciesJacobian P, Species b)
 // #define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 
-Species apply_gauss_seidel(SpeciesJacobian A, Species v)
+Species apply_gauss_seidel(const SpeciesJacobian &A, const Species &v)
 {
     Species z = {};
     for (int i = 0; i < n_species; ++i)
     {
         double sum = 0.0;
         for (int j = 0; j < i; ++j)
-            sum += A[i][j] * z[j]; // Already computed values of z
+        {
+            sum += A[i][j] * z[j]; // Forward substitution
+        }
 
-        // Diagonal + lower
         double diag = A[i][i];
-        z[i] = (v[i] - sum) /
-               (std::abs(diag) > 1e-14 ? diag : 1.0); // Avoid div by zero
+        z[i] = (v[i] - sum) / (std::abs(diag) > 1e-14 ? diag : 1.0);
     }
     return z;
 }
@@ -59,12 +59,6 @@ Species apply_gauss_seidel(SpeciesJacobian A, Species v)
 //=====================================================================
 #define CHEMGEN_PRECONDITIONER_NN
 #ifdef CHEMGEN_PRECONDITIONER_NN
-
-SpeciesJacobian nn_precondition(SpeciesJacobian A)
-{
-    SpeciesJacobian P = mlp_1(A);
-    return P;
-}
 
 SpeciesJacobian apply_diagonal(SpeciesJacobian P, SpeciesJacobian A)
 {
@@ -98,6 +92,7 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     Species x = {};
     Species cs = {};
     Species sn = {};
+    bool GS = false;
 #if defined(CHEMGEN_PRECONDITIONER_JACOBI)
     SpeciesJacobian P = inverse_diagonal(A);
     SpeciesJacobian A_ = apply_diagonal(P, A);
@@ -105,10 +100,11 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
     SpeciesJacobian A_ = A;
     Species b_ = apply_gauss_seidel(A, b);
+    GS = true;
 //===============================================
 #elif defined(CHEMGEN_PRECONDITIONER_NN)
-    SpeciesJacobian P = nn_precondition(A);
-    SpeciesJacobian A_ = apply_diagonal(P, A);
+    SpeciesJacobian P = mlp_1(A);
+    SpeciesJacobian A_ = operator*(P, A);
     Species b_ = apply_diagonal(P, b);
 //===============================================
 #else
@@ -137,7 +133,20 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     for (int j = 0; j < n_species; ++j)
     {
         final_iter = j;
-        Species w = A_ * V[j];
+        
+        // Apply gauss-seidel if yes
+        Species w;
+        #if defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+        {
+            w = apply_gauss_seidel(A, A * V[j]);
+            // std::cout << "entered GS" << std::endl;
+        }
+        #else
+        {
+            w = A_ * V[j];
+            // std::cout << "entered else" << std::endl;
+        }
+        #endif
 
         // Modified Gram-Schmidt
         for (int i = 0; i <= j; ++i)

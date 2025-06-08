@@ -201,12 +201,12 @@ main()
 
     }
     auto be_end = std::chrono::high_resolution_clock::now();
-    std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
-    std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
+    // std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
+    // std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY TRYING TO TIME NN CALCULATIONS
     std::chrono::duration<double> be_duration = be_end - be_start;
     std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
     auto be_adjusted_duration = be_duration - NN_total_time - P_total_time;
-    std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl;
+    // std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl;
     //######################################################################################################################################
 
     y = y_init;
