@@ -12,8 +12,8 @@ test_conditions:
       value: 0.2 
   end_time: 2e-5 
   dt_be: 1e-7  
-  dt_sdirk4: 20e-7
+  dt_sdirk4: 5e-7
   dt_sdirk2: 1e-6
   dt_ros: 1e-7
-  dt_rk4: 1e-7
+  dt_rk4: 1e-8
   dt_yass: 1e-7

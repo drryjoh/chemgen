@@ -1,5 +1,36 @@
 {device_option}
 {scalar_function}
+T3_choose({scalar_parameter} check, 
+          {scalar_parameter} a) {const_option}
+{{
+        if(check == {scalar_cast}(0.0))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else
+        {{
+                return exp_gen(a);
+        }}
+}}
+
+{device_option}
+{scalar_function}
+T3_choose_chain({scalar_parameter} check, 
+                {scalar_parameter} a,
+                {scalar_parameter} a_perturbation) {const_option}
+{{
+        if(check == {scalar_cast}(0.0))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else
+        {{
+                return exp_chain(a, a_perturbation);
+        }}
+}}
+
+{device_option}
+{scalar_function}
 f_cent_troe({scalar_parameter} alpha, 
             {scalar_parameter} T1, 
             {scalar_parameter} T2,
@@ -7,7 +38,7 @@ f_cent_troe({scalar_parameter} alpha,
             {scalar_parameter} temperature) {const_option}
 {{
         return
-        ({scalar_cast}(1) - alpha) * exp_gen(-inv_safe_gen(T3) * temperature)
+        ({scalar_cast}(1) - alpha) * T3_choose(T3, -inv_safe_gen(T3) * temperature)
         + alpha * exp_gen(-inv_gen(T1) * temperature)
         + exp_gen(-inv_gen(temperature) * T2);
 }}
@@ -21,7 +52,7 @@ df_cent_troe_dtemperature({scalar_parameter} alpha,
                           {scalar_parameter} temperature) {const_option}
 {{
         return
-        ({scalar_cast}(1) - alpha) * exp_chain(-inv_safe_gen(T3) * temperature, -inv_safe_gen(T3))
+        ({scalar_cast}(1) - alpha) * T3_choose_chain(T3, -inv_safe_gen(T3) * temperature, -inv_safe_gen(T3))
         + alpha * exp_chain(-inv_gen(T1) * temperature, -inv_gen(T1))
         + exp_chain(-inv_gen(temperature) * T2, -dinv_da(temperature) * T2);
 }}
