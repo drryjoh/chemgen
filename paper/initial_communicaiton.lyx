@@ -4227,11 +4227,20 @@ which requires seven boolean conditionals be checked,
 \begin_inset Formula $\ln p_{i}$
 \end_inset
 
- as removing 12 
+ as removing 2 
 \begin_inset Formula $\ln$
 \end_inset
 
- calls was still useful and optimal for differentiation.
+ calls,
+ the eventual 
+\begin_inset Formula $\ln p_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ln p_{i+1}$
+\end_inset
+
+ was still useful and optimal for differentiation.
  The use of Equation 
 \begin_inset space ~
 \end_inset
@@ -4253,7 +4262,11 @@ nolink "false"
 \begin_inset Formula $p$
 \end_inset
 
- falls along with a bisection search,
+ falls along with a bisection search,approximate 
+\begin_inset Formula $p\rightarrow i$
+\end_inset
+
+,
  thus optimizing convergence,
  which could potentially avoid warp divergence where different degrees of freedom may check a different number of booleans to be nearly one to two evaluated conditionals.
 \end_layout
