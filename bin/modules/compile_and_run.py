@@ -54,4 +54,4 @@ def compile(test_file, configuration_file, destination_folder, third_parties, co
     if compile:
         compile_cpp_code(build_directory, cpp_source_files, configuration_file)
     # Run the tests
-        run_tests(build_directory)
+    run_tests(build_directory)
