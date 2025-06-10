@@ -73,10 +73,10 @@ decorators:
 
 build:
   chemgen_smp: None 
-  chemgen_input: "-lyaml-cpp"
+  chemgen_input: "-I/Users/eching/homebrew/opt/yaml-cpp/include -L/Users/eching/homebrew/opt/yaml-cpp/lib -lyaml-cpp"
   chemgen_optimized: O2
 
 solver:
   chemistry_solver: all
-  linear_solver: gmres 
+  linear_solver: gmres
   preconditioner: jacobi 
