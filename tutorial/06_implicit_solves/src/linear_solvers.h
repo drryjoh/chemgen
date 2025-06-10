@@ -1,4 +1,4 @@
-// #define CHEMGEN_PRECONDITIONER_JACOBI
+#define CHEMGEN_PRECONDITIONER_JACOBI
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 
 SpeciesJacobian inverse_diagonal(SpeciesJacobian J)
@@ -57,7 +57,7 @@ Species apply_gauss_seidel(const SpeciesJacobian &A, const Species &v)
 #endif
 
 //..................................................................
-#define CHEMGEN_PRECONDITIONER_NN
+// #define CHEMGEN_PRECONDITIONER_NN
 #ifdef CHEMGEN_PRECONDITIONER_NN
 
 SpeciesJacobian apply_diagonal(SpeciesJacobian P, SpeciesJacobian A)
@@ -97,22 +97,27 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     SpeciesJacobian P = inverse_diagonal(A);
     SpeciesJacobian A_ = apply_diagonal(P, A);
     Species b_ = apply_diagonal(P, b);
+    Species r = b_ - (A_ * x);
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
     SpeciesJacobian A_ = A;
     Species b_ = apply_gauss_seidel(A, b);
     GS = true;
+    Species r = b_ - (A_ * x);
 //.............................................
 #elif defined(CHEMGEN_PRECONDITIONER_NN)
-    SpeciesJacobian P = mlp_all(A);
-    SpeciesJacobian A_ = apply_diagonal(P, A);
-    Species b_ = apply_diagonal(P, b);
+    SpeciesJacobian A_ = A;
+    SpeciesJacobian P = mlp_zigzag_4_relu(A);
+    Species b_ = operator*(P, b);
+    // SpeciesJacobian A_ = apply_diagonal(P, A);
+    Species v = A * x;
+    Species r = b_ - (P*v);  
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #else
     SpeciesJacobian A_ = A;
     Species b_ = b;
+    Species r = b_ - (A_ * x);
 #endif
 
-    Species r = b_ - (A_ * x);
     double norm2_r = norm2(r);
     double norm2_A = norm2(A_);
 
@@ -139,12 +144,15 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
         #if defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
         {
             w = apply_gauss_seidel(A, A * V[j]);
-            // std::cout << "entered GS" << std::endl;
+        }
+        #elif defined(CHEMGEN_PRECONDITIONER_NN)
+        {
+            w = A_ * V[j];
+            w = P * w;
         }
         #else
         {
             w = A_ * V[j];
-            // std::cout << "entered else" << std::endl;
         }
         #endif
 

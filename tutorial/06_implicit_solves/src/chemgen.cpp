@@ -4,10 +4,8 @@
 #include <chrono>
 #include <iostream>  // For printing the result to the console
 #include <fstream>
-
-//==================
+#include <string>
 #include <vector>
-//==================
 
 
 #include <yaml-cpp/yaml.h>
@@ -41,10 +39,10 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "source.h"
 #include "chemical_state_functions.h"
 #include "rk4.h"
-//.............................
-#include "./neural_net/mlp_all.h"
+//...........................................................................
+#include "./neural_net/mlp_zigzag_4_relu.hpp"
 #include "./neural_net/pinn.h"
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #include "linear_solvers.h"
 #include "backwards_euler.h"
 #include "sdirk.h"
@@ -90,7 +88,7 @@ Species read_species_from_yaml(const std::string& filename,
     {
         molefractions = 1;
         species_reader = test_conditions["MoleFraction"];
-        std::cout << "Using MoleFraction\n";
+        std::cout << "\nUsing MoleFraction\n";
     }
     else if (test_conditions["MassFraction"]) 
     {
@@ -175,8 +173,10 @@ main()
     be_file << t << " " << temperature(y);
     for (const auto& val : get_species(y)) be_file << " " << val;
     be_file << "\n";
-    std::chrono::duration<double> NN_total_time; // FOR JAY
-    std::chrono::duration<double> P_total_time; // FOR JAY
+    // std::chrono::duration<double> NN_total_time; // FOR JAY
+    // std::chrono::duration<double> P_total_time; // FOR JAY
+    std::string which_nn = "mlp_zigzag_4_relu\n";
+    std::cout << "\nUSING -> " << which_nn << std::endl;
     auto be_start = std::chrono::high_resolution_clock::now();
     for(int i = 0; i < n_run; i++)
     {
@@ -194,8 +194,8 @@ main()
                             dt,  
                             // bool last_step,
                             // cvs_iter,
-                            NN_total_time, 
-                            P_total_time, 
+                            // NN_total_time, 
+                            // P_total_time, 
                             1e-12, 
                             10);
         t = t + dt;
@@ -210,7 +210,7 @@ main()
     // std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY
     std::chrono::duration<double> be_duration = be_end - be_start;
     std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
-    auto be_adjusted_duration = be_duration - NN_total_time - P_total_time;
+    // auto be_adjusted_duration = be_duration - NN_total_time - P_total_time;
     // std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl // FOR JAY
     //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

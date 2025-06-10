@@ -4,14 +4,14 @@ backwards_euler(ChemicalState y,
                 //...........................................
                 // bool final_step,
                 // int cvs_iter,
-                std::chrono::duration<double>& NN_total_time,
-                std::chrono::duration<double>& P_total_time,
+                // std::chrono::duration<double>& NN_total_time,
+                // std::chrono::duration<double>& P_total_time,
                 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 double tol = 1e-12, 
                 int max_iter = 10
                 ) 
 {        
-/*
+/*******************************************************************************
 1.  -   initialize 
             y^n_k
     -   use NEWTON-RAPHSON METHOD to get temperature guess
@@ -68,7 +68,7 @@ backwards_euler(ChemicalState y,
             y^{n+1}_{k+1} = y^{n+1}_k + dy
 
     -   check for convergence
-*/
+***********************************************************************************/
 
         Species y_init = get_species(y);
         double temperature_guess = temperature(y[0], y_init);
@@ -105,7 +105,7 @@ backwards_euler(ChemicalState y,
             Species dy = train_pinn(A,res);
             //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
             #else
-            Species dy = gmres_solve(A, res, tol = 1e-10);
+            Species dy = gmres_solve(A, res, tol);
             #endif
 
             //.............................................
