@@ -3,7 +3,7 @@
 T3_choose({scalar_parameter} check, 
           {scalar_parameter} a) {const_option}
 {{
-        if(check == {scalar_cast}(0.0))
+        if(check <= {scalar_cast}(1e-16))
         {{
                 return {scalar_cast}(0.0);
         }}
@@ -19,7 +19,77 @@ T3_choose_chain({scalar_parameter} check,
                 {scalar_parameter} a,
                 {scalar_parameter} a_perturbation) {const_option}
 {{
-        if(check == {scalar_cast}(0.0))
+        if(check <= {scalar_cast}(1e-16))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else
+        {{
+                return exp_chain(a, a_perturbation);
+        }}
+}}
+
+{device_option}
+{scalar_function}
+T2_choose({scalar_parameter} check, 
+          {scalar_parameter} a) {const_option}
+{{
+        if(check >= {scalar_cast}(1e16))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else if(check == {scalar_cast}(0))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else
+        {{
+                return exp_gen(a);
+        }}
+}}
+
+{device_option}
+{scalar_function}
+T2_choose_chain({scalar_parameter} check, 
+                {scalar_parameter} a,
+                {scalar_parameter} a_perturbation) {const_option}
+{{
+        if(check >= {scalar_cast}(1e16))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else if(check == {scalar_cast}(0))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else
+        {{
+                return exp_chain(a, a_perturbation);
+        }}
+}}
+
+{device_option}
+{scalar_function}
+T1_choose({scalar_parameter} check, 
+          {scalar_parameter} a) {const_option}
+{{
+        if(check <= {scalar_cast}(1e-16))
+        {{
+                return {scalar_cast}(0.0);
+        }}
+        else
+        {{
+                return exp_gen(a);
+        }}
+}}
+
+{device_option}
+{scalar_function}
+T1_choose_chain({scalar_parameter} check, 
+                {scalar_parameter} a,
+                {scalar_parameter} a_perturbation) {const_option}
+{{
+        if(check <= {scalar_cast}(1e-16))
         {{
                 return {scalar_cast}(0.0);
         }}
@@ -39,8 +109,8 @@ f_cent_troe({scalar_parameter} alpha,
 {{
         return
         ({scalar_cast}(1) - alpha) * T3_choose(T3, -inv_safe_gen(T3) * temperature)
-        + alpha * exp_gen(-inv_gen(T1) * temperature)
-        + exp_gen(-inv_gen(temperature) * T2);
+        + alpha * T1_choose(T1, -inv_gen(T1) * temperature)
+        + T2_choose(T2, -inv_gen(temperature) * T2);
 }}
 
 {device_option}
@@ -53,8 +123,8 @@ df_cent_troe_dtemperature({scalar_parameter} alpha,
 {{
         return
         ({scalar_cast}(1) - alpha) * T3_choose_chain(T3, -inv_safe_gen(T3) * temperature, -inv_safe_gen(T3))
-        + alpha * exp_chain(-inv_gen(T1) * temperature, -inv_gen(T1))
-        + exp_chain(-inv_gen(temperature) * T2, -dinv_da(temperature) * T2);
+        + alpha * T1_choose_chain(T1, -inv_gen(T1) * temperature, -inv_gen(T1))
+        + T2_choose_chain(T2, -inv_gen(temperature) * T2, -dinv_da(temperature) * T2);
 }}
 
 {device_option}
