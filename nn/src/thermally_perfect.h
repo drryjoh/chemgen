@@ -314,7 +314,7 @@ temperature(const double& internal_energy, const Species& species)
     {
         temperature_guess = 
         temperature_guess - divide((internal_energy_volume_specific(species, temperature_guess) - internal_energy),
-                                   dinternal_energy_volume_specific_dtemperature(species, temperature_guess));
+                                   dinternal_energy_volume_specific_dtemperature(species, temperature_guess)); 
     }
     
     return temperature_guess;
