@@ -119,6 +119,7 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
 
     if (norm2_r < abs_tol)
     {
+        std::cout << "# GMRES iterations = 0" << std::endl;
         return x;
     }
 
@@ -210,6 +211,11 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     Species result = {};
     for (int i = 0; i < n_species; ++i)
         result = result + y[i] * V[i];
+
+    if (final_iter + 1 < n_species)
+    {
+        std::cout << "# GMRES iterations = " << final_iter + 1 << std::endl;
+    }
 
     return result;
 }
