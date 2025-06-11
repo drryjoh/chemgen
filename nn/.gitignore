@@ -5,4 +5,5 @@ __pycache__
 *.txt
 *.npy
 *.csv
+*.png
 

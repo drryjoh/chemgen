@@ -73,17 +73,12 @@ decorators:
 
 build:
   chemgen_smp: None 
+  # chemgen_input: "-lyaml-cpp"
+  ## ADDED FOR JAY MACBOOK
+  chemgen_input: "-I/Users/jsampa/miniconda3/envs/chemgen/include -L/Users/jsampa/miniconda3/envs/chemgen/lib -lyaml-cpp"
   chemgen_optimized: O2
 
-decorators_double:
-  scalar: "double"
-  scalar_function: "double"
-  scalar_cast: "double"
-  scalar_parameter: "const double&"
-  const_option: ""
-  constexpr: "constexpr"
-  device_option: ""
-  expmath: "std::exp"
-  powmath: "std::pow"
-  logmath: "std::log"
-
+solver:
+  chemistry_solver: all
+  linear_solver: gmres 
+  preconditioner: jacobi 

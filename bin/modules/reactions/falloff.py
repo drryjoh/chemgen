@@ -8,7 +8,8 @@ def create_reaction_functions_and_calls_falloff(reaction_rates, reaction_rates_d
     if "Troe" in falloff_type:
         create_reaction_functions_and_calls_troe(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)
     elif "Lindemann" in falloff_type:
-        if reaction.rate.falloff_coeffs>0:
+        # if reaction.rate.falloff_coeffs>0: # CHANGED FROM THIS
+        if len(reaction.rate.falloff_coeffs) > 0: # CHANGED TO THIS, RYAN
             print(f"Expected coefficients for {falloff_type} is incorrect")
         else:
             create_reaction_functions_and_calls_lindemann(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)

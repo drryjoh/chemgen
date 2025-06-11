@@ -1,0 +1,31 @@
+ constexpr Species molecular_weights()  {return {double(1.008),double(2.016),double(15.999),double(31.998),double(17.007),double(18.015),double(33.006),double(34.014),double(4.002602),double(39.95),double(28.014),double(12.011),double(13.018999999999998),double(14.027),double(14.027),double(15.035),double(16.043),double(28.009999999999998),double(44.009),double(29.018),double(30.026),double(31.034),double(31.034),double(32.042),double(25.029999999999998),double(26.037999999999997),double(27.046),double(28.054),double(29.061999999999998),double(30.07),double(41.028999999999996),double(42.037),double(43.045),double(44.053),double(43.045),double(26.037999999999997),double(47.033),double(48.041),double(61.06),double(62.068),double(43.045),double(44.053),double(44.053),double(46.069),double(45.061),double(45.061),double(44.096999999999994),double(43.089),double(43.089),double(42.080999999999996),double(41.073),double(41.073),double(40.065),double(40.065),double(39.056999999999995),double(58.08),double(58.08),double(57.072),double(56.06399999999999),double(58.08),double(75.087),double(76.095),double(75.087),double(76.095),double(50.059999999999995),double(51.068),double(51.068),double(52.07599999999999),double(53.083999999999996),double(53.083999999999996),double(53.083999999999996),double(54.092),double(54.092),double(54.092),double(55.099999999999994),double(55.099999999999994),double(55.099999999999994),double(56.108),double(56.108),double(56.108),double(57.116),double(57.116),double(57.116),double(57.116),double(58.123999999999995),double(58.123999999999995),double(66.059),double(69.083),double(69.083),double(70.091),double(72.107),double(72.107),double(72.107),double(70.091),double(17.007),double(13.018999999999998)};}
+ constexpr Species inv_molecular_weights()  {return {double(0.9920634920634921),double(0.49603174603174605),double(0.06250390649415588),double(0.03125195324707794),double(0.05879931792791203),double(0.055509297807382736),double(0.030297521662727988),double(0.029399658963956014),double(0.2498374807187924),double(0.025031289111389236),double(0.03569643749553795),double(0.0832570144034635),double(0.07681081496274676),double(0.07129108148570615),double(0.07129108148570615),double(0.06651147322913202),double(0.06233248145608677),double(0.03570153516601214),double(0.022722624917630486),double(0.03446136880556896),double(0.033304469459801506),double(0.032222723464587225),double(0.032222723464587225),double(0.031209038137444602),double(0.03995205753096285),double(0.03840540748137338),double(0.03697404422095689),double(0.035645540742853074),double(0.03440919413667332),double(0.03325573661456601),double(0.02437300446025982),double(0.023788567214596667),double(0.023231501916598906),double(0.02269992963021815),double(0.023231501916598906),double(0.03840540748137338),double(0.0212616673399528),double(0.02081555338148665),double(0.016377333770062234),double(0.016111361732293612),double(0.023231501916598906),double(0.02269992963021815),double(0.02269992963021815),double(0.021706570578914237),double(0.022192139544173452),double(0.022192139544173452),double(0.022677279633535163),double(0.023207779247603796),double(0.023207779247603796),double(0.023763693828568716),double(0.024346894553599688),double(0.024346894553599688),double(0.02495944090852365),double(0.02495944090852365),double(0.025603604987582254),double(0.01721763085399449),double(0.01721763085399449),double(0.017521726941407346),double(0.01783675799086758),double(0.01721763085399449),double(0.013317884587212166),double(0.01314146790196465),double(0.013317884587212166),double(0.01314146790196465),double(0.019976028765481425),double(0.01958173415837707),double(0.01958173415837707),double(0.01920270374068669),double(0.018838067967749228),double(0.018838067967749228),double(0.018838067967749228),double(0.018487022110478445),double(0.018487022110478445),double(0.018487022110478445),double(0.018148820326678767),double(0.018148820326678767),double(0.018148820326678767),double(0.017822770371426537),double(0.017822770371426537),double(0.017822770371426537),double(0.017508228867567758),double(0.017508228867567758),double(0.017508228867567758),double(0.017508228867567758),double(0.01720459706833666),double(0.01720459706833666),double(0.015137982712423743),double(0.014475341256170114),double(0.014475341256170114),double(0.014267166968655036),double(0.01386827908524831),double(0.01386827908524831),double(0.01386827908524831),double(0.014267166968655036),double(0.05879931792791203),double(0.07681081496274676)};}
+    // Define the species names as a fixed-size array
+    #pragma once
+    #include <string>
+
+    static constexpr std::array<const char*, 96> species_names_gen()
+    {
+        return {"H", "H2", "O", "O2", "OH", "H2O", "HO2", "H2O2", "HE", "AR", "N2", "C", "CH", "CH2", "CH2(S)", "CH3", "CH4", "CO", "CO2", "HCO", "CH2O", "CH2OH", "CH3O", "CH3OH", "C2H", "C2H2", "C2H3", "C2H4", "C2H5", "C2H6", "HCCO", "CH2CO", "CH2CHO", "CH3CHO", "CH3CO", "H2CC", "CH3O2", "CH3OOH", "C2H5O2", "C2H5OOH", "C2H2OH", "C2H3OH", "C2H4O", "C2H5OH", "C2H4OH", "CH3CHOH", "C3H8", "NC3H7", "IC3H7", "C3H6", "C3H5", "CH3CCH2", "AC3H4", "PC3H4", "C3H3", "C2H5CHO", "CH3COCH3", "CH3COCH2", "C2H3CHO", "C3H5OH", "NC3H7O2", "NC3H7OOH", "IC3H7O2", "IC3H7OOH", "C4H2", "NC4H3", "IC4H3", "C4H4", "NC4H5", "IC4H5", "C4H5-2", "C4H6", "C4H612", "C4H6-2", "C4H7", "IC4H7", "IC4H7-1", "C4H81", "C4H82", "IC4H8", "NC4H9", "SC4H9", "IC4H9", "TC4H9", "C4H10", "IC4H10", "H2C4O", "CH2CHCHCHO", "CH3CHCHCO", "CH3CHCHCHO", "C3H7CHO", "IC3H7CHO", "C2H5COCH3", "C2H3COCH3", "OH*", "CH*"};
+    }
+
+    // Return the species name for a given index
+    static std::string species_name_gen(int index)
+    {
+        constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
+        return names[index]; // Return the name of the requested species
+    }
+    // Return the species name for a given index
+    int species_index_gen(const char* name)
+    {
+        constexpr auto names = species_names_gen(); // Get the list of species names use auto for now
+        for(int i = 0; i<n_species; i++)
+        {
+            if (std::strcmp(names[i], name) == 0)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
