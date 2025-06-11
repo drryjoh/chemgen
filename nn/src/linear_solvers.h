@@ -95,9 +95,8 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     bool GS = false;
 #if defined(CHEMGEN_PRECONDITIONER_JACOBI)
     SpeciesJacobian P = inverse_diagonal(A);
-    SpeciesJacobian A_ = apply_diagonal(P, A);
-    Species b_ = apply_diagonal(P, b);
-    Species r = b_ - (A_ * x);
+    // Species r = P*(b - A*x);
+    Species r = apply_diagonal(P, b - A*x);
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
     SpeciesJacobian A_ = A;
     Species b_ = apply_gauss_seidel(A, b);
@@ -105,12 +104,8 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     Species r = b_ - (A_ * x);
 //.............................................
 #elif defined(CHEMGEN_PRECONDITIONER_NN)
-    SpeciesJacobian A_ = A;
     SpeciesJacobian P = mlp_zigzag_4_relu(A);
-    Species b_ = operator*(P, b);
-    // SpeciesJacobian A_ = apply_diagonal(P, A);
-    Species v = A * x;
-    Species r = b_ - (P*v);  
+    Species r = P*(b - A*x);
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #else
     SpeciesJacobian A_ = A;
@@ -119,7 +114,8 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
 #endif
 
     double norm2_r = norm2(r);
-    double norm2_A = norm2(A_);
+    // double norm2_A = norm2(A_);
+    // double norm2_A = norm2(apply_diagonal(P, A_));
 
     if (norm2_r < abs_tol)
     {
@@ -147,8 +143,12 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
         }
         #elif defined(CHEMGEN_PRECONDITIONER_NN)
         {
-            w = A_ * V[j];
-            w = P * w;
+            w = P * (A * V[j]);
+        }
+        #elif defined(CHEMGEN_PRECONDITIONER_JACOBI)
+        {
+            // w = P * (A * V[j]);
+            w = apply_diagonal(P, A * V[j]);
         }
         #else
         {
@@ -164,8 +164,8 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
         }
 
         H[j + 1][j] = norm2(w);
-        if (H[j + 1][j] < abs_tol * norm2_A)
-            break;
+        // if (H[j + 1][j] < abs_tol * norm2_A)
+        //     break;
         V[j + 1] = scale_gen(inv_gen(H[j + 1][j]), w);
 
         // Apply Givens rotations to new column of H
