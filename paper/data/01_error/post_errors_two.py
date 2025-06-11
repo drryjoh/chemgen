@@ -6,7 +6,7 @@ import seaborn as sns
 colors = ["purple", "blue", "orange", "red", "green"]
 mechs = ["OConnaire", "burke", "gri30", "sandiego", "FFCM2_model"]
 names = ["Ó Connaire", "Burke", "GRI v3.0", "UCSD", "FFCM2"]
-mean_loc = -2  # for degree 7
+mean_loc = -2.0  # for degree 7
 
 deg = 7
 fig, ax = plt.subplots(figsize=(8, 6), sharey=True)
@@ -37,11 +37,11 @@ for i, mech in enumerate(mechs):
     ax.axvline(mean_val, color=colors[i], linestyle='--', linewidth=1)
 
 ax.set_ylim([0, 350])
-txtloc = np.linspace(0.6, 0.9, len(means))
+txtloc = np.linspace(0.57, 0.9, len(means))
 for r, mean_val in enumerate(means):
     ax.text(mean_loc, ax.get_ylim()[1]*(txtloc[r]+0.05), 
             f"{names[r]}: $\mu = {10**mean_val:3.2e}$\n$\sigma = {10**(mean_val + stds[r]):3.2e}$",
-            color=colors[r], rotation=0, verticalalignment='top', fontsize=8)
+            color="k", rotation=0, verticalalignment='top', fontsize=10)
 
 xticks = ax.get_xticks()
 integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]
@@ -60,7 +60,7 @@ plt.savefig("hist_deg7.png", dpi=300)
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
 degrees = [4, 15]
-mean_locs = [-8.5, -2]
+mean_locs = [-8.5, -2.75]
 
 for j, deg in enumerate(degrees):
     ax = axes[j]
@@ -95,7 +95,7 @@ for j, deg in enumerate(degrees):
     for r, mean_val in enumerate(means):
         ax.text(mean_locs[j], ax.get_ylim()[1]*(txtloc[r]+0.05), 
                 f"{names[r]}: $\mu = {10**mean_val:3.2e}$\n$\sigma = {10**(mean_val + stds[r]):3.2e}$",
-                color=colors[r], rotation=0, verticalalignment='top', fontsize=8)
+                color="k", rotation=0, verticalalignment='top', fontsize=10)
 
     xticks = ax.get_xticks()
     integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]

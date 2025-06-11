@@ -1784,7 +1784,7 @@ CFD focuses on the conservation variables related to mass,
 \end_inset
 
  represents the number of chemical species.
- Detailed chemical mechanisms may involve hundreds of species and thousands of reactions,
+ Detailed chemical models may involve hundreds of species and thousands of reactions,
  typically with 
 \begin_inset Formula $n_{r}\approx5n_{s}$
 \end_inset
@@ -1941,7 +1941,7 @@ name "enu:manual"
 \end_layout
 
 \begin_layout Enumerate
-Use code generation tools to read the chemical mechanism and produce adaptable source code in the desired format for the CFD software.
+Use code generation tools to read the chemical model and produce adaptable source code in the desired format for the CFD software.
 \begin_inset CommandInset label
 LatexCommand label
 name "enu:software"
@@ -3310,7 +3310,7 @@ Starting with a guess value,
 \begin_inset Formula $1e-8$
 \end_inset
 
- relative error for a variety of mechanisms at different temperatures.
+ relative error for a variety of models at different temperatures.
 \end_layout
 
 \begin_layout Subsection
@@ -5240,7 +5240,7 @@ Additional time integrators
 
 \begin_layout Standard
 While backward Euler time integration is inherently stable,
- it may exhibit poor accuracy or convergence for certain chemical mechanisms and time step sizes.
+ it may exhibit poor accuracy or convergence for certain chemical models and time step sizes.
  To address this,
  ChemGen offers additional implicit integration strategies,
  allowing users to select a method appropriate to their problem.
@@ -6701,7 +6701,7 @@ Generation Process
 
 \begin_layout Standard
 The code generation process in ChemGen is designed to be as minimal and streamlined as possible.
- ChemGen relies on Cantera to interpret chemical mechanism files.
+ ChemGen relies on Cantera to interpret chemical model files.
  Cantera performs several key tasks:
  parsing the chemistry data,
  converting units to the International System of Units (SI),
@@ -7154,7 +7154,7 @@ literal "false"
 
  is used for natural gas combustion simulations.
  Finally,
- the 63-species UCSD mechanism 
+ the 63-species UCSD model 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "SanDiegoMech"
@@ -7241,7 +7241,7 @@ Here,
 \end_layout
 
 \begin_layout Standard
-The distribution of errors for the randomly generated states and five chemical mechanisms is shown in Figure
+The distribution of errors for the randomly generated states and five chemical models is shown in Figure
 \begin_inset space ~
 \end_inset
 
@@ -7257,13 +7257,13 @@ nolink "false"
 \end_inset
 
 .
- Agreement with Cantera predictions varies with mechanism complexity.
- Among the mechanisms tested,
- the UCSD mechanism exhibits the largest discrepancy.
+ Agreement with Cantera predictions varies with model complexity.
+ Among the models tested,
+ the UCSD model exhibits the largest discrepancy.
  While the ChemGen implementation is designed to be consistent with Cantera’s formulation,
  differences arise primarily due to the thermodynamic polynomial representations.
  Cantera supports multiple polynomial formats for thermodynamic property calculations,
- whereas ChemGen re-fits all species thermodynamics to a user-specified polynomial order during mechanism generation.
+ whereas ChemGen re-fits all species thermodynamics to a user-specified polynomial order during code generation.
  The ChemGen refits for the data in Figure
 \begin_inset space ~
 \end_inset
@@ -7292,7 +7292,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -7316,7 +7316,96 @@ name "fig:source_term_accuracy"
 
 \end_inset
 
-Error distributions for ChemGen source calculations in comparison to Cantera source calculations.
+Error distributions,
+ 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ from Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:source_error"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ for ChemGen source calculations in comparison to Cantera source calculations for five tested chemical models,
+ Ó Conaire 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Oco04"
+literal "false"
+
+\end_inset
+
+,
+ Burke 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Bur12"
+literal "false"
+
+\end_inset
+
+,
+ GRI-Mech 3.0 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Smi00"
+literal "false"
+
+\end_inset
+
+,
+ UCSD 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "SanDiegoMech"
+literal "false"
+
+\end_inset
+
+,
+ and FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+.
+ The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
+ The distribution mean,
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+,
+ and corresponding standard deviations,
+ 
+\begin_inset Formula $\sigma$
+\end_inset
+
+,
+ are also reported.
+ These distributions were created using 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+.
+ Overall mean agreement for all cases is,
+ on average,
+ less that a percent.
+ 
 \end_layout
 
 \end_inset
@@ -7478,7 +7567,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -7502,7 +7591,97 @@ name "fig:source_term_accuracy_np"
 
 \end_inset
 
-Error distributions for ChemGen source calculations in comparison to Cantera source calculations.
+Error distributions for ChemGen source calculations,
+ 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ from Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:source_error"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ in comparison to Cantera source calculations for five tested chemical models,
+ Ó Conaire 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Oco04"
+literal "false"
+
+\end_inset
+
+,
+ Burke 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Bur12"
+literal "false"
+
+\end_inset
+
+,
+ GRI-Mech 3.0 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Smi00"
+literal "false"
+
+\end_inset
+
+,
+ UCSD 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "SanDiegoMech"
+literal "false"
+
+\end_inset
+
+,
+ and FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+.
+ The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
+ The distribution mean,
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+,
+ and corresponding standard deviations,
+ 
+\begin_inset Formula $\sigma$
+\end_inset
+
+,
+ are also reported.
+ These distributions were created using 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ and 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+.
+ Increasing the polynomial degree for the thermodynamic fits decreases the error and increases the precision for the comparisons.
 \end_layout
 
 \end_inset
@@ -7518,7 +7697,7 @@ Error distributions for ChemGen source calculations in comparison to Cantera sou
 \begin_layout Standard
 The reduction in error with increasing polynomial fit degree provides additional confidence in the correctness of the ChemGen implementation.
  During this investigation,
- we discovered that several parameters in the UCSD mechanism,
+ we discovered that several parameters in the UCSD model,
  particularly those used in Troe fall-off reactions,
  contained extremely large or small values.
  For instance,
@@ -7587,9 +7766,11 @@ literal "false"
 \end_inset
 
 .
- When ChemGen was updated to correctly handle these edge cases and to avoid numerical instabilities from extreme exponentials,
- further reduction in error was observed.
- In addition using higher-order polynomial fits gave the expected behavior of reducing the error when comparing to cantera.
+ Updating ChemGen to address these edge cases and avoid numerical instabilities led to reduced error and unlocked the expected trend that higher-order polynomial fits improved accuracy relative to Cantera.
+\end_layout
+
+\begin_layout Subsection
+Explicit Time Integration
 \end_layout
 
 \begin_layout Subsection
