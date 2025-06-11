@@ -83,6 +83,7 @@ backwards_euler(ChemicalState y,
         // Species last_dy;
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+        int n = 0;
         for (int iter = 0; iter < 5; ++iter) 
         {
             double temperature_ = temperature(y[0], y_guess); 
@@ -96,7 +97,7 @@ backwards_euler(ChemicalState y,
 
             res = scale_gen(-double(1)/dt, y_guess - y_init) + f; 
 
-
+            // #define CHEMGEN_DIRECT_SOLVER
             #ifdef CHEMGEN_DIRECT_SOLVER
             Species dy = invert_jacobian(A) * res;
             //.............................
@@ -119,6 +120,7 @@ backwards_euler(ChemicalState y,
 
             y_guess = y_guess + dy;
 
+            n = iter;
             if (norm2(dy) < 1e-10) // check convergence
             {
                 // return set_chemical_state(y[0], y_guess); 
@@ -192,6 +194,8 @@ backwards_euler(ChemicalState y,
         //     }
         // }
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+        std::cout << "# Newton iterations = " << n + 1 << std::endl;
         
         return set_chemical_state(y[0], y_guess); //sets energy to zero to signal integration broke
 }
