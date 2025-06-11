@@ -69,11 +69,14 @@ auto mlp_zigzag_4_relu(const std::array<std::array<Scalar, 96>, 96>& initial_inp
 
 
     auto linear = +[](Scalar& output, Scalar input, Scalar alpha) noexcept {
-        output = input;
+        Scalar tmp = input;
+        output = tmp;
     };
 
     auto relu = +[](Scalar& output, Scalar input, Scalar alpha) noexcept {
-        output = input > 0 ? input : 0;
+        Scalar tmp = 0.;
+        if (tmp > 0.) tmp = input;
+        output = tmp;
     };
 
 
