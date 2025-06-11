@@ -45,7 +45,7 @@ def get_test_conditions(chemical_mechanism):
 def get_random_TPX(gas):
     # Define species list
     species_list = gas.species_names
-
+    '''
     # Define major species
     major_species = { 'H2', 'O2', 'H2O', 'AR', 'N2', 'CO', 'CO2', 'CH4', 'C2H4', 'C4H10'}
     minor_minor = {"NC3H7", "IC3H7", "C3H6", "C3H5", "CH3CCH2", "AC3H4", "PC3H4", "C3H3", "C2H5CHO", "CH3COCH3",
@@ -76,10 +76,12 @@ def get_random_TPX(gas):
         species_array[idx] = value
 
     for idx, value in zip(major_indices, minor_minor_values):
-        species_array[idx] = value   
+        species_array[idx] = value
+    '''  
+    species_array =  np.random.uniform(0, 1, len(gas.species_names))
     species_array /= species_array.sum()
 
-    return (1000 + 1000 * np.random.random(), 10132.5 + 101325.0 * 2 * np.random.random(), species_array)
+    return (1000 + 1500 * np.random.random(), 10132.5 + 101325.0 * 10.9 * np.random.random(), species_array)
 
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 1):

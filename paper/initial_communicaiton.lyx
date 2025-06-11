@@ -15,7 +15,7 @@
 \usetikzlibrary{shapes,arrows,calc,decorations.pathreplacing}
 \end_preamble
 \options 3p
-\use_default_options false
+\use_default_options true
 \begin_modules
 theorems-std
 \end_modules
@@ -92,7 +92,7 @@ theorems-std
 \quotes_style english
 \dynamic_quotes 0
 \papercolumns 1
-\papersides 2
+\papersides 1
 \paperpagestyle default
 \tablestyle default
 \tracking_changes false
@@ -6978,13 +6978,12 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename chemgen_flowchart.pdf
-	draft
 
 \end_inset
 
@@ -7018,8 +7017,579 @@ ChemGen flowchart
 Results and Demonstration Cases
 \end_layout
 
+\begin_layout Standard
+In this section we present stand alone test cases to confirm that the generated source code is behaving as intended.
+ We then demonstrate the generated code in CFD detonation simulation using detonationEulerFoam
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Sun23"
+literal "false"
+
+\end_inset
+
+ based on the OpenFOAM package
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Ope25"
+literal "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
 \begin_layout Subsection
-Error Analysis
+Source Term Accuracy Analysis
+\end_layout
+
+\begin_layout Standard
+To test the source term accuracy we randomly generated a chemical state,
+ 
+\begin_inset Formula $y_{c}$
+\end_inset
+
+,
+ using
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+T & = & 1000+r_{T}1000\nonumber \\
+p & = & 0.1+9.9r_{p}\nonumber \\
+X_{i} & = & r_{i}\quad\text{for }i=1,\dots,n_{s}\label{eq:chemical_state_01}
+\end{eqnarray}
+
+\end_inset
+
+Where 
+\begin_inset Formula $r_{T},r_{p},r_{1},\dots,r_{n_{s}}\sim\mathcal{U}(0,1)$
+\end_inset
+
+ where 
+\begin_inset Formula $\mathcal{U}(0,1)$
+\end_inset
+
+ is a uniform distribution,
+ 
+\begin_inset Formula $T$
+\end_inset
+
+ is in units Kelvin,
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+ is in atmospheres.
+ 
+\begin_inset Formula $X_{i}$
+\end_inset
+
+ is renormalized after all 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+ species are randomly generated,
+ 
+\begin_inset Formula $X_{i}=X_{i}/\sum_{i=1}^{n_{s}}X_{i}$
+\end_inset
+
+.
+ Here 
+\begin_inset Formula $X_{i}$
+\end_inset
+
+ can be viewed as the mole fraction,
+ defined as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+X_{i}=\frac{C_{i}}{\sum_{i=1}^{n_{s}}C_{i}}.\label{eq:mole_fraction}
+\end{equation}
+
+\end_inset
+
+Using equation of state,
+ 
+\begin_inset Formula $p=R^{o}T\sum_{i=1}^{n_{s}}C_{i}$
+\end_inset
+
+,
+ the concentrations were calculated,
+ 
+\begin_inset Formula $C_{i}=X_{i}p/\left(R^{o}T\right)$
+\end_inset
+
+,
+ forming the complete state for ChemGen.
+ We tested five different chemical models with increasing size that are common to computational simulations of chemically reacting flows by generating 10,000 random chemical states for each individual models.
+ The 10-species Ó Conaire model 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Oco04"
+literal "false"
+
+\end_inset
+
+ and the 13-species Burke model 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Bur12"
+literal "false"
+
+\end_inset
+
+ are utilized for hydrogen and hydrogen–carbon monoxide oxidation simulations,
+ respectively.
+ The 53-species GRI-Mech 3.0 model 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Smi00"
+literal "false"
+
+\end_inset
+
+ is used for natural gas combustion simulations.
+ Finally,
+ the 63-species UCSD mechanism 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "SanDiegoMech"
+literal "false"
+
+\end_inset
+
+ and the 93-species FFCM-2 model 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+ are applied for larger hydrocarbon combustion simulations.
+ 
+\end_layout
+
+\begin_layout Standard
+For each chemical state,
+ 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+ of source term elements,
+ were generated.
+ We used Cantera's source term prediction,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{net
+\backslash
+_production
+\backslash
+_rates}
+\end_layout
+
+\end_inset
+
+ ,
+ to evaluate the error for each state for each particular chemical model.
+ The average error per random chemical state is 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\epsilon=\begin{cases}
+\frac{1}{n_{s}}\sum_{i=1}^{n_{s}}\left|\frac{S_{cg,i}-S_{ct,i}}{S_{ct,i}}\right| & \text{if }\left|S_{ct,i}\right|>10^{-10}\\
+0 & \text{otherwise}
+\end{cases}.\label{eq:source_error}
+\end{equation}
+
+\end_inset
+
+Here,
+ 
+\begin_inset Formula $S_{\mathrm{ct},i}$
+\end_inset
+
+ denotes the Cantera predicted source term for species 
+\begin_inset Formula $i$
+\end_inset
+
+ and 
+\begin_inset Formula $S_{\mathrm{cg},i}$
+\end_inset
+
+ denotes the corresponding ChemGen predicted source term.
+ If the magnitude of the Cantera source term is less than 
+\begin_inset Formula $10^{-10}$
+\end_inset
+
+,
+ the error is defined to be zero.
+ In the special case where the Cantera source term meets this threshold while the corresponding ChemGen source term is significantly larger test program used to process this data reports an error.
+ No special cases were found.
+\end_layout
+
+\begin_layout Standard
+The distribution of errors for the randomly generated states and five chemical mechanisms is shown in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:source_term_accuracy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ Agreement with Cantera predictions varies with mechanism complexity.
+ Among the mechanisms tested,
+ the UCSD mechanism exhibits the largest discrepancy.
+ While the ChemGen implementation is designed to be consistent with Cantera’s formulation,
+ differences arise primarily due to the thermodynamic polynomial representations.
+ Cantera supports multiple polynomial formats for thermodynamic property calculations,
+ whereas ChemGen re-fits all species thermodynamics to a user-specified polynomial order during mechanism generation.
+ The ChemGen refits for the data in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:source_term_accuracy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ utilized 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/01_error/hist_deg7.png
+	lyxscale 50
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:source_term_accuracy"
+
+\end_inset
+
+Error distributions for ChemGen source calculations in comparison to Cantera source calculations.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To investigate the effect of the choice of polynomial we performed the same error analysis and change 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+.
+ Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:source_term_accuracy_np"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ shows two different polynomial choices,
+ on the left is 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ and on the right is 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+.
+ The error distributions shift due to the change in polynomial degree.
+ The mean errors,
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+,
+ of 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ results are an order of magnitude larger,
+ whereas the 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+ results are an order of magnitude smaller when comparing both to the means of the 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+ errors.
+ In addition,
+ the standard deviation,
+ 
+\begin_inset Formula $\sigma$
+\end_inset
+
+,
+ changes by an order of magnitude in the same manner,
+ indicating that the source term became more precise with increase in 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+To investigate the effect of polynomial order on source term accuracy,
+ we performed the same error analysis while varying the polynomial degree 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+.
+ Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:source_term_accuracy_np"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ presents the results for two alternative choices:
+ 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+(left) and 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+ (right).
+ The error distributions shift with polynomial order.
+ Specifically,
+ the mean errors 
+\begin_inset Formula $\mu$
+\end_inset
+
+ associated with 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ are approximately an order of magnitude larger than those for 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+ presented in Figure 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:source_term_accuracy_np"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ while the 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+ results exhibit mean errors that are an order of magnitude smaller.
+ The standard deviation 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ follows the same trend,
+ indicating that increasing the polynomial degree not only improves the accuracy but also enhances the precision of the predicted source terms.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/01_error/hist_deg4_15.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:source_term_accuracy_np"
+
+\end_inset
+
+Error distributions for ChemGen source calculations in comparison to Cantera source calculations.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The reduction in error with increasing polynomial fit degree provides additional confidence in the correctness of the ChemGen implementation.
+ During this investigation,
+ we discovered that several parameters in the UCSD mechanism,
+ particularly those used in Troe fall-off reactions,
+ contained extremely large or small values.
+ For instance,
+ in reaction 9,
+ the parameters were specified as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{T3:
+ 1.0e-30,
+ T1:
+ 1.0e+30}
+\end_layout
+
+\end_inset
+
+ .
+ The interpretation and handling of such extreme values can vary between software implementations.
+ Examining the form of 
+\begin_inset Formula $F_{\mathrm{cent}}$
+\end_inset
+
+,
+ given by
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+F_{\mathrm{cent}}(T)=(1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T),
+\]
+
+\end_inset
+
+we note that the very small value of 
+\begin_inset Formula $T_{3}$
+\end_inset
+
+ effectively drives the first exponential term to zero,
+ while the extremely large value of 
+\begin_inset Formula $\ensuremath{T_{1}}$
+\end_inset
+
+drives the second term's exponential to one.
+ It is assumed,
+ based on the specification,
+ that omitting 
+\begin_inset Formula $T_{2}$
+\end_inset
+
+ entirely implies that the third term is excluded from the calculation,
+ rather than setting 
+\begin_inset Formula $\ensuremath{T_{2}=0}$
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citet
+key "cantera"
+literal "false"
+
+\end_inset
+
+.
+ When ChemGen was updated to correctly handle these edge cases and to avoid numerical instabilities from extreme exponentials,
+ further reduction in error was observed.
+ In addition using higher-order polynomial fits gave the expected behavior of reducing the error when comparing to cantera.
 \end_layout
 
 \begin_layout Subsection
