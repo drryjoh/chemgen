@@ -2003,7 +2003,7 @@ nolink "false"
 ,
  although the package is excellent for property calculations and other critical combustion scenarios,
  it is a third-party library and could lead to limited control over software funcionality.
- Imbedding cantera is certainly possible,
+ Imbedding Cantera is certainly possible,
  but in some cases data would need to be transferred back and forth between the CFD's degrees of freedom (DoF) and Cantera,
  potentially restricting access to essential computational acceleration techniques.
  Additionally,
@@ -2139,7 +2139,8 @@ On this work,
  It is important to note that ChemGen is suitable for low-Mach flows that decouple pressure from the energy equation,
  to which we comment on later in this section.
  In addition,
- we also provide a path forward to incorporate Here,
+ we also provide a path forward to incorporate simplified physical diffusion models.
+ Here,
  we primarily highlight the interaction between the fluid dynamic state,
  
 \begin_inset Formula $y_{f}$
@@ -2332,7 +2333,7 @@ y_{c}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting
 
 \end_inset
 
-which is the complete state needed to calculate 
+which is the complete state needed to calculate the components of 
 \begin_inset Formula $\mathcal{S}\left(y_{f}\right)$
 \end_inset
 
@@ -2343,7 +2344,7 @@ which is the complete state needed to calculate
 \end_inset
 
 ,
- are all conserved quantities and can be extracted readily extracted from the fluid dynamic state.
+ are all conserved quantities and can be extracted readily from the fluid dynamic state.
  In the next section we expand on how to calculate temperature from internal energy using a nonlinear solve,
  
 \begin_inset Formula $\rho u\left(C,T\right)\rightarrow T$
@@ -5593,6 +5594,7 @@ literal "false"
 
 \end_inset
 
+,
  
 \end_layout
 
@@ -5600,7 +5602,7 @@ literal "false"
 \begin_inset Formula 
 \begin{equation}
 \begin{array}{ccccc}
-\gamma_{ii}=\gamma= & 1+\frac{\sqrt{2}}{2}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}
+\gamma_{ii}=\gamma= & 1+\frac{\sqrt{2}}{2}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}.
 \end{equation}
 
 \end_inset
@@ -6818,7 +6820,7 @@ texttt{reactions.h}
 \end_inset
 
  header file,
- for example a reaction if the first reaction a cantera based yaml file is
+ for example a reaction if the first reaction a Cantera based yaml file is
 \end_layout
 
 \begin_layout Standard
@@ -7041,6 +7043,13 @@ literal "false"
 
 \begin_layout Subsection
 Source Term Accuracy Analysis
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Source-Term-Accuracy"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7298,7 +7307,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename data/01_error/hist_deg7.png
-	lyxscale 50
+	lyxscale 30
 	scale 40
 
 \end_inset
@@ -7771,6 +7780,430 @@ literal "false"
 
 \begin_layout Subsection
 Explicit Time Integration
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Explicit-Time-Integration"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With confidence in the source term calculation we applied explicit time integration strategies to integrate a chemical state in time.
+ Using ChemGen's RK4 solver we integrated the following initial chemical state
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+T & = & 1800\nonumber \\
+p & = & 101325.0\nonumber \\
+\left(X_{H_{2}},X_{O_{2}},X_{N_{2}}\right) & = & \left(0.2,0.2,0.6\right)\label{eq:chemical_state_02}
+\end{eqnarray}
+
+\end_inset
+
+using the hydrogen submodel extracted from FFCM-2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+ and integrate in time under a constant volume assumption,
+ 
+\begin_inset Formula $\rho u$
+\end_inset
+
+ is constant.
+ A submodel extraction for hydrogen is done by removing any species or reactions with carbon atoms.
+ The resulting submodel is 9 species and 25 reactions.
+ The concentrations,
+ 
+\begin_inset Formula $C_{i}$
+\end_inset
+
+,
+ are calculated in the same manner as Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:Source-Term-Accuracy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ The RK4 integration became unstable for any time step larger than 
+\begin_inset Formula $\Delta t=1e-8$
+\end_inset
+
+ seconds,
+ which is the time step used in for the results reported here.
+ The resulting temperature and species concentration evolutions are shown in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:RK4_T_C"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ ,
+ where ChemGen results are represented by dashed black lines and Cantera results are represented by solid colored lines.
+ The Cantera results were produced using 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+ReactorNet
+\end_layout
+
+\end_inset
+
+ class.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/02_explicit_time_integration/rk4.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:RK4_T_C"
+
+\end_inset
+
+Temperature (left) and species (right) evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions from Equation Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:chemical_state_02"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ These results were produced using hydrogen submodel from FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+.
+ The solid lines are from the Cantera solution and the dashed black lines are the corresponding ChemGen results.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Following a brief induction period,
+ the chemical state undergoes a sudden temperature rise accompanied by rapid species changes,
+ where reactants,
+\begin_inset Formula $H_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $O_{2}$
+\end_inset
+
+,
+ are consumed and the product,
+ 
+\begin_inset Formula $H_{2}O$
+\end_inset
+
+,
+ along with intermediates,
+\begin_inset Formula $H_{2}O_{2}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $OH$
+\end_inset
+
+,
+ 
+\begin_inset Formula $O$
+\end_inset
+
+,
+ and 
+\begin_inset Formula $H$
+\end_inset
+
+,
+ are created.
+ This is followed by a more gradual evolution toward a steady state.
+ The main reactants and products are referred to as major species,
+ for this model they are 
+\begin_inset Formula $H_{2}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $O_{2}$
+\end_inset
+
+,
+ and 
+\begin_inset Formula $H_{2}O$
+\end_inset
+
+.
+ The intermediate and small remnant species are referred to as minor species and usually exist in trace quantities (
+\begin_inset Formula $X_{i}<1e-3$
+\end_inset
+
+).
+ The minor species span a wide range of values,
+ and therefore individual scaling multipliers are applied to each in order to display them on the same graph.
+\end_layout
+
+\begin_layout Standard
+The ChemGen steady-state temperature differs from the Cantera result by about 10 K,
+ which is well within the typical experimental uncertainty for combustion applications.
+ For examples,
+ a typical uncertainty of approximately 50 K is generally state of the art for non-invasive techniques such as coherent anti-Stokes Raman scattering
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Ded21"
+literal "false"
+
+\end_inset
+
+.
+ The results in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:RK4_T_C"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+were generated using 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+.
+ To investigate further,
+ we performed RK4 integrations using
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ and 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+..
+ The temperature evolution over the time domain 
+\begin_inset Formula $t=[0.06,0.20]$
+\end_inset
+
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+s,
+ comparing results from increasing thermodynamic polynomial degree and Cantera,
+ is shown in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:RK4_np_T"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Like the results in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:Source-Term-Accuracy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ the agreement with the Cantera solution improves with increasing polynomial degree.
+ For this case,
+ 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ achieved an agreement within 1 K of Cantera.
+ This suggests that,
+ while higher 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+ can more closely match Cantera,
+ lower np values may still provide predictive accuracy within experimental uncertainty at reduced computational cost.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/02_explicit_time_integration/temperature_np.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:RK4_np_T"
+
+\end_inset
+
+Temperature evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions from Equation Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:chemical_state_02"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ These results were produced using hydrogen submodel from FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+ .
+ The solid line is from the Cantera solution and the dashed lines are the corresponding ChemGen results from 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ (green),
+ 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+ (black),
+ and 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ (blue).
+ The agreement with the Cantera solution improves with increasing polynomial degree.
+ For this case,
+ 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ achieved an agreement within 1 K of Cantera.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
