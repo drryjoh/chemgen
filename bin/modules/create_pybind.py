@@ -30,6 +30,7 @@ def create_pybind(gas, headers, configuration, destination_folder, remove_reacti
         for header in headers:
             f.write(f"#include \"{header}\"\n")
         remove_reactions_text = ""
+        remove_reactions_call_text = "" 
         if remove_reactions:
             remove_reactions_text = """
 std::vector<std::vector<{scalar}>> source_jacobian_remove_reaction_py(const std::vector<{scalar}>& species, {scalar} temperature, std::vector<std::vector<{scalar}>>& J, {index} i) 

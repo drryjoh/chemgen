@@ -5210,7 +5210,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{a}\left(C_{i},T\right)_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}\text{ and }\mathcal{J}_{b}\left(C_{i},T\right)_{ij}=\begin{cases}
+\mathcal{J}_{a}\left(C,T\right)_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}\text{ and }\mathcal{J}_{b}\left(C,T\right)_{ij}=\begin{cases}
 \frac{\partial\omega_{i}}{\partial T} & i=1\dots n_{s};j=1\\
 \frac{\partial\omega_{i}}{\partial C_{j-1}} & i=1\dots n_{s};j=2\dots n_{s}+1;
 \end{cases}\label{eq:derivative_matrices}
@@ -7885,7 +7885,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -8207,11 +8207,307 @@ literal "false"
 \end_layout
 
 \begin_layout Subsection
-Jacobian Analysis
+Jacobian Verification
+\end_layout
+
+\begin_layout Standard
+We performed Jacobian calculation confirmation in order to build confidence in their use for implicit time integration strategies.
+ Recall ChemGen supplies two Jacobians,
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{a}\left(C_{},T\right)_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}\text{ and }\mathcal{J}_{b}\left(C_{},T\right)_{ij}=\begin{cases}
+\frac{\partial\omega_{i}}{\partial T} & i=1\dots n_{s};j=1\\
+\frac{\partial\omega_{i}}{\partial C_{j-1}} & i=1\dots n_{s};j=2\dots n_{s}+1;
+\end{cases}\label{eq:Ja_Jb_results}
+\end{equation}
+
+\end_inset
+
+The 
+\begin_inset Formula $\mathcal{J}_{b}$
+\end_inset
+
+ Jacobian is built off of the 
+\begin_inset Formula $\mathcal{J}_{a}$
+\end_inset
+
+ Jacobian.
+ Thus,
+ in this section we present verification of 
+\begin_inset Formula $\mathcal{J}_{b}$
+\end_inset
+
+ using the finite difference method confirms the the correct derivatives in ChemGen.
+ To calculate the finite difference approximation of 
+\begin_inset Formula $\mathcal{J}_{b}$
+\end_inset
+
+ we utilized the second order finite difference approximation for each element,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}=\begin{cases}
+\frac{S_{i}\left(C_{1},\dots,C_{n_{s}},T+\delta T\right)-S_{i}\left(C_{1},\dots,C_{n_{s}},T-\delta T\right)}{2\delta T} & i=1\dots n_{s};j=1\\
+\frac{S_{i}\left(C_{1}+\delta_{1j}\cdot\delta C,\dots,C_{n_{s}}+\delta_{n_{s}j}\cdot\delta C,T+\delta T\right)-S_{i}\left(C_{1}-\delta_{1j}\cdot\delta C,\dots,C_{n_{s}}-\delta_{n_{s}j}\cdot\delta C,T+\delta T\right)}{2\delta C} & i=1\dots n_{s};j=2\dots n_{s}+1,
+\end{cases}\label{eq:finite_difference}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\delta_{ij}$
+\end_inset
+
+ is from Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:jacobian"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ and 
+\begin_inset Formula $\delta T$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta C$
+\end_inset
+
+ are the temperature and concentration perturbations,
+ respectively.
+ This finite difference approximation is second order accurate.
+ An initial test to verify the Jacobian is to check the order of convergence of the finite difference errors when compared to the analytical Jacobian provided by ChemGen.
+ The order of accuracy describes how quickly the numerical error decreases as the step size is reduced.
+ In this context,
+ it measures how closely the finite difference Jacobian approximates the reference Jacobian as smaller perturbations are used.
+ For Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:finite_difference"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ a refinement will exhibit a decrease in error by a factor of four each time the perturbation is halved.
+\end_layout
+
+\begin_layout Standard
+We utilized the 
+\begin_inset Formula $L_{2}$
+\end_inset
+
+-norm to assess the error of the finite difference approximation,
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+L_{2}=||\mathcal{J}_{b}-\hat{\mathcal{J}_{b}}||=\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\mathcal{J}_{b}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}\right)^{2}},\label{eq:L2_fd}
+\end{equation}
+
+\end_inset
+
+for four refinement levels using smaller values of 
+\begin_inset Formula $\delta C$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta T$
+\end_inset
+
+,
+ halving each refinement.
+ The initial 
+\begin_inset Formula $\delta C$
+\end_inset
+
+ was chosen as a fraction,
+ in this case 
+\begin_inset Formula $1/4$
+\end_inset
+
+,
+ of the smallest non-zero concentration,
+ and the initial was chosen 
+\begin_inset Formula $\delta T=100$
+\end_inset
+
+ K.
+ Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:OOA"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ shows the order of convergence for a single random chemical state determined using Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:chemical_state_02"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ and using the UCSD chemical model
+\begin_inset CommandInset citation
+LatexCommand citet
+key "SanDiegoMech"
+literal "false"
+
+\end_inset
+
+.
+ The refinement results agree well with the expected second-order accuracy.
+ We performed this refinement study across all previously mentioned chemical models and observed consistent order of accuracy with little to no variation.
+ In some cases,
+ when the initial 
+\begin_inset Formula $\delta C$
+\end_inset
+
+ was too small,
+ the perturbations led to convergence within machine precision,
+ preventing further reduction in the 
+\begin_inset Formula $L_{2}$
+\end_inset
+
+-norm.
+ By adjusting the initial 
+\begin_inset Formula $\delta C$
+\end_inset
+
+,
+ the expected order of accuracy was recovered.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/03_jacobians/ooa.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:OOA"
+
+\end_inset
+
+Temperature evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions from Equation Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:chemical_state_02"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ These results were produced using hydrogen submodel from FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Zha23"
+literal "false"
+
+\end_inset
+
+ .
+ The solid line is from the Cantera solution and the dashed lines are the corresponding ChemGen results from 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ (green),
+ 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+ (black),
+ and 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ (blue).
+ The agreement with the Cantera solution improves with increasing polynomial degree.
+ For this case,
+ 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ achieved an agreement within 1 K of Cantera.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
-Time Integration Comparisons
+Implicit Time Integration Comparisons
 \end_layout
 
 \begin_layout Subsection
