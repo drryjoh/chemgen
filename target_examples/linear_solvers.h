@@ -88,7 +88,7 @@ gmres_solve(const SpeciesJacobian& A, const Species& b, double abs_tol = 1e-8, d
     std::array<Species, n_species + 1> V = {};
     V[0] = scale_gen(inv_gen(norm2_r), r); // stores orthonormal basis vectors of Krylov subspace
 
-    std::array<std::array<double, n_species + 1>, n_species> H = {}; // Hessenberg matrix that's modified in place at each iteration to yield the upper triangular (rectangular) matrix
+    std::array<std::array<double, n_species>, n_species + 1> H = {}; // Hessenberg matrix that's modified in place at each iteration to yield the upper triangular (rectangular) matrix
     std::array<double, n_species + 1> g = {};
     g[0] = norm2(r);
 
