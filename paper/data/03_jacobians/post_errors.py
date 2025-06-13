@@ -37,12 +37,13 @@ for k, L2 in enumerate(L2s):
     )
     ax.axvline(np.mean(log_errors), color=colors[k], linestyle='--', linewidth=1)
 
+ax.set_xlim([-14,-2])
 xticks = ax.get_xticks()
 integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]
 ax.set_xticks(integer_ticks)
 ax.set_xticklabels([f"$10^{{{int(t)}}}$" for t in integer_ticks])
 ax.set_title("$E_{norm}$ Error")
-ax.set_xlabel("Error")
+ax.set_xlabel("$E_{norm}$ Error")
 ax.set_ylabel("Frequency")
 ax.legend(title="Mechanism")
 
@@ -70,13 +71,12 @@ for k, L2 in enumerate(L2snei):
         kde=True
     )
     ax.axvline(np.mean(log_errors), color=colors[k], linestyle='--', linewidth=1)
-
+ax.set_xlim([-14,-2])
 xticks = ax.get_xticks()
 integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]
 ax.set_xticks(integer_ticks)
 ax.set_xticklabels([f"$10^{{{int(t)}}}$" for t in integer_ticks])
-ax.set_title("$E_{rel}$ Error")
-ax.set_xlabel("Error")
+ax.set_xlabel("$E_{rel}$ Error")
 ax.legend(title="Mechanism")
 
 plt.tight_layout()
