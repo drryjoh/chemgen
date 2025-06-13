@@ -13,6 +13,20 @@
 \usepackage{algpseudocode,algorithm,algorithmicx}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,calc,decorations.pathreplacing}
+\usepackage{listings}
+\usepackage{xcolor} % for colors
+
+\lstset{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{orange},
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  breaklines=true,
+  showstringspaces=false
+}
 \end_preamble
 \options 3p
 \use_default_options true
@@ -343,6 +357,10 @@ let
 thefootnote
 \backslash
 svthefootnote
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \end_inset
@@ -1667,7 +1685,7 @@ Chemical reactions are at the heart of many engineering applications,
 CFD is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
  and analytical solutions do not exist
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "And95,Fer02,Hir07"
 literal "false"
 
@@ -1682,7 +1700,7 @@ literal "false"
  such as the Navier-Stokes equations,
  using methods such as the finite volume
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Pat80,Ver07,Mou16"
 literal "false"
 
@@ -1691,7 +1709,7 @@ literal "false"
 ,
  finite difference
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "LeV07"
 literal "false"
 
@@ -1700,7 +1718,7 @@ literal "false"
 ,
  or finite element approaches
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Don03,Zie05"
 literal "false"
 
@@ -1725,7 +1743,7 @@ Developing robust CFD software is an accomplishment in itself,
  there are significant numerical challenges,
  such as stability-preserving methods
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Kar94,Abg96,Bil03,Lv15,Lv17,Joh20,Chi22,Chi22_2"
 literal "false"
 
@@ -1791,7 +1809,7 @@ CFD focuses on the conservation variables related to mass,
 
 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Lu09"
 literal "false"
 
@@ -1801,7 +1819,7 @@ literal "false"
  The number of species increases with the complexity of the fuel,
  for instance the model for hydrogen is 10 chemical species with 17 reactions
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Wes82,Chi22_2"
 literal "false"
 
@@ -1809,7 +1827,7 @@ literal "false"
 
  and the FFCM2 model for simple hydrocarbons (up to four carbons per chemical species) is 96 species with 1054 reactions
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -1887,7 +1905,7 @@ There are several approaches to integrate these features,
 \begin_layout Enumerate
 Locate and adapt existing Fortran code from early versions of Chemkin
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "chemkin89"
 literal "false"
 
@@ -1908,7 +1926,7 @@ Use the more widely adopted,
  open-source,
  and actively maintained Cantera 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "cantera"
 literal "false"
 
@@ -2057,7 +2075,7 @@ Code generation is a well-established concept,
  There are two publicly available code generators focused on gas-phase combustion:
  PyJac 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Nie17"
 literal "false"
 
@@ -2065,7 +2083,7 @@ literal "false"
 
  and Pyrometheus 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Cis25"
 literal "false"
 
@@ -3850,7 +3868,7 @@ Where the same optimization for efficiencies can be made There is a family diffe
 
 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Lin22"
 literal "false"
 
@@ -3922,7 +3940,7 @@ SRI Broadening
 \begin_layout Standard
 In the SRI 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Ste89"
 literal "false"
 
@@ -3963,7 +3981,7 @@ The previous fall-off reaction rates seek to fit between two reaction rates betw
  However,
  some rates have several pressure dependent zones which cannot be accurately represented by a single or two Arrhenius expressions.The pressure-dependent Arrhenius rate expressions was introduced to utilize pressure-dependent reaction rates by logarithmically interpolating between Arrhenius rate expressions at various pressures 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Gou11_b"
 literal "false"
 
@@ -4035,7 +4053,7 @@ To further optimize this rate,
  consider for example,
  the 81st reaction in FFCM2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -4283,7 +4301,7 @@ Tsang Broadening
 \begin_layout Plain Layout
 In the Tsang
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Tsa91"
 literal "false"
 
@@ -4734,7 +4752,7 @@ These transport quantities complete the necessary components to extend the singl
 .
  For the species dependent detailed mixture averaged quantities see 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Joh20"
 literal "false"
 
@@ -4742,7 +4760,7 @@ literal "false"
 
  which is based on 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Kee05"
 literal "false"
 
@@ -4752,7 +4770,7 @@ literal "false"
  In addition,
  Reynolds Averaged Navier Stokes and subgrid scale modeling have effective transport quantities where these nondimensionalized numbers can be modified in accordance
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Coo98,Hei06"
 literal "false"
 
@@ -4960,7 +4978,7 @@ nolink "false"
 .
  This explicit time integration scheme approximates the solution by evaluating the source term at four intermediate stages within each time step
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Hai96"
 literal "false"
 
@@ -5264,7 +5282,7 @@ SDIRK-2
 \begin_layout Standard
 The two stage Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method belongs to a class of implicit Runge-Kutta schemes where staging is utilized like that of RK4 but implicit strategies are used at each stage
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Hai96,Fran97"
 literal "false"
 
@@ -5431,7 +5449,7 @@ Here
 
  
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha14"
 literal "false"
 
@@ -5448,7 +5466,7 @@ SDIRK-4
 The four stage Singly Diagonally Implicit Runge-Kutta (SDIRK-4) follows the same structure as SDIRK-2 with additional stages which requires a set of coefficients.
  We utilize the coefficients implemented by FATODE 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha14"
 literal "false"
 
@@ -5588,7 +5606,7 @@ Here
 
 Again we utilize the coefficients from FATODE
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha14"
 literal "false"
 
@@ -5676,7 +5694,7 @@ Other time integration strategies not yet implemented in ChemGen can certainly b
  which utilize information from previous time steps,
  and higher-order Rosenbrock methods 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha14"
 literal "false"
 
@@ -5687,7 +5705,7 @@ literal "false"
  Some implicit methods,
  such as DGODE 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Joh20"
 literal "false"
 
@@ -5695,7 +5713,7 @@ literal "false"
 
  and CHEMEQ2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Mot01"
 literal "false"
 
@@ -5758,7 +5776,7 @@ It is well established that a direct inversion of the Jacobian,
 
 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Gol13"
 literal "false"
 
@@ -5795,7 +5813,7 @@ literal "false"
 \begin_layout Standard
 ChemGen supplies a standalone Generalized Minimal Residual (GMRES) method as its default linear solver
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Saa86"
 literal "false"
 
@@ -5848,7 +5866,7 @@ The number of GMRES iterations,
  .
  ChemGen provides some standard preconditioners to assist in convergence of the GMRES solve 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Gol13"
 literal "false"
 
@@ -5884,7 +5902,7 @@ nolink "false"
  and applies it as a preconditioner to the system.
  For more advanced chemical kinetics based preconditioners see 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Wal23"
 literal "false"
 
@@ -5898,7 +5916,7 @@ ChemGen is not intended to serve as a comprehensive linear solver library.
  For more advanced or scalable linear solver capabilities,
  ChemGen can be interfaced with external libraries such as Eigen 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Gue10"
 literal "false"
 
@@ -5906,7 +5924,7 @@ literal "false"
 
  or PETSc 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Bal97"
 literal "false"
 
@@ -5920,7 +5938,7 @@ literal "false"
  SDIRK methods),
  offloading the integration of stiff ODE systems to established libraries like CVODES
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Ser05"
 literal "false"
 
@@ -6114,7 +6132,7 @@ texttt{const float
  a function annotation may also be desirable,
  such as the preprocessor macro used in the Kokkos library 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Tro22"
 literal "false"
 
@@ -6678,7 +6696,7 @@ We found that this mechanical differentiation approach is both efficient and mor
  Regardless,
  since the functions are available in C++ once generated packages like autodiff 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Lea18"
 literal "false"
 
@@ -6688,7 +6706,7 @@ literal "false"
  For a mathematical overview of the derivatives needed for chemically reacting flow,
  see 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Nie17"
 literal "false"
 
@@ -7023,7 +7041,7 @@ Results and Demonstration Cases
 In this section we present stand alone test cases to confirm that the generated source code is behaving as intended.
  We then demonstrate the generated code in CFD detonation simulation using detonationEulerFoam
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Sun23"
 literal "false"
 
@@ -7031,7 +7049,7 @@ literal "false"
 
  based on the OpenFOAM package
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Ope25"
 literal "false"
 
@@ -7137,7 +7155,7 @@ Using equation of state,
  We tested five different chemical models with increasing size that are common to computational simulations of chemically reacting flows by generating 10,000 random chemical states for each individual models.
  The 10-species Ó Conaire model 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Oco04"
 literal "false"
 
@@ -7145,7 +7163,7 @@ literal "false"
 
  and the 13-species Burke model 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Bur12"
 literal "false"
 
@@ -7155,7 +7173,7 @@ literal "false"
  respectively.
  The 53-species GRI-Mech 3.0 model 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Smi00"
 literal "false"
 
@@ -7165,7 +7183,7 @@ literal "false"
  Finally,
  the 63-species UCSD model 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "SanDiegoMech"
 literal "false"
 
@@ -7173,7 +7191,7 @@ literal "false"
 
  and the 93-species FFCM-2 model 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -7349,7 +7367,7 @@ nolink "false"
  for ChemGen source calculations in comparison to Cantera source calculations for five tested chemical models,
  Ó Conaire 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Oco04"
 literal "false"
 
@@ -7358,7 +7376,7 @@ literal "false"
 ,
  Burke 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Bur12"
 literal "false"
 
@@ -7367,7 +7385,7 @@ literal "false"
 ,
  GRI-Mech 3.0 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Smi00"
 literal "false"
 
@@ -7376,7 +7394,7 @@ literal "false"
 ,
  UCSD 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "SanDiegoMech"
 literal "false"
 
@@ -7385,7 +7403,7 @@ literal "false"
 ,
  and FFCM2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -7624,7 +7642,7 @@ nolink "false"
  in comparison to Cantera source calculations for five tested chemical models,
  Ó Conaire 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Oco04"
 literal "false"
 
@@ -7633,7 +7651,7 @@ literal "false"
 ,
  Burke 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Bur12"
 literal "false"
 
@@ -7642,7 +7660,7 @@ literal "false"
 ,
  GRI-Mech 3.0 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Smi00"
 literal "false"
 
@@ -7651,7 +7669,7 @@ literal "false"
 ,
  UCSD 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "SanDiegoMech"
 literal "false"
 
@@ -7660,7 +7678,7 @@ literal "false"
 ,
  and FFCM2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -7768,7 +7786,7 @@ drives the second term's exponential to one.
 
 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "cantera"
 literal "false"
 
@@ -7806,7 +7824,7 @@ p & = & 101325.0\nonumber \\
 
 using the hydrogen submodel extracted from FFCM-2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -7927,7 +7945,7 @@ nolink "false"
 .
  These results were produced using hydrogen submodel from FFCM2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -8018,7 +8036,7 @@ The ChemGen steady-state temperature differs from the Cantera result by about 10
  For examples,
  a typical uncertainty of approximately 50 K is generally state of the art for non-invasive techniques such as coherent anti-Stokes Raman scattering
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Ded21"
 literal "false"
 
@@ -8165,7 +8183,7 @@ nolink "false"
 .
  These results were produced using hydrogen submodel from FFCM2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -8208,6 +8226,13 @@ literal "false"
 
 \begin_layout Subsection
 Jacobian Verification
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Jacobian-Verification"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8388,7 +8413,7 @@ nolink "false"
 
  and using the UCSD chemical model
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "SanDiegoMech"
 literal "false"
 
@@ -8465,7 +8490,7 @@ Niemeyer et al.
  verified the PyJac-generated Jacobian by comparing their analytical Jacobian to an automatically differentiated Jacobian across a wide range of thermochemical states,
  evaluating between 100,000 and 1 million samples depending on the chemical model
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Nie17"
 literal "false"
 
@@ -9070,7 +9095,7 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -9137,7 +9162,7 @@ nolink "false"
  in comparison to Cantera source calculations for five tested chemical models,
  Ó Conaire 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Oco04"
 literal "false"
 
@@ -9146,7 +9171,7 @@ literal "false"
 ,
  Burke 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Bur12"
 literal "false"
 
@@ -9155,7 +9180,7 @@ literal "false"
 ,
  GRI-Mech 3.0 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Smi00"
 literal "false"
 
@@ -9164,7 +9189,7 @@ literal "false"
 ,
  UCSD 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "SanDiegoMech"
 literal "false"
 
@@ -9173,7 +9198,7 @@ literal "false"
 ,
  and FFCM2 
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citep
 key "Zha23"
 literal "false"
 
@@ -9200,9 +9225,107 @@ Implicit Time Integration
 
 \begin_layout Standard
 In this section we present a demonstration test case for the implicit time integration methods provided by ChemGen,
- motivated by the validated accuracy of the source term,
- successful explicit time integration,
- and confidence in the computed source term Jacobians.
+ motivated by the validated accuracy of the source term from Section
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Source-Term-Accuracy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ successful explicit time integration from Section
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Explicit-Time-Integration"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ and confidence in the computed source term Jacobians from Section
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Jacobian-Verification"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ We utilize the FFCM-2 chemical model 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Zha23"
+literal "false"
+
+\end_inset
+
+ to integrate a chemical state with initial conditions:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+T & = & 1800\nonumber \\
+p & = & 101325.0\nonumber \\
+\left(X_{O_{2}},X_{N_{2}},X_{H_{2}},X_{C_{2}H_{4}}\right) & = & \left(0.2,0.4,0.2,0.2\right)\label{eq:chemical_state_03}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/04_implicit/implicit_time.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:implicit_homogeneous_reactor"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
