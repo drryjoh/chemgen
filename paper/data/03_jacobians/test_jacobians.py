@@ -48,7 +48,7 @@ def L2_J(Jcg, Jfd, ns):
     L2_J = Frobenius(Jcg, ns)
     for i in range(ns):
         for j in range(ns):
-            if np.abs(Jcg[i,j]) > L2_J/(10**20):
+            if np.abs(Jcg[i,j]) > L2_J/(10**7):
                 L2 += ((Jcg[i,j] - Jfd[i,j]))**2
     return np.sqrt(L2)/L2_J
 
@@ -58,13 +58,13 @@ def L2_nei_J(Jcg, Jfd, ns):
     number_of_elements = 0
     for i in range(ns):
         for j in range(ns):
-            if np.abs(Jcg[i,j]) > L2_J/(10**10):
+            if np.abs(Jcg[i,j]) > L2_J/(10**7):
                 L2 += ((Jcg[i,j] - Jfd[i,j])/Jcg[i,j])**2
                 number_of_elements+=1
     print(number_of_elements/ns**2)
     return np.sqrt(L2)
 
-mech = "sandiego"
+mech = "FFCM2_model"
 gas = ct.Solution(f"{mech}.yaml")
 
 ns = gas.n_species

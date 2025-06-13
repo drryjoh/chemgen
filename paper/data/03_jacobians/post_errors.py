@@ -3,22 +3,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Setup
 fig, axes = plt.subplots(1, 2, figsize=(18, 6), sharey=True)
-# Construct file path from directory
-L2s = ["errors/L2_FFCM2_model.npy","errors/L2_burke.npy" ]
-L2snei = ["errors/L2_nei_FFCM2_model.npy", "errors/L2_nei_burke.npy"]
 
 colors = ["purple", "blue", "orange", "red", "green"]
 mechs = ["OConnaire", "burke", "gri30", "sandiego", "FFCM2_model"]
-L2s = [f"errors/L2_{mech}.npy" for mech in mechs]
-L2snei = [f"errors/L2_nei_{mech}.npy" for mech in mechs]
 names = ["Ó Connaire", "Burke", "GRI v3.0", "UCSD", "FFCM2"]
 
+L2s = [f"errors/L2_{mech}.npy" for mech in mechs]
+L2snei = [f"errors/L2_nei_{mech}.npy" for mech in mechs]
+
+# Left subplot: pointwise error
 ax = axes[0]
+print("LAPACK Error Summary:")
+print(f"{'Mechanism':<12} {'Mean Error':>12} {'Max Error':>12}")
 for k, L2 in enumerate(L2s):
     errors = np.load(L2)
     log_errors = np.log10(errors)
-    # Plot histogram
+    
+    mean_val = np.mean(errors)
+    max_val = np.max(errors)
+    print(f"{names[k]:<12} {mean_val:12.2e} {max_val:12.2e}")
+
     sns.histplot(
         log_errors,
         ax=ax,
@@ -29,21 +35,30 @@ for k, L2 in enumerate(L2s):
         label=names[k],
         kde=True
     )
+    ax.axvline(np.mean(log_errors), color=colors[k], linestyle='--', linewidth=1)
 
-    # Plot mean line
-    mean_val = np.mean(log_errors)
-    std_val = np.std(log_errors)
-    ax.axvline(mean_val, color=colors[k], linestyle='--', linewidth=1)
 xticks = ax.get_xticks()
 integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]
 ax.set_xticks(integer_ticks)
 ax.set_xticklabels([f"$10^{{{int(t)}}}$" for t in integer_ticks])
+ax.set_title("$E_{norm}$ Error")
+ax.set_xlabel("Error")
+ax.set_ylabel("Frequency")
+ax.legend(title="Mechanism")
 
+# Right subplot: neighbor-aware error
 ax = axes[1]
+print("\nNeimeyer ErrorError Summary:")
+print(f"{'Mechanism':<12} {'Mean Error':>12} {'Max Error':>12}")
 for k, L2 in enumerate(L2snei):
     errors = np.load(L2)
     log_errors = np.log10(errors)
-    # Plot histogram
+
+    mean_val = np.mean(errors)
+    max_val = np.min(np.sort(errors)[-5:][::-1])
+    print(f"{names[k]:<12} {mean_val:12.2e} {max_val:12.2e}")
+
+
     sns.histplot(
         log_errors,
         ax=ax,
@@ -54,14 +69,16 @@ for k, L2 in enumerate(L2snei):
         label=names[k],
         kde=True
     )
+    ax.axvline(np.mean(log_errors), color=colors[k], linestyle='--', linewidth=1)
 
-    # Plot mean line
-    mean_val = np.mean(log_errors)
-    std_val = np.std(log_errors)
-    ax.axvline(mean_val, color=colors[k], linestyle='--', linewidth=1)
 xticks = ax.get_xticks()
 integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]
 ax.set_xticks(integer_ticks)
 ax.set_xticklabels([f"$10^{{{int(t)}}}$" for t in integer_ticks])
+ax.set_title("$E_{rel}$ Error")
+ax.set_xlabel("Error")
+ax.legend(title="Mechanism")
 
+plt.tight_layout()
+plt.savefig("error_distribution.png",dpi=300)
 plt.show()
