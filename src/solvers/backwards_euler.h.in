@@ -2,8 +2,8 @@
 {chemical_state} 
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt, 
-                {scalar} tol = 1e-10, 
-                {index} max_iter = 10) 
+                {scalar} tol = 1e-6,
+                {index} max_iter = 5)
 {{
         
         
@@ -34,7 +34,7 @@ backwards_euler({chemical_state} y,
             //Increment
             y_guess = y_guess + dy;
 
-            if (norm2(dy) < 1e-10)
+            if (norm2(dy) < tol)
             {{
                 std::cout << "# Newton iterations = " << iter + 1 << std::endl;
                 return set_chemical_state(y[0], y_guess); 
