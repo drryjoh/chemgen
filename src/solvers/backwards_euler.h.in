@@ -10,7 +10,7 @@ backwards_euler({chemical_state} y,
         {species} y_init = get_species(y);
         {scalar} temperature_guess = temperature(y[0], y_init);
         {species} y_guess = get_species(y);
-        for ({index} iter = 0; iter < 5; ++iter) 
+        for ({index} iter = 0; iter < max_iter; ++iter)
         {{
             {scalar} temperature_ = temperature(y[0], y_guess);
             {species} f = source(y_guess, temperature_);
