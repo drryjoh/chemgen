@@ -74,9 +74,13 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
         content = """
 auto read_scalar_or_default = [](const YAML::Node& node, const std::string& key, double default_value) 
 {{
-    if (node[key]) return node[key].as<{scalar}>();
-    std::cerr << "[Warning] " << key << " not defined. Using default: " << default_value << "\\n";
-    return default_value;
+    double value = default_value;
+    if (node[key])
+    {{
+        value = node[key].as<double>();
+    }}
+    std:: cout << key << " = " << value << std::endl;
+    return value;
 }};
 
 Species read_species_from_yaml(const std::string& filename, 
@@ -94,12 +98,14 @@ Species read_species_from_yaml(const std::string& filename,
     YAML::Node test_conditions = config["test_conditions"];
     temperature = test_conditions["temperature"].as<{scalar}>();
     pressure = test_conditions["pressure"].as<{scalar}>();
-    dt_be     = read_scalar_or_default(test_conditions, "dt_be",     5e-8);
-    dt_sdirk2 = read_scalar_or_default(test_conditions, "dt_sdirk2", 5e-7);
-    dt_ros = read_scalar_or_default(test_conditions, "dt_ros", 5e-7);
-    dt_sdirk4 = read_scalar_or_default(test_conditions, "dt_sdirk4", 2e-6);
-    dt_rk4    = read_scalar_or_default(test_conditions, "dt_rk4",    1e-8);
-    dt_yass    = read_scalar_or_default(test_conditions, "dt_yass",  1e-8);
+
+    dt_be     = read_scalar_or_default(test_conditions, "dt_be",     0.);
+    dt_sdirk2 = read_scalar_or_default(test_conditions, "dt_sdirk2", 0.);
+    dt_ros    = read_scalar_or_default(test_conditions, "dt_ros",    0.);
+    dt_sdirk4 = read_scalar_or_default(test_conditions, "dt_sdirk4", 0.);
+    dt_rk4    = read_scalar_or_default(test_conditions, "dt_rk4",    0.);
+    dt_yass   = read_scalar_or_default(test_conditions, "dt_yass",   0.);
+
     end_time  = read_scalar_or_default(test_conditions, "end_time",  1e-5);
 
     Species species = {{}}; // Zero-initialize the entire species vector
@@ -188,130 +194,151 @@ main()
 
     {chemical_state} y_init = set_chemical_state(int_energy, species);
     {chemical_state} y = y_init;
-    {scalar} dt = dt_be;
-    {index}  n_run = {index}(end_time/dt_be);
-    {scalar} t = 0;
+    {scalar} dt, t;
+    {index}  n_run;
 
-    be_file << t << " " << temperature(y);
-    for (const auto& val : get_species(y)) be_file << " " << val;
-    be_file << "\\n";
-    auto be_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < n_run; i++)
+    if (dt_be > 0.)
     {{
-        y = backwards_euler(y, dt);
-        t = t + dt;
+        dt = dt_be;
+        n_run = {index}(end_time/dt_be);
+        t = 0;
+
         be_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) be_file << " " << val;
         be_file << "\\n";
+        auto be_start = std::chrono::high_resolution_clock::now();
+        for({index} i = 0; i < n_run; i++)
+        {{
+            y = backwards_euler(y, dt);
+            t = t + dt;
+            be_file << t << " " << temperature(y);
+            for (const auto& val : get_species(y)) be_file << " " << val;
+            be_file << "\\n";
+        }}
+        auto be_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<{scalar}> be_duration = be_end - be_start;
+        std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
     }}
-    auto be_end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<{scalar}> be_duration = be_end - be_start;
-    std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
 
-    y = y_init;
-    dt = dt_sdirk2;
-    t = 0;
-    n_run = {index}(end_time/dt_sdirk2);
-    sdirk2_file << t << " " << temperature(y);
-    for (const auto& val : get_species(y)) sdirk2_file << " " << val;
-    sdirk2_file << "\\n";
-    
-    auto sdirk2_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < n_run; i++)
+    if (dt_sdirk2 > 0.)
     {{
-        y = sdirk2(y, dt);
-        t = t + dt;
+        y = y_init;
+        dt = dt_sdirk2;
+        t = 0;
+        n_run = {index}(end_time/dt_sdirk2);
         sdirk2_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) sdirk2_file << " " << val;
         sdirk2_file << "\\n";
-    }}
-    auto sdirk2_end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<{scalar}> sdirk2_duration = sdirk2_end - sdirk2_start;
-    std::cout << "[SDIRK2] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
 
-    y = y_init;
-    dt = dt_ros;
-    t = 0;
-    n_run = {index}(end_time/dt_ros);
-    ros_file << t << " " << temperature(y);
-    for (const auto& val : get_species(y)) ros_file << " " << val;
-    ros_file << "\\n";
-    
-    auto ros_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < n_run; i++)
+        auto sdirk2_start = std::chrono::high_resolution_clock::now();
+        for({index} i = 0; i < n_run; i++)
+        {{
+            y = sdirk2(y, dt);
+            t = t + dt;
+            sdirk2_file << t << " " << temperature(y);
+            for (const auto& val : get_species(y)) sdirk2_file << " " << val;
+            sdirk2_file << "\\n";
+        }}
+        auto sdirk2_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<{scalar}> sdirk2_duration = sdirk2_end - sdirk2_start;
+        std::cout << "[SDIRK2] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
+    }}
+
+    if (dt_ros > 0.)
     {{
-        y = rosenbroc(y, dt);
-        t = t + dt;
+        y = y_init;
+        dt = dt_ros;
+        t = 0;
+        n_run = {index}(end_time/dt_ros);
         ros_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) ros_file << " " << val;
         ros_file << "\\n";
-    }}
-    auto ros_end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<{scalar}> ros_duration = ros_end - ros_start;
-    std::cout << "[ROSENBROC] Time elapsed: " << ros_duration.count() << " seconds" << std::endl;
 
-    y = y_init;
-    dt = dt_yass;
-    t = 0;
-    n_run = {index}(end_time/dt_yass);
-    yass_file << t << " " << temperature(y);
-    for (const auto& val : get_species(y)) yass_file << " " << val;
-    yass_file << "\\n";
-    
-    auto yass_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < n_run; i++)
+        auto ros_start = std::chrono::high_resolution_clock::now();
+        for({index} i = 0; i < n_run; i++)
+        {{
+            y = rosenbroc(y, dt);
+            t = t + dt;
+            ros_file << t << " " << temperature(y);
+            for (const auto& val : get_species(y)) ros_file << " " << val;
+            ros_file << "\\n";
+        }}
+        auto ros_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<{scalar}> ros_duration = ros_end - ros_start;
+        std::cout << "[ROSENBROC] Time elapsed: " << ros_duration.count() << " seconds" << std::endl;
+    }}
+
+    if (dt_yass > 0.)
     {{
-        y = yass(y, dt);
-        t = t + dt;
+        y = y_init;
+        dt = dt_yass;
+        t = 0;
+        n_run = {index}(end_time/dt_yass);
         yass_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) yass_file << " " << val;
         yass_file << "\\n";
-    }}
-    auto yass_end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<{scalar}> yass_duration = yass_end - yass_start;
-    std::cout << "[YASS] Time elapsed: " << yass_duration.count() << " seconds" << std::endl;
 
-    y = y_init;
-    dt = dt_rk4;
-    n_run = {index}(end_time/dt_rk4);
-    t = 0;
-    rk4_file << t << " " << temperature(y);
-    for (const auto& val : get_species(y)) rk4_file << " " << val;
-    rk4_file << "\\n";
-    
-    auto rk4_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < n_run; i++)
+        auto yass_start = std::chrono::high_resolution_clock::now();
+        for({index} i = 0; i < n_run; i++)
+        {{
+            y = yass(y, dt);
+            t = t + dt;
+            yass_file << t << " " << temperature(y);
+            for (const auto& val : get_species(y)) yass_file << " " << val;
+            yass_file << "\\n";
+        }}
+        auto yass_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<{scalar}> yass_duration = yass_end - yass_start;
+        std::cout << "[YASS] Time elapsed: " << yass_duration.count() << " seconds" << std::endl;
+    }}
+
+    if (dt_rk4 > 0.)
     {{
-        y = rk4(y, dt);
-        t = t + dt;
+        y = y_init;
+        dt = dt_rk4;
+        n_run = {index}(end_time/dt_rk4);
+        t = 0;
         rk4_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) rk4_file << " " << val;
         rk4_file << "\\n";
-    }}
-    auto rk4_end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<{scalar}> rk4_duration = rk4_end - rk4_start;
-    std::cout << "[RK4] Time elapsed: " << rk4_duration.count() << " seconds" << std::endl;
 
-    y = y_init;
-    dt = dt_sdirk4;
-    n_run = {index}(end_time/dt_sdirk4);
-    t = 0;
-    sdirk4_file << t << " " << temperature(y);
-    for (const auto& val : get_species(y)) sdirk4_file << " " << val;
-    sdirk4_file << "\\n";
-    
-    auto sdirk4_start = std::chrono::high_resolution_clock::now();
-    for({index} i = 0; i < n_run; i++)
+        auto rk4_start = std::chrono::high_resolution_clock::now();
+        for({index} i = 0; i < n_run; i++)
+        {{
+            y = rk4(y, dt);
+            t = t + dt;
+            rk4_file << t << " " << temperature(y);
+            for (const auto& val : get_species(y)) rk4_file << " " << val;
+            rk4_file << "\\n";
+        }}
+        auto rk4_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<{scalar}> rk4_duration = rk4_end - rk4_start;
+        std::cout << "[RK4] Time elapsed: " << rk4_duration.count() << " seconds" << std::endl;
+    }}
+
+    if (dt_sdirk4 > 0.)
     {{
-        y = sdirk4(y, dt);
-        t = t + dt;
+        y = y_init;
+        dt = dt_sdirk4;
+        n_run = {index}(end_time/dt_sdirk4);
+        t = 0;
         sdirk4_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) sdirk4_file << " " << val;
         sdirk4_file << "\\n";
+
+        auto sdirk4_start = std::chrono::high_resolution_clock::now();
+        for({index} i = 0; i < n_run; i++)
+        {{
+            y = sdirk4(y, dt);
+            t = t + dt;
+            sdirk4_file << t << " " << temperature(y);
+            for (const auto& val : get_species(y)) sdirk4_file << " " << val;
+            sdirk4_file << "\\n";
+        }}
+        auto sdirk4_end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<{scalar}> sdirk4_duration = sdirk4_end - sdirk4_start;
+        std::cout << "[SDIRK4] Time elapsed: " << sdirk4_duration.count() << " seconds" << std::endl;
     }}
-    auto sdirk4_end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<{scalar}> sdirk4_duration = sdirk4_end - sdirk4_start;
-    std::cout << "[SDIRK4] Time elapsed: " << sdirk4_duration.count() << " seconds" << std::endl;
 
     return 0;
 }}
