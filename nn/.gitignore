@@ -1,9 +1,0 @@
-bin/
-__pycache__
-# src
-# src/*
-*.txt
-*.npy
-*.csv
-*.png
-
