@@ -82,6 +82,7 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
     
     if (norm2_r < abs_tol)
     {{
+        std::cout << "# GMRES iterations = 0" << std::endl;
         return x;
     }}
 
@@ -154,6 +155,11 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
     {species} result = {{}};
     for ({index} i = 0; i < n_species; ++i)
         result = result + y[i] * V[i];
+
+    if (final_iter + 1 < n_species)
+    {{
+        std::cout << "# GMRES iterations = " << final_iter + 1 << std::endl;
+    }}
 
     return result;
 }}
