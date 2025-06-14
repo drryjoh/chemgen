@@ -223,12 +223,11 @@ def main():
 
     if args.compile:
         compile(test_file, configuration_file, destination_folder, third_parties)
-
-    if args.compile and args.cmake:
-        compile(test_file, configuration_file, destination_folder, third_parties)
-    if not args.compile and args.cmake:
+    # elif args.compile and args.cmake:
+    #     compile(test_file, configuration_file, destination_folder, third_parties)
+    elif args.cmake:
         compile(test_file, configuration_file, destination_folder, third_parties, compile=False)
-    if args.pybind:
+    elif args.pybind:
         create_pybind(gas, headers, configuration, destination_folder, remove_reactions = args.remove_reactions)
 if __name__ == "__main__":
     main()
