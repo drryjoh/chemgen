@@ -36,8 +36,12 @@ backwards_euler({chemical_state} y,
 
             if (norm2(dy) < 1e-10)
             {{
+                std::cout << "# Newton iterations = " << iter + 1 << std::endl;
                 return set_chemical_state(y[0], y_guess); 
             }};
         }}
+
+        std::cout << "Newton solve did not converge!" << std::endl;
+
         return set_chemical_state(y[0], y_guess); //sets energy to zero to signal integration broke
 }}
