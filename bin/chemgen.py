@@ -66,6 +66,7 @@ def main():
     parser.add_argument("--force", action="store_true", default=False, help="Force code generation despite warnings")
     parser.add_argument("--pybind", action="store_true", default=False, help="Create pybind linker")
     parser.add_argument("--skip", action="store_true", default=False, help="Skip code generation")
+    parser.add_argument("--run_tests", action="store_true", default=True, help="Run tests")
 
     args = parser.parse_args()
     
@@ -234,14 +235,11 @@ def main():
             from modules.default_test import create_test
             create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
 
-    if args.compile:
-        compile(test_file, configuration_file, destination_folder, third_parties)
-    # elif args.compile and args.cmake:
-    #     compile(test_file, configuration_file, destination_folder, third_parties)
-    elif args.cmake:
-        compile(test_file, configuration_file, destination_folder, third_parties, compile=False)
-    elif args.pybind:
+    if args.pybind:
         create_pybind(gas, headers, configuration, destination_folder, remove_reactions = args.remove_reactions)
+    else:
+        compile_and_run(test_file, configuration_file, destination_folder, third_parties, args.cmake, args.compile, args.run_tests)
+
 if __name__ == "__main__":
     main()
 
