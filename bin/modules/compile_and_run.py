@@ -43,15 +43,19 @@ def run_tests(build_dir):
     print("Running tests...")
     run_command(test_command)
 
-def compile(test_file, configuration_file, destination_folder, third_parties, compile = True):
+def compile_and_run(test_file, configuration_file, destination_folder, third_parties, cmake, compile, run):
     # Define directories and C++ source files
     build_directory = destination_folder.parent
     cpp_source_files = ['src'+'/'+test_file]
-    # generate cmake
-    
-    generate_cmake_file(configuration_file, build_directory, third_parties)
+
+    # Generate cmake
+    if cmake or compile:
+        generate_cmake_file(configuration_file, build_directory, third_parties)
+
     # Compile the C++ code
     if compile:
         compile_cpp_code(build_directory, cpp_source_files, configuration_file)
-    # Run the tests
-    run_tests(build_directory)
+
+    # Run tests
+    if run:
+        run_tests(build_directory)
