@@ -65,6 +65,7 @@ def main():
     parser.add_argument("--jacobian-temperature", action="store_true", default=False, help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
     parser.add_argument("--force", action="store_true", default=False, help="Force code generation despite warnings")
     parser.add_argument("--pybind", action="store_true", default=False, help="Create pybind linker")
+    parser.add_argument("--skip", action="store_true", default=False, help="Skip code generation")
 
     args = parser.parse_args()
     
@@ -178,60 +179,60 @@ def main():
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
     setattr(configuration, "eigen",  eigen)
-        
-
 
     third_parties = [use_third_parties, third_party_path, libraries]
-    
-    headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian, remove_reactions = args.remove_reactions)
 
-    if "types_inl.h" in headers:
-        headers.remove("types_inl.h")
-        headers.insert(0,"types_inl.h")
-    
-    if "chemical_state_functions.h" in headers:
-        headers.remove("chemical_state_functions.h")
-        headers.append("chemical_state_functions.h")
+    test_file = 'chemgen.cpp'
 
-    if "rk4.h" in headers:
-        headers.remove("rk4.h")
-        headers.append("rk4.h")
+    if args.skip:
+        print("Skipping code generation")
+    else:
+        headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian, remove_reactions = args.remove_reactions)
 
-    if "linear_solvers.h" in headers:
-        headers.remove("linear_solvers.h")
-        headers.append("linear_solvers.h")
+        if "types_inl.h" in headers:
+            headers.remove("types_inl.h")
+            headers.insert(0,"types_inl.h")
 
-    if "backwards_euler.h" in headers:
-        headers.remove("backwards_euler.h")
-        headers.append("backwards_euler.h")
-    
-    if "sdirk.h" in headers:
-        headers.remove("sdirk.h")
-        headers.append("sdirk.h")
+        if "chemical_state_functions.h" in headers:
+            headers.remove("chemical_state_functions.h")
+            headers.append("chemical_state_functions.h")
 
-    if "rosenbroc.h" in headers:
-        headers.remove("rosenbroc.h")
-        headers.append("rosenbroc.h")
-    
-    if "yass.h" in headers:
-        headers.remove("yass.h")
-        headers.append("yass.h")
-    test_file = ''
-    
-    if args.custom_test:
-        try:
-            test_file = 'chemgen.cpp'
-            # Load the custom SourceWriter
-            create_test = load_custom_test(args.custom_test)
-            create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder, n_points = n_points_test)
+        if "rk4.h" in headers:
+            headers.remove("rk4.h")
+            headers.append("rk4.h")
 
-        except (FileNotFoundError, AttributeError) as e:
-            print(f"Error loading custom test writer: {e}")
-            sys.exit(1)
-    else: #replace with run time argument
-        test_file = 'chemgen.cpp'
-        from modules.default_test import create_test
-        create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
+        if "linear_solvers.h" in headers:
+            headers.remove("linear_solvers.h")
+            headers.append("linear_solvers.h")
+
+        if "backwards_euler.h" in headers:
+            headers.remove("backwards_euler.h")
+            headers.append("backwards_euler.h")
+
+        if "sdirk.h" in headers:
+            headers.remove("sdirk.h")
+            headers.append("sdirk.h")
+
+        if "rosenbroc.h" in headers:
+            headers.remove("rosenbroc.h")
+            headers.append("rosenbroc.h")
+
+        if "yass.h" in headers:
+            headers.remove("yass.h")
+            headers.append("yass.h")
+
+        if args.custom_test:
+            try:
+                # Load the custom SourceWriter
+                create_test = load_custom_test(args.custom_test)
+                create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder, n_points = n_points_test)
+
+            except (FileNotFoundError, AttributeError) as e:
+                print(f"Error loading custom test writer: {e}")
+                sys.exit(1)
+        else: #replace with run time argument
+            from modules.default_test import create_test
+            create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
 
     if args.compile:
         compile(test_file, configuration_file, destination_folder, third_parties)
