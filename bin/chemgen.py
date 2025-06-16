@@ -61,7 +61,7 @@ def main():
     parser.add_argument("--n-points-test", type=int, default=1000,  help="Number of points for testing (default: 1000)")
     parser.add_argument("--verbose", action="store_true", help="Verbose code generation")
     parser.add_argument("--remove_reactions", action="store_true", help="Generate the ability to remove single reaction from jacobian")
-    parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction") # can never be False
+    parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction") # TODO: this can never be False
     parser.add_argument("--jacobian-temperature", action="store_true", help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
     parser.add_argument("--force", action="store_true", help="Force code generation despite warnings")
     parser.add_argument("--pybind", action="store_true", help="Create pybind linker")
