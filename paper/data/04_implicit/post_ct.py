@@ -2,6 +2,12 @@
 import cantera as ct
 import numpy as np
 import matplotlib.pyplot as plt
+try:
+    plt.style.use('seaborn-colorblind')
+except OSError:
+    plt.style.use('seaborn-v0_8-colorblind')
+colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+print(len(colors))
 
 # Load the reaction mechanism
 gas = ct.Solution("FFCM2_model.yaml")
@@ -50,17 +56,15 @@ data = np.array(data)
 # Save results to file
 
 # Plot results
-plt.plot(data[:, 0]*1000000.0, data[:, 1],'-r', label = "Cantera", lw=4)
+plt.plot(data[:, 0]*1000000.0, data[:, 1],'-', label = "Cantera", lw=5)
 d = np.loadtxt("backward_euler.txt")
-plt.plot(d[:, 0]*1000000.0, d[:, 1],'-ok', label = "ChemGen Backward Euler", markevery=int(len(d[:, 0])/10))
-#d = np.loadtxt("rk4.txt")
-#plt.plot(d[:, 0]*1000000.0, d[:, 1],'--ok', label = "ChemGen RK4",markevery=int(len(d[:, 0])/10))
+plt.plot(d[:, 0]*1000000.0, d[:, 1],'-d', label = "ChemGen Backward Euler", markevery=int(len(d[:, 0])/10))
 d = np.loadtxt("sdirk2.txt")
-plt.plot(d[:, 0]*1000000.0, d[:, 1],'-ob', label = "ChemGen SDIRK2", markevery=int(len(d[:, 0])/10))
+plt.plot(d[:, 0]*1000000.0, d[:, 1],'-x', label = "ChemGen SDIRK2", markevery=int(len(d[:, 0])/10))
 d = np.loadtxt("sdirk4.txt")
-plt.plot(d[:, 0]*1000000.0, d[:, 1],'-og', label = "ChemGen SDIRK4")
+plt.plot(d[:, 0]*1000000.0, d[:, 1],':^', label = "ChemGen SDIRK4", markevery=int(len(d[:, 0])/10))
 d = np.loadtxt("ros.txt")
-plt.plot(d[:, 0]*1000000.0, d[:, 1],'-o',color='purple', label = "ChemGen Rosenbroc", markevery=int(len(d[:, 0])/10))
+plt.plot(d[:, 0]*1000000.0, d[:, 1],'--s',color='purple', label = "ChemGen Rosenbroc", markevery=int(len(d[:, 0])/10))
 
 d = np.loadtxt("yass.txt")
 plt.plot(d[:, 0]*1000000.0, d[:, 1],'-d',color='orange', label = "ChemGen YASS", markevery=int(len(d[:, 0])/10))

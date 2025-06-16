@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import chemgen as cg
 
 # Load the reaction mechanism
-gas = ct.Solution("ffcm2_h2.yaml")
+gas = ct.Solution("FFCM2_Model.yaml")
 
 # Define initial conditions
 test_conditions = {
@@ -13,8 +13,9 @@ test_conditions = {
     "pressure": 101325.0,  # Pa
     "species": {
         "O2": 0.2,
-        "N2": 0.6,
+        "N2": 0.4,
         "H2": 0.2,
+        "C2H4": 0.2,
     }
 }
 
@@ -44,12 +45,12 @@ for t in time:
     network.advance(t)
     temperature.append(reactor.T)
     data.append([t, reactor.T])
-    if t>4e-6:
+    if t>8e-6:
         T = reactor.T 
         C = reactor.thermo.concentrations
         break
 
-big_dt = 5e-6
+big_dt = 2.5e-6
 T_in = T 
 C_in = C
 Ts = []
@@ -59,7 +60,7 @@ Cs = []
 
 for r in range(7):
     print(f"Refinement: {r+1}")
-    dt = 5e-6 / 2**r
+    dt = big_dt / 2**r
     n_steps = int(np.ceil(big_dt / dt))
     print(f"nsteps: {n_steps}")
     
@@ -67,7 +68,7 @@ for r in range(7):
     C = C_in.copy()
     
     for k in range(n_steps):
-        y = cg.sdirk4(C, T, dt, 1e-10, 10)
+        y = cg.sdirk4(C, T, dt, 1e-14, 10)
         C = y[1:]
         T = cg.temperature_from_internal_energy(C, y[0])
     

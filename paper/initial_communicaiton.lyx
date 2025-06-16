@@ -9282,7 +9282,63 @@ p & = & 101325.0\nonumber \\
 
 \end_inset
 
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:implicit_homogeneous_reactor"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
 
+\end_inset
+
+ compares the performance of implicit time integration methods against Cantera results using the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+ReactorNet
+\end_layout
+
+\end_inset
+
+ class.
+ ChemGen solutions are shown with markers placed every ten time steps,
+ except for SDIRK4,
+ which includes a marker at each time step.
+ All integrators demonstrate agreement with Cantera.
+ The time steps used in this example were all 
+\begin_inset Formula $\Delta t=\left(1\times10^{-7}\right)$
+\end_inset
+
+ seconds with the exception of 
+\begin_inset Formula $\Delta t=\left(5\times10^{-7}\right)$
+\end_inset
+
+ for SDIRK-4.
+ The homogeneous reactor was run for a physical time of 20 
+\begin_inset Formula $\mu$
+\end_inset
+
+s.
+ As a reference,
+ the Cantera results were generated using 
+\begin_inset Formula $\Delta t=1\times10^{-7}$
+\end_inset
+
+ with default settings.
+ Line markers are shown at every 10 time steps,
+ except for SDIRK-4,
+ where markers are placed every 5 steps to accommodate its larger time step.
+ Among the integrators,
+ the first-order methods,
+ YASS and Backward Euler,
+ exhibit the largest discrepancies from Cantera.
+ The Rosenbrock method shows improved agreement,
+ while SDIRK-2 and SDIRK-4 integrators match Cantera most closely.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -9291,13 +9347,13 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename data/04_implicit/implicit_time.png
-	lyxscale 20
+	lyxscale 30
 	scale 40
 
 \end_inset
@@ -9315,7 +9371,291 @@ name "fig:implicit_homogeneous_reactor"
 
 \end_inset
 
+ChemGen integrators were tested on a homogeneous reactor simulation run to 
+\begin_inset Formula $\ensuremath{20\,\mu\text{s}}$
+\end_inset
 
+ using a default time step of 
+\begin_inset Formula $\Delta t=1\times10^{-7}\,\text{s}$
+\end_inset
+
+,
+ except for SDIRK-4 which used 
+\begin_inset Formula $\Delta t=5\times10^{-7}\,\text{s}$
+\end_inset
+
+ and included markers every 5 steps.
+ While all integrators showed agreement with Cantera,
+ the higher-order SDIRK-2 and SDIRK-4 matched most closely,
+ whereas YASS and Backward Euler exhibited the largest discrepancies.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The results shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:implicit_homogeneous_reactor"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ were produced on several machines with reproducible timings.
+ YASS was the fastest integrator,
+ with the others slower by average factors of 3.80 (Backward Euler),
+ 1.55 (Rosenbrock),
+ 6.58 (SDIRK-2),
+ and 4.46 (SDIRK-4).
+ Backward Euler was slower due to the need for multiple linear solves per step,
+ in contrast to YASS,
+ which requires only a single solve.
+ A similar pattern holds for Rosenbrock,
+ which performs two linear solves but offers higher accuracy.
+ While SDIRK-2 and SDIRK-4 were initially slower,
+ both retained stability across all test cases and approached the speed of YASS when the time step was increased to 
+\begin_inset Formula $\Delta t=1\times10^{-6}$
+\end_inset
+
+,
+ achieving comparable error levels.
+ 
+\end_layout
+
+\begin_layout Standard
+In computational physics,
+ The optimal choice of time integrator is problem dependent.
+ For unsteady simulations requiring extremely small time steps,
+ such as detonations,
+ the YASS integrator is often sufficient,
+ offering a balance of stability,
+ accuracy,
+ and computational efficiency.
+ In contrast,
+ higher-order methods like SDIRK-4 may be more suitable for steady-state or low Mach number solvers,
+ where larger time steps are feasible.
+ Although lower-order integrators are generally faster per step,
+ they may necessitate sub-stepping or adaptive routines to maintain stability and accuracy,
+ introducing additional complexity that may not be desirable in all applications.
+\end_layout
+
+\begin_layout Standard
+To assure the correct implementation of these implicit methods beyond comparisons to Cantera we performed an order of accuracy test for YASS,
+ SDIRK-4,
+ and Rosenbroc.
+ Because the implementation of SDIRK-2 is similar to SDIRK-4 and backward Euler is YASS with more linear solver iterations we omitted them from the discussion here.
+ For this test case we used the extracted hydrogen submodel from FFCM-2 with a state taken at time 
+\begin_inset Formula $t=4\mu$
+\end_inset
+
+s with initial conditions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+T & = & 1800\nonumber \\
+p & = & 101325.0\nonumber \\
+\left(X_{O_{2}},X_{H_{2}},X_{N_{2}}\right) & = & \left(0.2,0.2,0.6\right).\label{eq:chemical_state_04}
+\end{eqnarray}
+
+\end_inset
+
+The state at 
+\begin_inset Formula $t=4\mu$
+\end_inset
+
+s was was the approximate location of maximum 
+\begin_inset Formula $\frac{\partial T}{\partial t}$
+\end_inset
+
+.
+ This was to introduce enough variability and thus sensitivity to time step as opposed to other states with smaller 
+\begin_inset Formula $\frac{\partial T}{\partial t}$
+\end_inset
+
+ .
+ We targeted a time evolution of 
+\begin_inset Formula $\Delta t=2\times10^{-6}$
+\end_inset
+
+ for SDIRK-4 and 
+\begin_inset Formula $\Delta t=1\times10^{-7}$
+\end_inset
+
+ for YASS and Rosenbroc.
+ We performed five refinements that change the time step by a factor of 
+\begin_inset Formula $2$
+\end_inset
+
+,
+ 
+\begin_inset Formula $h=\Delta t/2^{r}$
+\end_inset
+
+ for 
+\begin_inset Formula $r=0\dots4$
+\end_inset
+
+,
+ for each integrator resulting in five solutions,
+ the most refined solution 
+\begin_inset Formula $h=\Delta t/16$
+\end_inset
+
+ was used at the converged solution for a norm calculation,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+L_{2,h}(C)=\sum_{i=1}^{n_{s}}\left(C_{h,i}-C_{\frac{\Delta t}{16},i}\right)^{2},\label{eq:L2_species}
+\end{equation}
+
+\end_inset
+
+Resulting in four 
+\begin_inset Formula $L_{2,h}$
+\end_inset
+
+ norms should reduce in error according to their observed order of accuracy,
+ 
+\begin_inset Formula $L_{2,h}(C)=L_{2,\Delta t}(C)\left(\frac{1}{2^{r}}\right)^{p}$
+\end_inset
+
+ where 
+\begin_inset Formula $p$
+\end_inset
+
+ is order of accuracy and 
+\begin_inset Formula $r$
+\end_inset
+
+ is the refinement,
+ 
+\begin_inset Formula $p=4$
+\end_inset
+
+ for SDIRK,
+ 
+\begin_inset Formula $p=2$
+\end_inset
+
+ for Rosenbroc,
+ and 
+\begin_inset Formula $p=1$
+\end_inset
+
+ for YASS.
+ The results for the convergence study are summarized in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:convergence_study"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ Each 
+\begin_inset Formula $L_{2,h}$
+\end_inset
+
+ is plotted against its corresponding refinement with a neighboring dashed reference line for the theoretical order of convergence calculated from 
+\begin_inset Formula $L_{2,\Delta t}$
+\end_inset
+
+.
+ For all three tested implicit methods,
+ the refinement errors decrease as expected.
+ In some cases,
+ super-convergence is observed during the first refinement,
+ likely due to the difficulty in selecting initial states that both lie within the asymptotic convergence regime and avoid reaching machine precision in the early refinement levels.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/04_implicit/convergence.png
+	lyxscale 30
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:convergence_study"
+
+\end_inset
+
+Order-of-accuracy study for YASS,
+ Rosenbrock,
+ and SDIRK-4 using a hydrogen submodel from FFCM-2 at a chemically active state near 
+\begin_inset Formula $t=4\,\mu\text{s}$
+\end_inset
+
+ for initial conditions 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:chemical_state_04"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ Each integrator was tested across five successive time-step refinements,
+ with the most refined solution used as reference.
+ The observed 
+\begin_inset Formula $L_{2}$
+\end_inset
+
+ errors decrease consistently with theoretical convergence rates 
+\begin_inset Formula $p=1$
+\end_inset
+
+ for YASS,
+ 
+\begin_inset Formula $p=2$
+\end_inset
+
+ for Rosenbrock,
+ 
+\begin_inset Formula $p=4$
+\end_inset
+
+ for SDIRK-4.
+ 
 \end_layout
 
 \end_inset

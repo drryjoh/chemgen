@@ -83,7 +83,7 @@ np.save("sdirk4_Cconvergence.npy",Cs)
 print("--Rosenbroc Block--")
 Ts = []
 Cs = []
-big_dt = 2.5e-7
+big_dt = 1.0e-7
 for r in range(n_refinements):
     print(f"Refinement: {r+1}")
     dt = big_dt / 2**r
@@ -111,11 +111,12 @@ np.save("rosenbroc_Cconvergence.npy",Cs)
 print("--Rosenbroc Block--")
 Ts = []
 Cs = []
-big_dt = 5e-8
+big_dt = 1e-7
 dt_min = 1e-9
 for r in range(n_refinements):
     print(f"Refinement: {r+1}")
     dt = big_dt / 2**r
+    print(dt)
     n_steps = int(np.ceil(big_dt / dt))
     print(f"nsteps: {n_steps}")
     
