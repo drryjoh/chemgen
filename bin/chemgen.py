@@ -67,6 +67,8 @@ def main():
     parser.add_argument("--pybind", action="store_true", help="Create pybind linker")
     parser.add_argument("--skip", action="store_true", help="Skip code generation")
     parser.add_argument("--skip-tests", action="store_true", help="Skip running tests")
+    parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
+    parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
 
     args = parser.parse_args()
     
@@ -187,8 +189,31 @@ def main():
 
     if args.skip:
         print("Skipping code generation")
+
+        if args.get_sparsity:
+            print("Warning: cannot get sparsity pattern if skipping code generation")
     else:
-        headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian, remove_reactions = args.remove_reactions)
+        if args.get_sparsity and not temperature_jacobian and not args.remove_reactions:
+            sparsity_pattern = np.zeros([gas.n_species, gas.n_species], dtype=int)
+        else:
+            sparsity_pattern = None
+            if args.plot_sparsity:
+                print("Warning: Cannot plot sparsity pattern if no get-sparsity argument")
+
+        headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian, remove_reactions = args.remove_reactions, sparsity_pattern=sparsity_pattern)
+
+        if args.get_sparsity:
+            n_nonzeros = np.count_nonzero(sparsity_pattern)
+            n_entries = sparsity_pattern.size
+            n_zeros = n_entries - n_nonzeros
+            sparsity_percent = 100.*(1. - n_nonzeros/n_entries)
+            print("Jacobian: # nonzero entries = {}, # zero entries = {}, total # entries = {}".format(n_nonzeros, n_zeros, n_entries))
+            print("Sparsity percentage = %g%%" % sparsity_percent)
+            if args.plot_sparsity:
+                import matplotlib.pyplot as plt
+                plt.figure()
+                plt.spy(sparsity_pattern)
+                plt.show()
 
         if "types_inl.h" in headers:
             headers.remove("types_inl.h")
