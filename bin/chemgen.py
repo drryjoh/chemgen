@@ -56,17 +56,17 @@ def main():
     parser.add_argument('destination', type=str, help="The destination folder where the files will be generated")
     parser.add_argument("--custom-source", type=str, help="Path to custom source writer file")
     parser.add_argument("--custom-test", type=str, help="Path to custom test case writer file")
-    parser.add_argument("--compile", action="store_true", default=False, help="Compile the source writer code")
-    parser.add_argument("--cmake", action="store_true", default=False, help="Compile the source writer code")
+    parser.add_argument("--compile", action="store_true", help="Compile the source writer code")
+    parser.add_argument("--cmake", action="store_true", help="Compile the source writer code")
     parser.add_argument("--n-points-test", type=int, default=1000,  help="Number of points for testing (default: 1000)")
-    parser.add_argument("--verbose", action="store_true", default=False, help="Verbose code generation")
-    parser.add_argument("--remove_reactions", action="store_true", default=False, help="Generate the ability to remove single reaction from jacobian")
-    parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction")
-    parser.add_argument("--jacobian-temperature", action="store_true", default=False, help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
-    parser.add_argument("--force", action="store_true", default=False, help="Force code generation despite warnings")
-    parser.add_argument("--pybind", action="store_true", default=False, help="Create pybind linker")
-    parser.add_argument("--skip", action="store_true", default=False, help="Skip code generation")
-    parser.add_argument("--run_tests", action="store_true", default=True, help="Run tests")
+    parser.add_argument("--verbose", action="store_true", help="Verbose code generation")
+    parser.add_argument("--remove_reactions", action="store_true", help="Generate the ability to remove single reaction from jacobian")
+    parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction") # can never be False
+    parser.add_argument("--jacobian-temperature", action="store_true", help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
+    parser.add_argument("--force", action="store_true", help="Force code generation despite warnings")
+    parser.add_argument("--pybind", action="store_true", help="Create pybind linker")
+    parser.add_argument("--skip", action="store_true", help="Skip code generation")
+    parser.add_argument("--skip-tests", action="store_true", help="Skip running tests")
 
     args = parser.parse_args()
     
@@ -226,7 +226,7 @@ def main():
     if args.pybind:
         create_pybind(gas, headers, configuration, destination_folder, remove_reactions = args.remove_reactions)
     else:
-        compile_and_run(test_file, configuration_file, destination_folder, third_parties, args.cmake, args.compile, args.run_tests)
+        compile_and_run(test_file, configuration_file, destination_folder, third_parties, args.cmake, args.compile, args.skip_tests)
 
 if __name__ == "__main__":
     main()
