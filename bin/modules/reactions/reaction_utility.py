@@ -14,6 +14,7 @@ def get_efficiencies(reaction):
     return efficiencies
 def get_mixture_concentration(efficiencies, species_names, configuration):
     mixture_concentration_array = []
+    # TODO: Need to account for default efficiency
     if all(np.abs(eff-1.0) < 0.001 for eff in efficiencies.values()) or len(efficiencies) == 0:
         return "mixture_concentration"
     else:
@@ -38,8 +39,8 @@ def get_mixture_concentration_derivatives(reaction, efficiencies, species_names,
         return "{0}".format(','.join(mixture_concentration_array))
     else:
         if not efficiencies:
-            efficiencies = {specie: 1.0 for specie in species_names}
-        for species_index, specie in enumerate(species_names):
+            efficiencies = {specie: 1.0 for specie in species_names} # TODO: is this necessary?
+        for species_index, specie in enumerate(species_names): # TODO: species is both singular and plural
             if specie in efficiencies:
                 mixture_concentration_array[species_index] = f"{configuration.scalar_cast}({efficiencies[specie]})"
         return "{0}".format(', '.join(mixture_concentration_array))
