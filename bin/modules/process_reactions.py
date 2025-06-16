@@ -348,7 +348,7 @@ def create_rates_of_progress_derivatives(gas, progress_rates_derivatives, reacti
                 elif dforward_rate != '0':
                     formatted_text += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-    progress_rates_derivatives[reaction_index] = f"        //{reaction}\n"+formatted_text.replace('1 * ','').replace('1.0*','')
+    progress_rates_derivatives[reaction_index] = f"\n\n        // Reaction {reaction_index}: {reaction}\n"+formatted_text.replace('1 * ','').replace('1.0*','')
 
     # Sparsity for add_to_jacobian_all
     if sparsity_pattern is not None:
