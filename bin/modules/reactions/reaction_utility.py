@@ -44,3 +44,20 @@ def get_mixture_concentration_derivatives(reaction, efficiencies, species_names,
                 mixture_concentration_array[species_index] = f"{configuration.scalar_cast}({efficiencies[specie]})"
         return "{0}".format(', '.join(mixture_concentration_array))
 
+def get_mixture_concentration_derivatives_array(reaction, efficiencies, species_names, configuration):
+    array = np.full(len(species_names), get_default_efficiency(reaction))
+
+    if len(efficiencies) == 0:
+        return array
+
+    if reaction.reaction_type == "three-body-Arrhenius":
+        if reaction.third_body_name != 'M':
+            # In this case, efficiencies will always be size 1, so won't return prematurely
+            array = np.zeros(len(species_names))
+
+    if not efficiencies:
+        efficiencies = {specie: 1.0 for specie in species_names}
+    for species_index, specie in enumerate(species_names):
+        if specie in efficiencies:
+            array[species_index] = efficiencies[specie]
+    return array
