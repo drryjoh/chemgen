@@ -1,7 +1,7 @@
 #include <cmath>
 #include <algorithm>
 #include <array>
-#include <chrono>
+#include <chrono>   
 #include <iostream>  // For printing the result to the console
 #include <fstream>
 #include <string>
@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "chemical_state_functions.h"
 #include "rk4.h"
 //...........................................................................
-#include "./neural_net/MLP_4.hpp"
+#include "./neural_net/MLP_LU_1.hpp"
 #include "./neural_net/pinn.h"
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #include "linear_solvers.h"
@@ -185,11 +185,7 @@ main()
         be_file << "\n";
 
         // std::chrono::duration<double> NN_total_time; // FOR JAY
-        // std::chrono::duration<double> P_total_time; // FOR JAY
-        std::string which_nn = "MLP_4\n";
-        // std::string which_nn = "JACOBI\n";
-        // std::string which_nn = "GAUSS_SEIDEL\n";
-        std::cout << "\nUSING -> " << which_nn << std::endl;
+        std::cout << "\nUSING -> MLP_LU_1" << std::endl;
         // int cvs_iter = 0;
 
         auto be_start = std::chrono::high_resolution_clock::now();
@@ -202,30 +198,24 @@ main()
             // for (const auto& val : get_species(y)) be_file << " " << val;
             // be_file << "\n";
 
-            //..................................................................
-            // bool last_step = (i == n_run - 1);
             // cvs_iter = i;
             y = backwards_euler(y,
                                 dt,
-                                // bool last_step,
                                 // cvs_iter,
                                 // NN_total_time,
-                                // P_total_time,
                                 1e-12,
                                 10);
             t = t + dt;
             be_file << t << " " << temperature(y);
             for (const auto& val : get_species(y)) be_file << " " << val;
             be_file << "\n";
-            //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         }
         auto be_end = std::chrono::high_resolution_clock::now();
         // std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY
-        // std::cout << "Total Precondition Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY
         std::chrono::duration<double> be_duration = be_end - be_start;
         std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
-        // auto be_adjusted_duration = be_duration - NN_total_time - P_total_time;
+        // auto be_adjusted_duration = be_duration - NN_total_time; // FOR JAY
         // std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl // FOR JAY
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     }

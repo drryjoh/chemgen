@@ -2,10 +2,8 @@ ChemicalState
 backwards_euler(ChemicalState y,  
                 const double& dt,
                 //...........................................
-                // bool final_step,
                 // int& cvs_iter,
                 // std::chrono::duration<double>& NN_total_time,
-                // std::chrono::duration<double>& P_total_time,
                 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 double tol = 1e-12, 
                 int max_iter = 10
@@ -103,6 +101,7 @@ backwards_euler(ChemicalState y,
             Species dy = invert_jacobian(A) * res;
             //.............................
             // NOT WORKING (DO NOT USE)
+            // # define CHEMGEN_DIRECT_PINN
             #elif CHEMGEN_DIRECT_PINN
             Species dy = train_pinn(A,res);
             //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

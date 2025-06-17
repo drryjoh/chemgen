@@ -87,130 +87,6 @@
 
 
 
-# import numpy as np
-# import tensorflow as tf
-# import glob, os
-# from tensorflow.keras.utils import register_keras_serializable
-
-# # load data
-# A_paths  = sorted(glob.glob('./data_all/A_*.csv'), key=lambda p: int(os.path.basename(p).rsplit('_', 1)[1].split('.csv')[0]))
-# A_inv_paths  = sorted(glob.glob('./data_all/A_inv_*.csv'), key=lambda p: int(os.path.basename(p).rsplit('_', 1)[1].split('.csv')[0]))
-# b_paths  = sorted(glob.glob('./data_all/res_*.csv'), key=lambda p: int(os.path.basename(p).rsplit('_', 1)[1].split('.csv')[0]))
-# dy_paths = sorted(glob.glob('./data_all/dy_*.csv'), key=lambda p: int(os.path.basename(p).rsplit('_', 1)[1].split('.csv')[0]))
-
-# # print(len(A_inv_paths))
-# # print(len(b_paths))
-# # print(len(dy_paths))
-
-# # assert same number of samples
-# assert len(A_inv_paths) == len(b_paths) == len(dy_paths), "Mismatch in number of files!"
-# num_samples = len(A_inv_paths) #200 data samples
-# print(f"Loading {num_samples} samples…")
-
-# # preallocate memory for large data set of array of arrays
-# A_s = np.zeros((num_samples, 96, 96, 1), dtype='float32')
-# A_inv_s = np.zeros((num_samples, 96, 96, 1), dtype='float32')
-# B_s = np.zeros((num_samples, 96, 1),    dtype='float32')
-# X_s = np.zeros((num_samples, 96, 1),    dtype='float32')
-
-# # load every data sample into set of arrays of arrays
-# for i, (Af, Ainvf, bf, dyf) in enumerate(zip(A_paths, A_inv_paths, b_paths, dy_paths)):
-#     A_s[i, :, :, 0] = np.loadtxt(Af,  delimiter=',', dtype='float32')
-#     A_inv_s[i, :, :, 0] = np.loadtxt(Ainvf,  delimiter=',', dtype='float32')
-#     B_s[i, :,  0]   = np.loadtxt(bf,  delimiter=',', dtype='float32')
-#     X_s[i, :,  0]   = np.loadtxt(dyf, delimiter=',', dtype='float32')
-
-# # build label tensor
-# Y = np.concatenate([B_s, X_s], axis=-1) 
-
-# # pipeline the data
-# ds = tf.data.Dataset.from_tensor_slices((A_inv_s, Y))
-# ds = ds.shuffle(buffer_size=num_samples, reshuffle_each_iteration=True)
-
-# val_size   = int(0.1 * num_samples)
-# val_ds     = ds.take(val_size).batch(32).prefetch(tf.data.AUTOTUNE)
-# train_ds   = ds.skip(val_size).batch(32).prefetch(tf.data.AUTOTUNE)
-
-# # model
-# model = tf.keras.Sequential([
-#     tf.keras.Input(shape=(96,96,1)),
-#     tf.keras.layers.Dense(8, activation=tf.keras.layers.LeakyReLU(alpha=0.1)),
-#     tf.keras.layers.Dense(4, activation=tf.keras.layers.LeakyReLU(alpha=0.1)),
-#     tf.keras.layers.Dense(2, activation=tf.keras.layers.LeakyReLU(alpha=0.1)),
-#     tf.keras.layers.Dense(1, activation='linear'),
-#     tf.keras.layers.Reshape((96,96))
-# ])
-
-# @register_keras_serializable(package='CustomLosses')
-# def custom_loss(y_true, y_pred):
-#     P     = y_pred
-#     b_vec = y_true[..., 0]
-#     x_vec = y_true[..., 1]
-#     y_hat = tf.linalg.matvec(P, b_vec)
-#     return tf.reduce_mean(tf.square(y_hat - x_vec))
-
-# model.compile(
-#     optimizer=tf.keras.optimizers.Adam(1e-4),
-#     loss=custom_loss
-# )
-
-# # train and save
-# es  = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=30, restore_best_weights=True)
-# rlr = tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, min_lr=1e-7)
-
-# model.fit(
-#     train_ds,
-#     validation_data=val_ds,
-#     epochs=1000,
-#     callbacks=[es, rlr],
-#     verbose=2
-# )
-# model.save('test.keras')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -236,16 +112,16 @@ import tensorflow as tf
 from tensorflow.keras import layers, callbacks, models, optimizers
 
 # config
-DATA_DIR        = "data_825"
-MODEL_PATH      = "MLP_4.keras"
-CSV_FILE        = "MLP_4.csv"
+DATA_DIR        = "EULER_825"
+MODEL_PATH      = "TEST.keras"
+CSV_FILE        = "TEST.csv"
 NUM_SAMPLES     = 825
 M               = 96
 FLAT_DIM        = M * M      
 BATCH_SIZE      = 16
-EPOCHS          = 2000
+EPOCHS          = 100
 HIDDEN_UNITS    = 8
-LEARNING_RATE   = 1e-2
+LEARNING_RATE   = 1e-3
 CLIP_NORM       = 1.0        
 VALIDATION_SPLIT= 0.3
 RANDOM_SEED     = 42
@@ -293,26 +169,30 @@ X_tr, X_val, y_tr, y_val = train_test_split(
 # x = layers.Activation("relu")(x)
 # outputs = layers.Dense(FLAT_DIM, activation=None)(x)
 # model = models.Model(inputs, outputs)
+###########
 model = tf.keras.Sequential([
     layers.Input(shape=(FLAT_DIM,)),
     layers.Dense(HIDDEN_UNITS),
+    # layers.UnitNormalization(axis=-1),
     layers.BatchNormalization(),
+    # layers.Activation("relu"),
     layers.LeakyReLU(negative_slope=0.01),
     layers.Dense(HIDDEN_UNITS),
-    layers.BatchNormalization(),
-    layers.LeakyReLU(negative_slope=0.01),
-    layers.Dense(HIDDEN_UNITS),
-    layers.BatchNormalization(),
-    layers.LeakyReLU(negative_slope=0.01),
-    layers.Dense(HIDDEN_UNITS),
-    layers.BatchNormalization(),
+    # layers.BatchNormalization(),
+    # layers.Activation("relu"),
     layers.LeakyReLU(negative_slope=0.01),
     layers.Dense(FLAT_DIM, activation="linear")
 ])
+###########
 
 # compile model with gradient clipping
 opt = optimizers.Adam(learning_rate=LEARNING_RATE, clipnorm=CLIP_NORM)
-model.compile(optimizer=opt, loss=tf.keras.losses.LogCosh())
+model.compile(optimizer=opt, 
+            #   loss=tf.keras.losses.MeanSquaredError()
+              loss=tf.keras.losses.LogCosh()
+            #   loss='binary_crossentropy',
+            #   metrics=['accuracy']
+              )
 
 # set up early stopping and checkpoint
 early_stop = callbacks.EarlyStopping(monitor="val_loss", patience=500, restore_best_weights=True)

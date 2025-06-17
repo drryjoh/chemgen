@@ -3,7 +3,7 @@
 #include <sstream>
 #include <array>
 #include <iomanip> 
-#include "SMALLEST.hpp" 
+#include "MLP_x_1.hpp" 
 #include <chrono>
 
 using namespace std;
@@ -11,7 +11,7 @@ using Scalar = double;
 
 int main() {
     
-    ifstream file("../data_200/A_199.csv");
+    ifstream file("../EULER_825/A_0.csv");
     if (!file) {
         std::cerr << "Error opening file A.csv" << std::endl;
         return 1;
@@ -28,7 +28,7 @@ int main() {
 
     // Pass the input to your generated CNN function
     // auto start = std::chrono::high_resolution_clock::now();
-    auto output = SMALLEST<Scalar>(A);
+    auto output = MLP_x_1<Scalar>(A);
     // auto end = std::chrono::high_resolution_clock::now();
     // std::chrono::duration<double> elapsed = end - start;
     // std::cout << "NN time = " << elapsed.count() << " seconds" << std::endl; 

@@ -87,6 +87,21 @@ SpeciesJacobian unflatten_matrix(std::array<double, 96 * 96> A)
 }
 #endif
 
+std::pair<std::array<double, 96 * 96>, std::array<double, 96 * 96>> split_matrix(std::array<double, 96 * 96 * 2> LU)
+{
+    std::array<double, 96 * 96> L;
+    std::array<double, 96 * 96> U;
+    for (int i = 0; i < 96; i++)
+    {
+        for (int j = 0; j < 96; j++)
+        {
+            L[(i*96)+j] = LU[(i*96*2)+j];
+            U[(i*96)+j] = LU[(i*96*2)+j+96];
+        }
+    }
+    return {L,U};
+}
+
 // #define CHEMGEN_PRECONDITIONER_NN_DIAGONAL
 #ifdef CHEMGEN_PRECONDITIONER_NN_DIAGONAL
 
@@ -161,10 +176,21 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     Species r = b_ - (A_ * x);
 //.............................................
 #elif defined(CHEMGEN_PRECONDITIONER_NN)
+    //// REGULAR A_inv ////
+    // std::array<double, 96 * 96> A_flat = flatten_matrix(A);
+    // std::array<double, 96 * 96> P_flat = MLP_2(A_flat);
+    // SpeciesJacobian P = unflatten_matrix(P_flat);
+    // Species r = P*(b - A*x);
+    // SpeciesJacobian A_ = A;
+
+    //// LU DECOMPOSITION ////
     std::array<double, 96 * 96> A_flat = flatten_matrix(A);
-    std::array<double, 96 * 96> P_flat = MLP_4(A_flat);
-    SpeciesJacobian P = unflatten_matrix(P_flat);
-    Species r = P*(b - A*x);
+    std::array<double, 96 * 96 * 2> LU_flat = MLP_LU_1(A_flat);
+    auto [L_flat, U_flat] = split_matrix(LU_flat);
+    SpeciesJacobian L = unflatten_matrix(L_flat);
+    SpeciesJacobian U = unflatten_matrix(U_flat);
+    SpeciesJacobian P = operator*(L, U);
+    Species r = P * (b - A * x);
     SpeciesJacobian A_ = A;
 #elif defined(CHEMGEN_PRECONDITIONER_NN_DIAGONAL)
     std::array<double, 96 * 96> A_flat = flatten_matrix(A);
