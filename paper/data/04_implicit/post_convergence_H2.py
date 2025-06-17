@@ -10,6 +10,7 @@ def L2(data):
     return np.sqrt(np.sum(data**2))
 
 titles = ["SDIRK-4","Rosenbroc","YASS"]
+scales = [1,10,1/100]
 #colors = ["red","green", "blue"]
 plt.figure(figsize=(8,6))
 for k, data_name in enumerate(["sdirk4","rosenbroc","yass"]):
@@ -39,17 +40,18 @@ for k, data_name in enumerate(["sdirk4","rosenbroc","yass"]):
     refinement_levels = refinement_levels[:-1]
     L2T = L2T[:-1]
     CL2 =CL2[:-1]
-    shift =0.15
+    shift =0.30
 
-    plt.semilogy(refinement_levels[::-1], CL2, 's-', color=colors[k], label=f'$L_{{2,h}}(C)$ for {titles[k]}', mfc="white")
+
+    plt.semilogy(refinement_levels[::-1], CL2/scales[k], 's-', color=colors[k], label=f'$L_{{2,h}}(C)$ for {titles[k]}', mfc="white")
     if data_name=="yass":
-        plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift) * (0.5)**(refinement_levels - 1), '--', color=colors[k], label=f'1st-order reference')
+        plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift) * (0.5)**(refinement_levels - 1)/scales[k], '--', color=colors[k], label=f'1st-order reference')
     elif data_name=="sdirk4":
-        plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift)  * (0.0625)**(refinement_levels - 1), '--', color=colors[k], label=f'4th-order reference')
+        plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift)  * (0.0625)**(refinement_levels - 1)/scales[k], '--', color=colors[k], label=f'4th-order reference')
     else:
-        plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift)  * (0.25)**(refinement_levels - 1), '--', color=colors[k], label=f'2nd-order reference')
+        plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift)  * (0.25)**(refinement_levels - 1)/scales[k], '--', color=colors[k], label=f'2nd-order reference')
     # Formatting
-    plt.xlabel("Refinement Level")
+    plt.xlabel("$h$")
     plt.ylabel(f"$L_{{2,h}}(C)$")
     #plt.title("Convergence of Temperature and Species")
     #plt.xticks(range(1, len(CL2) + 1))  # <- only show 1, 2, 3, 4, ...
