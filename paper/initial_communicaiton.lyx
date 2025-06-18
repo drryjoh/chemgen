@@ -4356,428 +4356,6 @@ with the remaining features,
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Note Comment
-status collapsed
-
-\begin_layout Section
-Calculation of the Source Term
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:sourceterm"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-There are several ways the reactions rates can be accrued to create the actual source term applied to the species conservation equations.
- The most simple approach would be to use the chemical state at every degree of freedom to calculate the forward reactions,
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{equation}
-k_{p}=\left(k_{1}^{f}\left(y_{c,p}\right),k_{2}^{f}\left(y_{c,p}\right),k_{3}^{f}\left(y_{c,p}\right),\dots,k_{n_{r}}^{f}\left(y_{c,p}\right)\right)\label{eq:forward_rates_vector}
-\end{equation}
-
-\end_inset
-
-Here we represent the entirity of forward reactions as 
-\begin_inset Formula $k_{p}$
-\end_inset
-
- where the subscript 
-\begin_inset Formula $p$
-\end_inset
-
-represents a particularly degree of freedom.
- At every degree of freedom there is a unique chemical state,
- 
-\begin_inset Formula $y_{c,p}$
-\end_inset
-
- that yields 
-\begin_inset Formula $n_{r}\times n_{dof}$
-\end_inset
-
- forward reactions.
- Once the forward reactions are calculated the rates of progress can then be computed and assembled as
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{equation}
-q_{p}=\left(q_{1,p},q_{2,p},q_{3,p},\dots,q_{n_{r},p}\right),\label{eq:progress_rates_vector}
-\end{equation}
-
-\end_inset
-
-where 
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{equation}
-q_{j,p}=k_{j}^{f}\left(y_{c,p}\right)\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}-\frac{k_{j}^{f}\left(y_{c,p}\right)}{K_{j}^{e}}\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}}.\label{eq:progress_rates_element}
-\end{equation}
-
-\end_inset
-
-This again 
-\begin_inset Formula $n_{r}\times n_{dof}$
-\end_inset
-
- rates of progress.
- The formulation in Equation
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:progress_rates_element"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- is reduced in Chemgen by removing any zero-power terms and substituting multiplication operations for any whole number power in the terms
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\[
-\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{f}}\text{ and }\prod_{i=1}^{n_{s}}C_{i}^{\nu_{ij}^{r}}.
-\]
-
-\end_inset
-
-For instance,
- the reaction 
-\begin_inset Formula $k_{1}$
-\end_inset
-
- describing the global reaction of hydrogen and oxygen becoming water,
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\[
-2H_{2}+O_{2}\rightleftharpoons2H_{2}O,
-\]
-
-\end_inset
-
-where 
-\begin_inset Formula $\left(C_{0},C_{1},C_{2}\right)=\left(C_{H_{2}},C_{O_{2}},C_{H_{2}O}\right)$
-\end_inset
-
-,
- reduces to 
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{equation}
-q_{1,p}=k_{1}^{f}\left(y_{c,p}\right)C_{0}^{2}C_{1}-\frac{k_{1}^{f}\left(y_{c,p}\right)}{K_{1}^{e}}C_{2}^{2}=k_{1}^{f}\left(y_{c,p}\right)C_{0}C_{o}C_{1}-\frac{k_{1}^{f}\left(y_{c,p}\right)}{K_{1}^{e}}C_{2}C_{2}\label{eq:progress_rates_reduced}
-\end{equation}
-
-\end_inset
-
-Finally,
- the rates of progress can then be assembled into the final net production rate 
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\[
-\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right),
-\]
-
-\end_inset
-
-where
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\[
-\omega_{i}=\sum_{j=1}^{n_{r}}\nu_{ij}q_{j}.
-\]
-
-\end_inset
-
-This results in 
-\begin_inset Formula $n_{n_{s}}\times n_{dof}$
-\end_inset
-
- source terms.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Extension to Navier-Stokes
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Diffusive_flows"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-An immediate way to extend the above formulation to include diffusion and thus approximate the chemically reacting Navier-Stokes equation is to use constant Schmidt and Lewis number approximations.
- The Navier-Stokes equations are of the form
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\frac{\partial y_{f}}{\partial t}+\nabla\cdot F\left(y_{f},\nabla y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\label{eq:conservation-law-strong-form-1}
-\end{equation}
-
-\end_inset
-
-Which has the addition of the viscous flux,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-F\left(y,\nabla y\right)=\left(\mathcal{F}^{}\left(y\right)-\mathcal{F}^{v}\left(y,\nabla y\right)\right)\label{eq:flux_function}
-\end{equation}
-
-\end_inset
-
-Where 
-\begin_inset Formula $\mathcal{F}^{}\left(y\right)$
-\end_inset
-
- is consistent with the flux function from Equation 
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:reacting-navier-stokes-spatial-convective-flux-component"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- and the viscous flux is 
-\begin_inset Formula 
-\begin{equation}
-\mathcal{F}_{k}^{v}\left(y,\nabla y\right)=\left(\tau_{1k},\ldots,\tau_{dk},\sum_{j=1}^{d}\tau_{kj}v_{j}-W_{i}C_{i}h_{i}V_{ik}-q_{k},C_{1}V_{1k},\ldots,C_{n_{s}}V_{n_{s}k}\right),\label{eq:navier-stokes-viscous-flux-spatial-component}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\noindent
-where 
-\begin_inset Formula $q:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d}$
-\end_inset
-
- is the thermal heat flux,
- 
-\begin_inset Formula $\tau:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d\times d}$
-\end_inset
-
- is the viscous stress tensor,
- 
-\begin_inset Formula $\left(h_{1},\ldots,h_{n_{s}}\right):\mathbb{R}^{m}\rightarrow\mathbb{R}^{n_{s}}$
-\end_inset
-
- are the species specific enthalpies,
- and 
-\begin_inset Formula $\left(\left(V_{11},\dots,V_{1d}\right),\dots,\left(V_{n_{s}1},\dots,V_{n_{s}d}\right)\right):\mathbb{R}^{m}\times\mathbb{R}^{n_{s}\times d}\rightarrow\mathbb{R}^{n_{s}\times d}$
-\end_inset
-
- are the species diffusion velocities.
- The 
-\begin_inset Formula $k$
-\end_inset
-
--th spatial component of the viscous stress tensor is given by
-\end_layout
-
-\begin_layout Standard
-\noindent
-\begin_inset Formula 
-\begin{equation}
-\tau_{k}\left(y,\nabla y\right)=\mu\left(\frac{\partial v_{1}}{\partial x_{k}}+\frac{\partial v_{k}}{\partial x_{1}}-\delta_{k1}\frac{2}{3}\sum_{j=1}^{d}\frac{\partial v_{j}}{\partial x_{j}},\ldots,\frac{\partial v_{d}}{\partial x_{k}}+\frac{\partial v_{k}}{\partial x_{d}}-\delta_{kd}\frac{2}{3}\sum_{j=1}^{d}\frac{\partial v_{j}}{\partial x_{j}}\right),\label{eq:reacting-navier-stokes-viscous-stress-tensor-component}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\noindent
-where 
-\begin_inset Formula $\mu:\mathbb{R}^{m}\rightarrow\mathbb{R}$
-\end_inset
-
- is the dynamic viscosity.
- The 
-\begin_inset Formula $k$
-\end_inset
-
--th spatial component of the heat flux is given as
-\begin_inset Formula 
-\begin{eqnarray*}
-q_{k}\left(y,\nabla y\right) & = & -\lambda\frac{\partial T}{\partial x_{k}}.
-\end{eqnarray*}
-
-\end_inset
-
-where 
-\begin_inset Formula $\lambda:\mathbb{R}^{m}\rightarrow\mathbb{R}$
-\end_inset
-
- is the thermal conductivity.
-\end_layout
-
-\begin_layout Standard
-Up to this point,
- the formulation presented is consistent with the a single component Navier-Stokes formulation.
- In a detailed transport approach,
- 
-\begin_inset Formula $\mu$
-\end_inset
-
- and 
-\begin_inset Formula $\lambda$
-\end_inset
-
- would be functions of both temperature and species concentration.
- To remove this,
- specialized models can be created for an average or temperature varying viscosity 
-\begin_inset Formula $\mu$
-\end_inset
-
- by using a Prandtl number approximation,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-Pr=\frac{c_{p}\mu}{\lambda}.\label{eq:Pr_number}
-\end{equation}
-
-\end_inset
-
-Remaining is the species diffusion velocity,
- which can be estimated from either a species specific Schmidt number,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-Sc_{i}=\frac{\mu}{\rho\bar{D}_{i}}.\label{eq:Sc_number}
-\end{equation}
-
-\end_inset
-
-or,
- in some cases,
- a species specific Lewis number,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-Le_{i}=\frac{\lambda}{\rho c_{p}\bar{D}_{i}}.\label{eq:Sc_number-1}
-\end{equation}
-
-\end_inset
-
-The species mixture averaged diffusion coefficient,
- 
-\begin_inset Formula $\bar{D}_{i}$
-\end_inset
-
-,
- is used in 
-\begin_inset Formula $k$
-\end_inset
-
--th spatial component of the diffusion velocity for the 
-\begin_inset Formula $i$
-\end_inset
-
--th species is given as
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-V_{ik}=\frac{\bar{D}_{i}}{C_{i}}\frac{\partial C_{i}}{\partial x_{k}}-\frac{\bar{D}_{i}}{\rho}\frac{\partial\rho}{\partial x_{k}}.\label{eq:diffusion_velocity}
-\end{equation}
-
-\end_inset
-
-These transport quantities complete the necessary components to extend the single-component Navier-Stokes to a multi-component formulation.
- An even more reduced case would be to assume a singular value for the species dependent quantities,
- 
-\begin_inset Formula $Le_{i}=Le$
-\end_inset
-
- and 
-\begin_inset Formula $Sc_{i}=Sc$
-\end_inset
-
-.
- For the species dependent detailed mixture averaged quantities see 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Joh20"
-literal "false"
-
-\end_inset
-
- which is based on 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Kee05"
-literal "false"
-
-\end_inset
-
-.
- In addition,
- Reynolds Averaged Navier Stokes and subgrid scale modeling have effective transport quantities where these nondimensionalized numbers can be modified in accordance
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Coo98,Hei06"
-literal "false"
-
-\end_inset
-
-.
- Therefore,
- under these assumptions,
- along with the thermodynamics and chemical source terms provided by ChemGen,
- it is possible to approximate the solution of the chemically reacting Navier–Stokes equations starting from a single component formulation.
-\end_layout
-
 \begin_layout Section
 Time Integration Strategies
 \end_layout
@@ -4881,61 +4459,6 @@ In this section we will cover some tools provided by ChemGen to integrate this s
 
 .
  
-\end_layout
-
-\begin_layout Subsection
-Constant Pressure Strategy
-\end_layout
-
-\begin_layout Standard
-In CFD,
- it is typically assumed that the volume of a cell remains constant over time.
- This assumption influences the allowable time integration strategies and,
- in compressible flows,
- permits pressure to rise in response to changes in species.
- However,
- in incompressible or low-Mach solvers,
- pressure is treated differently:
- it is assumed to adjust instantaneously,
- effectively decoupling it from the time evolution and thus remain constant at some thermodynamic value.
- This means pressure is held constant in time,
- which imposes a constraint on the energy conservation.
- Specifically,
- if pressure does not evolve,
- then the enthalpy,
- 
-\begin_inset Formula $\rho h=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}$
-\end_inset
-
- ,
- must also remain constant in time.
- This constraint becomes clear when examining the thermodynamic relationship between internal energy,
- enthalpy,
- and pressure,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\rho u=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}-R^{o}T\sum_{i=1}^{n_{s}}C_{i}=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}-p=\rho h-p,\label{eq:int_energy_enthalpy}
-\end{equation}
-
-\end_inset
-
-and applying a time derivative
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\frac{\partial\rho u}{\partial t}=\frac{\partial\rho h}{\partial t}-\cancelto{0}{\frac{\partial p}{\partial t}}=0\rightarrow\frac{\partial\rho h}{\partial t}=0.\label{eq:int_energy_enthalpy-1}
-\end{equation}
-
-\end_inset
-
-Therefore,
- the constant pressure assumption can be enforced by treating enthalpy as a globally constant,
- while leaving the rest of the system formulation unchanged.
 \end_layout
 
 \begin_layout Subsection
@@ -5065,10 +4588,14 @@ The Newton's method can be used to iteratively find
 \begin_inset Formula $y^{n+1}$
 \end_inset
 
- by rewriting 
+ by solving for the decrement 
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \frac{-y^{n}}{\Delta t}+\frac{y^{n+1}}{\Delta t}-S\left(y^{n+1}\right)=f(y^{n+1})=0\label{eq:BE-rewrite}
@@ -5079,11 +4606,16 @@ The Newton's method can be used to iteratively find
 and solving the decrement
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \delta y^{n+1}=\left(y_{k+1}^{n+1}-y_{k}^{n+1}\right)=-\mathcal{J}\left(y_{k}^{n+1}\right)^{-1}f(y_{k}^{n+1})\label{eq:newtons-method}
 \end{equation}
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -5270,424 +4802,13 @@ While backward Euler time integration is inherently stable,
  may be more appropriate.
 \end_layout
 
-\begin_layout Subsubsection
-SDIRK-2
-\end_layout
-
-\begin_layout Standard
-The two stage Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method belongs to a class of implicit Runge-Kutta schemes where staging is utilized like that of RK4 but implicit strategies are used at each stage
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Hai96,Fran97"
-literal "false"
-
-\end_inset
-
-.
- These methods are both stable and have higher order of accuracy than backward Euler.
- However,
- the Jacobian inversion approaches increase inherent cost of the method.
- The staged SDIRK-2 method is as follows
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray}
-\Gamma_{1} & = & S\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)\label{eq:SDIRK2}\\
-\Gamma_{2} & = & S\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)\nonumber \\
-y_{n+1} & = & y_{n}+\Delta t\left[(1-\gamma)\Gamma_{1}+\gamma\Gamma_{2}\right]\nonumber 
-\end{eqnarray}
-
-\end_inset
-
-For the first stage 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-f\left(\Gamma_{1}\right)=\Gamma_{1}-S\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\delta\Gamma_{1}=\left(\Gamma_{1,k+1}-\Gamma_{1,k}\right)=-\mathcal{J}\left(\Gamma_{1,k}\right)^{-1}f(\Gamma_{1,k})\label{eq:newtons-method-sdirk2}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}\left(\Gamma_{1,k}\right)\delta\Gamma_{1}=-f(\Gamma_{1,k})\label{eq:newtons-method-sdirk2-1}
-\end{equation}
-
-\end_inset
-
-Where
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}_{ij}\left(\Gamma_{1,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+\gamma\Delta t\Gamma_{1,k}\right)}{\partial C_{j}}\label{eq:newtons-method-sdirk2-1-1}
-\end{equation}
-
-\end_inset
-
-Here 
-\begin_inset Formula $\omega_{i}$
-\end_inset
-
- is evaluated from the initial guess of 
-\begin_inset Formula $\Gamma_{1,k=1}=\mathcal{S}\left(y_{n}\right)$
-\end_inset
-
- with subsequent 
-\begin_inset Formula $\Gamma_{1,k}$
-\end_inset
-
- coming from the iterated for decrement,
- 
-\begin_inset Formula $\Gamma_{1,k+1}=\Gamma_{1,k}+\delta\Gamma_{1}$
-\end_inset
-
-.
- Once 
-\begin_inset Formula $\Gamma_{1,k}$
-\end_inset
-
- is realized by the decrement being less than a prescribed tolerance,
-\begin_inset Formula $||\delta\Gamma_{1,k}||<\epsilon$
-\end_inset
-
-,
- the next stage can be solved for in a similar manner,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-f\left(\Gamma_{2}\right)=\Gamma_{2}-S\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\delta\Gamma_{2}=\left(\Gamma_{2,k+1}-\Gamma_{2,k}\right)=-\mathcal{J}\left(\Gamma_{2,k}\right)^{-1}f(\Gamma_{2,k})\label{eq:newtons-method-sdirk2-2}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}\left(\Gamma_{2,k}\right)\delta\Gamma_{2}=-f(\Gamma_{2,k})\label{eq:newtons-method-sdirk2-1-2}
-\end{equation}
-
-\end_inset
-
-Where
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}_{ij}\left(\Gamma_{2,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2,k}\right)}{\partial C_{j}}\label{eq:newtons-method-sdirk2-1-1-1}
-\end{equation}
-
-\end_inset
-
-Here 
-\begin_inset Formula $\omega_{i}$
-\end_inset
-
- is evaluated from the initial guess of 
-\begin_inset Formula $\Gamma_{2,k=1}=\mathcal{S}\left(y_{n}\right)$
-\end_inset
-
- with subsequent 
-\begin_inset Formula $\Gamma_{2,k}$
-\end_inset
-
- coming from the iterated for decrement,
- 
-\begin_inset Formula $\Gamma_{2,k+1}=\Gamma_{2,k}+\delta\Gamma_{2}$
-\end_inset
-
-.
- Once 
-\begin_inset Formula $\Gamma_{2,k}$
-\end_inset
-
- is realized the next stage can be solved for in a similar manner.
- Chemgen utilizes 
-\begin_inset Formula $\gamma=1-\sqrt{2}/2$
-\end_inset
-
- 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha14"
-literal "false"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Subsubsection
-SDIRK-4
-\end_layout
-
-\begin_layout Standard
-The four stage Singly Diagonally Implicit Runge-Kutta (SDIRK-4) follows the same structure as SDIRK-2 with additional stages which requires a set of coefficients.
- We utilize the coefficients implemented by FATODE 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha14"
-literal "false"
-
-\end_inset
-
- which have shown stability for stiff problems and achieve 4th order accuracy.
- The SDIRK-4 method is
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-y_{n+1} & = & y_{n}+\Delta t\sum_{i=1}^{5}b_{i}\Gamma_{i}\\
-\Gamma_{p} & = & S\left(y_{n}+\sum_{j=1}^{i}a_{pj}\Delta t\Gamma_{j}\right)
-\end{eqnarray*}
-
-\end_inset
-
-with coefficients
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\begin{array}{ccc}
-a_{ii}=0.2\bar{6} & a_{21}=0.5 & a_{31}=3.541539\times10^{-1}\\
-a_{32}=-5.415395\times10^{-2} & a_{41}=8.515494\times10^{-2} & a_{42}=-6.484332\times10^{-2}\\
-a_{43}=7.915325\times10^{-2} & a_{51}=2.100115 & a_{53}=2.399816\\
-a_{54}=-2.998818 & b_{1}=2.100115 & b_{2}=-7.677800\times10^{-1}\\
-b_{3}=2.399816 & b_{4}=-2.998818 & b_{5}=0.2\bar{6}
-\end{array}
-\end{equation}
-
-\end_inset
-
-The implicit strategy is similar to SDIRK-2 but written more generally here
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-f\left(\Gamma_{p}\right)=\Gamma_{p}-S\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\Gamma_{j}\right)
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\delta\Gamma_{p}=\left(\Gamma_{p,k+1}-\Gamma_{p,k}\right)=-\mathcal{J}\left(\Gamma_{p,k}\right)^{-1}f(\Gamma_{p,k})\label{eq:newtons-method-sdirk2-2-1}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}\left(\Gamma_{p,k}\right)\delta\Gamma_{p}=-f(\Gamma_{p,k})\label{eq:newtons-method-sdirk2-1-2-1}
-\end{equation}
-
-\end_inset
-
-Where
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}_{ij}\left(\Gamma_{p,k}\right)=\delta_{ij}-a_{pp}\Delta t\frac{\partial\omega_{i}\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\left(\Gamma_{j}\right)_{k}\right)}{\partial C_{j}}.\label{eq:newtons-method-sdirk2-1-1-1-1}
-\end{equation}
-
-\end_inset
-
-Like SDIRK-2,
- the subsequent 
-\begin_inset Formula $\Gamma_{p,k}$
-\end_inset
-
- coming from the iterated for decrement,
- 
-\begin_inset Formula $\Gamma_{p,k+1}=\Gamma_{p,k}+\delta\Gamma_{p}$
-\end_inset
-
-.
- Once 
-\begin_inset Formula $\Gamma_{p,k}$
-\end_inset
-
- is realized by the decrement being less than a prescribed tolerance,
-\begin_inset Formula $||\delta\Gamma_{p}||<\epsilon$
-\end_inset
-
-,
- the next stage can be solved for in a similar manner.
-\end_layout
-
-\begin_layout Subsubsection
-2nd order Rosenbrock
-\end_layout
-
-\begin_layout Standard
-Rosenbrock schemes are another attractive time integration strategy but removes the need of multiple Jacobian inversions that are required in a Newton solve per stage as shown in the prior SDIRK based methods.
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{eqnarray*}
-\left(\frac{1}{\Delta t\gamma_{11}}\mathcal{I}-J_{n}\right)\Gamma_{1} & = & S\left(y_{n}\right)\\
-\left(\frac{1}{\Delta t\gamma_{22}}\mathcal{I}-J_{n}\right)\Gamma_{2} & = & S\left(y_{n}+\alpha\Gamma_{1}\right)+\frac{\beta}{\Delta t}\Gamma_{1}-S\left(y_{n}\right)\\
-y_{n+1} & = & y_{n}+m_{1}\Gamma_{1}+m_{2}\Gamma_{2}
-\end{eqnarray*}
-
-\end_inset
-
-Here 
-\begin_inset Formula $J_{n}$
-\end_inset
-
- is the Jacobian held constant for both stages,
- thus removing the need for multiple Jacobian evaluations,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}_{n,ij}\left(\Gamma_{p,k}\right)=\frac{\partial\omega_{i}\left(y_{n}\right)}{\partial y_{n,j}}.\label{eq:newtons-method-sdirk2-1-1-1-1-1}
-\end{equation}
-
-\end_inset
-
-Again we utilize the coefficients from FATODE
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha14"
-literal "false"
-
-\end_inset
-
-,
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\begin{array}{ccccc}
-\gamma_{ii}=\gamma= & 1+\frac{\sqrt{2}}{2}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}.
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-YASS
-\end_layout
-
-\begin_layout Standard
-Yet another stiff solver (YASS) is an appealing solver that only uses one linear solve to predict the species evolution.
- YASS is equivalent to one Newton step for backwards Euler that relies on sub-stepping if the change in 
-\begin_inset Formula $y_{n}$
-\end_inset
-
- is too large.
- The integration is
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\left(\mathcal{I}-\Delta t\mathcal{J}\right)\delta y_{n}=\Delta tS\left(y_{n}\right)
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $y_{n+1}=y_{n}+\delta y_{n}$
-\end_inset
-
-.
- If the norm of the decrement is larger than some scalar value,
- 
-\begin_inset Formula $||\delta y_{n}||>\alpha$
-\end_inset
-
-,
- then the YASS integration's time step is reduced to 
-\begin_inset Formula $\Delta t_{s+1}=\frac{1}{2}\Delta t_{s}$
-\end_inset
-
- where 
-\begin_inset Formula $\Delta t_{s}=\Delta t$
-\end_inset
-
- in the first integration.
- This means that there is am appealing chance that the solver is performing a minimum of one linear solve.
- This necessitates restricting the solver to fail if the time step reaches a minimum value,
- 
-\begin_inset Formula $\Delta t_{s+1}<\Delta t_{\text{min}}$
-\end_inset
-
- ,
- to where a possible higher order method can be utilized.
- This is especially useful when stability is desired for time-split chemistry solves of very small times steps where the chemical state is not expected to evolve much,
- but the stiffness of the problem necessitates stability.
-\end_layout
-
-\begin_layout Subsubsection
-Other Time Integration Schemes
-\end_layout
-
 \begin_layout Standard
 Other time integration strategies not yet implemented in ChemGen can certainly be added using the same framework as the existing methods.
  These include,
  but are not limited to,
  multi-step implicit methods such as backward differentiation formulas ,
  which utilize information from previous time steps,
- and higher-order Rosenbrock methods 
+ and higher-order Rosenbroc methods 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha14"
@@ -5790,9 +4911,9 @@ literal "false"
  SDIRK-2 and SDIRK-4 require a Newton solve per stage,
  which by the same example is roughly 10 and 25 linear solves per step,
  respectively.
- This makes Rosenbrock and YASS appealing time integration strategies,
+ This makes Rosenbroc and YASS appealing time integration strategies,
  as they eliminate the need for a full Newton solve.
- Rosenbrock methods typically require two linear solves per step,
+ Rosenbroc methods typically require two linear solves per step,
  while YASS,
  without adaptation,
  requires only one.
@@ -7508,289 +6629,6 @@ nolink "false"
  
 \end_layout
 
-\begin_layout Standard
-To investigate the effect of polynomial order on source term accuracy,
- we performed the same error analysis while varying the polynomial degree 
-\begin_inset Formula $n_{p}$
-\end_inset
-
-.
- Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:source_term_accuracy_np"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- presents the results for two alternative choices:
- 
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
-(left) and 
-\begin_inset Formula $n_{p}=15$
-\end_inset
-
- (right).
- The error distributions shift with polynomial order.
- Specifically,
- the mean errors 
-\begin_inset Formula $\mu$
-\end_inset
-
- associated with 
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- are approximately an order of magnitude larger than those for 
-\begin_inset Formula $n_{p}=7$
-\end_inset
-
- presented in Figure 
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:source_term_accuracy_np"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-,
- while the 
-\begin_inset Formula $n_{p}=15$
-\end_inset
-
- results exhibit mean errors that are an order of magnitude smaller.
- The standard deviation 
-\begin_inset Formula $\sigma$
-\end_inset
-
- follows the same trend,
- indicating that increasing the polynomial degree not only improves the accuracy but also enhances the precision of the predicted source terms.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-alignment document
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename data/01_error/hist_deg4_15.png
-	lyxscale 20
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:source_term_accuracy_np"
-
-\end_inset
-
-Error distributions for ChemGen source calculations,
- 
-\begin_inset Formula $\epsilon$
-\end_inset
-
- from Equation
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:source_error"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-,
- in comparison to Cantera source calculations for five tested chemical models,
- Ó Conaire 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Oco04"
-literal "false"
-
-\end_inset
-
-,
- Burke 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Bur12"
-literal "false"
-
-\end_inset
-
-,
- GRI-Mech 3.0 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Smi00"
-literal "false"
-
-\end_inset
-
-,
- UCSD 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "SanDiegoMech"
-literal "false"
-
-\end_inset
-
-,
- and FFCM2 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha23"
-literal "false"
-
-\end_inset
-
-.
- The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
- The distribution mean,
- 
-\begin_inset Formula $\mu$
-\end_inset
-
-,
- and corresponding standard deviations,
- 
-\begin_inset Formula $\sigma$
-\end_inset
-
-,
- are also reported.
- These distributions were created using 
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- and 
-\begin_inset Formula $n_{p}=15$
-\end_inset
-
-.
- Increasing the polynomial degree for the thermodynamic fits decreases the error and increases the precision for the comparisons.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The reduction in error with increasing polynomial fit degree provides additional confidence in the correctness of the ChemGen implementation.
- During this investigation,
- we discovered that several parameters in the UCSD model,
- particularly those used in Troe fall-off reactions,
- contained extremely large or small values.
- For instance,
- in reaction 9,
- the parameters were specified as 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-texttt{T3:
- 1.0e-30,
- T1:
- 1.0e+30}
-\end_layout
-
-\end_inset
-
- .
- The interpretation and handling of such extreme values can vary between software implementations.
- Examining the form of 
-\begin_inset Formula $F_{\mathrm{cent}}$
-\end_inset
-
-,
- given by
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-F_{\mathrm{cent}}(T)=(1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T),
-\]
-
-\end_inset
-
-we note that the very small value of 
-\begin_inset Formula $T_{3}$
-\end_inset
-
- effectively drives the first exponential term to zero,
- while the extremely large value of 
-\begin_inset Formula $\ensuremath{T_{1}}$
-\end_inset
-
-drives the second term's exponential to one.
- It is assumed,
- based on the specification,
- that omitting 
-\begin_inset Formula $T_{2}$
-\end_inset
-
- entirely implies that the third term is excluded from the calculation,
- rather than setting 
-\begin_inset Formula $\ensuremath{T_{2}=0}$
-\end_inset
-
-
-\begin_inset CommandInset citation
-LatexCommand citep
-key "cantera"
-literal "false"
-
-\end_inset
-
-.
- Updating ChemGen to address these edge cases and avoid numerical instabilities led to reduced error and unlocked the expected trend that higher-order polynomial fits improved accuracy relative to Cantera.
-\end_layout
-
 \begin_layout Subsection
 Explicit Time Integration
 \begin_inset CommandInset label
@@ -8480,740 +7318,6 @@ OOA
 
 \end_layout
 
-\begin_layout Standard
-Niemeyer et al.
- verified the PyJac-generated Jacobian by comparing their analytical Jacobian to an automatically differentiated Jacobian across a wide range of thermochemical states,
- evaluating between 100,000 and 1 million samples depending on the chemical model
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Nie17"
-literal "false"
-
-\end_inset
-
-.
- They reported two metrics that could be used per chemical state to evaluate the relative error,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-E_{rel}=||\frac{\mathcal{J}_{b}-\hat{\mathcal{J}_{b}}}{\hat{\mathcal{J}_{b}}}||_{F}=\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\frac{\mathcal{J}_{b}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}}{\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}}\right)^{2}}\text{and}\label{eq:E_rel}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-E_{norm}=\frac{||\mathcal{J}_{b}-\hat{\mathcal{J}_{b}}||_{F}}{\hat{||\mathcal{J}_{b}}||_{F}}=\frac{\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\mathcal{J}_{b}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}\right)^{2}}}{\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}\right)^{2}}}.\label{eq:E_norm}
-\end{equation}
-
-\end_inset
-
-In these error metrics only matrix elements where 
-\begin_inset Formula $|\mathcal{J}_{ij}|>\hat{||\mathcal{J}_{b}}||_{F}/10^{20}$
-\end_inset
-
- were considered where the subscript 
-\begin_inset Formula $F$
-\end_inset
-
- denotes the Frobenius norm,
- 
-\begin_inset Formula $||A||_{F}=\sum_{j=1}^{m}\sum_{i=1}^{n}\left(A_{ij}\right)^{2}$
-\end_inset
-
- for matrix 
-\begin_inset Formula $A$
-\end_inset
-
- of size 
-\begin_inset Formula $n\times m$
-\end_inset
-
-.
- In Niemeyer et al.
- it was reported that 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- may be more useful in identifying discrepancies in both larger and smaller matrix elements.
- Table 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "tab:jacobian_norms"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- reports the mean and max error norms for both 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- and 
-\begin_inset Formula $E_{norm}$
-\end_inset
-
- using ChemGen for five chemical models using 10,000 randomly generated chemical states.
- Each analytical Jacobian,
- 
-\begin_inset Formula $\mathcal{J}_{b}$
-\end_inset
-
-,
- was compared to the second order finite difference Jacobian,
- 
-\begin_inset Formula $\hat{\mathcal{J}_{b}}$
-\end_inset
-
-,
- with 
-\begin_inset Formula $\delta C=1\times10^{-6}$
-\end_inset
-
- Kmol/m
-\begin_inset Formula $^{3}$
-\end_inset
-
-and 
-\begin_inset Formula $\delta T=1\times10^{-3}$
-\end_inset
-
- K.
- Overall,
- both error norms suggest that the analytical Jacobian is producing the expected derivatives.
- In this study,
- 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- errors were generally higher,
- but never exceeding 
-\begin_inset Formula $3\times10^{-3}$
-\end_inset
-
-.
- Only one specialized case for the chemical FFCM-2 gave a 
-\begin_inset Formula $E_{rel}>0.01$
-\end_inset
-
- which was due to sensitivity of 
-\begin_inset Formula $\delta C$
-\end_inset
-
-;
- when 
-\begin_inset Formula $\delta C$
-\end_inset
-
- was slightly increased to 
-\begin_inset Formula $\delta C=4\times10^{-6}$
-\end_inset
-
-,
- the 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- norm dropped to the order of 
-\begin_inset Formula $1\times10^{-4}$
-\end_inset
-
- indicating an sensitivity in 
-\begin_inset Formula $\hat{\mathcal{J}_{b}}$
-\end_inset
-
- to the concentration decrement.
- Figure
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:jacobian_error_distribution"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- shows the distributions of these norms for both 
-\begin_inset Formula $E_{norm}$
-\end_inset
-
- (left) and 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- (right).
- The 
-\begin_inset Formula $E_{norm}$
-\end_inset
-
- distributions are orders of magnitude less than the 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- distributions which indicates a sensitivity of the chosen norm for evaluating these Jacobians.
- Regardless,
- these results give confidence in the ability to accurately calculate the analytical Jacobians for implicit time integration approaches.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float table
-placement document
-alignment document
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset Formula $E_{norm}$
-\end_inset
-
- and 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- mean and max errors for different chemical models given 10,000 randomly produced states each.
- Overall,
- the 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- errors were generally higher,
- but never exceeding 
-\begin_inset Formula $3\times10^{-3}$
-\end_inset
-
-.
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:jacobian_norms"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="5">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Mechanism
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $E_{norm}$
-\end_inset
-
- Mean Error
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $E_{norm}$
-\end_inset
-
- Max Error
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- Mean Error
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- Max Error
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Ó Connaire
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $3.92\times10^{-10}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $2.39\times10^{-7}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $3.38\times10^{-7}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $8.71\times10^{-5}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Burke
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $1.23\times10^{-10}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $5.43\times10^{-8}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $4.44\times10^{-7}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $1.01\times10^{-4}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-GRI v3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $8.46\times10^{-11}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $5.57\times10^{-9}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $8.10\times10^{-6}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $4.07\times10^{-4}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-UCSD
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $7.55\times10^{-12}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $7.27\times10^{-10}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $9.06\times10^{-5}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $2.53\times10^{-3}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-FFCM-2
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $3.41\times10^{-9}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $3.35\times10^{-5}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $2.70\times10^{-4}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $1.70\times10^{-4}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-alignment document
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename data/03_jacobians/error_distribution.png
-	lyxscale 20
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:jacobian_error_distribution"
-
-\end_inset
-
-Error distributions for ChemGen source term Jacobian calculations,
- both 
-\begin_inset Formula $E_{nom}$
-\end_inset
-
- and 
-\begin_inset Formula $E_{rel}$
-\end_inset
-
- from Equations
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:E_norm"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- and 
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:E_rel"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-,
- in comparison to Cantera source calculations for five tested chemical models,
- Ó Conaire 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Oco04"
-literal "false"
-
-\end_inset
-
-,
- Burke 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Bur12"
-literal "false"
-
-\end_inset
-
-,
- GRI-Mech 3.0 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Smi00"
-literal "false"
-
-\end_inset
-
-,
- UCSD 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "SanDiegoMech"
-literal "false"
-
-\end_inset
-
-,
- and FFCM2 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha23"
-literal "false"
-
-\end_inset
-
-.
- The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
- These distributions demonstrate the sensitivity of the choice of norm in assessing the error of the Jacobians but still gives confidence that the source term Jacobian calculations are correct.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsection
 Implicit Time Integration
 \end_layout
@@ -9331,7 +7435,7 @@ s.
  the first-order methods,
  YASS and Backward Euler,
  exhibit the largest discrepancies from Cantera.
- The Rosenbrock method shows improved agreement,
+ The Rosenbroc method shows improved agreement,
  while SDIRK-2 and SDIRK-4 integrators match Cantera most closely.
  
 \end_layout
@@ -9410,13 +7514,13 @@ nolink "false"
  were produced on several machines with reproducible timings.
  YASS was the fastest integrator,
  with the others slower by average factors of 3.80 (Backward Euler),
- 1.55 (Rosenbrock),
+ 1.55 (Rosenbroc),
  6.58 (SDIRK-2),
  and 4.46 (SDIRK-4).
  Backward Euler was slower due to the need for multiple linear solves per step,
  in contrast to YASS,
  which requires only a single solve.
- A similar pattern holds for Rosenbrock,
+ A similar pattern holds for Rosenbroc,
  which performs two linear solves but offers higher accuracy.
  While SDIRK-2 and SDIRK-4 were initially slower,
  both retained stability across all test cases and approached the speed of YASS when the time step was increased to 
@@ -9587,7 +7691,7 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -9612,7 +7716,7 @@ name "fig:convergence_study"
 \end_inset
 
 Order-of-accuracy study for YASS,
- Rosenbrock,
+ Rosenbroc,
  and SDIRK-4 using a hydrogen submodel from FFCM-2 at a chemically active state near 
 \begin_inset Formula $t=4\,\mu\text{s}$
 \end_inset
@@ -9644,7 +7748,7 @@ nolink "false"
 \begin_inset Formula $p=2$
 \end_inset
 
- for Rosenbrock,
+ for Rosenbroc,
  
 \begin_inset Formula $p=4$
 \end_inset
@@ -10207,6 +8311,38 @@ literal "false"
 
 .
  In our initialization we perturbed the front with additional sinusoidal to introduce more irregularity.
+ 
+\end_layout
+
+\begin_layout Standard
+As the initial front progresses into the unreacted domain,
+ the irregular structures from the initialization cause the development of pressure waves that move normal to the direction of the detonation.
+ Eventually these transverse waves become regular and give rise to the expected cellular structures.
+ Figure
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:pressure-max-value"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ shows the maximum pressure at 
+\begin_inset Formula $t=200\text{ }\mu$
+\end_inset
+
+s predicted by detonationEulerFoam using ChemGen for the chemistry source terms,
+ and demonstrates that ChemGen yields the expected cellular detonation structures consistent with those produced by OpenFOAM’s native ODE solver as reported in 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Sun23"
+literal "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -10243,32 +8379,7 @@ nolink "false"
 \end_inset
 
 s.
- As the initial front progresses into the unreacted domain,
- the irregular structure from the initialization causes the development of pressure waves that move normal to the direction of the detonation.
- Eventually these transverse waves become regular and give rise to the structures seen in Figures 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:detonation_T"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- and 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:detonation_OH"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-.
- These results are consistent with those produced using the existing seulex ODE integrator.
+ These results are consistent with those produced using the existing seulex ODE integrator which are not reported here.
  Figures 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10318,7 +8429,50 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/05_cfd/maxp_full.png
+	lyxscale 10
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:pressure-max-value"
+
+\end_inset
+
+Pressure value
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -10459,7 +8613,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -10583,7 +8737,25 @@ name "fig:reaction_rate_compare_OF_CG"
 
 \end_inset
 
-Front location and velocity as a function of physical time.
+The production term form O-atoms,
+ 
+\begin_inset Formula $\mathcal{R}=\left(\frac{C_{O}^{n+1}-C_{O}^{n}}{\Delta t}\right)W_{i}$
+\end_inset
+
+ at 
+\begin_inset Formula $t=200\text{ }\mu$
+\end_inset
+
+s for a detonationEulerFOAM simulation of a two dimensional detonation wave using OpenFOAM seulex ODE solver (subscript 
+\begin_inset Formula $of$
+\end_inset
+
+) and for ChemGen using the YASS ODE solver (subscript 
+\begin_inset Formula $cg$
+\end_inset
+
+).
+ 
 \end_layout
 
 \end_inset
@@ -10594,10 +8766,6 @@ Front location and velocity as a function of physical time.
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsection
-Reaction Rates
 \end_layout
 
 \begin_layout Standard
@@ -10669,7 +8837,7 @@ Calculate all production rates
 \begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
- 
+
 \end_layout
 
 \end_deeper
@@ -10780,7 +8948,7 @@ Calculate all production rates
 \begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
- 
+
 \end_layout
 
 \end_deeper
@@ -10890,7 +9058,7 @@ Thread over the
 \begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
- 
+
 \end_layout
 
 \end_deeper
@@ -10991,7 +9159,7 @@ Calculate all production rates
 \begin_inset Formula $\omega_{p}=\left(\omega_{1,p},\omega_{2,p},\omega_{3,p},\dots,\omega_{n_{s},p}\right)$
 \end_inset
 
- 
+
 \end_layout
 
 \end_deeper
@@ -11083,7 +9251,7 @@ Thread over
 \begin_inset Formula $j$
 \end_inset
 
- 
+
 \end_layout
 
 \begin_layout Enumerate
@@ -11091,7 +9259,7 @@ individually calculate
 \begin_inset Formula $k_{j}$
 \end_inset
 
- 
+
 \end_layout
 
 \begin_layout Enumerate
@@ -11182,7 +9350,6 @@ there is bound to be a trade off.
  Quantities such as fluxes and gradients require face contributions that involve other degrees of freedom.
  It is therefore feasible that the approaches laid out here could be implemented in a variety of CFD software,
  with the caveat that the performance may not transition due to other factors beholden to the target software.
- 
 \end_layout
 
 \begin_layout Plain Layout
@@ -11196,7 +9363,7 @@ In this section we utilize these architectures in on several systems with two ma
 \end_layout
 
 \begin_layout Subsubsection
-CPU Based Parallelism 
+CPU Based Parallelism
 \end_layout
 
 \begin_layout Plain Layout
@@ -11258,13 +9425,45 @@ Stiffness
 
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Conclusion
+\end_layout
+
+\begin_layout Standard
+In this work,
+ we introduced ChemGen,
+ a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based software,
+ with an emphasis on CFD applications.
+ ChemGen employs a decorator-based approach to enable flexible and modular C++ code generation tailored to existing simulation ecosystems.
+ It generates both thermodynamic property approximations and source term expressions,
+ along with their analytical derivatives,
+ facilitating Jacobian assembly for a variety of time integration strategies relevant to computational physics.
+ Additionally,
+ ChemGen includes compact linear solvers to support implicit methods.
+\end_layout
+
+\begin_layout Standard
+We validated the correctness of the generated code by comparing its results against established Cantera source terms,
+ and showed consistency across a range of reaction mechanisms commonly used in CFD.
+ We further verified the accuracy of the source term Jacobians and demonstrated optimal order of accuracy across several supplied implicit integration methods.
+ Finally,
+ we applied ChemGen within an established detonation CFD simulation and reproduced results consistent with prior literature,
+ illustrating its ability to integrate seamlessly into mature computational frameworks.
+ All data,
+ source code,
+ and supplementary tutorials are publicly available.
+\end_layout
+
+\begin_layout Standard
+ChemGen lays the groundwork for the consistent inclusion of chemical source terms in diverse computational environments.
+ Its flexibility also opens the door for scalable reactive solvers,
+ reduced-order modeling strategies,
+ and accelerator-aware chemistry integration methods that can advance the frontier of high-fidelity reactive flow simulation.
 \end_layout
 
 \begin_layout Standard
@@ -11274,6 +9473,1832 @@ btprint "btPrintCited"
 bibfiles "citations,citations_runover"
 options "elsarticle-num"
 encoding "default"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+Algorithms of Implicit Time Integrators
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Algorithms-of-Implicit"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+SDIRK-2
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:SDIRK-2"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The two stage Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method belongs to a class of implicit Runge-Kutta schemes where staging is utilized like that of RK4 but implicit strategies are used at each stage
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Hai96,Fran97"
+literal "false"
+
+\end_inset
+
+.
+ These methods are both stable and have higher order of accuracy than backward Euler.
+ However,
+ the Jacobian inversion approaches increase inherent cost of the method.
+ The staged SDIRK-2 method is as follows
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\Gamma_{1} & = & S\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)\label{eq:SDIRK2}\\
+\Gamma_{2} & = & S\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)\nonumber \\
+y_{n+1} & = & y_{n}+\Delta t\left[(1-\gamma)\Gamma_{1}+\gamma\Gamma_{2}\right]\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+For the first stage 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+f\left(\Gamma_{1}\right)=\Gamma_{1}-S\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta\Gamma_{1}=\left(\Gamma_{1,k+1}-\Gamma_{1,k}\right)=-\mathcal{J}\left(\Gamma_{1,k}\right)^{-1}f(\Gamma_{1,k})\label{eq:newtons-method-sdirk2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(\Gamma_{1,k}\right)\delta\Gamma_{1}=-f(\Gamma_{1,k})\label{eq:newtons-method-sdirk2-1}
+\end{equation}
+
+\end_inset
+
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{ij}\left(\Gamma_{1,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+\gamma\Delta t\Gamma_{1,k}\right)}{\partial C_{j}}\label{eq:newtons-method-sdirk2-1-1}
+\end{equation}
+
+\end_inset
+
+Here 
+\begin_inset Formula $\omega_{i}$
+\end_inset
+
+ is evaluated from the initial guess of 
+\begin_inset Formula $\Gamma_{1,k=1}=\mathcal{S}\left(y_{n}\right)$
+\end_inset
+
+ with subsequent 
+\begin_inset Formula $\Gamma_{1,k}$
+\end_inset
+
+ coming from the iterated for decrement,
+ 
+\begin_inset Formula $\Gamma_{1,k+1}=\Gamma_{1,k}+\delta\Gamma_{1}$
+\end_inset
+
+.
+ Once 
+\begin_inset Formula $\Gamma_{1,k}$
+\end_inset
+
+ is realized by the decrement being less than a prescribed tolerance,
+\begin_inset Formula $||\delta\Gamma_{1,k}||<\epsilon$
+\end_inset
+
+,
+ the next stage can be solved for in a similar manner,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+f\left(\Gamma_{2}\right)=\Gamma_{2}-S\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta\Gamma_{2}=\left(\Gamma_{2,k+1}-\Gamma_{2,k}\right)=-\mathcal{J}\left(\Gamma_{2,k}\right)^{-1}f(\Gamma_{2,k})\label{eq:newtons-method-sdirk2-2}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(\Gamma_{2,k}\right)\delta\Gamma_{2}=-f(\Gamma_{2,k})\label{eq:newtons-method-sdirk2-1-2}
+\end{equation}
+
+\end_inset
+
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{ij}\left(\Gamma_{2,k}\right)=\delta_{ij}-\gamma\Delta t\frac{\partial\omega_{i}\left(y_{n}+(1-\gamma)\Delta t\Gamma_{1}+\gamma\Delta t\Gamma_{2,k}\right)}{\partial C_{j}}\label{eq:newtons-method-sdirk2-1-1-1}
+\end{equation}
+
+\end_inset
+
+Here 
+\begin_inset Formula $\omega_{i}$
+\end_inset
+
+ is evaluated from the initial guess of 
+\begin_inset Formula $\Gamma_{2,k=1}=\mathcal{S}\left(y_{n}\right)$
+\end_inset
+
+ with subsequent 
+\begin_inset Formula $\Gamma_{2,k}$
+\end_inset
+
+ coming from the iterated for decrement,
+ 
+\begin_inset Formula $\Gamma_{2,k+1}=\Gamma_{2,k}+\delta\Gamma_{2}$
+\end_inset
+
+.
+ Once 
+\begin_inset Formula $\Gamma_{2,k}$
+\end_inset
+
+ is realized the next stage can be solved for in a similar manner.
+ Chemgen utilizes 
+\begin_inset Formula $\gamma=1-\sqrt{2}/2$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Zha14"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+SDIRK-4
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:SDIRK-4"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The four stage Singly Diagonally Implicit Runge-Kutta (SDIRK-4) follows the same structure as SDIRK-2 with additional stages which requires a set of coefficients.
+ We utilize the coefficients implemented by FATODE 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Zha14"
+literal "false"
+
+\end_inset
+
+ which have shown stability for stiff problems and achieve 4th order accuracy.
+ The SDIRK-4 method is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+y_{n+1} & = & y_{n}+\Delta t\sum_{i=1}^{5}b_{i}\Gamma_{i}\\
+\Gamma_{p} & = & S\left(y_{n}+\sum_{j=1}^{i}a_{pj}\Delta t\Gamma_{j}\right)
+\end{eqnarray*}
+
+\end_inset
+
+with coefficients
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccc}
+a_{ii}=0.2\bar{6} & a_{21}=0.5 & a_{31}=3.541539\times10^{-1}\\
+a_{32}=-5.415395\times10^{-2} & a_{41}=8.515494\times10^{-2} & a_{42}=-6.484332\times10^{-2}\\
+a_{43}=7.915325\times10^{-2} & a_{51}=2.100115 & a_{53}=2.399816\\
+a_{54}=-2.998818 & b_{1}=2.100115 & b_{2}=-7.677800\times10^{-1}\\
+b_{3}=2.399816 & b_{4}=-2.998818 & b_{5}=0.2\bar{6}
+\end{array}
+\end{equation}
+
+\end_inset
+
+The implicit strategy is similar to SDIRK-2 but written more generally here
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+f\left(\Gamma_{p}\right)=\Gamma_{p}-S\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\Gamma_{j}\right)
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\delta\Gamma_{p}=\left(\Gamma_{p,k+1}-\Gamma_{p,k}\right)=-\mathcal{J}\left(\Gamma_{p,k}\right)^{-1}f(\Gamma_{p,k})\label{eq:newtons-method-sdirk2-2-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}\left(\Gamma_{p,k}\right)\delta\Gamma_{p}=-f(\Gamma_{p,k})\label{eq:newtons-method-sdirk2-1-2-1}
+\end{equation}
+
+\end_inset
+
+Where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{ij}\left(\Gamma_{p,k}\right)=\delta_{ij}-a_{pp}\Delta t\frac{\partial\omega_{i}\left(y_{n}+\sum_{j=1}^{p}a_{pj}\Delta t\left(\Gamma_{j}\right)_{k}\right)}{\partial C_{j}}.\label{eq:newtons-method-sdirk2-1-1-1-1}
+\end{equation}
+
+\end_inset
+
+Like SDIRK-2,
+ the subsequent 
+\begin_inset Formula $\Gamma_{p,k}$
+\end_inset
+
+ coming from the iterated for decrement,
+ 
+\begin_inset Formula $\Gamma_{p,k+1}=\Gamma_{p,k}+\delta\Gamma_{p}$
+\end_inset
+
+.
+ Once 
+\begin_inset Formula $\Gamma_{p,k}$
+\end_inset
+
+ is realized by the decrement being less than a prescribed tolerance,
+\begin_inset Formula $||\delta\Gamma_{p}||<\epsilon$
+\end_inset
+
+,
+ the next stage can be solved for in a similar manner.
+\end_layout
+
+\begin_layout Subsection
+2nd-Order Rosenbroc
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Rosenbroc"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Rosenbroc schemes are another attractive time integration strategy but removes the need of multiple Jacobian inversions that are required in a Newton solve per stage as shown in the prior SDIRK based methods.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left(\frac{1}{\Delta t\gamma_{11}}\mathcal{I}-J_{n}\right)\Gamma_{1} & = & S\left(y_{n}\right)\\
+\left(\frac{1}{\Delta t\gamma_{22}}\mathcal{I}-J_{n}\right)\Gamma_{2} & = & S\left(y_{n}+\alpha\Gamma_{1}\right)+\frac{\beta}{\Delta t}\Gamma_{1}-S\left(y_{n}\right)\\
+y_{n+1} & = & y_{n}+m_{1}\Gamma_{1}+m_{2}\Gamma_{2}
+\end{eqnarray*}
+
+\end_inset
+
+Here 
+\begin_inset Formula $J_{n}$
+\end_inset
+
+ is the Jacobian held constant for both stages,
+ thus removing the need for multiple Jacobian evaluations,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{n,ij}\left(\Gamma_{p,k}\right)=\frac{\partial\omega_{i}\left(y_{n}\right)}{\partial y_{n,j}}.\label{eq:newtons-method-sdirk2-1-1-1-1-1}
+\end{equation}
+
+\end_inset
+
+Again we utilize the coefficients from FATODE
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Zha14"
+literal "false"
+
+\end_inset
+
+,
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\begin{array}{ccccc}
+\gamma_{ii}=\gamma= & 1+\frac{\sqrt{2}}{2}\text{, }\alpha=1/\gamma\text{, } & \beta=\frac{-2}{\gamma} & m_{1}=\frac{3}{2\gamma} & m_{2}=\frac{1}{2\gamma}\end{array}.
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+YASS
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:YASS"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Yet another stiff solver (YASS) is an appealing solver that only uses one linear solve to predict the species evolution.
+ YASS is equivalent to one Newton step for backwards Euler that relies on sub-stepping if the change in 
+\begin_inset Formula $y_{n}$
+\end_inset
+
+ is too large.
+ The integration is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\left(\mathcal{I}-\Delta t\mathcal{J}\right)\delta y_{n}=\Delta tS\left(y_{n}\right)
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $y_{n+1}=y_{n}+\delta y_{n}$
+\end_inset
+
+.
+ If the norm of the decrement is larger than some scalar value,
+ 
+\begin_inset Formula $||\delta y_{n}||>\alpha$
+\end_inset
+
+,
+ then the YASS integration's time step is reduced to 
+\begin_inset Formula $\Delta t_{s+1}=\frac{1}{2}\Delta t_{s}$
+\end_inset
+
+ where 
+\begin_inset Formula $\Delta t_{s}=\Delta t$
+\end_inset
+
+ in the first integration.
+ This means that there is am appealing chance that the solver is performing a minimum of one linear solve.
+ This necessitates restricting the solver to fail if the time step reaches a minimum value,
+ 
+\begin_inset Formula $\Delta t_{s+1}<\Delta t_{\text{min}}$
+\end_inset
+
+ ,
+ to where a possible higher order method can be utilized.
+ This is especially useful when stability is desired for time-split chemistry solves of very small times steps where the chemical state is not expected to evolve much,
+ but the stiffness of the problem necessitates stability.
+\end_layout
+
+\begin_layout Section
+Extensions of Formulation to include Physical Diffusion and Constant Pressure Reactors
+\end_layout
+
+\begin_layout Subsection
+Extension to Navier-Stokes
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Diffusive_flows"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An immediate way to extend the above formulation to include diffusion and thus approximate the chemically reacting Navier-Stokes equation is to use constant Schmidt and Lewis number approximations.
+ The Navier-Stokes equations are of the form
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial y_{f}}{\partial t}+\nabla\cdot F\left(y_{f},\nabla y_{f}\right)-\mathcal{S}\left(y_{f}\right)=0\label{eq:conservation-law-strong-form-1}
+\end{equation}
+
+\end_inset
+
+Which has the addition of the viscous flux,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+F\left(y,\nabla y\right)=\left(\mathcal{F}^{}\left(y\right)-\mathcal{F}^{v}\left(y,\nabla y\right)\right)\label{eq:flux_function}
+\end{equation}
+
+\end_inset
+
+Where 
+\begin_inset Formula $\mathcal{F}^{}\left(y\right)$
+\end_inset
+
+ is consistent with the flux function from Equation 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:reacting-navier-stokes-spatial-convective-flux-component"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ and the viscous flux is 
+\begin_inset Formula 
+\begin{equation}
+\mathcal{F}_{k}^{v}\left(y,\nabla y\right)=\left(\tau_{1k},\ldots,\tau_{dk},\sum_{j=1}^{d}\tau_{kj}v_{j}-W_{i}C_{i}h_{i}V_{ik}-q_{k},C_{1}V_{1k},\ldots,C_{n_{s}}V_{n_{s}k}\right),\label{eq:navier-stokes-viscous-flux-spatial-component}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+where 
+\begin_inset Formula $q:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d}$
+\end_inset
+
+ is the thermal heat flux,
+ 
+\begin_inset Formula $\tau:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d\times d}$
+\end_inset
+
+ is the viscous stress tensor,
+ 
+\begin_inset Formula $\left(h_{1},\ldots,h_{n_{s}}\right):\mathbb{R}^{m}\rightarrow\mathbb{R}^{n_{s}}$
+\end_inset
+
+ are the species specific enthalpies,
+ and 
+\begin_inset Formula $\left(\left(V_{11},\dots,V_{1d}\right),\dots,\left(V_{n_{s}1},\dots,V_{n_{s}d}\right)\right):\mathbb{R}^{m}\times\mathbb{R}^{n_{s}\times d}\rightarrow\mathbb{R}^{n_{s}\times d}$
+\end_inset
+
+ are the species diffusion velocities.
+ The 
+\begin_inset Formula $k$
+\end_inset
+
+-th spatial component of the viscous stress tensor is given by
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Formula 
+\begin{equation}
+\tau_{k}\left(y,\nabla y\right)=\mu\left(\frac{\partial v_{1}}{\partial x_{k}}+\frac{\partial v_{k}}{\partial x_{1}}-\delta_{k1}\frac{2}{3}\sum_{j=1}^{d}\frac{\partial v_{j}}{\partial x_{j}},\ldots,\frac{\partial v_{d}}{\partial x_{k}}+\frac{\partial v_{k}}{\partial x_{d}}-\delta_{kd}\frac{2}{3}\sum_{j=1}^{d}\frac{\partial v_{j}}{\partial x_{j}}\right),\label{eq:reacting-navier-stokes-viscous-stress-tensor-component}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+where 
+\begin_inset Formula $\mu:\mathbb{R}^{m}\rightarrow\mathbb{R}$
+\end_inset
+
+ is the dynamic viscosity.
+ The 
+\begin_inset Formula $k$
+\end_inset
+
+-th spatial component of the heat flux is given as
+\begin_inset Formula 
+\begin{eqnarray*}
+q_{k}\left(y,\nabla y\right) & = & -\lambda\frac{\partial T}{\partial x_{k}}.
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\lambda:\mathbb{R}^{m}\rightarrow\mathbb{R}$
+\end_inset
+
+ is the thermal conductivity.
+\end_layout
+
+\begin_layout Standard
+Up to this point,
+ the formulation presented is consistent with the a single component Navier-Stokes formulation.
+ In a detailed transport approach,
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ would be functions of both temperature and species concentration.
+ To remove this,
+ specialized models can be created for an average or temperature varying viscosity 
+\begin_inset Formula $\mu$
+\end_inset
+
+ by using a Prandtl number approximation,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Pr=\frac{c_{p}\mu}{\lambda}.\label{eq:Pr_number}
+\end{equation}
+
+\end_inset
+
+Remaining is the species diffusion velocity,
+ which can be estimated from either a species specific Schmidt number,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Sc_{i}=\frac{\mu}{\rho\bar{D}_{i}}.\label{eq:Sc_number}
+\end{equation}
+
+\end_inset
+
+or,
+ in some cases,
+ a species specific Lewis number,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Le_{i}=\frac{\lambda}{\rho c_{p}\bar{D}_{i}}.\label{eq:Sc_number-1}
+\end{equation}
+
+\end_inset
+
+The species mixture averaged diffusion coefficient,
+ 
+\begin_inset Formula $\bar{D}_{i}$
+\end_inset
+
+,
+ is used in 
+\begin_inset Formula $k$
+\end_inset
+
+-th spatial component of the diffusion velocity for the 
+\begin_inset Formula $i$
+\end_inset
+
+-th species is given as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+V_{ik}=\frac{\bar{D}_{i}}{C_{i}}\frac{\partial C_{i}}{\partial x_{k}}-\frac{\bar{D}_{i}}{\rho}\frac{\partial\rho}{\partial x_{k}}.\label{eq:diffusion_velocity}
+\end{equation}
+
+\end_inset
+
+These transport quantities complete the necessary components to extend the single-component Navier-Stokes to a multi-component formulation.
+ An even more reduced case would be to assume a singular value for the species dependent quantities,
+ 
+\begin_inset Formula $Le_{i}=Le$
+\end_inset
+
+ and 
+\begin_inset Formula $Sc_{i}=Sc$
+\end_inset
+
+.
+ For the species dependent detailed mixture averaged quantities see 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Joh20"
+literal "false"
+
+\end_inset
+
+ which is based on 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Kee05"
+literal "false"
+
+\end_inset
+
+.
+ In addition,
+ Reynolds Averaged Navier Stokes and subgrid scale modeling have effective transport quantities where these nondimensionalized numbers can be modified in accordance
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Coo98,Hei06"
+literal "false"
+
+\end_inset
+
+.
+ Therefore,
+ under these assumptions,
+ along with the thermodynamics and chemical source terms provided by ChemGen,
+ it is possible to approximate the solution of the chemically reacting Navier–Stokes equations starting from a single component formulation.
+\end_layout
+
+\begin_layout Subsection
+Constant Pressure Strategy
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Constant-Pressure-Strategy"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In CFD,
+ it is typically assumed that the volume of a cell remains constant over time.
+ This assumption influences the allowable time integration strategies and,
+ in compressible flows,
+ permits pressure to rise in response to changes in species.
+ However,
+ in incompressible or low-Mach solvers,
+ pressure is treated differently:
+ it is assumed to adjust instantaneously,
+ effectively decoupling it from the time evolution and thus remain constant at some thermodynamic value.
+ This means pressure is held constant in time,
+ which imposes a constraint on the energy conservation.
+ Specifically,
+ if pressure does not evolve,
+ then the enthalpy,
+ 
+\begin_inset Formula $\rho h=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}$
+\end_inset
+
+ ,
+ must also remain constant in time.
+ This constraint becomes clear when examining the thermodynamic relationship between internal energy,
+ enthalpy,
+ and pressure,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\rho u=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}-R^{o}T\sum_{i=1}^{n_{s}}C_{i}=\sum_{i=1}^{n_{s}}W_{i}C_{i}h_{i}-p=\rho h-p,\label{eq:int_energy_enthalpy}
+\end{equation}
+
+\end_inset
+
+and applying a time derivative
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\rho u}{\partial t}=\frac{\partial\rho h}{\partial t}-\cancelto{0}{\frac{\partial p}{\partial t}}=0\rightarrow\frac{\partial\rho h}{\partial t}=0.\label{eq:int_energy_enthalpy-1}
+\end{equation}
+
+\end_inset
+
+Therefore,
+ the constant pressure assumption can be enforced by treating enthalpy as a globally constant,
+ while leaving the rest of the system formulation unchanged.
+\end_layout
+
+\begin_layout Section
+Source Term and Source Term Jacobian Errors
+\end_layout
+
+\begin_layout Subsection
+Source term error due to thermodynamic polynomial degree
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:sourcetermpoly"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To investigate the effect of polynomial order on source term accuracy,
+ we performed the same error analysis of Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:Source-Term-Accuracy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ while varying the polynomial degree 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+.
+ Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:source_term_accuracy_np"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ presents the results for two alternative choices:
+ 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+(left) and 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+ (right).
+ The error distributions shift with polynomial order.
+ Specifically,
+ the mean errors 
+\begin_inset Formula $\mu$
+\end_inset
+
+ associated with 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ are approximately an order of magnitude larger than those for 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+ presented in Figure 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:source_term_accuracy_np"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ while the 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+ results exhibit mean errors that are an order of magnitude smaller.
+ The standard deviation 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ follows the same trend,
+ indicating that increasing the polynomial degree not only improves the accuracy but also enhances the precision of the predicted source terms.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/01_error/hist_deg4_15.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:source_term_accuracy_np"
+
+\end_inset
+
+Error distributions for ChemGen source calculations,
+ 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ from Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:source_error"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ in comparison to Cantera source calculations for five tested chemical models,
+ Ó Conaire 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Oco04"
+literal "false"
+
+\end_inset
+
+,
+ Burke 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Bur12"
+literal "false"
+
+\end_inset
+
+,
+ GRI-Mech 3.0 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Smi00"
+literal "false"
+
+\end_inset
+
+,
+ UCSD 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "SanDiegoMech"
+literal "false"
+
+\end_inset
+
+,
+ and FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Zha23"
+literal "false"
+
+\end_inset
+
+.
+ The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
+ The distribution mean,
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+,
+ and corresponding standard deviations,
+ 
+\begin_inset Formula $\sigma$
+\end_inset
+
+,
+ are also reported.
+ These distributions were created using 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ and 
+\begin_inset Formula $n_{p}=15$
+\end_inset
+
+.
+ Increasing the polynomial degree for the thermodynamic fits decreases the error and increases the precision for the comparisons.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The reduction in error with increasing polynomial fit degree provides additional confidence in the correctness of the ChemGen implementation.
+ During this investigation,
+ we discovered that several parameters in the UCSD model,
+ particularly those used in Troe fall-off reactions,
+ contained extremely large or small values.
+ For instance,
+ in reaction 9,
+ the parameters were specified as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{T3:
+ 1.0e-30,
+ T1:
+ 1.0e+30}
+\end_layout
+
+\end_inset
+
+ .
+ The interpretation and handling of such extreme values can vary between software implementations.
+ Examining the form of 
+\begin_inset Formula $F_{\mathrm{cent}}$
+\end_inset
+
+,
+ given by
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+F_{\mathrm{cent}}(T)=(1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T),
+\]
+
+\end_inset
+
+we note that the very small value of 
+\begin_inset Formula $T_{3}$
+\end_inset
+
+ effectively drives the first exponential term to zero,
+ while the extremely large value of 
+\begin_inset Formula $\ensuremath{T_{1}}$
+\end_inset
+
+drives the second term's exponential to one.
+ It is assumed,
+ based on the specification,
+ that omitting 
+\begin_inset Formula $T_{2}$
+\end_inset
+
+ entirely implies that the third term is excluded from the calculation,
+ rather than setting 
+\begin_inset Formula $\ensuremath{T_{2}=0}$
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citep
+key "cantera"
+literal "false"
+
+\end_inset
+
+.
+ Updating ChemGen to address these edge cases and avoid numerical instabilities led to reduced error and unlocked the expected trend that higher-order polynomial fits improved accuracy relative to Cantera.
+\end_layout
+
+\begin_layout Subsection
+Source term Jacobian error 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:jacobianErel"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Niemeyer et al.
+ verified the PyJac-generated Jacobian by comparing their analytical Jacobian to an automatically differentiated Jacobian across a wide range of thermochemical states,
+ evaluating between 100,000 and 1 million samples depending on the chemical model
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Nie17"
+literal "false"
+
+\end_inset
+
+.
+ They reported two metrics that could be used per chemical state to evaluate the relative error,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+E_{rel}=||\frac{\mathcal{J}_{b}-\hat{\mathcal{J}_{b}}}{\hat{\mathcal{J}_{b}}}||_{F}=\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\frac{\mathcal{J}_{b}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}}{\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}}\right)^{2}}\text{and}\label{eq:E_rel}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+E_{norm}=\frac{||\mathcal{J}_{b}-\hat{\mathcal{J}_{b}}||_{F}}{\hat{||\mathcal{J}_{b}}||_{F}}=\frac{\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\mathcal{J}_{b}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}\right)^{2}}}{\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}\right)^{2}}}.\label{eq:E_norm}
+\end{equation}
+
+\end_inset
+
+In these error metrics only matrix elements where 
+\begin_inset Formula $|\mathcal{J}_{ij}|>\hat{||\mathcal{J}_{b}}||_{F}/10^{20}$
+\end_inset
+
+ were considered where the subscript 
+\begin_inset Formula $F$
+\end_inset
+
+ denotes the Frobenius norm,
+ 
+\begin_inset Formula $||A||_{F}=\sum_{j=1}^{m}\sum_{i=1}^{n}\left(A_{ij}\right)^{2}$
+\end_inset
+
+ for matrix 
+\begin_inset Formula $A$
+\end_inset
+
+ of size 
+\begin_inset Formula $n\times m$
+\end_inset
+
+.
+ In Niemeyer et al.
+ it was reported that 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ may be more useful in identifying discrepancies in both larger and smaller matrix elements.
+ Table 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "tab:jacobian_norms"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ reports the mean and max error norms for both 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ and 
+\begin_inset Formula $E_{norm}$
+\end_inset
+
+ using ChemGen for five chemical models using 10,000 randomly generated chemical states.
+ Each analytical Jacobian,
+ 
+\begin_inset Formula $\mathcal{J}_{b}$
+\end_inset
+
+,
+ was compared to the second order finite difference Jacobian,
+ 
+\begin_inset Formula $\hat{\mathcal{J}_{b}}$
+\end_inset
+
+,
+ with 
+\begin_inset Formula $\delta C=1\times10^{-6}$
+\end_inset
+
+ Kmol/m
+\begin_inset Formula $^{3}$
+\end_inset
+
+and 
+\begin_inset Formula $\delta T=1\times10^{-3}$
+\end_inset
+
+ K.
+ Overall,
+ both error norms suggest that the analytical Jacobian is producing the expected derivatives.
+ In this study,
+ 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ errors were generally higher,
+ but never exceeding 
+\begin_inset Formula $3\times10^{-3}$
+\end_inset
+
+.
+ Only one specialized case for the chemical model FFCM-2 gave a 
+\begin_inset Formula $E_{rel}>0.01$
+\end_inset
+
+ which was due to sensitivity of 
+\begin_inset Formula $\delta C$
+\end_inset
+
+;
+ when 
+\begin_inset Formula $\delta C$
+\end_inset
+
+ was slightly increased to 
+\begin_inset Formula $\delta C=4\times10^{-6}$
+\end_inset
+
+,
+ the 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ norm dropped to the order of 
+\begin_inset Formula $1\times10^{-4}$
+\end_inset
+
+ indicating an sensitivity in 
+\begin_inset Formula $\hat{\mathcal{J}_{b}}$
+\end_inset
+
+ to the concentration decrement.
+ Figure
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:jacobian_error_distribution"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ shows the distributions of these norms for both 
+\begin_inset Formula $E_{norm}$
+\end_inset
+
+ (left) and 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ (right).
+ The 
+\begin_inset Formula $E_{norm}$
+\end_inset
+
+ distributions are orders of magnitude less than the 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ distributions which indicates a sensitivity of the chosen norm for evaluating these Jacobians.
+ Regardless,
+ these results give confidence in the ability to accurately calculate the analytical Jacobians for implicit time integration approaches.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement document
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Formula $E_{norm}$
+\end_inset
+
+ and 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ mean and max errors for different chemical models given 10,000 randomly produced states each.
+ Overall,
+ the 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ errors were generally higher,
+ but never exceeding 
+\begin_inset Formula $3\times10^{-3}$
+\end_inset
+
+.
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:jacobian_norms"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Mechanism
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $E_{norm}$
+\end_inset
+
+ Mean Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $E_{norm}$
+\end_inset
+
+ Max Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ Mean Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ Max Error
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ó Connaire
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $3.92\times10^{-10}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $2.39\times10^{-7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $3.38\times10^{-7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $8.71\times10^{-5}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Burke
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1.23\times10^{-10}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $5.43\times10^{-8}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $4.44\times10^{-7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1.01\times10^{-4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+GRI v3.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $8.46\times10^{-11}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $5.57\times10^{-9}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $8.10\times10^{-6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $4.07\times10^{-4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UCSD
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $7.55\times10^{-12}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $7.27\times10^{-10}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $9.06\times10^{-5}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $2.53\times10^{-3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FFCM-2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $3.41\times10^{-9}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $3.35\times10^{-5}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $2.70\times10^{-4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1.70\times10^{-4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/03_jacobians/error_distribution.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:jacobian_error_distribution"
+
+\end_inset
+
+Error distributions for ChemGen source term Jacobian calculations,
+ both 
+\begin_inset Formula $E_{nom}$
+\end_inset
+
+ and 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ from Equations
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:E_norm"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ and 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:E_rel"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ in comparison to Cantera source calculations for five tested chemical models,
+ Ó Conaire 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Oco04"
+literal "false"
+
+\end_inset
+
+,
+ Burke 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Bur12"
+literal "false"
+
+\end_inset
+
+,
+ GRI-Mech 3.0 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Smi00"
+literal "false"
+
+\end_inset
+
+,
+ UCSD 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "SanDiegoMech"
+literal "false"
+
+\end_inset
+
+,
+ and FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Zha23"
+literal "false"
+
+\end_inset
+
+.
+ The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
+ These distributions demonstrate the sensitivity of the choice of norm in assessing the error of the Jacobians but still gives confidence that the source term Jacobian calculations are correct.
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
