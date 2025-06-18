@@ -273,10 +273,8 @@ def create_rates_of_progress_derivatives(progress_rates_derivatives, reactions_d
             formatted_text += """
 {dforward_rate_dspecies}
 {dbackward_rate_dspecies}
-        drate_of_progress_dspecies_all_species = 
-        scale_gen({forward_rate}, dforward_reaction_{reaction_index}_dspecies) -
-        scale_gen(divide({backward_rate}, 
-                         equilibrium_constant), 
+        drate_of_progress_dspecies_all_species =
+        scale_gen({forward_rate} - divide({backward_rate}, equilibrium_constant), 
                   dforward_reaction_{reaction_index}_dspecies);
 {all_species}
                         """.format(reaction_index = reaction_index, 
