@@ -174,11 +174,31 @@ address{Stanford University}
 \end_layout
 
 \begin_layout Keywords
-lalal
+Chemistry,
+ Combustion,
+ Computational Physics,
+ Computational Fluid Dynamics,
+ Code Generation
 \end_layout
 
 \begin_layout Abstract
-lalalal
+We introduce ChemGen,
+ a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based CFD codes.
+ The software is intended to bridge the gab between combustion and computational physics by making chemical kinetics more accessible.
+ ChemGen employs decorators to enable flexible C++ code generation compatible with existing software ecosystems.
+ The current focus is on generating thermodynamic properties,
+ chemical source terms,
+ and their analytical derivatives,
+ which facilitate Jacobian assembly for various time integration strategies relevant to CFD.
+ ChemGen also provides compact implicit solvers,
+ enabling problem-specific customization.
+ We verify that the generated source terms match Cantera's results and that the Jacobians used in ChemGen's implicit solvers are correct.
+ Finally,
+ we demonstrate ChemGen by integrating it into OpenFOAM,
+ replacing the native ODE solver.
+ In this case,
+ the chemistry solver achieved convergence approximately four times faster for the same order of accuracy.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1825,7 +1845,7 @@ literal "false"
 
 \end_inset
 
- and the FFCM2 model for simple hydrocarbons (up to four carbons per chemical species) is 96 species with 1054 reactions
+ and the FFCM-2 model for simple hydrocarbons (up to four carbons per chemical species) is 96 species with 1054 reactions
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -2184,12 +2204,12 @@ The multicomponent chemically reacting compressible Euler equations are given as
 \end_inset
 
 where 
-\begin_inset Formula $t\in\mathbb{R}^{+}$
+\begin_inset Formula $t$
 \end_inset
 
  is time,
  
-\begin_inset Formula $y_{f}(x,t):\mathbb{R}^{d}\times\mathbb{R}^{+}\rightarrow\mathbb{R}^{m}$
+\begin_inset Formula $y_{f}(x,t)$
 \end_inset
 
  is the conservative state vector (with 
@@ -2198,22 +2218,22 @@ where
 
  denoting the physical coordinates),
  
-\begin_inset Formula $\mathcal{F}(y_{f}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m\times d}$
+\begin_inset Formula $\mathcal{F}(y_{f})$
 \end_inset
 
  is the convective flux,
- 
-\begin_inset Formula $\mathcal{S}(y_{f}):\mathbb{R}^{m}\rightarrow\mathbb{R}^{m}$
+ and 
+\begin_inset Formula $\mathcal{S}(y_{f})$
 \end_inset
 
- is the chemical source term.
+ is the CFD source term that can include the chemical reactions.
  The fluid dynamic state is
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state}
+y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{},\label{eq:reacting-navier-stokes-state}
 \end{equation}
 
 \end_inset
@@ -2222,8 +2242,8 @@ where
 \begin_inset Formula $n_{s}$
 \end_inset
 
- is the number of species (which yields 
-\begin_inset Formula $m=d+n_{s}+1$
+ is the number of species (which yields a state size 
+\begin_inset Formula $n_{y}=d+n_{s}+1$
 \end_inset
 
 ),
@@ -2300,7 +2320,7 @@ The
 th spatial convective flux component is written as
 \begin_inset Formula 
 \begin{equation}
-\mathcal{F}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
+\mathcal{F}_{k}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
 \end{equation}
 
 \end_inset
@@ -2346,12 +2366,12 @@ The chemical state is
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-y_{c}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-state-1}
+y_{c}=\left(p,T,\ln T,M_{c},C_{1},\ldots,C_{n_{s}}\right)^{},\label{eq:reacting-navier-stokes-state-1}
 \end{equation}
 
 \end_inset
 
-which is the complete state needed to calculate the components of 
+which is the complete derived state needed to calculate the components of 
 \begin_inset Formula $\mathcal{S}\left(y_{f}\right)$
 \end_inset
 
@@ -2381,7 +2401,7 @@ p=R^{o}T\sum_{i=1}^{n_{s}}C_{i},
 \end_inset
 
 with 
-\begin_inset Formula $R^{0}=8314.4621\,\mathrm{JKmol}^{-1}\mathrm{K}^{-1}$
+\begin_inset Formula $R^{0}=8314.4621\,\mathrm{J\cdot Kmol}^{-1}\mathrm{K}^{-1}$
 \end_inset
 
  denoting the universal gas constant.
@@ -2403,7 +2423,14 @@ M_{c}=\sum_{i=1}^{n_{s}}C_{i}=\frac{p}{R^{o}T},
 
 is utilized in various reactions,
  such as third body reactions with no specified efficiencies.
- 
+ For the following sections,
+ we assume that the elements of 
+\begin_inset Formula $y_{c}$
+\end_inset
+
+ are accessible at all levels of ChemGen.
+ As such,
+ functional dependencies are omitted for brevity.
 \end_layout
 
 \begin_layout Subsection
@@ -2490,7 +2517,7 @@ c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k},\label{eq:specific_heat_polynomial}
 
 \end_inset
 
-based on the NASA coefficients
+which is based on but not equivalent to the NASA coefficients
 \begin_inset space ~
 \end_inset
 
@@ -2558,12 +2585,12 @@ Here we target
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-h_{\text{ref},i}=h_{i}(T=298\text{K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1},\label{eq:enthalpy-adjustment}
+h_{\text{ref},i}=h_{i}(T=298)-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1},\label{eq:enthalpy-adjustment}
 \end{equation}
 
 \end_inset
 
-
+which gives
 \end_layout
 
 \begin_layout Standard
@@ -2571,13 +2598,13 @@ h_{\text{ref},i}=h_{i}(T=298\text{K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(
 \begin{equation}
 b_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k\geqq1\\
-h_{\text{ref},i}, & k=0.
+h_{\text{ref},i}, & k=0
 \end{cases}\label{eq:enthalpy_coeffs}
 \end{equation}
 
 \end_inset
 
-
+and
 \end_layout
 
 \begin_layout Standard
@@ -2667,8 +2694,7 @@ where
 \begin_inset Formula $R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}}$
 \end_inset
 
- which accounts when the gas is not at atmospheric pressure conditions will be utilized in mixture averaged calculations covered later;
- the term depends on concentration as well as temperature and can be addressed downstream of these thermodynamic relations.
+ which accounts when the gas is not at atmospheric pressure but the term depends on concentration as well as temperature and can be addressed downstream of these thermodynamic relations if needed.
  Focusing then on using the Equation
 \begin_inset space ~
 \end_inset
@@ -2688,7 +2714,7 @@ nolink "false"
 \begin_inset Formula $s_{i}^{o}$
 \end_inset
 
- entropy quantity is thus
+ entropy quantity is
 \end_layout
 
 \begin_layout Standard
@@ -2771,19 +2797,31 @@ This gives two new temperature monomials with additional elements,
 
  which can then be simply contracted with the respective array of coefficients,
  
-\begin_inset Formula $s_{i}=\left<C_{i},T_{n_{p},\ln T}\right>$
+\begin_inset Formula $s_{i}=\left<A_{i},T_{n_{p},\ln T}\right>$
 \end_inset
 
  where 
-\begin_inset Formula $C_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{0})$
+\begin_inset Formula $A_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{0})$
 \end_inset
 
  and 
-\begin_inset Formula $g_{i}=\left<C_{i},T_{n_{p}+1,T\ln T}\right>$
+\begin_inset Formula $g_{i}=\left<A,T_{n_{p}+1,T\ln T}\right>$
 \end_inset
 
  where 
-\begin_inset Formula $C_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{0})$
+\begin_inset Formula $A_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{0})$
+\end_inset
+
+.
+ The thermodynamic relationships used by ChemGen are summarized in Table 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "tab:Summary-of-polynomial"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
 \end_inset
 
 .
@@ -2878,6 +2916,14 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float table
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="3">
 <features tabularvalignment="middle">
@@ -2918,7 +2964,7 @@ Coefficient Description
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific heat at 
+Species specific heat at
 \end_layout
 
 \begin_layout Plain Layout
@@ -3150,6 +3196,30 @@ h_{\text{ref},i} & k=0.
 
 \end_layout
 
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Summary of polynomial coefficients in ChemGen for thermally perfect species specific relationships.
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Summary-of-polynomial"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 It is efficient to utilize the Newton method to extract temperature from internal energy which requires its derivative.
  Internal energy is typically part of a conserved state,
@@ -3192,28 +3262,28 @@ where the term
 
 Newton's method are accurate once converged and can be quite efficient when using exact derivatives,
  especially for scalar functions such as energy as a function of temperature,
- which does not require the inversion of a matrix.
+ which does not require a linear solve.
  Included in ChemGen is a Newton iteration that is of the form
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-T_{n+1}=T_{n}-\frac{\rho u(T_{n})}{\frac{\partial\rho u(T_{n})}{\partial T}}.\label{eq:netwon_iteration_temperature}
+T_{k+1}=T_{k}-\frac{\rho u(T_{k})}{\frac{\partial\rho u(T_{k})}{\partial T}}.\label{eq:netwon_iteration_temperature}
 \end{equation}
 
 \end_inset
 
 where 
-\begin_inset Formula $T_{n}$
+\begin_inset Formula $T_{k}$
 \end_inset
 
-is the current guess (starting from 
+ is the current guess (starting from 
 \begin_inset Formula $T_{0}$
 \end_inset
 
  an initial prescribed guess) and 
-\begin_inset Formula $T_{n+1}$
+\begin_inset Formula $T_{k+1}$
 \end_inset
 
  is the new guess.
@@ -3223,7 +3293,7 @@ is the current guess (starting from
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\rho u(C,T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{n})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},T_{n_{p}+1}\right>
+\rho u(C,T_{k})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{k})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},T_{k,n_{p}+1}\right>
 \end{equation}
 
 \end_inset
@@ -3234,7 +3304,7 @@ is the current guess (starting from
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\rho u(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{n})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{n_{p}+1}}{\partial T}\right>
+\frac{\partial\rho u(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{k,n_{p}+1}}{\partial T}\right>
 \end{equation}
 
 \end_inset
@@ -3256,7 +3326,7 @@ and
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial T_{n_{p}+1}}{\partial T}=\left(0,1,2T,\dots,\left(n_{p}+1\right)T^{n_{p}}\right)
+\frac{\partial T_{k,n_{p}+1}}{\partial T}=\left(0,1,2T_{k},\dots,\left(n_{p}+1\right)T_{k}^{n_{p}}\right)
 \end{equation}
 
 \end_inset
@@ -3317,9 +3387,6 @@ Starting with a guess value,
 
 ,
  can be used to terminate the Newton iterations.
- It's important to note that a target tolerance could cause small divergences in threaded process,
- so keeping a set number of iterations would be ideal.
- ChemGen generates both target tolerance and set number of iterations.
  In general,
  we have found in our past work that 
 \begin_inset Formula $n_{T}=3$
@@ -3577,8 +3644,9 @@ nolink "false"
 
 \end_inset
 
-,
- all of the supported functions of which ChemGen supports will be discussed next.
+.
+ The functions currently supported by ChemGen are discussed below.
+ We also demonstrate any optimization that can be made during by ChemGen that can avoid unnecessary compute.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3590,7 +3658,7 @@ The Arrhenius form is the most common model for approximating reaction rates.
  The forward rate constants are computed as
 \begin_inset Formula 
 \[
-k_{j}^{f}=k_{A,j}^{f}(T)=A_{j}T^{b_{j}}\exp\left(-\frac{E_{j}}{R^{0}T}\right),
+k_{j}^{f}=k_{A,j}^{f}=A_{j}T^{b_{j}}\exp\left(-\frac{E_{j}}{R^{0}T}\right),
 \]
 
 \end_inset
@@ -3647,7 +3715,7 @@ literal "false"
 \begin_layout Standard
 \begin_inset Formula 
 \[
-k_{A,j}^{f}(T,\ln T)=A_{j}\exp\left(\beta_{j}\ln T-\frac{E_{j}}{R^{0}T}\right).
+k_{A,j}^{f}=A_{j}\exp\left(\beta_{j}\ln T-\frac{E_{j}}{R^{0}T}\right).
 \]
 
 \end_inset
@@ -3719,7 +3787,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \[
-k_{j}^{f}=k_{TB,j}^{f}(C,M_{c},T,\ln T)=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f}(T,\ln T)=\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right)k_{A,j}^{f}(T,\ln T)
+k_{j}^{f}=k_{TB,j}^{f}=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f}=\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right)k_{A,j}^{f}
 \]
 
 \end_inset
@@ -3833,7 +3901,7 @@ Unimolecular/recombination fall-off reactions incorporate a dependence on pressu
  is computed as
 \begin_inset Formula 
 \begin{equation}
-k_{j}^{f}=k_{FO,j}^{f}(C,M_{c},T,\ln T)=k_{A,\infty,j}(T,\ln T)\left(\frac{P_{r}(C,M_{c},T,\ln T)}{1+P_{r}(C,M_{c},T,\ln T)}\right)F,\label{eq:falloff-reaction}
+k_{j}^{f}=k_{FO,j}^{f}=k_{A,\infty,j}\left(\frac{P_{r}}{1+P_{r}}\right)F,\label{eq:falloff-reaction}
 \end{equation}
 
 \end_inset
@@ -3846,7 +3914,7 @@ where
  defined as
 \begin_inset Formula 
 \[
-P_{r}(C,M_{c},T,\ln T)=\frac{k_{A,0,j}(T,\ln T)}{k_{A,\infty,j}(T,\ln T)}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right).
+P_{r}=\frac{k_{A,0,j}}{k_{A,\infty,j}}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha_{ij}-1\right)C_{i}\right).
 \]
 
 \end_inset
@@ -3909,8 +3977,8 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-\log_{10}F(T,P_{r}) & = & \frac{\log_{10}F_{cent}(T)}{1+f_{1}(P_{r})^{2}}\label{eq:f_and_fcent}\\
-F_{cent}(T) & = & (1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T)\nonumber \\
+\log_{10}F & = & \frac{\log_{10}F_{cent}}{1+f_{1}(P_{r})^{2}}\label{eq:f_and_fcent}\\
+F_{cent} & = & (1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T)\nonumber \\
 f_{1} & = & (\log_{10}P_{r}+c)/(n-0.14(\log_{10}P_{r}+c))\nonumber \\
 c & = & -0.4-0.67\;\log_{10}F_{cent}\nonumber \\
 n & = & 0.75-1.27\;\log_{10}F_{cent}\nonumber 
@@ -3956,7 +4024,7 @@ literal "false"
 \begin_layout Standard
 \begin_inset Formula 
 \[
-F(T,P_{r})=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e},
+F=d\bigl[a\exp(-b/T)+\exp(-T/c)\bigr]^{1/(1+\log_{10}^{2}P_{r})}T^{e},
 \]
 
 \end_inset
@@ -3995,8 +4063,8 @@ literal "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-p_{i}:k_{i}(T) & = & A_{i}T^{b_{i}}\exp\left(-E_{i}/RT\right)\text{ and }\label{eq:plog_p1_p2}\\
-p_{i+1}:k_{i+1}(T) & = & A_{i+1}T^{b_{i+1}}\exp\left(-E_{i+1}/RT\right),\nonumber 
+p_{i}:k_{i} & = & A_{i}T^{b_{i}}\exp\left(-E_{i}/RT\right)\text{ and }\label{eq:plog_p1_p2}\\
+p_{i+1}:k_{i+1} & = & A_{i+1}T^{b_{i+1}}\exp\left(-E_{i+1}/RT\right),\nonumber 
 \end{eqnarray}
 
 \end_inset
@@ -4007,7 +4075,7 @@ the rate at an intermediate pressure is computed as
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\ln k_{plog}(T,p)=\ln k_{i}(T)+\bigl(\ln k_{i+1}(T)-\ln k_{i}(T)\bigr)\frac{\ln p-\ln p_{i}}{\ln p_{i+1}-\ln p_{i}}.\label{eq:plog_rate}
+\ln k_{plog}=\ln k_{i}+\bigl(\ln k_{i+1}-\ln k_{i}\bigr)\frac{\ln p-\ln p_{i}}{\ln p_{i+1}-\ln p_{i}}.\label{eq:plog_rate}
 \end{equation}
 
 \end_inset
@@ -4031,7 +4099,7 @@ An additional complexity is that multiple rate expressions may be given at the s
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\ln k(T,\ln T)=\ln A+b\ln T+-E/RT,\label{eq:logK}
+\ln k=\ln A+b\ln T+-E/RT,\label{eq:logK}
 \end{equation}
 
 \end_inset
@@ -4226,7 +4294,7 @@ which requires seven boolean conditionals be checked,
 \end_inset
 
  with 
-\begin_inset Formula $\ln k\left(T,\ln T\right)$
+\begin_inset Formula $\ln k$
 \end_inset
 
 ,
@@ -4275,7 +4343,8 @@ nolink "false"
 
 \end_inset
 
- is still possible for future iterations.Beyond this,
+ is still possible for future iterations.
+ Beyond this,
  further optimization could be achieved by fitting an approximate mapping from 
 \begin_inset Formula $p\rightarrow i$
 \end_inset
@@ -4377,7 +4446,15 @@ nolink "false"
 \end_inset
 
 .
- Different approaches can be utilized by time-splitting the evolution of the chemical state and retain the stability of the fluid dynamic algorithms.
+ Different approaches can be utilized by time-splitting the evolution of the chemical state and retain the stability of the fluid dynamic algorithms
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Str68,Hou11,Lv15,Joh20"
+literal "false"
+
+\end_inset
+
+.
  These approaches typically do not involve the flux from either convection or diffusion.
  By removing any spatial fluxes,
  the conservation Equation
@@ -4413,7 +4490,7 @@ By removing the spatial fluxes,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{T}\rightarrow y_{f}=\left(0,\ldots,0,\rho u,C_{1},\ldots,C_{n_{s}}\right)^{T}\label{eq:ODE_state}
+y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right)^{}\rightarrow y_{f}=\left(0,\ldots,0,\rho u,C_{1},\ldots,C_{n_{s}}\right)^{}\label{eq:ODE_state}
 \end{equation}
 
 \end_inset
@@ -4424,7 +4501,7 @@ and by inspecting the source term,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{S}\left(y_{f}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:RNS_source}
+\mathcal{S}\left(y_{f}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{},\label{eq:RNS_source}
 \end{equation}
 
 \end_inset
@@ -4436,14 +4513,21 @@ the state can be reduced to be purely concentration based for time-split algorit
 \begin_inset Formula 
 \begin{equation}
 \begin{array}{ccc}
-\frac{dy}{dt}=S\left(y\right); & y=\left(C_{1},\ldots,C_{n_{s}}\right)^{T}; & S\left(y\right)=\left(\omega_{1},\ldots,\omega_{n_{s}}\right)^{T}.\end{array}\label{eq:extracted_problem}
+\frac{dy}{dt}=S\left(y\right); & y=\left(C_{1},\ldots,C_{n_{s}}\right); & S\left(y\right)=\left(\omega_{1},\ldots,\omega_{n_{s}}\right)^{}.\end{array}\label{eq:extracted_problem}
 \end{equation}
 
 \end_inset
 
 In this section we will cover some tools provided by ChemGen to integrate this state in time.
  We also comment on how ChemGen provides tools for fully coupled methods.
- For the compressible time-split integration approaches provided by ChemGen the source term is calculated utilizing a global 
+ Isolating the source term as a system of ODEs allows the stiffness of the problem,
+ which comes from disparate time scales between slow and fast chemical reactions,
+ to be addressed more effectively.
+ 
+\end_layout
+
+\begin_layout Standard
+For the compressible time-split integration approaches provided by ChemGen the source term is calculated utilizing a global 
 \begin_inset Formula $\rho u$
 \end_inset
 
@@ -4455,6 +4539,22 @@ In this section we will cover some tools provided by ChemGen to integrate this s
 ,
  was used to produce 
 \begin_inset Formula $S\left(y\right)$
+\end_inset
+
+.
+ Appendix 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:Constant-Pressure-Strategy"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ covers how this formulation can be extended to a constant pressure assumption that uses a global 
+\begin_inset Formula $\rho h$
 \end_inset
 
 .
@@ -4528,11 +4628,11 @@ literal "false"
 \begin_inset Formula 
 \begin{equation}
 \begin{array}{ccc}
-k_{1} & = & S\left(y^{n}\right)\\
-k_{2} & = & S\left(y^{n}+\frac{\Delta t}{2}k_{1}\right)\\
-k_{3} & = & S\left(y^{n}+\frac{\Delta t}{2}k_{2}\right)\\
-k_{4} & = & S\left(y^{n}+\Delta tk_{3}\right)\\
-y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
+\Gamma_{1} & = & S\left(y^{n}\right)\\
+\Gamma_{2} & = & S\left(y^{n}+\frac{\Delta t}{2}\Gamma_{1}\right)\\
+\Gamma_{3} & = & S\left(y^{n}+\frac{\Delta t}{2}\Gamma_{2}\right)\\
+\Gamma_{4} & = & S\left(y^{n}+\Delta t\Gamma_{3}\right)\\
+y^{n+1} & = & y^{n}+\frac{\Delta t}{6}\left(\Gamma_{1}+2\Gamma_{2}+2\Gamma_{3}+\Gamma_{4}\right)
 \end{array}\label{eq:RK4}
 \end{equation}
 
@@ -4557,6 +4657,13 @@ This method achieves fourth-order accuracy in time,
 
 \begin_layout Subsection
 Implicit Time Integration
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Implicit-Time-Integration"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4593,7 +4700,7 @@ The Newton's method can be used to iteratively find
 
 \begin_layout Standard
 \begin_inset Note Comment
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Formula 
@@ -4625,7 +4732,7 @@ and solving the decrement
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}\left(y_{k}^{n+1}\right)\left(y_{k+1}^{n+1}-y_{k}^{n+1}\right)=-f(y_{k}^{n+1})\label{eq:newtons-method-2}
+\mathcal{J}\left(y_{k}^{n+1}\right)\left(y_{k+1}^{n+1}-y_{k}^{n+1}\right)=-f(y_{k}^{n+1})\text{ where }f(y_{k}^{n+1})=\frac{-y^{n}}{\Delta t}+\frac{y^{n+1}}{\Delta t}-S\left(y^{n+1}\right)\label{eq:newtons-method-2}
 \end{equation}
 
 \end_inset
@@ -4692,7 +4799,7 @@ nolink "false"
 \end_inset
 
  is for the special case of time-split chemistry for a constant internal energy which acts as a global variable and is not part of the state.
- If a fully implicit scheme or a scheme with a source term applied to a derived energy equation (such as enthalpy) is formulated,
+ If a fully implicit scheme or a scheme with a source term applied to a derived energy equation is formulated,
  the derivatives for the source term with respect to temperature will be necessary.
  For instance,
  in using a fully implicit time integration scheme for fluid dynamics state 
@@ -4797,16 +4904,404 @@ While backward Euler time integration is inherently stable,
  In contrast,
  fully compressible solvers may require time steps as small as nanoseconds or even less.
  In such cases,
- a lower-order but computationally faster time integrator,
- like the previously outline Backward Euler or YASS algorithm outlined below,
- may be more appropriate.
+ a lower-order but computationally faster time integrator may be more appropriate.
+ The included implicit time integration in ChemGen are 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Implicit time integration strategies provided by ChemGen.
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Time_integrators"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Strategy
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Order
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stages
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Linear Solve Iteration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Appendix
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SDIRK-4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4th
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $n$
+\end_inset
+
+-iterations until convergence per stage
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:SDIRK-4"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SDIRK-2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2nd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $n$
+\end_inset
+
+-iterations until convergence per stage
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:SDIRK-2"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Rosenbroc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2nd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+one per stage
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:Rosenbroc"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+YASS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1st
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+one
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:YASS"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Backward Euler
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1st
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $n$
+\end_inset
+
+-iterations until convergence
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:Implicit-Time-Integration"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 Other time integration strategies not yet implemented in ChemGen can certainly be added using the same framework as the existing methods.
  These include,
  but are not limited to,
- multi-step implicit methods such as backward differentiation formulas ,
+ multi-step implicit methods such as backward differentiation formulas,
  which utilize information from previous time steps,
  and higher-order Rosenbroc methods 
 \begin_inset CommandInset citation
@@ -4817,8 +5312,8 @@ literal "false"
 \end_inset
 
 ,
- which require multiple stages and carefully assigned coefficients.
- Some implicit methods,
+ which require multiple stages.
+ Some other integration methods,
  such as DGODE 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -4952,7 +5447,12 @@ literal "false"
 \end_inset
 
 .
- The order of operations needed for GMRES is 
+ 
+\begin_inset Note Comment
+status open
+
+\begin_layout Plain Layout
+The order of operations needed for GMRES is 
 \begin_inset Formula $\mathcal{O}\left(kn_{s}^{2}+k^{2}n_{s}+k^{3}\right)$
 \end_inset
 
@@ -4968,14 +5468,13 @@ literal "false"
  term can dominate thus reducing the overall cost of the linear solve.
 \end_layout
 
-\begin_layout Standard
-The number of GMRES iterations,
- 
-\begin_inset Formula $k$
 \end_inset
 
-,
- is directly related to the condition number of matrix 
+
+\end_layout
+
+\begin_layout Standard
+The number of GMRES iterations is directly related to the condition number of matrix 
 \begin_inset Formula $A$
 \end_inset
 
@@ -5009,7 +5508,7 @@ nolink "false"
 \end_inset
 
  and applying it to both sides of the system.
- This is known at the Jacobi preconditioner this is a fast preconditioner calculation as it only inverts the diagonals and can be directly applied to the existing system.
+ This is known at the Jacobi preconditioner and is a fast preconditioner calculation as it only inverts the diagonals and can be directly applied to the existing system.
  In addition,
  the Gauss-Seidel preconditioner is also supplied which inverts a matrix converged of the lower and diagonal components of 
 \begin_inset Formula $A$
@@ -5079,9 +5578,19 @@ name "sec:Code-Generation"
 In the ChemGen software there are three main file types.
  The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
  The second file type are static code that are ingested by python code and reformatted to the desired target software.
- The remaining file types are a mixture of python code used to exercise tutorals,
- most of which covered in the results section,
- Section 5,
+ The remaining file types are a mixture of python code used to exercise tutorials,
+ most of which covered in the results in Section
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:Results-and-Demonstration"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
  and yaml files that contain kinetic data.
 \end_layout
 
@@ -5108,7 +5617,7 @@ texttt{using scalar = float;}
  variables may appear to be simple scalars while in fact representing complex types with custom behavior.
  This flexibility enables expressive,
  domain-specific syntax,
- but means that there is not one set of generated code that would work for imedding existing C++ software.
+ but means that there is not one set of generated code that would work for imbedding existing C++ software.
  
 \end_layout
 
@@ -5378,10 +5887,6 @@ decorators:
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
 and for example function 2:
 \end_layout
 
@@ -5493,7 +5998,7 @@ Derivatives
 ChemGen makes use of mechanical differentiation approach where the underlying mathematics for essential problems have supply their derivatives and chain rules when necessary.
  This means that a functions derivative,
  when added to the static code base,
- should be immediately accessible giving the access to the underlying derivatives supplied by chemgen.
+ should be immediately accessible giving the access to the underlying derivatives supplied by ChemGen.
  For instance,
  the Arrhenius function as generated using a default configuration in ChemGen is
 \end_layout
@@ -5669,7 +6174,7 @@ The same derivatives,
  partial derivative per parameter and a chain rule contracting the partials with a perturbation,
  can assumed to be accessible when developing higher level functions.
  Assuming this capability,
- the derivative of the Arrhenius function with respect to temperature is 
+ the derivative of the Arrhenius function with respect to temperature is immediately known,
 \end_layout
 
 \begin_layout Standard
@@ -6017,8 +6522,8 @@ double call_forward_reaction_0(const double& temperature,
 
 \end_inset
 
-Once all reactions are generated a source term file is then generated.
- The source file begins by calculating 
+Once all reactions are generated a source term file is then created.
+ The source file begins by generating the code that calculates 
 \begin_inset Formula $M_{c}$
 \end_inset
 
@@ -6151,6 +6656,13 @@ ChemGen flowchart
 
 \begin_layout Section
 Results and Demonstration Cases
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Results-and-Demonstration"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6199,8 +6711,8 @@ To test the source term accuracy we randomly generated a chemical state,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-T & = & 1000+r_{T}1000\nonumber \\
-p & = & 0.1+9.9r_{p}\nonumber \\
+T & = & 1000+r_{T}1500\text{ K}\nonumber \\
+p & = & 0.1+9.9r_{p}\text{ atm}\nonumber \\
 X_{i} & = & r_{i}\quad\text{for }i=1,\dots,n_{s}\label{eq:chemical_state_01}
 \end{eqnarray}
 
@@ -6210,21 +6722,11 @@ Where
 \begin_inset Formula $r_{T},r_{p},r_{1},\dots,r_{n_{s}}\sim\mathcal{U}(0,1)$
 \end_inset
 
- where 
+ and 
 \begin_inset Formula $\mathcal{U}(0,1)$
 \end_inset
 
- is a uniform distribution,
- 
-\begin_inset Formula $T$
-\end_inset
-
- is in units Kelvin,
- and 
-\begin_inset Formula $p$
-\end_inset
-
- is in atmospheres.
+ is a uniform distribution.
  
 \begin_inset Formula $X_{i}$
 \end_inset
@@ -6427,6 +6929,27 @@ nolink "false"
 \end_inset
 
 .
+ To investigate the effect of polynomial choice,
+ we repeated the error analysis while varying 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+ which reduced the error distributions mean and increased precision by an order of magnitude for all chemical models which is detailed in Appendix
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:sourcetermpoly"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -6435,7 +6958,7 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -6559,74 +7082,6 @@ literal "false"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-To investigate the effect of the choice of polynomial we performed the same error analysis and change 
-\begin_inset Formula $n_{p}$
-\end_inset
-
-.
- Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:source_term_accuracy_np"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- shows two different polynomial choices,
- on the left is 
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- and on the right is 
-\begin_inset Formula $n_{p}=15$
-\end_inset
-
-.
- The error distributions shift due to the change in polynomial degree.
- The mean errors,
- 
-\begin_inset Formula $\mu$
-\end_inset
-
-,
- of 
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- results are an order of magnitude larger,
- whereas the 
-\begin_inset Formula $n_{p}=15$
-\end_inset
-
- results are an order of magnitude smaller when comparing both to the means of the 
-\begin_inset Formula $n_{p}=7$
-\end_inset
-
- errors.
- In addition,
- the standard deviation,
- 
-\begin_inset Formula $\sigma$
-\end_inset
-
-,
- changes by an order of magnitude in the same manner,
- indicating that the source term became more precise with increase in 
-\begin_inset Formula $n_{p}$
-\end_inset
-
-.
- 
 \end_layout
 
 \begin_layout Subsection
@@ -6861,82 +7316,7 @@ Following a brief induction period,
 ).
  The minor species span a wide range of values,
  and therefore individual scaling multipliers are applied to each in order to display them on the same graph.
-\end_layout
-
-\begin_layout Standard
-The ChemGen steady-state temperature differs from the Cantera result by about 10 K,
- which is well within the typical experimental uncertainty for combustion applications.
- For examples,
- a typical uncertainty of approximately 50 K is generally state of the art for non-invasive techniques such as coherent anti-Stokes Raman scattering
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Ded21"
-literal "false"
-
-\end_inset
-
-.
- The results in Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:RK4_T_C"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-were generated using 
-\begin_inset Formula $n_{p}=7$
-\end_inset
-
-.
- To investigate further,
- we performed RK4 integrations using
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- and 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
-..
- The temperature evolution over the time domain 
-\begin_inset Formula $t=[0.06,0.20]$
-\end_inset
-
- 
-\begin_inset Formula $\mu$
-\end_inset
-
-s,
- comparing results from increasing thermodynamic polynomial degree and Cantera,
- is shown in Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:RK4_np_T"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-Like the results in Section
+ As mentioned in Section
 \begin_inset space ~
 \end_inset
 
@@ -6951,61 +7331,39 @@ nolink "false"
 
 \end_inset
 
-,
- the agreement with the Cantera solution improves with increasing polynomial degree.
- For this case,
- 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
- achieved an agreement within 1 K of Cantera.
- This suggests that,
- while higher 
-\begin_inset Formula $n_{p}$
-\end_inset
-
- can more closely match Cantera,
- lower np values may still provide predictive accuracy within experimental uncertainty at reduced computational cost.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-alignment document
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename data/02_explicit_time_integration/temperature_np.png
-	lyxscale 20
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:RK4_np_T"
-
-\end_inset
-
-Temperature evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions from Equation Section
+ and demonstrated in Appendix
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:chemical_state_02"
+reference "subsec:sourcetermpoly"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ the polynomial degree,
+ 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+,
+ does have an affect on the agreement with Cantera and improves with increasing 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+ as expanded on in Appendix
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:RK4-Integration-Error"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7014,47 +7372,6 @@ nolink "false"
 \end_inset
 
 .
- These results were produced using hydrogen submodel from FFCM2 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha23"
-literal "false"
-
-\end_inset
-
- .
- The solid line is from the Cantera solution and the dashed lines are the corresponding ChemGen results from 
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- (green),
- 
-\begin_inset Formula $n_{p}=7$
-\end_inset
-
- (black),
- and 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
- (blue).
- The agreement with the Cantera solution improves with increasing polynomial degree.
- For this case,
- 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
- achieved an agreement within 1 K of Cantera.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
@@ -7272,7 +7589,31 @@ literal "false"
 \end_inset
 
 ,
- the expected order of accuracy was recovered.
+ the expected order of accuracy was recovered.Niemeyer et al. 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Nie17"
+literal "false"
+
+\end_inset
+
+ reported error metrics that can be used to verify Jacobian accuracy.
+ These metrics are utilized in Appendix
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:jacobianErel"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ to provide additional confidence in the correctness of ChemGen's Jacobians.
 \end_layout
 
 \begin_layout Standard
@@ -7281,7 +7622,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -7305,7 +7646,16 @@ name "fig:OOA"
 
 \end_inset
 
-OOA
+Order of accuracy convergence for 
+\begin_inset Formula $\hat{\mathcal{J}_{b}}$
+\end_inset
+
+ when compared to 
+\begin_inset Formula $\mathcal{J}_{b}$
+\end_inset
+
+,
+ demonstrating 
 \end_layout
 
 \end_inset
@@ -7374,8 +7724,8 @@ literal "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-T & = & 1800\nonumber \\
-p & = & 101325.0\nonumber \\
+T & = & 1800\text{ K}\nonumber \\
+p & = & 101325.0\text{ Pa}\nonumber \\
 \left(X_{O_{2}},X_{N_{2}},X_{H_{2}},X_{C_{2}H_{4}}\right) & = & \left(0.2,0.4,0.2,0.2\right)\label{eq:chemical_state_03}
 \end{eqnarray}
 
@@ -7404,9 +7754,6 @@ ReactorNet
 \end_inset
 
  class.
- ChemGen solutions are shown with markers placed every ten time steps,
- except for SDIRK4,
- which includes a marker at each time step.
  All integrators demonstrate agreement with Cantera.
  The time steps used in this example were all 
 \begin_inset Formula $\Delta t=\left(1\times10^{-7}\right)$
@@ -7428,9 +7775,9 @@ s.
 \end_inset
 
  with default settings.
- Line markers are shown at every 10 time steps,
+ Line markers are shown at every ten time steps,
  except for SDIRK-4,
- where markers are placed every 5 steps to accommodate its larger time step.
+ where markers are placed every five steps to accommodate its larger time step.
  Among the integrators,
  the first-order methods,
  YASS and Backward Euler,
@@ -7533,6 +7880,10 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
 In computational physics,
  The optimal choice of time integrator is problem dependent.
  For unsteady simulations requiring extremely small time steps,
@@ -7547,6 +7898,11 @@ In computational physics,
  Although lower-order integrators are generally faster per step,
  they may necessitate sub-stepping or adaptive routines to maintain stability and accuracy,
  introducing additional complexity that may not be desirable in all applications.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7564,8 +7920,8 @@ s with initial conditions
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-T & = & 1800\nonumber \\
-p & = & 101325.0\nonumber \\
+T & = & 1800\text{ K}\nonumber \\
+p & = & 101325.0\text{ Pa}\nonumber \\
 \left(X_{O_{2}},X_{H_{2}},X_{N_{2}}\right) & = & \left(0.2,0.2,0.6\right).\label{eq:chemical_state_04}
 \end{eqnarray}
 
@@ -7584,7 +7940,7 @@ s was was the approximate location of maximum
 \begin_inset Formula $\frac{\partial T}{\partial t}$
 \end_inset
 
- .
+ or randomly generated ones like in the previous sections .
  We targeted a time evolution of 
 \begin_inset Formula $\Delta t=2\times10^{-6}$
 \end_inset
@@ -7818,7 +8174,7 @@ where
 \end_inset
 
  is an applied source term.
- The complete set of conservation equations and computational approach see 
+ For the complete set of conservation equations and computational approach see 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -7873,7 +8229,8 @@ nolink "false"
 \begin_inset Formula $C_{i}^{n+1}$
 \end_inset
 
- are the predicted concentrations from solving the species evolution ODEs 
+ are the predicted concentrations from solving the species evolution ODEs,
+ 
 \begin_inset Formula $\frac{\partial y_{c}}{\partial t}=S(y_{c})$
 \end_inset
 
@@ -7883,7 +8240,11 @@ nolink "false"
 \end_inset
 
  is a linearized production term estimated from solving the detailed kinetics.
- To implement a chemistry solver into detonationEulerFoam we only needed to replace the prediction of 
+ 
+\end_layout
+
+\begin_layout Standard
+To implement a chemistry solver into detonationEulerFoam we only needed to replace the prediction of 
 \begin_inset Formula $C_{i}^{n+1}$
 \end_inset
 
@@ -7910,7 +8271,7 @@ literal "false"
 
 .
  The seulex solver utilizes an extrapolation algorithm,
- based on the linearly implicit Euler method with step size control and order selection.
+ based on the implicit Euler method with step size control and order selection.
  Due to the small time step size 
 \begin_inset Formula $\Delta t=1\times10^{-9}$
 \end_inset
@@ -8109,7 +8470,7 @@ Analysis of time scales
 \end_layout
 
 \begin_layout Standard
-Here we present the two-dimensional test detonation using ChemGen that is consistent with Sun et al.
+To demonstrate the use of ChemGen we targeted a two-dimensional test detonation and assessed its consistency with Sun et al.
  
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -8119,7 +8480,8 @@ literal "false"
 \end_inset
 
 .
- This configuration has been shown to be a reproducible test case for detonations,
+ Beyond the detonationFoam work,
+ this configuration has been shown to be a reproducible test case for detonations,
  see Oran et al.
 \begin_inset space ~
 \end_inset
@@ -8185,7 +8547,8 @@ literal "false"
 \end_inset
 
 .
- The domain considered is 
+ Each one of those previous works slightly differs in domain size.
+ The domain considered here is 
 \begin_inset Formula $0.5$
 \end_inset
 
@@ -8210,7 +8573,7 @@ m (
 \end_inset
 
 -direction).
- The case is initially run with a uniform quadrilateral mesh with 
+ The case is initially runs with a uniform quadrilateral mesh with 
 \begin_inset Formula $2000$
 \end_inset
 
@@ -8234,8 +8597,8 @@ literal "false"
 
 \end_inset
 
- which resulted in a possible three refiments,
- smallest mesh size of 
+ which resulted in a possible three refinements,
+ generating smalles mesh size of 
 \begin_inset Formula $31\times10^{-6}$
 \end_inset
 
@@ -8291,13 +8654,13 @@ literal "false"
 
 \end_inset
 
- a several period sinusoidal wave was specified to perturb the front location which gave rase to instabilities and the expected established two detonation cells in the vertical direction,
+ a several period sinusoidal wave was specified to perturb the front location which eventually gave rase to instabilities and the expected established two detonation cells in the vertical direction,
  with each cell to be 
 \begin_inset Formula $\left(0.055\right)\mathrm{m}\times\left(0.03\right)\mathrm{m}$
 \end_inset
 
 .
- Their results and the results of the aforementioned similar results are consistent with experiments performed by Lefebvre et al.
+ These results and the results of the aforementioned works are said to be consistent with experiments performed by Lefebvre et al.
 \begin_inset space ~
 \end_inset
 
@@ -8310,13 +8673,12 @@ literal "false"
 \end_inset
 
 .
- In our initialization we perturbed the front with additional sinusoidal to introduce more irregularity.
- 
+ In our initialization we perturbed the front with additional sinusoidal to introduce more irregularity as we noticed some slapping-like wave features with a single wave.
 \end_layout
 
 \begin_layout Standard
-As the initial front progresses into the unreacted domain,
- the irregular structures from the initialization cause the development of pressure waves that move normal to the direction of the detonation.
+For this cases,
+ the initial front progresses into the unreacted domain and the irregular structures from the initialization cause the development of pressure waves that move normal to the direction of the detonation.
  Eventually these transverse waves become regular and give rise to the expected cellular structures.
  Figure
 \begin_inset CommandInset ref
@@ -8420,7 +8782,8 @@ s for detonationEulerFOAM using OpenFOAM seulex ODE solver (subscript
 \end_inset
 
 ).
- These results demonstrate that a consistent CFD solution can be obtained using ChemGen in the detonationEulerFOAM solver.
+ These results demonstrate that a consistent CFD solution can be obtained using ChemGen in the detonationEulerFoam solver.
+ The YASS solver was on average 8 times faster than the seulex solver and 4 times faster than OpenFOAM's backward Euler solver.
 \end_layout
 
 \begin_layout Standard
@@ -8429,14 +8792,14 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
 	filename data/05_cfd/maxp_full.png
 	lyxscale 10
-	scale 40
+	width 6in
 
 \end_inset
 
@@ -8472,7 +8835,7 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -8481,7 +8844,7 @@ placement document
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -8613,7 +8976,7 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -10558,6 +10921,211 @@ literal "false"
 
 .
  Updating ChemGen to address these edge cases and avoid numerical instabilities led to reduced error and unlocked the expected trend that higher-order polynomial fits improved accuracy relative to Cantera.
+\end_layout
+
+\begin_layout Subsection
+RK4 Integration Error due to thermodynamic polynomial order
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:RK4-Integration-Error"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The ChemGen steady-state temperature differs from the Cantera result by about 10 K,
+ which is well within the typical experimental uncertainty for combustion applications.
+ For examples,
+ a typical uncertainty of approximately 50 K is generally state of the art for non-invasive techniques such as coherent anti-Stokes Raman scattering
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Ded21"
+literal "false"
+
+\end_inset
+
+.
+ The results in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:RK4_T_C"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+were generated using 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+.
+ To investigate further,
+ we performed RK4 integrations using
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ and 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+..
+ The temperature evolution over the time domain 
+\begin_inset Formula $t=[0.06,0.20]$
+\end_inset
+
+ 
+\begin_inset Formula $\mu$
+\end_inset
+
+s,
+ comparing results from increasing thermodynamic polynomial degree and Cantera,
+ is shown in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:RK4_np_T"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Like the results in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:sourcetermpoly"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ the agreement with the Cantera solution improves with increasing polynomial degree.
+ For this case,
+ 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ achieved an agreement within 1 K of Cantera.
+ This suggests that,
+ while higher 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+ can more closely match Cantera,
+ lower np values may still provide predictive accuracy within experimental uncertainty at reduced computational cost.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+alignment document
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename data/02_explicit_time_integration/temperature_np.png
+	lyxscale 20
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:RK4_np_T"
+
+\end_inset
+
+Temperature evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions from Equation Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:chemical_state_02"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ These results were produced using hydrogen submodel from FFCM2 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Zha23"
+literal "false"
+
+\end_inset
+
+ .
+ The solid line is from the Cantera solution and the dashed lines are the corresponding ChemGen results from 
+\begin_inset Formula $n_{p}=4$
+\end_inset
+
+ (green),
+ 
+\begin_inset Formula $n_{p}=7$
+\end_inset
+
+ (black),
+ and 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ (blue).
+ The agreement with the Cantera solution improves with increasing polynomial degree.
+ For this case,
+ 
+\begin_inset Formula $n_{p}=12$
+\end_inset
+
+ achieved an agreement within 1 K of Cantera.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection

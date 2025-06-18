@@ -91,16 +91,17 @@ refinement  = np.array(range(4))
 L2s = np.array(L2s)
 
 plt.figure()
-plt.semilogy(refinement, L2s / L2s[0], 'ok', label='Observed error')
-plt.semilogy(refinement, [1 / (4 ** r) for r in refinement], '--r', label='Second-order reference')
+plt.semilogy(refinement, [1.0 / (4 ** r) for r in refinement], '--r', label='Second-order reference', lw=3)
+plt.semilogy(refinement, L2s / L2s[0], ':ok', label='Observed $L_2$')
+
 
 # Custom x-axis tick labels
 tick_labels = [f"[$\delta c/{2**r}$, $\delta T/{2**r}$]" if r > 0 else "[$\delta c$, $\delta T$]" for r in refinement]
 plt.xticks(refinement, tick_labels)
 
 # Label the plot
-plt.xlabel('Refinement Level (r)')
-plt.ylabel('Normalized L2 Error')
+plt.xlabel('Refinement Level')
+plt.ylabel('$L_2$ normalized by\n$L_2$ for $\delta c$ and $\delta T$')
 plt.legend()
 plt.grid(True, which="both", ls="--", lw=0.5)
 plt.savefig("ooa.png",dpi=300)
