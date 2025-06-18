@@ -84,38 +84,38 @@ std::vector<std::vector<{scalar}>> source_jacobian_py(const std::vector<{scalar}
     return jac_out;
 }}
 
-std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter) 
+std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
     {chemical_state} y = set_chemical_state(int_energy, sp);
     
-    auto result = sdirk4(y, dt, norm, max_iter);
+    auto result = sdirk4(y, dt, norm, max_iter, linear_abs_tol, linear_rel_tol);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
-std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter) 
+std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
     {chemical_state} y = set_chemical_state(int_energy, sp);
     
-    auto result = rosenbroc(y, dt);
+    auto result = rosenbroc(y, dt, linear_abs_tol, linear_rel_tol);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
-std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} max_norm, {index} max_iter, {scalar} min_dt) 
+std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} max_norm, {scalar} min_dt, {index} max_iter, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
     {chemical_state} y = set_chemical_state(int_energy, sp);
     
-    auto result = yass(y, dt, max_norm, min_dt, max_iter);
+    auto result = yass(y, dt, max_norm, min_dt, max_iter, linear_abs_tol, linear_rel_tol);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}

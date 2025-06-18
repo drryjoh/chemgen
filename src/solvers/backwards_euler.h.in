@@ -2,15 +2,17 @@
 {chemical_state} 
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt, 
-                {scalar} tol = 1e-10, 
-                {index} max_iter = 10) 
+                {scalar} newton_tol = 1e-10, 
+                {index}  max_iter = 5,
+                {scalar} linear_abs_tol = 1e-8, 
+                {scalar} linear_rel_tol = 1e-4) 
 {{
         
         
         {species} y_init = get_species(y);
         {scalar} temperature_guess = temperature(y[0], y_init);
         {species} y_guess = get_species(y);
-        for ({index} iter = 0; iter < 5; ++iter) 
+        for ({index} iter = 0; iter < max_iter; ++iter) 
         {{
             {scalar} temperature_ = temperature(y[0], y_guess);
             {species} f = source(y_guess, temperature_);
@@ -28,13 +30,13 @@ backwards_euler({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {species} dy = invert_jacobian(A) * res;
             #else
-            {species} dy = gmres_solve(A, res, tol = 1e-10);
+            {species} dy = gmres_solve(A, res, linear_abs_tol, linear_rel_tol);
             #endif
 
             //Increment
             y_guess = y_guess + dy;
 
-            if (norm2(dy) < 1e-10)
+            if (norm2(dy) < newton_tol)
             {{
                 return set_chemical_state(y[0], y_guess); 
             }};
