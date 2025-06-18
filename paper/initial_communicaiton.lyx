@@ -10361,22 +10361,22 @@ nolink "false"
 \begin_layout Standard
 \noindent
 where 
-\begin_inset Formula $q:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d}$
+\begin_inset Formula $q$
 \end_inset
 
  is the thermal heat flux,
  
-\begin_inset Formula $\tau:\mathbb{R}^{m}\times\mathbb{R}^{m\times d}\rightarrow\mathbb{R}^{d\times d}$
+\begin_inset Formula $\tau$
 \end_inset
 
  is the viscous stress tensor,
  
-\begin_inset Formula $\left(h_{1},\ldots,h_{n_{s}}\right):\mathbb{R}^{m}\rightarrow\mathbb{R}^{n_{s}}$
+\begin_inset Formula $\left(h_{1},\ldots,h_{n_{s}}\right)$
 \end_inset
 
  are the species specific enthalpies,
  and 
-\begin_inset Formula $\left(\left(V_{11},\dots,V_{1d}\right),\dots,\left(V_{n_{s}1},\dots,V_{n_{s}d}\right)\right):\mathbb{R}^{m}\times\mathbb{R}^{n_{s}\times d}\rightarrow\mathbb{R}^{n_{s}\times d}$
+\begin_inset Formula $\left(\left(V_{11},\dots,V_{1d}\right),\dots,\left(V_{n_{s}1},\dots,V_{n_{s}d}\right)\right)$
 \end_inset
 
  are the species diffusion velocities.
@@ -10402,7 +10402,7 @@ where
 \begin_layout Standard
 \noindent
 where 
-\begin_inset Formula $\mu:\mathbb{R}^{m}\rightarrow\mathbb{R}$
+\begin_inset Formula $\mu$
 \end_inset
 
  is the dynamic viscosity.
@@ -10419,7 +10419,7 @@ q_{k}\left(y,\nabla y\right) & = & -\lambda\frac{\partial T}{\partial x_{k}}.
 \end_inset
 
 where 
-\begin_inset Formula $\lambda:\mathbb{R}^{m}\rightarrow\mathbb{R}$
+\begin_inset Formula $\lambda$
 \end_inset
 
  is the thermal conductivity.
