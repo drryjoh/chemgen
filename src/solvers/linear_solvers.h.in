@@ -1,5 +1,6 @@
 {preconditioner}
 {direct_solver}
+{eigen}
 
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 {device_option}
@@ -59,10 +60,71 @@ apply_gauss_seidel({jacobian_function} A, {species_function} v)
 }}
 #endif
 
+#ifdef CHEMGEN_EIGEN
+{device_option}
+{species_function}
+gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
+{{
+    using namespace Eigen;
+
+    // Step 1: Convert A and b to Eigen types
+    Matrix<{scalar}, n_species, n_species> A;
+    Matrix<{scalar}, n_species, 1> b;
+
+    for ({index} i = 0; i < n_species; ++i)
+    {{
+        b(i) = b_[i];
+        for ({index} j = 0; j < n_species; ++j) 
+        {{
+            A(i, j) = A_[i][j];
+        }}
+    }}
+
+    // Step 2: Define operator for GMRES using lambda
+    auto Aop = [&A](const Matrix<{scalar}, n_species, 1>& x) -> Matrix<{scalar}, n_species, 1> 
+    {{
+        return A * x;
+    }};
+
+    // Step 3: Use GMRES with identity preconditioner
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+    DiagonalPreconditioner<{scalar}> precond;
+    precond.compute(A);
+#else
+    IdentityPreconditioner precond;
+#endif
+
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+    GeneralizedMinimalResidual<Matrix<{scalar}, n_species, 1>, decltype(Aop), DiagonalPreconditioner<double>> gmres;
+#else
+    GeneralizedMinimalResidual<Matrix<{scalar}, n_species, 1>, decltype(Aop), IdentityPreconditioner> gmres;
+#endif
+
+
+    gmres.setMaxIterations(n_species * 10);
+    gmres.set_restart(n_species);  // Full-size Krylov subspace
+    gmres.setTolerance(abs_tol);  // You can scale with norm(b) if needed
+
+    // Step 4: Solve
+    Matrix<{scalar}, n_species, 1> x0 = Matrix<{scalar}, n_species, 1>::Zero();
+    Matrix<{scalar}, n_species, 1> x = gmres.solveWithGuess(Aop, b, x0, precond);
+
+    // Step 5: Convert result back to std::array
+    std::array<{scalar}, n_species> result;
+    for ({index} i = 0; i < n_species; ++i)
+        result[i] = x(i);
+
+    return result;
+}}
+#endif
+
 {device_option}
 {species_function}
 gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
 {{
+#ifdef CHEMGEN_EIGEN
+    return gmres_eigen(A, b, abs_tol, rel_tol);
+#else
 	{index} max_iter = 100;
     {species} x = {{}};
 	{species} cs = {{}};
@@ -156,5 +218,6 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
         result = result + y[i] * V[i];
 
     return result;
+#endif
 }}
 
