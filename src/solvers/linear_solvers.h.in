@@ -67,9 +67,9 @@ gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 
 {{
     using namespace Eigen;
 
-    // Step 1: Convert A and b to Eigen types
-    Matrix<{scalar}, n_species, n_species> A;
-    Matrix<{scalar}, n_species, 1> b;
+    MatrixXd A(n_species, n_species);  // or A.resize(n_species, n_species);
+    VectorXd b(n_species);
+
 
     for ({index} i = 0; i < n_species; ++i)
     {{
@@ -80,37 +80,23 @@ gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 
         }}
     }}
 
-    // Step 2: Define operator for GMRES using lambda
-    auto Aop = [&A](const Matrix<{scalar}, n_species, 1>& x) -> Matrix<{scalar}, n_species, 1> 
-    {{
-        return A * x;
-    }};
-
-    // Step 3: Use GMRES with identity preconditioner
-#ifdef CHEMGEN_PRECONDITIONER_JACOBI
-    DiagonalPreconditioner<{scalar}> precond;
-    precond.compute(A);
-#else
-    IdentityPreconditioner precond;
-#endif
-
-#ifdef CHEMGEN_PRECONDITIONER_JACOBI
-    GeneralizedMinimalResidual<Matrix<{scalar}, n_species, 1>, decltype(Aop), DiagonalPreconditioner<double>> gmres;
-#else
-    GeneralizedMinimalResidual<Matrix<{scalar}, n_species, 1>, decltype(Aop), IdentityPreconditioner> gmres;
-#endif
+    #ifdef CHEMGEN_PRECONDITIONER_JACOBI
+    GMRES<MatrixXd, DiagonalPreconditioner<{scalar}>> gmres;
+    #else
+    GMRES<MatrixXd, IdentityPreconditioner> gmres;
+    #endif
 
 
     gmres.setMaxIterations(n_species * 10);
     gmres.set_restart(n_species);  // Full-size Krylov subspace
     gmres.setTolerance(abs_tol);  // You can scale with norm(b) if needed
+    
+    gmres.compute(A);
+    VectorXd x = gmres.solve(b);  // ✅ This is dynamic and safe
 
-    // Step 4: Solve
-    Matrix<{scalar}, n_species, 1> x0 = Matrix<{scalar}, n_species, 1>::Zero();
-    Matrix<{scalar}, n_species, 1> x = gmres.solveWithGuess(Aop, b, x0, precond);
 
     // Step 5: Convert result back to std::array
-    std::array<{scalar}, n_species> result;
+    {species} result = {{}};
     for ({index} i = 0; i < n_species; ++i)
         result[i] = x(i);
 

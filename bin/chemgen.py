@@ -116,6 +116,7 @@ def main():
     chemistry_solver = configuration_file.get('solver', {}).get('chemistry_solver', None)
     chemistry_solver_preconditioner = configuration_file.get('solver', {}).get('preconditioner', None)
     chemistry_solver_eigen = configuration_file.get('solver', {}).get('eigen', None)
+
     direct_solver = ''
     if chemistry_solver:
         generate_chemistry_solver = True
@@ -165,8 +166,9 @@ def main():
             print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
             exit()
     
+    eigen = ""
     if chemistry_solver_eigen and chemistry_solver:
-        if chemistry_solver_eigen.lower() == "on":
+        if chemistry_solver_eigen:
             eigen = "#define CHEMGEN_EIGEN"
         else:
             print(f"Eigen option {chemistry_solver_eigen} in unknown, defaulting to CHEMGEN_EIGEN OFF")
