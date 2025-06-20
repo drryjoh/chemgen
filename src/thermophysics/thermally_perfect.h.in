@@ -286,7 +286,7 @@ specific_heat_constant_volume_volume_specific({species_parameter} species,
 dtemperature_dspecies({species_parameter} species,
                       {scalar_parameter} temperature) {const_option}
 {{
-    return  {scale}(-inv_gen(specific_heat_constant_volume_volume_specific(species, temperature)), molecular_weights() * species_specific_heat_constant_volume_mass_specific(temperature));
+    return  {scale}(-inv_gen(specific_heat_constant_volume_volume_specific(species, temperature)), molecular_weights() * species_internal_energy_mass_specific(temperature));
 }}
 
 {device_option}
