@@ -3,7 +3,7 @@ import chemgen as cg
 import cantera as ct
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 
 
 def random_yc(ns):
@@ -24,13 +24,30 @@ def discrete_jacobian(C,T,dc):
         C[i] = C[i] + dc
         J[:,i] = (S1-S2) / (2 * dc)
     return J
+
+def discrete_jacobian_new(C,T,dc):
+    n_species  = len(C)
+    J = np.zeros([ns, ns])
+    rho_u = cg.internal_energy_volume_specific(C, T)
+    for i in range(n_species):
+        C[i] = C[i] + dc
+        T1 = cg.temperature_from_internal_energy(C, rho_u)
+        S1 = np.array(cg.source(C, T1))
+        C[i] = C[i] - dc
+        C[i] = C[i] - dc
+        T2 = cg.temperature_from_internal_energy(C, rho_u)
+        S2 = np.array(cg.source(C, T2))
+        C[i] = C[i] + dc
+        J[:,i] = (S1-S2) / (2 * dc)
+    return J
+
 def Frobenius(J, ns):
     L2 = 0
     for i in range(ns):
         for j in range(ns):
             L2 += J[i,j]**2
     return np.sqrt(L2)
-    
+
 
 def check_J(Jcg, Jfd, ns):
     minJ = np.min(Jfd[np.abs(Jfd)>0])/1000
@@ -64,7 +81,7 @@ def L2_nei_J(Jcg, Jfd, ns):
     print(number_of_elements/ns**2)
     return np.sqrt(L2)
 
-mech = "sandiego"
+mech = "ffcm2_h2"
 gas = ct.Solution(f"{mech}.yaml")
 
 ns = gas.n_species
@@ -85,10 +102,13 @@ C = yci[1:]
 dc = np.min(C[C > 0])/1.5
 Jcg = np.array(cg.source_jacobian(C,T))
 for r in range(4):
-    Jfd = discrete_jacobian(C, T, dc/(2**r))
+    Jfd = discrete_jacobian_new(C, T, dc/(2**r))
     L2s.append(L2_J(Jcg, Jfd, ns))
 refinement  = np.array(range(4))
 L2s = np.array(L2s)
+
+# breakpoint()
+print("L2s = {}".format(L2s))
 
 plt.figure()
 plt.semilogy(refinement, [1.0 / (4 ** r) for r in refinement], '--r', label='Second-order reference', lw=3)
@@ -96,12 +116,12 @@ plt.semilogy(refinement, L2s / L2s[0], ':ok', label='Observed $L_2$')
 
 
 # Custom x-axis tick labels
-tick_labels = [f"[$\delta c/{2**r}$, $\delta T/{2**r}$]" if r > 0 else "[$\delta c$, $\delta T$]" for r in refinement]
+tick_labels = [f"[$\\delta c/{2**r}$, $\\delta T/{2**r}$]" if r > 0 else "[$\\delta c$, $\\delta T$]" for r in refinement]
 plt.xticks(refinement, tick_labels)
 
 # Label the plot
 plt.xlabel('Refinement Level')
-plt.ylabel('$L_2$ normalized by\n$L_2$ for $\delta c$ and $\delta T$')
+plt.ylabel('$L_2$ normalized by\n$L_2$ for $\\delta c$ and $\\delta T$')
 plt.legend()
 plt.grid(True, which="both", ls="--", lw=0.5)
 plt.savefig("ooa.png",dpi=300)
