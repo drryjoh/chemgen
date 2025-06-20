@@ -190,7 +190,7 @@ def rosenbrock2(y0, dt, n_time_steps):
 
         # Stage 2
         y_stage = yn + alpha * k1
-        rhs2 = source(y_stage) + beta/dt *k1 - G @ k1 #source(y_stage) - J @ (a21 * dt * k1)
+        rhs2 = source(y_stage) + beta/dt *k1 - rhs1#source(y_stage) - J @ (a21 * dt * k1)
         dk2, _ = gmres_custom(G, rhs2)
         k2 = k1 + dk2
 

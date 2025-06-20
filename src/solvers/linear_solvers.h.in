@@ -1,5 +1,6 @@
 {preconditioner}
 {direct_solver}
+{eigen}
 
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 {device_option}
@@ -59,10 +60,57 @@ apply_gauss_seidel({jacobian_function} A, {species_function} v)
 }}
 #endif
 
+#ifdef CHEMGEN_EIGEN
+{device_option}
+{species_function}
+gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
+{{
+    using namespace Eigen;
+
+    MatrixXd A(n_species, n_species);  // or A.resize(n_species, n_species);
+    VectorXd b(n_species);
+
+
+    for ({index} i = 0; i < n_species; ++i)
+    {{
+        b(i) = b_[i];
+        for ({index} j = 0; j < n_species; ++j) 
+        {{
+            A(i, j) = A_[i][j];
+        }}
+    }}
+
+    #ifdef CHEMGEN_PRECONDITIONER_JACOBI
+    GMRES<MatrixXd, DiagonalPreconditioner<{scalar}>> gmres;
+    #else
+    GMRES<MatrixXd, IdentityPreconditioner> gmres;
+    #endif
+
+
+    gmres.setMaxIterations(n_species * 10);
+    gmres.set_restart(n_species);  // Full-size Krylov subspace
+    gmres.setTolerance(abs_tol);  // You can scale with norm(b) if needed
+    
+    gmres.compute(A);
+    VectorXd x = gmres.solve(b);  // ✅ This is dynamic and safe
+
+
+    // Step 5: Convert result back to std::array
+    {species} result = {{}};
+    for ({index} i = 0; i < n_species; ++i)
+        result[i] = x(i);
+
+    return result;
+}}
+#endif
+
 {device_option}
 {species_function}
 gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
 {{
+#ifdef CHEMGEN_EIGEN
+    return gmres_eigen(A, b, abs_tol, rel_tol);
+#else
 	{index} max_iter = 100;
     {species} x = {{}};
 	{species} cs = {{}};
@@ -156,5 +204,6 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
         result = result + y[i] * V[i];
 
     return result;
+#endif
 }}
 

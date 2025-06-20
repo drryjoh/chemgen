@@ -31,7 +31,7 @@ rosenbroc({chemical_state} y,
         {species} y_stage = y_init + alpha * k1;
         {scalar} temperature_stage = temperature(y[0], y_stage);
 
-        {species} rhs2 = source(y_stage, temperature_stage) + beta/dt * k1 - G * k1; //source(y_stage) - J @ (a21 * dt * k1)
+        {species} rhs2 = source(y_stage, temperature_stage) + beta/dt * k1 - rhs1; //source(y_stage) - J @ (a21 * dt * k1)
 
         #ifdef CHEMGEN_DIRECT_SOLVER
         {species} dk = invert_jacobian(G) * rhs2;

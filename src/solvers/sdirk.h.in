@@ -9,7 +9,7 @@
 sdirk2({chemical_state} y,  
        {scalar_parameter} dt, 
        {scalar} tol = 1e-10,
-       {index} max_iter = 10) 
+       {index} max_iter = 5) 
 {{
         {species} y_init = get_species(y);
         {scalar} gamma = 1.0 - 1.0 / sqrt_gen({scalar}(2));
@@ -20,7 +20,7 @@ sdirk2({chemical_state} y,
         const {jacobian} I = jacobian_I();
 
         //stage1
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter) 
         {{
             {species} y_stage = y_init + scale_gen(gamma * dt, k1);
             {scalar} temperature_ = temperature(y[0], y_stage);
@@ -71,7 +71,7 @@ sdirk2({chemical_state} y,
 sdirk4({chemical_state} y,  
        {scalar_parameter} dt, 
        {scalar} tol = 1e-10,
-       {index} max_iter = 10) 
+       {index} max_iter = 5) 
 {{
         {scalar} gamma = .26666666666666666666666666666666670;
         {scalar} a11 = .26666666666666666666666666666666670;
@@ -108,7 +108,7 @@ sdirk4({chemical_state} y,
         Confirmed Stage 1
 */
 
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter) 
         {{
             {species} y_stage = y_init + scale_gen(gamma * dt, k1);
             {scalar} temperature_ = temperature(y[0], y_stage);

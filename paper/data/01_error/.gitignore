@@ -1,0 +1,20 @@
+*
+!.gitignore
+!*.png
+!*.py
+!*.sh
+!*.yaml
+!max*
+
+# Unignore the directories
+!4/
+!7/
+!15/
+
+4/*
+7/*
+15/*
+!4/l2*
+!7/l2*
+!15/l2*
+
