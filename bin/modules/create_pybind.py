@@ -127,11 +127,26 @@ std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} tem
     return temperature(internal_energy, sp);
 }}
 
+{scalar} temperature_py(const std::vector<{scalar}>& species, {scalar} internal_energy)
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+    return temperature(internal_energy, sp);
+}}
+
 {scalar} internal_energy_volume_specific_py(const std::vector<{scalar}>& species, {scalar} temperature)
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     return internal_energy_volume_specific(sp, temperature);
+}}
+
+std::vector<{scalar}> dtemperature_dspecies_py(const std::vector<{scalar}>& species, {scalar} temperature)
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+    auto result = dtemperature_dspecies(sp, temperature);
+    return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
 
@@ -144,7 +159,9 @@ PYBIND11_MODULE(chemgen, m)
     m.def("rosenbroc", &rosenbroc_py, "Rosenbroc 2");
     m.def("yass", &yass_py, "YASS");
     m.def("temperature_from_internal_energy", &temperature_from_internal_energy_py, "temperature 4");
+    m.def("temperature", &temperature_py, "temperature");
     m.def("internal_energy_volume_specific", &internal_energy_volume_specific_py, "internal_energy_volume_specific");
+    m.def("dtemperature_dspecies", &dtemperature_dspecies_py, "dtemperature_dspecies");
     {remove_reactions_call}
 }}
 
