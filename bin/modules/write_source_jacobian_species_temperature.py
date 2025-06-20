@@ -11,7 +11,9 @@ class SourceJacobianWriter:
     {{
         {species} net_production_rates = {{{scalar_cast}(0)}};
         {jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};
-        ReactionSpecies drate_of_progress_dspecies = {{{scalar_cast}(0)}};
+        {scalar} drate_of_progress_dspecies  = {scalar_cast}(0);
+        // {scalar} equilibrium_constant  = {scalar_cast}(0);
+        {species} drate_of_progress_dspecies_all_species  = {{{scalar_cast}(0)}};
 
         {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
         {scalar} dinv_universal_gas_constant_temperature_dtemperature  = inv_chain(universal_gas_constant() * temperature, universal_gas_constant());
@@ -35,6 +37,8 @@ class SourceJacobianWriter:
                        dinv_universal_gas_constant_temperature_dtemperature);
         
         {species} dmixture_concentration_dspecies = {species}{{1}}; // optimized (1/(RT))*(RT,...,RT)
+
+        {species} dtemperature_dspecies_ = dtemperature_dspecies(species, temperature);
         
             \n""".format(**vars(configuration), gibbs = gibbs))
     
