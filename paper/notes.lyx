@@ -86,10 +86,14 @@
 
 \begin_body
 
+\begin_layout Section
+Temperature dependence
+\end_layout
+
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\frac{\partial\omega_{i}}{\partial C_{j}}=\left.\frac{\partial\omega_{i}}{\partial C_{j}}\right|_{C_{k\neq j},T}+\left.\frac{\partial\omega_{i}}{\partial T}\right|_{C_{k}}\left.\frac{\partial T}{\partial C_{j}}\right|_{C_{k\neq j}}
+\frac{\partial\omega_{i}}{\partial C_{j}}=\left(\frac{\partial\omega_{i}}{\partial C_{j}}\right)_{C_{k\neq j},T}+\left(\frac{\partial\omega_{i}}{\partial T}\right)_{C_{k}}\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}
 \]
 
 \end_inset
@@ -97,7 +101,7 @@
 where
 \begin_inset Formula 
 \begin{align*}
-\left.\frac{\partial T}{\partial C_{j}}\right|_{C_{k\neq j}} & =-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}\\
+\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}} & =-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}\\
  & =-\frac{1}{\rho c_{v}}W_{j}u_{j}\\
  & =-\frac{W_{j}u_{j}}{\rho c_{v}}
 \end{align*}
@@ -115,8 +119,68 @@ Also,
 so
 \begin_inset Formula 
 \[
-\frac{\partial\omega_{i}}{\partial C_{j}}=\sum_{l=1}^{n_{r}}\nu_{il}\frac{\partial q_{l}}{\partial C_{j}}=\sum_{l=1}^{n_{r}}\nu_{il}\left.\frac{\partial q_{l}}{\partial C_{j}}\right|_{C_{k\neq j},T}+\sum_{l=1}^{n_{r}}\nu_{il}\left.\frac{\partial q_{l}}{\partial T}\right|_{C_{k}}\left.\frac{\partial T}{\partial C_{j}}\right|_{C_{k\neq j}}
+\frac{\partial\omega_{i}}{\partial C_{j}}=\sum_{l=1}^{n_{r}}\nu_{il}\frac{\partial q_{l}}{\partial C_{j}}=\sum_{l=1}^{n_{r}}\nu_{il}\left(\frac{\partial q_{l}}{\partial C_{j}}\right)_{C_{k\neq j},T}+\sum_{l=1}^{n_{r}}\nu_{il}\left(\frac{\partial q_{l}}{\partial T}\right)_{C_{k}}\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}
 \]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Variable transformations
+\end_layout
+
+\begin_layout Subsection
+Temperature equation
+\end_layout
+
+\begin_layout Standard
+We have
+\begin_inset Formula 
+\[
+\frac{\partial u}{\partial t}=0=\frac{\partial u}{\partial T}\frac{\partial T}{\partial t}+\sum_{i}\frac{\partial u}{\partial Y_{i}}\frac{\partial Y_{i}}{\partial t},
+\]
+
+\end_inset
+
+which can be rewritten as
+\begin_inset Formula 
+\[
+c_{v}\frac{\partial T}{\partial t}=-\sum_{i}u_{i}\frac{\partial Y_{i}}{\partial t},
+\]
+
+\end_inset
+
+where,
+ since 
+\begin_inset Formula $\rho$
+\end_inset
+
+ is constant by mass conservation,
+\begin_inset Formula 
+\[
+\frac{\partial Y_{i}}{\partial t}=\frac{1}{\rho}\frac{\partial\rho_{i}}{\partial t}=\frac{1}{\rho}W_{i}\omega_{i}.
+\]
+
+\end_inset
+
+This gives
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial T}{\partial t} & =-\frac{1}{\rho c_{v}}\sum_{i}u_{i}W_{i}\omega_{i}\\
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i}u_{i}W_{i}\omega_{i}}{\sum_{k}W_{k}C_{k}c_{v,k}}.
+\end{align*}
+
+\end_inset
+
+In mole-based quantities,
+ we have
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i}\widehat{u}_{i}\omega_{i}}{\sum_{k}\rho_{k}\widehat{c}_{v,k}\frac{1}{W_{k}}}\\
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i}\widehat{u}_{i}\omega_{i}}{\sum_{k}C_{k}\widehat{c}_{v,k}}
+\end{align*}
 
 \end_inset
 
