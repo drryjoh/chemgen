@@ -4862,10 +4862,33 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
+\mathcal{J}_{ij}=\frac{\partial\omega_{i}\left(C,T\right)}{\partial C_{j}}=\left(\frac{\partial\omega_{i}}{\partial C_{j}}\right)_{C_{k\neq j},T}+\left(\frac{\partial\omega_{i}}{\partial T}\right)_{C}\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}},\label{eq:derivative_matrices}
+\end{equation}
+
+\end_inset
+
+where
+\begin_inset Formula 
+\[
+\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}=-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}=-\frac{1}{\rho c_{v}}W_{j}u_{j}=-\frac{W_{j}u_{j}}{\rho c_{v}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{equation}
 \mathcal{J}_{a}\left(C,T\right)_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}\text{ and }\mathcal{J}_{b}\left(C,T\right)_{ij}=\begin{cases}
 \frac{\partial\omega_{i}}{\partial T} & i=1\dots n_{s};j=1\\
 \frac{\partial\omega_{i}}{\partial C_{j-1}} & i=1\dots n_{s};j=2\dots n_{s}+1;
-\end{cases}\label{eq:derivative_matrices}
+\end{cases}\label{eq:derivative_matrices-1}
 \end{equation}
 
 \end_inset
@@ -4885,6 +4908,11 @@ Thus
 
 ,
  provided other derivatives are available beyond the source terms.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
