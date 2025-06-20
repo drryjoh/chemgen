@@ -51,10 +51,10 @@ def get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_
 
     return entropy_coefficients
 
-def get_internal_energy_coefficients(gas, order, enthalpy_coefficients):
-    internal_internal_energy_coefficients = enthalpy_coefficients.copy()
-    internal_internal_energy_coefficients[1,:] = enthalpy_coefficients[1,:] - ct.gas_constant/gas.molecular_weights
-    return internal_internal_energy_coefficients
+def get_internal_energy_coefficients(gas, enthalpy_coefficients):
+    internal_energy_coefficients = enthalpy_coefficients.copy()
+    internal_energy_coefficients[1,:] = enthalpy_coefficients[1,:] - ct.gas_constant/gas.molecular_weights
+    return internal_energy_coefficients
 
 def check_against_temperature(gas, temperature_min, temperature_max, n_samples, enthalpy_coefficients, order):
     import matplotlib.pyplot as plt
@@ -167,14 +167,14 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     #mass specific quantities (units/kg)
     specific_heat_constant_pressure_species_coefficients = get_specific_heat_constant_pressure_species_coefficients(gas, order, temperatures)
     enthalpy_coefficients = get_enthalpy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients)
-    internal_energy_coefficients = get_internal_energy_coefficients(gas, order, enthalpy_coefficients)
+    internal_energy_coefficients = get_internal_energy_coefficients(gas, enthalpy_coefficients)
     species_entropy_coefficients = get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_heat_constant_pressure_species_coefficients)
     gibbs_energy_coefficients = get_gibbs_energy_coefficients(gas, order, specific_heat_constant_pressure_species_coefficients, enthalpy_coefficients, species_entropy_coefficients)
     gibbs_reaction_energy_coefficients = get_gibbs_reaction_coefficients(gas, order, temperatures)
 
     species_specific_heat_text = thermo_fit_text("temperature_monomial_sequence", specific_heat_constant_pressure_species_coefficients, "default", configuration)
     species_enthalpy_text  =      thermo_fit_text("temperature_energy_monomial_sequence", enthalpy_coefficients, "energy", configuration)
-    internal_internal_text =      thermo_fit_text("temperature_energy_monomial_sequence", internal_energy_coefficients, "energy", configuration)
+    internal_energy_text =      thermo_fit_text("temperature_energy_monomial_sequence", internal_energy_coefficients, "energy", configuration)
     species_entropy_text   =      thermo_fit_text("temperature_entropy_monomial_sequence", species_entropy_coefficients, "energy", configuration)
     gibbs_energy_text   =      thermo_fit_text("temperature_gibbs_monomial_sequence", gibbs_energy_coefficients, "gibbs", configuration)
     gibbs_energy_reaction_text   =      thermo_fit_text("log_temperature_monomial_sequence", gibbs_reaction_energy_coefficients, "default", configuration, return_type = "{reactions}")
@@ -187,7 +187,7 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     "gibbs_reaction"],
     [species_specific_heat_text,
     species_enthalpy_text,
-    internal_internal_text,
+    internal_energy_text,
     species_entropy_text,
     gibbs_energy_text,
     gibbs_energy_reaction_text],
