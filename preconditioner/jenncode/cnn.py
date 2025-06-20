@@ -172,28 +172,34 @@ import tensorflow as tf
 from tensorflow.keras import layers, callbacks, models, optimizers
 
 # Config
-DATA_DIR        = "data_200"
+DATA_DIR        = "EULER_825"
 MODEL_PATH      = "CNN_1.keras"
-NUM_SAMPLES     = 200
+NUM_SAMPLES     = 825
 M               = 96
-EPOCHS          = 10000
-BATCH_SIZE      = 32
-LEARNING_RATE   = 1e-6
-CLIP_NORM       = 1.0
-VALIDATION_SPLIT= 0.2
+FILTER_SIZE     = 8
+KERNEL_SIZE     = 6
+EPOCHS          = 50
+BATCH_SIZE      = 16
+LEARNING_RATE   = 1e-3
+CLIP_NORM       = 0.1
+VALIDATION_SPLIT= 0.3
 RANDOM_SEED     = 42
+EPS             = 1e-8
 
 # Load and shape data
 A_list = []
 invA_list = []
 for i in range(NUM_SAMPLES):
     A = np.loadtxt(os.path.join(DATA_DIR, f"A_{i}.csv"), delimiter=",", dtype=np.float32).reshape(M, M, 1)
-    inv_A = np.loadtxt(os.path.join(DATA_DIR, f"inv_A_{i}.csv"), delimiter=",", dtype=np.float32).reshape(M, M)
+    inv_A = np.loadtxt(os.path.join(DATA_DIR, f"A_inv_{i}.csv"), delimiter=",", dtype=np.float32).reshape(M, M)
     A_list.append(A)
     invA_list.append(inv_A)
+A = np.stack(A_list, axis=0)         
+inv_A = np.stack(invA_list, axis=0)  
 
-A = np.stack(A_list, axis=0)          # Shape: (200, 96, 96, 1)
-inv_A = np.stack(invA_list, axis=0)   # Shape: (200, 96, 96)
+# Normalize data
+A_mean, A_std = A.mean(), A.std() + EPS
+A_inv_std, A_inv_mean = inv_A.std() + EPS, inv_A.mean()
 
 # Shuffle and split data
 dataset = tf.data.Dataset.from_tensor_slices((A, inv_A)).shuffle(512, seed=RANDOM_SEED, reshuffle_each_iteration=True)
@@ -204,15 +210,26 @@ val_ds   = dataset.take(val_size).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 # Define CNN model
 model = models.Sequential([
     layers.Input(shape=(M, M, 1)),
-    layers.Conv2D(16, kernel_size=3, padding='same', activation='relu'),
-    layers.Conv2D(8, kernel_size=3, padding='same', activation='relu'),
-    layers.Conv2D(1, kernel_size=3, padding='same'),
-    layers.Reshape((M, M))
+    layers.Rescaling(1.0/A_std, offset=-A_mean/A_std),
+
+    layers.Conv2D(FILTER_SIZE, KERNEL_SIZE, padding='same', activation='gelu'),
+    # layers.LayerNormalization(axis=[1,2,3]),
+    layers.Conv2D(FILTER_SIZE, KERNEL_SIZE, padding='same', activation='gelu'),
+    layers.Conv2D(FILTER_SIZE, KERNEL_SIZE, padding='same', activation='gelu'),
+    layers.Conv2D(1, 3, padding='same'),
+    layers.Reshape((96,96)),
+
+    layers.Rescaling(A_inv_std, offset=A_inv_mean)
 ])
 
 # Compile with MSE loss
 opt = optimizers.Adam(learning_rate=LEARNING_RATE, clipnorm=CLIP_NORM)
-model.compile(optimizer=opt, loss='mse')
+model.compile(optimizer=opt,
+            #   loss="log_cosh", 
+              loss='mse'
+            #   loss=tf.keras.losses.MeanSquaredLogarithmicError()
+            # loss=tf.keras.losses.MeanAbsolutePercentageError()
+              )
 
 # Callbacks
 early_stop = callbacks.EarlyStopping(monitor="val_loss", patience=30, restore_best_weights=True)
@@ -224,7 +241,7 @@ history = model.fit(
     validation_data=val_ds,
     epochs=EPOCHS,
     callbacks=[early_stop, checkpoint],
-    verbose=1
+    verbose=2
 )
 
 # Evaluate

@@ -184,7 +184,8 @@ main()
         for (const auto& val : get_species(y)) be_file << " " << val;
         be_file << "\n";
 
-        // std::chrono::duration<double> NN_total_time; // FOR JAY
+        std::chrono::duration<double> NN_total_time; // FOR JAY
+        std::chrono::duration<double> P_total_time; // FOR JAY
         std::cout << "\nUSING -> MLP_LU_1" << std::endl;
         // int cvs_iter = 0;
 
@@ -201,8 +202,9 @@ main()
             // cvs_iter = i;
             y = backwards_euler(y,
                                 dt,
+                                NN_total_time,
+                                P_total_time,
                                 // cvs_iter,
-                                // NN_total_time,
                                 1e-12,
                                 10);
             t = t + dt;
@@ -212,9 +214,13 @@ main()
 
         }
         auto be_end = std::chrono::high_resolution_clock::now();
-        // std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY
+        
+        std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY
+        std::cout << "Total Preconditioning Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY
+
         std::chrono::duration<double> be_duration = be_end - be_start;
         std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
+
         // auto be_adjusted_duration = be_duration - NN_total_time; // FOR JAY
         // std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl // FOR JAY
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

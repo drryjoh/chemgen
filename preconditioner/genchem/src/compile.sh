@@ -9,5 +9,6 @@
 # exec 2>/dev/null
 rm -rf test
 export DYLD_LIBRARY_PATH=/Users/jsampa/miniconda3/envs/chemgen/lib:$DYLD_LIBRARY_PATH
-clang++ -O3 -march=native -I/Users/jsampa/miniconda3/envs/chemgen/include -L/Users/jsampa/miniconda3/envs/chemgen/lib -lyaml-cpp  chemgen.cpp -o test
+# clang++ -O3 -march=native -I/Users/jsampa/miniconda3/envs/chemgen/include -L/Users/jsampa/miniconda3/envs/chemgen/lib -lyaml-cpp  chemgen.cpp -o test
+clang++ -std=c++23 -O3 -march=native -ftemplate-depth=10000 -I/Users/jsampa/miniconda3/envs/chemgen/include -L/Users/jsampa/miniconda3/envs/chemgen/lib -lyaml-cpp  chemgen.cpp -o test
 ./test

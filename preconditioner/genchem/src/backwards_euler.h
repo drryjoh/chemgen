@@ -2,8 +2,9 @@ ChemicalState
 backwards_euler(ChemicalState y,  
                 const double& dt,
                 //...........................................
+                std::chrono::duration<double>& NN_total_time,
+                std::chrono::duration<double>& P_total_time,
                 // int& cvs_iter,
-                // std::chrono::duration<double>& NN_total_time,
                 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 double tol = 1e-12, 
                 int max_iter = 10
@@ -106,7 +107,10 @@ backwards_euler(ChemicalState y,
             Species dy = train_pinn(A,res);
             //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
             #else
-            Species dy = gmres_solve(A, res, tol);
+            Species dy = gmres_solve(A, res, 
+                                    NN_total_time,
+                                    P_total_time,
+                                    tol);
             #endif
 
             //.............................................
