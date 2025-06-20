@@ -80,7 +80,7 @@ def get_enthalpy_coefficients(gas, order, specific_heat_coefficients):
     specific_heat_shape = np.shape(specific_heat_coefficients)
     enthalpy_coefficients = np.zeros([specific_heat_shape[0]+1, specific_heat_shape[1]]) 
 
-    for i in range(1,order+1):
+    for i in range(1,order+2):
         enthalpy_coefficients[i,:] = specific_heat_coefficients[i-1,:]/(i)
 
     #assure that 298 matches
