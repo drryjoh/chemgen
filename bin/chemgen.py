@@ -62,7 +62,7 @@ def main():
     parser.add_argument("--verbose", action="store_true", help="Verbose code generation")
     parser.add_argument("--remove_reactions", action="store_true", help="Generate the ability to remove single reaction from jacobian")
     parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction") # TODO: this can never be False
-    parser.add_argument("--jacobian-temperature", action="store_true", help="Generate source term jacobian with temperature derivatives requires n+1 for source Jacobian State")
+    parser.add_argument("--ignore-temp-dependence", action="store_true", help="Ignore temperature dependence in Jacobian")
     parser.add_argument("--force", action="store_true", help="Force code generation despite warnings")
     parser.add_argument("--pybind", action="store_true", help="Create pybind linker")
     parser.add_argument("--skip", action="store_true", help="Skip code generation")
@@ -81,10 +81,10 @@ def main():
         fit_gibbs_reaction  = False
         print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
     
-    temperature_jacobian  = False
-    if args.jacobian_temperature == True:
-        temperature_jacobian  = True
-        print("Source Jacobain will be created with temperature derivatives")
+    temperature_jacobian = True
+    if args.ignore_temp_dependence == True:
+        temperature_jacobian  = False
+        print("Source Jacobian will be created without temperature dependence")
 
     
     force  = False
@@ -196,7 +196,7 @@ def main():
         if args.get_sparsity:
             if temperature_jacobian or args.remove_reactions:
                 raise NotImplementedError
-                
+
             sparsity_pattern = np.zeros([gas.n_species, gas.n_species], dtype=int)
         else:
             sparsity_pattern = None

@@ -33,11 +33,11 @@ def get_configuration(configuration_filename = 'configuration.yaml', decorators 
 #update with other checks later on
 def check_configuration(configuration, temperature_jacobian, force = False): 
     if temperature_jacobian:
-        jacobian_type  = f"{configuration.jacobian_typedef}"
-        if "Species, n_species" in jacobian_type and not force:
-            exit(f"{jacobian_type} is probably incorrect for jacobian_typedef in configuraiton file\n Consider one with size <n_species +1, n_species + 1> such as std::array<ChemicalState, n_species + 1>\n to continue use --force")
-        elif "Species, n_species" in jacobian_type and force:
-            print(f"{jacobian_type} is probably incorrect ")
+        # jacobian_type  = f"{configuration.jacobian_typedef}"
+        # if "Species, n_species" in jacobian_type and not force:
+        #     exit(f"{jacobian_type} is probably incorrect for jacobian_typedef in configuraiton file\n Consider one with size <n_species +1, n_species + 1> such as std::array<ChemicalState, n_species + 1>\n to continue use --force")
+        # elif "Species, n_species" in jacobian_type and force:
+        #     print(f"{jacobian_type} is probably incorrect ")
         setattr(configuration, "temperature_jacobian", "on")
     else:
         setattr(configuration, "temperature_jacobian", "off")
