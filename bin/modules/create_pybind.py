@@ -30,7 +30,7 @@ def create_pybind(gas, headers, configuration, destination_folder, remove_reacti
         for header in headers:
             f.write(f"#include \"{header}\"\n")
         remove_reactions_text = ""
-        remove_reactions_call_text = "" 
+        remove_reactions_call_text = ""
         if remove_reactions:
             remove_reactions_text = """
 std::vector<std::vector<{scalar}>> source_jacobian_remove_reaction_py(const std::vector<{scalar}>& species, {scalar} temperature, std::vector<std::vector<{scalar}>>& J, {index} i) 
@@ -84,47 +84,54 @@ std::vector<std::vector<{scalar}>> source_jacobian_py(const std::vector<{scalar}
     return jac_out;
 }}
 
-std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter) 
+std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter)
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
     {chemical_state} y = set_chemical_state(int_energy, sp);
-    
+
     auto result = sdirk4(y, dt, norm, max_iter);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
-std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter) 
+std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter)
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
     {chemical_state} y = set_chemical_state(int_energy, sp);
-    
+
     auto result = rosenbroc(y, dt);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
-std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} max_norm, {index} max_iter, {scalar} min_dt) 
+std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} max_norm, {index} max_iter, {scalar} min_dt)
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
     {chemical_state} y = set_chemical_state(int_energy, sp);
-    
+
     auto result = yass(y, dt, max_norm, min_dt, max_iter);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
-{scalar} temperature_from_internal_energy_py(const std::vector<{scalar}>& species, {scalar} internal_energy) 
+{scalar} temperature_from_internal_energy_py(const std::vector<{scalar}>& species, {scalar} internal_energy)
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
     return temperature(internal_energy, sp);
+}}
+
+{scalar} internal_energy_volume_specific_py(const std::vector<{scalar}>& species, {scalar} temperature)
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+    return internal_energy_volume_specific(sp, temperature);
 }}
 
 
@@ -137,6 +144,7 @@ PYBIND11_MODULE(chemgen, m)
     m.def("rosenbroc", &rosenbroc_py, "Rosenbroc 2");
     m.def("yass", &yass_py, "YASS");
     m.def("temperature_from_internal_energy", &temperature_from_internal_energy_py, "temperature 4");
+    m.def("internal_energy_volume_specific", &internal_energy_volume_specific_py, "internal_energy_volume_specific");
     {remove_reactions_call}
 }}
 
