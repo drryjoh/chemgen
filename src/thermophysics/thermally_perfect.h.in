@@ -325,7 +325,7 @@ temperature({scalar_parameter} internal_energy, {species_parameter} species, {in
 temperature({scalar_parameter} internal_energy, {species_parameter} species) {const_option} 
 {{
     {scalar} temperature_guess  = {scalar_cast}(500);
-    {index} max_iterations = 3;
+    {index} max_iterations = 5;
     for({index} i=0; i < max_iterations; ++i)
     {{
         temperature_guess = 
