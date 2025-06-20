@@ -34,6 +34,8 @@ backwards_euler({chemical_state} y,
             //Increment
             y_guess = y_guess + dy;
 
+            std::cout << "|norm2(dy) = " << norm2(dy) << "|" << std::endl;
+
             if (norm2(dy) < tol)
             {{
                 std::cout << "# Newton iterations = " << iter + 1 << std::endl;
