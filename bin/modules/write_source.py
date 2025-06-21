@@ -1,4 +1,22 @@
 class SourceWriter:
+    def write_energy_source(self, file, temperature_equation, configuration):
+        if temperature_equation:
+            file.write("""
+            {device_option}
+            {scalar} source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return
+                -divide(sum_gen(molecular_weights() * species_internal_energy_mass_specific(temperature) * source(species, temperature)),
+                        sum_gen(molecular_weights() * species * species_specific_heat_constant_volume_mass_specific(temperature)));
+            }}""".format(**vars(configuration)))
+        else:
+            file.write("""
+            {device_option}
+            {scalar} source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return {scalar_cast}(0);
+            }}""".format(**vars(configuration)))
+
     def write_start_of_source_function(self, file, configuration, fit_gibbs_reaction = True):
         if fit_gibbs_reaction:
             gibbs = "{reactions} gibbs_reactions = gibbs_reaction(log_temperature);".format(**vars(configuration)) 
@@ -40,7 +58,8 @@ class SourceWriter:
 
     def write_source(self, file, equilibrium_constants, 
                      reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
-                     species_production_texts, headers, configuration, fit_gibbs_reaction = True): 
+                     species_production_texts, headers, configuration, temperature_equation, fit_gibbs_reaction = True):
+        self.write_energy_source(file, temperature_equation, configuration)
         self.write_start_of_source_function(file, configuration, fit_gibbs_reaction = fit_gibbs_reaction)
         self.write_reaction_calculations(file, reaction_calls, configuration)
         self.write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)

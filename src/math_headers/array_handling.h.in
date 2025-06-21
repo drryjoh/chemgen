@@ -259,7 +259,7 @@ get_energy({chemical_state_parameter} y) {const_option}
 
 {device_option}
 {chemical_state_function} 
-set_chemical_state({scalar_parameter} internal_energy,
+set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
                    {species_parameter} species) {const_option}
 {{
     {chemical_state} y;
@@ -267,7 +267,7 @@ set_chemical_state({scalar_parameter} internal_energy,
     {{
         y[i] = species[i-1];
     }}
-    y[0] = internal_energy;
+    y[0] = energy;
     return y;
 }}
 

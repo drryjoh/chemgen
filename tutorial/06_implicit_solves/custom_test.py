@@ -72,6 +72,8 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
         concentration_test = '{species} species  = {{{array}}};'.format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
 
         content = """
+#define {internal_energy_or_temperature}
+
 auto read_scalar_or_default = [](const YAML::Node& node, const std::string& key, double default_value) 
 {{
     double value = default_value;
@@ -192,7 +194,11 @@ main()
                            end_time);
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
 
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
     {chemical_state} y_init = set_chemical_state(int_energy, species);
+#else
+    {chemical_state} y_init = set_chemical_state(temperature_, species);
+#endif
     {chemical_state} y = y_init;
     {scalar} dt, t;
     {index}  n_run;
@@ -342,6 +348,8 @@ main()
 
     return 0;
 }}
+
+#undef {internal_energy_or_temperature}
             """
         file.write(content.format(**vars(configuration), 
         concentration_test = concentration_test, 
