@@ -114,6 +114,7 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         species_index = index))
     species_production_on_fly_function_texts[reaction_index] = '\n'.join(on_the_fly_production)
 
+'''
 def accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_species_texts, species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, reactions_depend_on, reaction_index, configuration, temperature_jacobian = False):
     depends_on_temperature = True; depends_on_species = True
     begin = '0'
@@ -153,11 +154,13 @@ def add_to_loops(species_production_jacobian_texts, species_production_jacobian_
             static constexpr {scalar_list}<{scalar}, n_rates_of_progres_species_jacobian_{species_index}> coefficients_{species_index} = {{{coeffs}}};
             static constexpr {scalar_list}<{index}, n_rates_of_progres_species_jacobian_{species_index}> idx_{species_index} = {{{indexes}}};
             """.format(**vars(configuration), n_coefficients = n_coefficients, coeffs = ','.join(jacobian_texts), indexes = ",".join(species_production_jacobian_species_indexes[i]), species_index = i)
-            species_production_jacobian_texts[i] = """""".format(**vars(configuration), species_index = i, begin = begin, end = end, jacobian_texts = jacobian_texts, jacobian_temperature = jacobian_temperature, jacobian_species_texts = jacobian_species_texts)  
+            species_production_jacobian_texts[i] = """""".format(**vars(configuration), species_index = i, begin = begin, end = end, jacobian_texts = jacobian_texts, jacobian_temperature = jacobian_temperature, jacobian_species_texts = jacobian_species_texts)
         else:
             species_production_jacobian_texts[i] ="""
         //no species jacobian
             """
+'''
+
 def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose=False, temperature_jacobian=False, sparsity_pattern=None):
     is_reversible[reaction_index] = reaction.reversible
 

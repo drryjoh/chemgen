@@ -60,8 +60,8 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
         create_rates_of_progress_derivatives(gas, progress_rates_derivatives, reactions_depend_on, species_production_function_texts, reaction_index, forward_rate, backward_rate, forward_rate_derivatives, backward_rate_derivatives, is_reversible, indexes_of_species_in_reaction, stoichiometric_production, reaction, configuration, temperature_jacobian=temperature_jacobian, sparsity_pattern=sparsity_pattern)
         
-        accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_species_texts,species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, reactions_depend_on, reaction_index, configuration, temperature_jacobian=temperature_jacobian)
-    add_to_loops(species_production_jacobian_texts, species_production_jacobian_species_texts, species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, configuration, temperature_jacobian=False)
+    #     accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_species_texts,species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, reactions_depend_on, reaction_index, configuration, temperature_jacobian=temperature_jacobian)
+    # add_to_loops(species_production_jacobian_texts, species_production_jacobian_species_texts, species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, configuration, temperature_jacobian=False)
     headers = []
     with open(destination_folder/'types_inl.h','w') as file:
         write_type_defs(file, gas, configuration)
