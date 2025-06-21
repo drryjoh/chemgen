@@ -83,16 +83,16 @@ auto read_scalar_or_default = [](const YAML::Node& node, const std::string& key,
     return value;
 }};
 
-Species read_species_from_yaml(const std::string& filename, 
-                               {scalar}& temperature, 
-                               {scalar}& pressure, 
+Species read_species_from_yaml(const std::string& filename,
+                               {scalar}& temperature,
+                               {scalar}& pressure,
                                {scalar}& dt_be,
                                {scalar}& dt_sdirk2,
                                {scalar}& dt_sdirk4,
                                {scalar}& dt_ros,
                                {scalar}& dt_yass,
                                {scalar}& dt_rk4,
-                               {scalar}& end_time) 
+                               {scalar}& end_time)
 {{
     YAML::Node config = YAML::LoadFile(filename);
     YAML::Node test_conditions = config["test_conditions"];
@@ -113,34 +113,34 @@ Species read_species_from_yaml(const std::string& filename,
     YAML::Node species_reader;
     {index} molefractions  = 0;
     {index} massfractions  = 0;
-    if (test_conditions["MoleFraction"]) 
+    if (test_conditions["MoleFraction"])
     {{
         molefractions = 1;
         species_reader = test_conditions["MoleFraction"];
         std::cout << "Using MoleFraction\\n";
     }}
-    else if (test_conditions["MassFraction"]) 
+    else if (test_conditions["MassFraction"])
     {{
         massfractions  = 1;
         species_reader = test_conditions["MassFraction"];
         std::cout << "Using MassFraction\\n";
-    }} 
+    }}
     else
     {{
         throw std::runtime_error("Error: Neither 'MoleFraction' nor 'MassFraction' is defined in test_conditions.");
     }}
 
 
-    for (const auto& node : species_reader) 
+    for (const auto& node : species_reader)
     {{
         std::string name = node["name"].as<std::string>();
         {scalar} value = node["value"].as<{scalar}>();
 
         {index} index = species_index_gen(name.c_str());
-        if (index >= 0 && index < n_species) 
+        if (index >= 0 && index < n_species)
         {{
             species[index] = value;
-        }} 
+        }}
         else
         {{
             std::cerr << "Warning: Species \\"" << name << "\\" not found in species list.\\n";
@@ -186,9 +186,9 @@ main()
     {scalar} dt_rk4;
     {scalar} end_time;
 
-    Species species = 
-    read_species_from_yaml("test.yaml", temperature_, pressure_, 
-                           dt_be, dt_sdirk2, dt_sdirk4, dt_ros, dt_yass, dt_rk4, 
+    Species species =
+    read_species_from_yaml("test.yaml", temperature_, pressure_,
+                           dt_be, dt_sdirk2, dt_sdirk4, dt_ros, dt_yass, dt_rk4,
                            end_time);
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
 
