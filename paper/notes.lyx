@@ -91,6 +91,10 @@ Temperature dependence
 \end_layout
 
 \begin_layout Standard
+Assuming that internal energy is the energy variable,
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula 
 \[
 \frac{\partial\omega_{i}}{\partial C_{j}}=\left(\frac{\partial\omega_{i}}{\partial C_{j}}\right)_{C_{k\neq j},T}+\left(\frac{\partial\omega_{i}}{\partial T}\right)_{C_{k}}\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}
@@ -167,10 +171,10 @@ where,
 
 This gives
 \begin_inset Formula 
-\begin{align*}
+\begin{align}
 \frac{\partial T}{\partial t} & =-\frac{1}{\rho c_{v}}\sum_{i}u_{i}W_{i}\omega_{i}\\
-\frac{\partial T}{\partial t} & =-\frac{\sum_{i}u_{i}W_{i}\omega_{i}}{\sum_{k}W_{k}C_{k}c_{v,k}}.
-\end{align*}
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{\sum_{k=1}^{n_{s}}W_{k}C_{k}c_{v,k}}.
+\end{align}
 
 \end_inset
 
@@ -185,6 +189,84 @@ In mole-based quantities,
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsection
+Total concentration
+\end_layout
+
+\begin_layout Standard
+Consider the total concentration,
+\begin_inset Formula 
+\[
+C=\sum_{i=1}^{n_{s}}C_{i}.
+\]
+
+\end_inset
+
+Pressure-dependent reactions dramatically reduce matrix sparsity since pressure couples all species concentrations.
+ However,
+ sparsity can largely be recovered if 
+\begin_inset Formula $C$
+\end_inset
+
+ is treated as a state variable since most efficiencies are unity.
+ At the same time,
+ if one 
+\begin_inset Formula $C_{k}$
+\end_inset
+
+ is replaced by 
+\begin_inset Formula $C$
+\end_inset
+
+ in the state vector for some 
+\begin_inset Formula $k$
+\end_inset
+
+,
+ then any reactions directly involving the 
+\begin_inset Formula $k$
+\end_inset
+
+th species becomes dependent on all other species (though overall sparsity should still be increased).
+ 
+\end_layout
+
+\begin_layout Standard
+Alternatively,
+ we can retain all 
+\begin_inset Formula $C_{i}$
+\end_inset
+
+ in the state vector and append an 
+\emph on
+auxiliary
+\emph default
+ 
+\begin_inset Formula $C$
+\end_inset
+
+,
+ denoted 
+\begin_inset Formula $C^{*}$
+\end_inset
+
+,
+ to the state vector.
+ This 
+\begin_inset Formula $C^{*}$
+\end_inset
+
+ would only be used to compute the pressure for pressure-dependent reactions.
+ This would significantly increase sparsity,
+ unless (for some reason) the default efficiency is not unity.
+ Of course,
+ the row corresponding to 
+\begin_inset Formula $C^{*}$
+\end_inset
+
+ would be dense.
 \end_layout
 
 \end_body
