@@ -213,8 +213,9 @@ def add_to_jacobian_all(variable, indexes_of_species_in_reaction, stoichiometric
             running_text.append(f"        jacobian_net_production_rates[{species_index}] = jacobian_net_production_rates[{species_index}] + scale_gen({stoichiometric_production[species_index]}, {variable});\n")
     return ''.join(running_text)
 
-def add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production):
+def add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration):
     running_text = []
+    running_text.append("        {species} drate_of_progress_{reaction_index}_dtemperature_times_dtemperature_dspecies_ = scale_gen(drate_of_progress_{reaction_index}_dtemperature, dtemperature_dspecies_);\n".format(**vars(configuration), reaction_index=reaction_index))
     for i, species_index in enumerate(indexes_of_species_in_reaction):
         if stoichiometric_production[species_index]!=0:
             running_text.append(f"        jacobian_net_production_rates[{species_index}] = jacobian_net_production_rates[{species_index}] + scale_gen({stoichiometric_production[species_index]}*drate_of_progress_{reaction_index}_dtemperature, dtemperature_dspecies_);\n")
@@ -250,7 +251,7 @@ def create_rates_of_progress_derivatives(gas, progress_rates_derivatives, reacti
 
                 formatted_text += """
 {all_species}
-""".format(all_species=add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production))
+""".format(all_species=add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration))
 
         else:
             formatted_text += """
@@ -321,7 +322,7 @@ def create_rates_of_progress_derivatives(gas, progress_rates_derivatives, reacti
 
                 formatted_text += """
 {all_species}
-""".format(all_species=add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production))
+""".format(all_species=add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration))
             else:
                 formatted_text += """
                 // rate_of_progress temperature derivative unused
