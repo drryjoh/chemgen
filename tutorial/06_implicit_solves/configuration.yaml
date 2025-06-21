@@ -73,8 +73,7 @@ decorators:
 
 build:
   chemgen_smp: None 
-  chemgen_input: "-I/Users/eching/homebrew/opt/yaml-cpp/include -L/Users/eching/homebrew/opt/yaml-cpp/lib -lyaml-cpp"
-  chemgen_input: "-O3"
+  chemgen_input: "-O3 -I/Users/eching/homebrew/opt/yaml-cpp/include -L/Users/eching/homebrew/opt/yaml-cpp/lib -lyaml-cpp"
 
 solver:
   chemistry_solver: all
