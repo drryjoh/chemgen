@@ -42,19 +42,106 @@ class SourceJacobianWriter:
         {species} dtemperature_dspecies_ = dtemperature_dspecies(species, temperature);
         
             \n""".format(**vars(configuration), gibbs = gibbs))
+    def write_progress_jacobian_header(self, file, reaction_index, is_reversible, reactions_depend_on, configuration):
+        pressure_dependency = ""
+        if "pressure" in reactions_depend_on[reaction_index]:
+            pressure_dependency = """\n                                               {scalar_parameter} dpressure_dtemperature_,
+                                               {species_parameter} dpressure_dspecies_,\n""".format(**vars(configuration))
+        else:
+            pressure_dependency = ""
+
+        if is_reversible[reaction_index]:
+            file.write("""
+        
+void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_production_rates,
+                                               {species_parameter} species,
+                                               {scalar_parameter} temperature,
+                                               {scalar_parameter} log_temperature,
+                                               {scalar_parameter} mixture_concentration,
+                                               {scalar_parameter} pressure_,{pressure_dependency}
+                                               {species_parameter} dtemperature_dspecies_,
+                                               {scalar_parameter} equilibrium_constant_{reaction_index},
+                                               {scalar_parameter} dequilibrium_constant_{reaction_index}_dtemperature,
+                                               {scalar_parameter} dlog_temperature_dtemperature)
+{{       
+        """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency))
+        else:
+            file.write("""
+        
+void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_production_rates,
+                                               {species_parameter} species,
+                                               {scalar_parameter} temperature,
+                                               {scalar_parameter} log_temperature,
+                                               {scalar_parameter} mixture_concentration,
+                                               {scalar_parameter} pressure_,{pressure_dependency}
+                                               {species_parameter} dtemperature_dspecies_,
+                                               {scalar_parameter} dlog_temperature_dtemperature)
+{{       
+        """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency))
     
-    def write_progress_rates_jacobian(self, file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration):
+    def write_eq_and_derivatives(self, file, progress_rates, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration ):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
                 file.write("\n")
                 file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
                 file.write("        {scalar} dequilibrium_constant_{i}_dtemperature = {dequilibrium_constant};\n".format(i=i, dequilibrium_constant = dequilibrium_constants_dtemperature[i], **vars(configuration)))
                 file.write("\n")
+    
+    def write_reaction_calculations_jacobian_i(self, file, reaction_calls, reactions_depend_on, reaction_index, configuration):
+        reaction_call = reaction_calls[reaction_index]
+        file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
+        call  = f"{reaction_call}".replace(' ','')
+        call_split = call.split('(')
+        front = f"{call_split[0]}"
+        back = f"({call_split[1]}".replace(';','').replace('\n','')
+
+        #assure log_temperature and pressure come after species and temperature
+        if "log_temperature" in reactions_depend_on[reaction_index]:
+            reactions_depend_on[reaction_index].remove("log_temperature")
+            reactions_depend_on[reaction_index].append("log_temperature")
+        if "pressure" in reactions_depend_on[reaction_index]:
+            reactions_depend_on[reaction_index].remove("pressure")
+            reactions_depend_on[reaction_index].append("pressure")
+
+        for dependent_variable in reactions_depend_on[reaction_index]:
+            if dependent_variable == "temperature":
+                file.write(f"        {configuration.scalar} dforward_reaction_{reaction_index}_dtemperature = d{front}_dtemperature{back};\n")
+            if dependent_variable == "species":
+                file.write(f"        {configuration.species} dforward_reaction_{reaction_index}_dspecies = d{front}_dspecies{back};\n")
+            if dependent_variable == "log_temperature":
+                file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dlog_temperature{back} * dlog_temperature_dtemperature;\n")
+            if dependent_variable == "pressure":
+                file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dpressure{back} * dpressure_dtemperature_;\n")
+                if "species" not in reactions_depend_on[reaction_index]:
+                    file.write(f"        {configuration.species}   dforward_reaction_{reaction_index}_dspecies = scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
+                else:
+                    file.write(f"        dforward_reaction_{reaction_index}_dspecies += scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
+            file.write('\n')
+        file.write('\n')
+
+    def write_progress_rates_jacobian(self, file, progress_rates, progress_rates_derivatives, reaction_calls, reactions_depend_on, is_reversible, configuration):
+        
+        for reaction_index, progress_rate in enumerate(progress_rates):
+            self.write_progress_jacobian_header(file, reaction_index, is_reversible, reactions_depend_on, configuration)
+            self.write_reaction_calculations_jacobian_i(file, reaction_calls, reactions_depend_on, reaction_index, configuration)
+            file.write("{scalar} drate_of_progress_dspecies  = {scalar_cast}(0);\n".format(**vars(configuration)))
             file.write(f"        {progress_rate}\n")
-            file.write(f"        {progress_rates_derivatives[i]}")
-        file.write("\n")
+            file.write(f"        {progress_rates_derivatives[reaction_index]}")
+            file.write("}\n")
+    
+    def write_progress_rates_jacobian_calls(self, file, progress_rates, is_reversible, reactions_depend_on, configuration):
+        for i, progress_rate in enumerate(progress_rates):
+            pressure_dependency = ""
+            if "pressure" in reactions_depend_on[i]:
+                pressure_dependency = "dpressure_dtemperature_, dpressure_dspecies_,"
+            if is_reversible[i]:
+                file.write("""        update_jacobian_reaction_{reaction_index}(jacobian_net_production_rates, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, equilibrium_constant_{reaction_index}, dequilibrium_constant_{reaction_index}_dtemperature,dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
+            else:
+                file.write("""        update_jacobian_reaction_{reaction_index}(jacobian_net_production_rates, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
+
         
     def write_species_production_jacobian(self, file, species_production_rates, configuration):
+        print(species_production_rates)
         for species_index, species_production in enumerate(species_production_rates):
             if species_production != '':
                 file.write(f"{species_production}") 
@@ -62,47 +149,15 @@ class SourceJacobianWriter:
                 file.write(f"//source_{species_index} has no production term\n")
         file.write("\n")
 
-    def write_reaction_calculations_jacobian(self, file, reaction_calls, reactions_depend_on, configuration):
-        for reaction_index, reaction_call in enumerate(reaction_calls):
-            file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
-            call  = f"{reaction_call}".replace(' ','')
-            call_split = call.split('(')
-            front = f"{call_split[0]}"
-            back = f"({call_split[1]}".replace(';','').replace('\n','')
-
-            #assure log_temperature and pressure come after species and temperature
-            if "log_temperature" in reactions_depend_on[reaction_index]:
-                reactions_depend_on[reaction_index].remove("log_temperature")
-                reactions_depend_on[reaction_index].append("log_temperature")
-            if "pressure" in reactions_depend_on[reaction_index]:
-                reactions_depend_on[reaction_index].remove("pressure")
-                reactions_depend_on[reaction_index].append("pressure")
-
-            for dependent_variable in reactions_depend_on[reaction_index]:
-                if dependent_variable == "temperature":
-                    file.write(f"        {configuration.scalar} dforward_reaction_{reaction_index}_dtemperature = d{front}_dtemperature{back};\n")
-                if dependent_variable == "species":
-                    file.write(f"        {configuration.species} dforward_reaction_{reaction_index}_dspecies = d{front}_dspecies{back};\n")
-                if dependent_variable == "log_temperature":
-                    file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dlog_temperature{back} * dlog_temperature_dtemperature;\n")
-                if dependent_variable == "pressure":
-                    file.write(f"        dforward_reaction_{reaction_index}_dtemperature += d{front}_dpressure{back} * dpressure_dtemperature_;\n")
-                    if "species" not in reactions_depend_on[reaction_index]:
-                        file.write(f"        {configuration.species}   dforward_reaction_{reaction_index}_dspecies = scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
-                    else:
-                        file.write(f"        dforward_reaction_{reaction_index}_dspecies += scale_gen(d{front}_dpressure{back}, dpressure_dspecies_);\n")
-                file.write('\n')
-            file.write('\n')
-
     def write_end_of_function_jacobian(self, file):
         file.write("        return jacobian_net_production_rates;\n    }")
 
     def write_source_jacobian(self, file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                      reaction_calls,  progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts,
                      species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction = True): 
+        self.write_progress_rates_jacobian(file, progress_rates, progress_rates_derivatives, reaction_calls, reactions_depend_on, is_reversible, configuration)
         self.write_start_of_source_function_jacobian(file, configuration, fit_gibbs_reaction = fit_gibbs_reaction)
-        self.write_reaction_calculations_jacobian(file, reaction_calls, reactions_depend_on, configuration)
-        self.write_progress_rates_jacobian(file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration)
-        self.write_species_production_jacobian(file, species_production_jacobian_texts, configuration)
+        self.write_eq_and_derivatives(file, progress_rates, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration)
+        self.write_progress_rates_jacobian_calls(file, progress_rates, is_reversible, reactions_depend_on, configuration)
         self.write_end_of_function_jacobian(file)
         #headers.append('source.h')
