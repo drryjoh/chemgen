@@ -30,9 +30,13 @@ def compile_cpp_code(build_dir, source_files, config):
     build_option = ''
     if config['build'].get('chemgen_input'):
         build_option = config['build'].get('chemgen_input')
-        print(f"building with opentions: {build_option}")
+        print(f"building with options: {build_option}")
+    else:
+        print("no build input specified defaulting to O3")
+        build_option = "-O3"
+
     # Command to compile C++ code
-    compile_command = f"clang++ -std=c++17 {build_option} -O3 -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+    compile_command = f"clang++ -std=c++17 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
     print(compile_command)
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
