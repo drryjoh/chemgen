@@ -62,13 +62,14 @@ def main():
     parser.add_argument("--verbose", action="store_true", help="Verbose code generation")
     parser.add_argument("--remove_reactions", action="store_true", help="Generate the ability to remove single reaction from jacobian")
     parser.add_argument("--fit-gibbs-reaction", action="store_true", default=True, help="Fit the gibbs free energy per reaction") # TODO: this can never be False
-    parser.add_argument("--ignore-temp-dependence", action="store_true", help="Ignore temperature dependence in Jacobian")
+    parser.add_argument("--ignore-temp-dependence", action="store_true", help="Ignore temperature dependence in Jacobian if internal energy is state variable")
     parser.add_argument("--force", action="store_true", help="Force code generation despite warnings")
     parser.add_argument("--pybind", action="store_true", help="Create pybind linker")
     parser.add_argument("--skip", action="store_true", help="Skip code generation")
     parser.add_argument("--skip-tests", action="store_true", help="Skip running tests")
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
     parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
+    parser.add_argument("--temperature-equation", action="store_true", help="Solve temperature equation instead of assuming constant internal energy")
 
     args = parser.parse_args()
     
@@ -82,11 +83,12 @@ def main():
         print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
     
     temperature_jacobian = True
-    if args.ignore_temp_dependence == True:
-        temperature_jacobian  = False
+    if args.ignore_temp_dependence:
+        if args.temperature_equation:
+            exit("Cannot ignore temperature dependence if solving temperature equation")
+        temperature_jacobian = False
         print("Source Jacobian will be created without temperature dependence")
 
-    
     force  = False
     if args.force == True:
         force  = True
@@ -104,7 +106,12 @@ def main():
     gas = ct.Solution(chemical_mechanism)
     [configuration, configuration_file] = get_configuration(configuration_filename='configuration.yaml')
 
-    check_configuration(configuration, temperature_jacobian, force)
+    check_configuration(configuration, args)
+
+    if args.temperature_equation:
+        setattr(configuration, "internal_energy_or_temperature",  "CHEMGEN_TEMPERATURE_EQUATION")
+    else:
+        setattr(configuration, "internal_energy_or_temperature",  "CHEMGEN_INTERNAL_ENERGY_EQUATION")
 
     use_third_parties = False
     third_party_path = Path(__file__).resolve().parent.parent/'third_party'

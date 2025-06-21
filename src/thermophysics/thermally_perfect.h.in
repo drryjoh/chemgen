@@ -305,6 +305,9 @@ dinternal_energy_volume_specific_dtemperature({species_parameter} species,
     return  {sum}(species * molecular_weights() * species_internal_energy_mass_specific(dtemperature_energy_monomial_dtemperature(temperature)));
 }}
 
+#define {internal_energy_or_temperature}
+
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
 {device_option}
 {scalar_function} 
 temperature({scalar_parameter} internal_energy, {species_parameter} species, {index} max_iterations) {const_option} 
@@ -335,3 +338,15 @@ temperature({scalar_parameter} internal_energy, {species_parameter} species) {co
     
     return temperature_guess;
 }}
+
+#else
+
+{device_option}
+{scalar_function}
+temperature({scalar_parameter} temperature, {species_parameter} species) {const_option}
+{{
+    return temperature;
+}}
+#endif
+
+#undef {internal_energy_or_temperature}
