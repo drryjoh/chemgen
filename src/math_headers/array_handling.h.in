@@ -386,3 +386,17 @@ add_species_to_chemical_state({chemical_state_parameter} a_s, {species_parameter
     {device_element_sum_offset_inl}
     return c_s;
 }}
+
+{device_option}
+{species_function}
+multiply({species} a, {species} b) {const_option}
+{{
+    return a * b;
+}}
+
+{device_option}
+{species_function}
+multiply_chain({species} a, {species} a_perturbation, {species} b, {species} b_perturbation) {const_option}
+{{
+    return a_perturbation * b + a * b_perturbation;
+}}

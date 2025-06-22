@@ -286,7 +286,7 @@ specific_heat_constant_volume_volume_specific({species_parameter} species,
 dspecific_heat_constant_volume_volume_specific_dtemperature({species_parameter} species,
                                                             {scalar_parameter} temperature) {const_option}
 {{
-    return {sum}(species * molecular_weights() * species_specific_heat_constant_volume_mass_specific(dtemperature_energy_monomial_dtemperature(temperature)));
+    return {sum}(species * molecular_weights() * dspecies_specific_heat_constant_volume_mass_specific_dtemperature(temperature));
 }}
 
 {device_option}
@@ -378,7 +378,7 @@ dspecies_internal_energy_mole_source_sum_dtemperature({species_parameter} specie
 temperature_source({scalar_parameter} temperature, {species_parameter} species) {const_option}
 {{
     return
-    -divide(species_internal_energy_mole_source_sum(species, temperature))
+    -divide(species_internal_energy_mole_source_sum(species, temperature)),
             specific_heat_constant_volume_volume_specific(species, temperature));
 }}
 
@@ -387,7 +387,7 @@ temperature_source({scalar_parameter} temperature, {species_parameter} species) 
 dtemperature_source_dtemperature({scalar_parameter} temperature, {species_parameter} species) {const_option}
 {{
     return
-    -divide_chain(species_internal_energy_mole_source_sum(species, temperature))
+    -divide_chain(species_internal_energy_mole_source_sum(species, temperature)),
                   dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature),
                   specific_heat_constant_volume_volume_specific(species, temperature),
                   dspecific_heat_constant_volume_volume_specific_dtemperature(species, temperature));

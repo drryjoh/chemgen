@@ -6,7 +6,6 @@
 {device_option} {scalar_function} dmultiply_db({scalar_parameter} a, {scalar_parameter} b) {const_option} {{return a;}}
 //derivatives * increment
 {device_option} {scalar_function} multiply_chain({scalar_parameter} a, {scalar_parameter} a_perturbation, {scalar_parameter} b, {scalar_parameter} b_perturbation) {const_option} {{return a_perturbation * b + a * b_perturbation;}}
-{device_option} {species_function} multiply_chain({species_parameter} a, {species_parameter} a_perturbation, {species_parameter} b, {species_parameter} b_perturbation) {const_option} {{return a_perturbation * b + a * b_perturbation;}}
 
 //pow
 {device_option} {scalar_function} pow2({scalar_parameter} a) {const_option} {{return a * a;}}
