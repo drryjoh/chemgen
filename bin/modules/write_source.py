@@ -5,9 +5,7 @@ class SourceWriter:
             {device_option}
             {scalar} source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
             {{
-                return
-                -divide(sum_gen(molecular_weights() * species_internal_energy_mass_specific(temperature) * source(species, temperature)),
-                        sum_gen(molecular_weights() * species * species_specific_heat_constant_volume_mass_specific(temperature)));
+                return temperature_source(temperature, species);
             }}""".format(**vars(configuration)))
         else:
             file.write("""
@@ -24,7 +22,7 @@ class SourceWriter:
             gibbs = "{species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);".format(**vars(configuration)) 
         file.write("""
         {device_option}
-        {chemical_state_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option}
+        {species_function} source_species({species_parameter} species, {scalar_parameter} temperature) {const_option}
         {{
             {species} net_production_rates = {{{scalar_cast}(0)}};
             {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
@@ -53,8 +51,15 @@ class SourceWriter:
             file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
 
 
-    def write_end_of_function(self, file):
-        file.write("        return set_chemical_state(source_energy(species, temperature), net_production_rates);\n    }")
+    def write_end_of_function(self, file, configuration):
+        file.write("        return net_production_rates;\n    }")
+
+        file.write("""
+        {device_option}
+        {chemical_state_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option}
+        {{
+            return set_chemical_state(source_energy(species, temperature), source_species(species, temperature));
+        }}\n""".format(**vars(configuration)))
 
     def write_source(self, file, equilibrium_constants, 
                      reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
@@ -64,5 +69,5 @@ class SourceWriter:
         self.write_reaction_calculations(file, reaction_calls, configuration)
         self.write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
         self.write_species_production(file, species_production_texts, configuration)
-        self.write_end_of_function(file)
+        self.write_end_of_function(file, configuration)
         headers.append('source.h')
