@@ -24,7 +24,7 @@ class SourceWriter:
             gibbs = "{species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);".format(**vars(configuration)) 
         file.write("""
         {device_option}
-        {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
+        {chemical_state_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option}
         {{
             {species} net_production_rates = {{{scalar_cast}(0)}};
             {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
@@ -54,7 +54,7 @@ class SourceWriter:
 
 
     def write_end_of_function(self, file):
-        file.write("        return net_production_rates;\n    }")
+        file.write("        return set_chemical_state(source_energy(species, temperature), net_production_rates);\n    }")
 
     def write_source(self, file, equilibrium_constants, 
                      reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
