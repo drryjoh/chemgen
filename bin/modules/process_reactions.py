@@ -231,6 +231,27 @@ def add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reacti
             running_text.append(f"        jacobian_net_production_rates[{species_index+1}] = add_species_to_chemical_state(jacobian_net_production_rates[{species_index+1}], scale_gen({stoichiometric_production[species_index]}*drate_of_progress_{reaction_index}_dtemperature, dtemperature_dspecies_));\n")
     return ''.join(running_text)
 
+def create_drate_of_progress_i_dtemperature(reaction_index, forward_rate, backward_rate, is_reversible, configuration):
+    if is_reversible:
+        return """
+        {scalar} drate_of_progress_{reaction_index}_dtemperature =
+        multiply({forward_rate}, dforward_reaction_{reaction_index}_dtemperature)
+        -
+        multiply({backward_rate},
+                 divide_chain(forward_reaction_{reaction_index},
+                              dforward_reaction_{reaction_index}_dtemperature,
+                              equilibrium_constant_{reaction_index},
+                              dequilibrium_constant_{reaction_index}_dtemperature));
+""".format(reaction_index = reaction_index,
+                    forward_rate = forward_rate,
+                    backward_rate = backward_rate,
+                    **vars(configuration))
+    else:
+        return """
+        {scalar} drate_of_progress_{reaction_index}_dtemperature =  multiply({forward_rate}, dforward_reaction_{reaction_index}_dtemperature);""".format(reaction_index = reaction_index,
+                    forward_rate = forward_rate,
+                    **vars(configuration))
+
 def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, reactions_depend_on, progress_rates_functions,
                                          reaction_index, forward_rate, backward_rate, forward_rate_derivatives,
                                          backward_rate_derivatives, is_reversible,
@@ -245,19 +266,7 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
     if is_reversible[reaction_index]:
         if temperature_jacobian:
             if "temperature" in reactions_depend_on[reaction_index]:
-                formatted_text += """
-        {scalar} drate_of_progress_{reaction_index}_dtemperature =
-        multiply({forward_rate}, dforward_reaction_{reaction_index}_dtemperature)
-        -
-        multiply({backward_rate},
-                 divide_chain(forward_reaction_{reaction_index},
-                              dforward_reaction_{reaction_index}_dtemperature,
-                              equilibrium_constant_{reaction_index},
-                              dequilibrium_constant_{reaction_index}_dtemperature));
-""".format(reaction_index = reaction_index,
-                    forward_rate = forward_rate,
-                    backward_rate = backward_rate,
-                    **vars(configuration))
+                formatted_text += create_drate_of_progress_i_dtemperature(reaction_index, forward_rate, backward_rate, True, configuration)
 
                 formatted_text += """
 {jacobian_temperature}
@@ -326,10 +335,7 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
     else:
         if "temperature" in reactions_depend_on[reaction_index]:
             if temperature_jacobian:
-                formatted_text += """
-        {scalar} drate_of_progress_{reaction_index}_dtemperature =  multiply({forward_rate}, dforward_reaction_{reaction_index}_dtemperature);""".format(reaction_index = reaction_index,
-                    forward_rate = forward_rate,
-                    **vars(configuration))
+                formatted_text += create_drate_of_progress_i_dtemperature(reaction_index, forward_rate, backward_rate, False, configuration)
 
                 formatted_text += """
 {all_species}
