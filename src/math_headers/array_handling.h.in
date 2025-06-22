@@ -283,12 +283,23 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 }}
 
 {device_option}
+{scalar_function} norm2({chemical_state_parameter} x)
+{{
+    {scalar} sum = {scalar_cast}(0.0);
+    for ({index} i  = 0; i<n_variables; i++)
+    {{
+        sum += x[i] * x[i];
+    }}
+    return sqrt_gen(sum);
+}}
+
+{device_option}
 {scalar_function} norm2({jacobian_parameter} x) 
 {{
     {scalar} sum = {scalar_cast}(0.0);
-    for ({index} i  = 0; i<n_species; i++)
+    for ({index} i  = 0; i < n_variables; i++)
     {{
-        for ({index} j  = 0; j<n_species; j++)
+        for ({index} j  = 0; j < n_variables; j++)
         {{
             sum += x[i][j] * x[i][j]; 
         }}
@@ -298,12 +309,12 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 
 
 {device_option}
-{species_function} operator*({jacobian_parameter} A, {species_parameter} x) 
+{chemical_state_function} operator*({jacobian_parameter} A, {chemical_state_parameter} x)
 {{
-    {species} r = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+    {chemical_state} r = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
     {{
-        for ({index} j = 0; j < n_species; ++j)
+        for ({index} j = 0; j < n_variables; ++j)
         {{
             r[i] += A[i][j] * x[j];
         }}
@@ -315,12 +326,12 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 {jacobian_function} operator*({jacobian_parameter} A, {jacobian_parameter} B) 
 {{
     {jacobian} C = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+    for ({index} i = 0; i < n_variables; ++i)
     {{
-        for ({index} j = 0; j < n_species; ++j)
+        for ({index} j = 0; j < n_variables; ++j)
         {{
             C[i][j] = 0.0;
-            for ({index} k = 0; k < n_species; ++k)
+            for ({index} k = 0; k < n_variables; ++k)
             {{
                 C[i][j] += A[i][k] * B[k][j];
             }}
@@ -336,6 +347,12 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 }}
 
 {device_option}
+{chemical_state_function} operator*({scalar_parameter} s, {chemical_state_parameter} a)
+{{
+    return scale_gen(s, a);
+}}
+
+{device_option}
 {scalar_function} dot({species_parameter} a, {species_parameter} b) 
 {{
     {scalar} dot_sum = {scalar_cast}(0.0);
@@ -343,6 +360,13 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
     return dot_sum;
 }}
 
+{device_option}
+{scalar_function} dot({chemical_state_parameter} a, {chemical_state_parameter} b)
+{{
+    {scalar} dot_sum = {scalar_cast}(0.0);
+    for ({index} i = 0; i < n_variables; ++i) dot_sum += a[i]*b[i];
+    return dot_sum;
+}}
 
 {device_option}
 {jacobian_function} 
@@ -351,4 +375,14 @@ jacobian_I()
     {jacobian} I = {{}};
     for ({index} i = 0; i < {jacobian_end}; ++i) I[i][i] = 1.0;
     return I;
+}}
+
+{device_option}
+{chemical_state_function}
+add_species_to_chemical_state({chemical_state_parameter} a_s, {species_parameter} b_s) {const_option}
+{{
+    {chemical_state} c_s;
+    c_s[0] = a_s[0];
+    {device_element_sum_offset_inl}
+    return c_s;
 }}

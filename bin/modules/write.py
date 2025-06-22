@@ -6,6 +6,7 @@ def write_type_defs(file, gas, configuration):
 
     file.write("""
 const {index} n_species = {n_species};
+const {index} n_variables = {n_species} + 1;
 const {index} n_reactions = {n_reactions};
 const {index} n_order_thermo = {n_thermo_order} + 1;
 const {index} n_chemical_state = {n_species} + 1;
