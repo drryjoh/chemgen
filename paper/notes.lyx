@@ -173,7 +173,7 @@ This gives
 \begin_inset Formula 
 \begin{align}
 \frac{\partial T}{\partial t} & =-\frac{1}{\rho c_{v}}\sum_{i}u_{i}W_{i}\omega_{i}\\
-\frac{\partial T}{\partial t} & =-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{\sum_{k=1}^{n_{s}}W_{k}C_{k}c_{v,k}}.
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{\rho c_{v}}=-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{\sum_{k=1}^{n_{s}}W_{k}C_{k}c_{v,k}}.
 \end{align}
 
 \end_inset
