@@ -52,7 +52,7 @@ class SourceJacobianWriter:
 
         if is_reversible[reaction_index]:
             file.write("""
-        
+
 void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_production_rates,
                                                {species_parameter} species,
                                                {scalar_parameter} temperature,
@@ -63,11 +63,11 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
                                                {scalar_parameter} equilibrium_constant_{reaction_index},
                                                {scalar_parameter} dequilibrium_constant_{reaction_index}_dtemperature,
                                                {scalar_parameter} dlog_temperature_dtemperature)
-{{       
+{{
         """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency))
         else:
             file.write("""
-        
+
 void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_production_rates,
                                                {species_parameter} species,
                                                {scalar_parameter} temperature,
@@ -76,7 +76,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
                                                {scalar_parameter} pressure_,{pressure_dependency}
                                                {species_parameter} dtemperature_dspecies_,
                                                {scalar_parameter} dlog_temperature_dtemperature)
-{{       
+{{
         """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency))
     
     def write_eq_and_derivatives(self, file, progress_rates, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration ):
@@ -86,7 +86,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
                 file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
                 file.write("        {scalar} dequilibrium_constant_{i}_dtemperature = {dequilibrium_constant};\n".format(i=i, dequilibrium_constant = dequilibrium_constants_dtemperature[i], **vars(configuration)))
                 file.write("\n")
-    
+
     def write_reaction_calculations_jacobian_i(self, file, reaction_calls, reactions_depend_on, reaction_index, configuration):
         reaction_call = reaction_calls[reaction_index]
         file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
@@ -120,7 +120,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
         file.write('\n')
 
     def write_progress_rates_jacobian(self, file, progress_rates, progress_rates_derivatives, reaction_calls, reactions_depend_on, is_reversible, configuration):
-        
+
         for reaction_index, progress_rate in enumerate(progress_rates):
             self.write_progress_jacobian_header(file, reaction_index, is_reversible, reactions_depend_on, configuration)
             self.write_reaction_calculations_jacobian_i(file, reaction_calls, reactions_depend_on, reaction_index, configuration)
@@ -128,7 +128,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
             file.write(f"        {progress_rate}\n")
             file.write(f"        {progress_rates_derivatives[reaction_index]}")
             file.write("}\n")
-    
+
     def write_progress_rates_jacobian_calls(self, file, progress_rates, is_reversible, reactions_depend_on, configuration):
         for i, progress_rate in enumerate(progress_rates):
             pressure_dependency = ""
