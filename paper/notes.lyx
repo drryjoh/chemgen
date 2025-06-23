@@ -183,8 +183,56 @@ In mole-based quantities,
 \begin_inset Formula 
 \begin{align*}
 \frac{\partial T}{\partial t} & =-\frac{\sum_{i}\widehat{u}_{i}\omega_{i}}{\sum_{k}\rho_{k}\widehat{c}_{v,k}\frac{1}{W_{k}}}\\
-\frac{\partial T}{\partial t} & =-\frac{\sum_{i}\widehat{u}_{i}\omega_{i}}{\sum_{k}C_{k}\widehat{c}_{v,k}}
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i}\widehat{u}_{i}\omega_{i}}{\sum_{k}C_{k}\widehat{c}_{v,k}}.
 \end{align*}
+
+\end_inset
+
+Rewriting as 
+\begin_inset Formula 
+\[
+\frac{\partial T}{\partial t}=\omega_{T}=-\frac{\alpha_{T}}{\beta_{T}},\quad\alpha_{T}=\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i},\beta_{T}=\rho c_{v},
+\]
+
+\end_inset
+
+we have
+\begin_inset Formula 
+\[
+\left(\frac{\partial\alpha_{T}}{\partial T}\right)_{C_{i}}=\sum_{i=1}^{n_{s}}W_{i}\left(u_{i}\frac{\partial\omega_{i}}{\partial T}+\frac{\partial u_{i}}{\partial T}\omega_{i}\right)
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+\left(\frac{\partial\beta_{T}}{\partial T}\right)_{C_{i}}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{dc_{v,i}}{dT}
+\]
+
+\end_inset
+
+We also have
+\begin_inset Formula 
+\[
+\left(\frac{\partial\alpha_{T}}{\partial C_{j}}\right)_{T}=\sum_{i=1}^{n_{s}}W_{i}u_{i}\frac{\partial\omega_{i}}{\partial C_{j}}
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+\left(\frac{\partial\beta_{T}}{\partial C_{j}}\right)_{T}=\frac{\partial}{\partial C_{j}}\left(\sum_{i=1}^{n_{s}}W_{i}C_{i}c_{v,i}\right)=W_{j}c_{v,j},
+\]
+
+\end_inset
+
+so
+\begin_inset Formula 
+\[
+\left(\frac{\partial\omega_{T}}{\partial C_{j}}\right)_{T}=-\frac{1}{\beta_{T}}\left(\frac{\partial\alpha_{T}}{\partial C_{j}}\right)_{T}+\frac{\alpha_{T}}{\left(\beta_{T}\right)^{2}}\left(\frac{\partial\beta_{T}}{\partial C_{j}}\right)_{T}
+\]
 
 \end_inset
 
