@@ -358,39 +358,9 @@ temperature({scalar_parameter} temperature, {species_parameter} species) {const_
 
 {device_option}
 {species_function}
-species_internal_energy_mole_source_sum({species_parameter} species, {scalar_parameter} temperature) {const_option}
+dspecific_heat_constant_volume_volume_specific_dspecies({species_parameter} species, {scalar_parameter} temperature) {const_option}
 {{
-    return {sum}(molecular_weights() * multiply(species_internal_energy_mass_specific(temperature), source_species(species, temperature)));
-}}
-
-{device_option}
-{species_function}
-dspecies_internal_energy_mole_source_sum_dtemperature({species_parameter} species, {scalar_parameter} temperature) {const_option}
-{{
-    return {sum}(molecular_weights() * multiply_chain(species_internal_energy_mass_specific(temperature),
-                                                      dspecies_internal_energy_mass_specific_dtemperature(temperature),
-                                                      source_species(species, temperature),
-                                                      dsource_species_dtemperature(species, temperature)));
-}}
-
-{device_option}
-{scalar_function}
-temperature_source({scalar_parameter} temperature, {species_parameter} species) {const_option}
-{{
-    return
-    -divide(species_internal_energy_mole_source_sum(species, temperature)),
-            specific_heat_constant_volume_volume_specific(species, temperature));
-}}
-
-{device_option}
-{scalar_function}
-dtemperature_source_dtemperature({scalar_parameter} temperature, {species_parameter} species) {const_option}
-{{
-    return
-    -divide_chain(species_internal_energy_mole_source_sum(species, temperature)),
-                  dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature),
-                  specific_heat_constant_volume_volume_specific(species, temperature),
-                  dspecific_heat_constant_volume_volume_specific_dtemperature(species, temperature));
+    return molecular_weights() * species_specific_heat_constant_volume_mass_specific(temperature);
 }}
 #endif
 
