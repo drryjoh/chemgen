@@ -5,14 +5,14 @@ test_conditions:
     - name: O2
       value: 0.2
     - name: N2
-      value: 0.4
+      value: 0.6
     - name: H2
       value: 0.2 
     # - name: C2H4
     #   value: 0.2
   end_time: 2e-5 
-  dt_be: 2.5e-7
-  dt_sdirk2: 1e-6
+  dt_be: 0.25e-6
+  dt_sdirk2: 0.25e-6
   # dt_sdirk4: 5e-7
   # dt_ros: 1e-7
   # dt_rk4: 1e-8
