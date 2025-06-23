@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the reaction mechanism
-gas = ct.Solution("FFCM2_model.yaml")
+gas = ct.Solution("ffcm2_h2.yaml")
 
 # Define initial conditions
 test_conditions = {
@@ -12,9 +12,8 @@ test_conditions = {
     "pressure": 101325.0,  # Pa
     "species": {
         "O2": 0.2,
-        "N2": 0.4,
+        "N2": 0.6,
         "H2": 0.2,
-        "C2H4": 0.2,
     }
 }
 
