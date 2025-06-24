@@ -150,7 +150,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
         file.write("\n")
 
     def write_end_of_function_jacobian(self, file):
-        file.write("        return jacobian_net_production_rates;\n    }")
+        file.write("\n        return jacobian_net_production_rates;\n    }")
 
     def write_source_species_temperature_derivative_header(self, file, reaction_index, is_reversible, reactions_depend_on, configuration):
         pressure_dependency = ""
@@ -297,6 +297,14 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
         }}
 
         {species} dtemperature_source_dspecies_ = dtemperature_source_dspecies(temperature, species, dspecies_internal_energy_mole_source_sum_dspecies_);
+
+        for ({index} i = 0; i < n_species; i++)
+        {{
+            // Derivative of temperature source term with respect to concentrations
+            jacobian_net_production_rates[0][i+1] = dtemperature_source_dspecies_[i];
+            // Derivative of species source terms with respect to temperature
+            jacobian_net_production_rates[i+1][0] = dsource_species_dtemperature_[i];
+        }}
 """.format(**vars(configuration)))
 
     def write_source_jacobian(self, file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,

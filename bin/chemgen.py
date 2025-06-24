@@ -271,7 +271,7 @@ def main():
             create_test(gas, args.chemical_mechanism, headers, test_file, configuration, destination_folder)
 
     if args.pybind:
-        create_pybind(gas, headers, configuration, destination_folder, remove_reactions = args.remove_reactions)
+        create_pybind(gas, headers, args, configuration, destination_folder, remove_reactions = args.remove_reactions)
     else:
         compile_and_run(test_file, configuration_file, destination_folder, third_parties, args.cmake, args.compile, args.skip_tests)
 
