@@ -77,5 +77,5 @@ build:
 
 solver:
   chemistry_solver: all
-  linear_solver: gmres
+  linear_solver: direct 
   preconditioner: jacobi 
