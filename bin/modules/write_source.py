@@ -10,9 +10,7 @@ class SourceWriter:
                 //return dmassfractions_from_concentrations_dspecies(species);
                 //return molecular_weights();
                 
-                return scale_gen(inv_gen(density(species)),
-                                 multiply(molecular_weights(), 
-                                          ones() - massfractions_from_concentrations(species)));
+                return  multiply(molecular_weights(),  ones() - massfractions_from_concentrations(species));
                 
             }}
 
@@ -31,7 +29,8 @@ class SourceWriter:
             {{
                 return
                 -divide(species_internal_energy_mole_source_sum(species, temperature),
-                        specific_heat_constant_volume_mass_specific(species, temperature));
+                        multiply(density(species),
+                                 specific_heat_constant_volume_mass_specific(species, temperature)));
             }}
 
             {device_option}
