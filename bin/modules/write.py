@@ -34,6 +34,14 @@ def write_molecular_weights(file, molecular_weights, inv_molecular_weights, conf
     content += "\n"+"{device_option} {constexpr} {species_function} inv_molecular_weights() {const_option} {{return {inv_molecular_weights};}}".format(**vars(configuration), inv_molecular_weights = inv_molecular_weights)
     file.write(content)
 
+def write_species_based_constants(file, n_species, configuration):
+    constants = ','.join(["{scalar_cast}(1.0)".format(**vars(configuration)) for i in range(n_species)])
+    content = "\n"+"{device_option} {constexpr} {species_function} ones() {const_option} {{return {{{constants}}};}}".format(**vars(configuration), constants = constants)
+    constants = ','.join(["{scalar_cast}(0)".format(**vars(configuration)) for i in range(n_species)])
+    content += "\n"+"{device_option} {constexpr} {species_function} zeros() {const_option} {{return {{{constants}}};}}".format(**vars(configuration), constants = constants)
+    file.write(content)
+
+
 def write_species_names(file, species_names, configuration):
     file.write("""
     // Define the species names as a fixed-size array

@@ -3,10 +3,26 @@ class SourceWriter:
         if temperature_equation:
             file.write("""
             {device_option}
+            {species_function}
+            weighting_term({species_parameter} species) {const_option}
+            {{
+                //inv(rho) * W_i *  (1-Y_i)
+                //return dmassfractions_from_concentrations_dspecies(species);
+                //return molecular_weights();
+                
+                return scale_gen(inv_gen(density(species)),
+                                 multiply(molecular_weights(), 
+                                          ones() - massfractions_from_concentrations(species)));
+                
+            }}
+
+            {device_option}
             {scalar_function}
             species_internal_energy_mole_source_sum({species_parameter} species, {scalar_parameter} temperature) {const_option}
             {{
-                return {sum}(molecular_weights() * multiply(species_internal_energy_mass_specific(temperature), source_species(species, temperature)));
+                return {sum}(multiply(weighting_term(species),  
+                             multiply(species_internal_energy_mass_specific(temperature), 
+                                      source_species(species, temperature))));
             }}
 
             {device_option}
@@ -15,7 +31,7 @@ class SourceWriter:
             {{
                 return
                 -divide(species_internal_energy_mole_source_sum(species, temperature),
-                        specific_heat_constant_volume_volume_specific(species, temperature));
+                        specific_heat_constant_volume_mass_specific(species, temperature));
             }}
 
             {device_option}
