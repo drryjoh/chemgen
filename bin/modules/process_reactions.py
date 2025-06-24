@@ -338,8 +338,9 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                 formatted_text += create_drate_of_progress_i_dtemperature(reaction_index, forward_rate, backward_rate, False, configuration)
 
                 formatted_text += """
-{all_species}
-""".format(all_species=add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration))
+{jacobian_temperature}
+""".format(jacobian_temperature=(add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, gas.n_species, configuration) if args.temperature_equation \
+                                 else add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration)))
             else:
                 formatted_text += """
                 // rate_of_progress temperature derivative unused
