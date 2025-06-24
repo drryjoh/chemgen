@@ -272,7 +272,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
         for i, progress_rate in enumerate(progress_rates):
             pressure_dependency = ""
             if "pressure" in reactions_depend_on[i]:
-                pressure_dependency = "dpressure_dtemperature_, dpressure_dspecies_,"
+                pressure_dependency = "dpressure_dtemperature_,"
             if is_reversible[i]:
                 file.write("""        update_dsource_species_dtemperature_reaction_{reaction_index}(dsource_species_dtemperature_, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}equilibrium_constant_{reaction_index}, dequilibrium_constant_{reaction_index}_dtemperature,dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
             else:
