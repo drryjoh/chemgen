@@ -3,13 +3,15 @@ class SourceWriter:
         if temperature_equation:
             file.write("""
             {device_option}
-            {scalar} species_internal_energy_mole_source_sum({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {scalar_function}
+            species_internal_energy_mole_source_sum({species_parameter} species, {scalar_parameter} temperature) {const_option}
             {{
                 return {sum}(molecular_weights() * multiply(species_internal_energy_mass_specific(temperature), source_species(species, temperature)));
             }}
 
             {device_option}
-            {scalar} temperature_source({scalar_parameter} temperature, {species_parameter} species) {const_option}
+            {scalar_function}
+            temperature_source({scalar_parameter} temperature, {species_parameter} species) {const_option}
             {{
                 return
                 -divide(species_internal_energy_mole_source_sum(species, temperature),
@@ -17,7 +19,8 @@ class SourceWriter:
             }}
 
             {device_option}
-            {scalar} source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {scalar_function}
+            source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
             {{
                 return temperature_source(temperature, species);
             }}
