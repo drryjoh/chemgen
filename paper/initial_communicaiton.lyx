@@ -4869,9 +4869,91 @@ nolink "false"
 
 where
 \begin_inset Formula 
-\[
-\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}=-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}=-\frac{1}{\rho c_{v}}W_{j}u_{j}=-\frac{W_{j}u_{j}}{\rho c_{v}}.
-\]
+\begin{equation}
+\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}=-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}=-\frac{1}{\rho c_{v}}W_{j}u_{j}=-\frac{W_{j}u_{j}}{\rho c_{v}}.\label{eq:temperature_wrt_species}
+\end{equation}
+
+\end_inset
+
+Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:temperature_wrt_species"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ removes any possibility of sparseness,
+ where 
+\begin_inset Formula $\mathcal{J}_{ij}\equiv0$
+\end_inset
+
+ for known 
+\begin_inset Formula $i$
+\end_inset
+
+ and 
+\begin_inset Formula $j$
+\end_inset
+
+.
+ It also requires a 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+ of 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+ contractions with 
+\begin_inset Formula $\frac{\partial\omega_{i}}{\partial T}$
+\end_inset
+
+.
+ This can be removed by utilizing a nonconservative formulation based on temperature evolution by extracting,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\rho u}{\partial t}=\frac{\partial u}{\partial t}=\frac{\partial u}{\partial T}\frac{\partial T}{\partial t}+\sum_{i=1}^{n_{s}}\frac{\partial u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}=0\rightarrow\frac{\partial T}{\partial t}=-\sum_{i=1}^{n_{s}}\frac{\partial u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}/\frac{\partial u}{\partial T},\label{eq:chain_int_energy-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial T}{\partial t}=-\sum_{i=1}^{n_{s}}\frac{\partial u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}/\frac{\partial u}{\partial T}=-\sum_{i=1}^{n_{s}}u_{i}\frac{\partial Y_{i}}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}/\frac{\partial u}{\partial T}=-\sum_{i=1}^{n_{s}}u_{i}\frac{\partial}{\partial C_{i}}\left(\frac{W_{i}C_{i}}{\rho}\right)\omega_{i}/\frac{\partial u}{\partial T}\label{eq:chain_int_energy-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial}{\partial C_{i}}\left(W_{i}C_{i}\rho^{-1}\right)=W_{i}\left(1-\left(\frac{W_{i}C_{i}}{\rho^{2}}\right)\right)\label{eq:chain_int_energy-1-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial T}{\partial t}=-\sum_{i=1}^{n_{s}}u_{i}W_{i}\left(1-\left(\frac{W_{i}C_{i}}{\rho^{2}}\right)\right)\omega_{i}/\frac{\partial u}{\partial T}=\label{eq:chain_int_energy-1-1-1-1}
+\end{equation}
 
 \end_inset
 
