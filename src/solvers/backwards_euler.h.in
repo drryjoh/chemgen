@@ -1,11 +1,12 @@
 {device_option}
 {chemical_state} 
 backwards_euler({chemical_state} y,  
-                {scalar_parameter} dt,                 
-                {scalar} newton_tol = 1e-10, 
+                {scalar_parameter} dt,
+                {scalar} abs_newton_tol = 1e-10,                  
+                {scalar} rel_newton_tol = 1e-10, 
                 {index}  max_iter = 5,
-                {scalar} linear_abs_tol = 1e-8, 
-                {scalar} linear_rel_tol = 1e-4) 
+                {scalar} linear_abs_tol = 1e-10, 
+                {scalar} linear_rel_tol = 1e-10) 
 {{
         {chemical_state} y_init = y;
         {chemical_state} y_guess = y;
@@ -33,11 +34,13 @@ backwards_euler({chemical_state} y,
             //Increment
             y_guess = y_guess + dy;
 
-            if (norm2(dy) < newton_tol)
+            {scalar} dy_norm = norm2(dy);
+            {scalar} y_norm  = norm2(y_guess);
+            if (dy_norm < abs_newton_tol || dy_norm / (y_norm + 1e-20) < rel_newton_tol)
             {{
                 std::cout << "# Newton iterations = " << iter + 1 << std::endl;
                 return y_guess;
-            }};
+            }}
         }}
 
         std::cout << "Newton solve did not converge!" << std::endl;
