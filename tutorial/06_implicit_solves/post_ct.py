@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the reaction mechanism
-gas = ct.Solution("ffcm2_h2.yaml")
+gas = ct.Solution("FFCM2_model.yaml")
 
 # Define initial conditions
 test_conditions = {
@@ -84,6 +84,7 @@ except IndexError:
 plt.legend()
 plt.xlabel("Time ($\\mu$s)")
 plt.ylabel("Temperature (K)")
+plt.ylim([300,4000])
 plt.title("Temperature Evolution in Homogeneous Reactor")
 plt.savefig("rk4.png",dpi=300)
 plt.show()
