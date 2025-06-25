@@ -90,6 +90,9 @@ def main():
         temperature_jacobian = False
         print("Source Jacobian will be created without temperature dependence")
 
+    if args.ignore_other_species:
+        print("Source Jacobian will be created without dependence on third-body efficiencies or pressure")
+
     force  = False
     if args.force == True:
         force  = True
