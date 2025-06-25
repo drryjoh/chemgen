@@ -9,8 +9,8 @@ test_conditions:
     - name: H2
       value: 0.2 
   end_time: 2e-5
-  dt_be: 1e-7
-  dt_sdirk2: 1e-7
+  dt_be: 0.25e-6
+  dt_sdirk2: 1e-6
   # dt_sdirk4: 1e-7
   # dt_ros: 1e-8
   # dt_rk4: 5e-8
