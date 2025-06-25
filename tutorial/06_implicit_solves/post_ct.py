@@ -78,7 +78,7 @@ try:
     plt.plot(d[:, 0]*1000.0, d[:, 1],'-d',color='orange', label = "ChemGen YASS", markevery=int(len(d[:, 0])/10))
 except IndexError:
     pass
-    d = np.loadtxt("rk4.txt")
+d = np.loadtxt("rk4.txt")
 try:
     plt.plot(d[:, 0]*1000.0, d[:, 1],'--ok', label = "ChemGen RK4",markevery=int(len(d[:, 0])/10))
 except IndexError:
