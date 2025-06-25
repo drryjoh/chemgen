@@ -170,10 +170,11 @@ def main():
     if chemistry_solver_eigen and chemistry_solver:
         if chemistry_solver_eigen:
             eigen = "#define CHEMGEN_EIGEN"
+            print("Running with eigen!")
         else:
             print(f"Eigen option {chemistry_solver_eigen} in unknown, defaulting to CHEMGEN_EIGEN OFF")
             eigen = ""
-    
+
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
     setattr(configuration, "eigen",  eigen)
