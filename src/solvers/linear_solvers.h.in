@@ -62,19 +62,18 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 
 #ifdef CHEMGEN_EIGEN
 {device_option}
-{species_function}
-gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
+{chemical_state_function}
+gmres_eigen({jacobian_parameter} A_, {chemical_state_parameter} b_, {scalar} abs_tol, {scalar} rel_tol)
 {{
     using namespace Eigen;
 
-    MatrixXd A(n_species, n_species);  // or A.resize(n_species, n_species);
-    VectorXd b(n_species);
+    MatrixXd A(n_variables, n_variables);  // or A.resize(n_variables, n_variables);
+    VectorXd b(n_variables);
 
-
-    for ({index} i = 0; i < n_species; ++i)
+    for ({index} i = 0; i < n_variables; ++i)
     {{
         b(i) = b_[i];
-        for ({index} j = 0; j < n_species; ++j) 
+        for ({index} j = 0; j < n_variables; ++j)
         {{
             A(i, j) = A_[i][j];
         }}
@@ -86,18 +85,17 @@ gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 
     GMRES<MatrixXd, IdentityPreconditioner> gmres;
     #endif
 
-
-    gmres.setMaxIterations(n_species * 10);
-    gmres.set_restart(n_species);  // Full-size Krylov subspace
+    gmres.setMaxIterations(n_variables * 10);
+    gmres.set_restart(n_variables);  // Full-size Krylov subspace
     gmres.setTolerance(abs_tol);  // You can scale with norm(b) if needed
-    
+
     gmres.compute(A);
     VectorXd x = gmres.solve(b);  // ✅ This is dynamic and safe
 
 
     // Step 5: Convert result back to std::array
-    {species} result = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+    {chemical_state} result = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
         result[i] = x(i);
 
     return result;
