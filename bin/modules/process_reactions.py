@@ -298,7 +298,10 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
             formatted_text += """
 {dforward_rate_dspecies}
-{dbackward_rate_dspecies}
+{dbackward_rate_dspecies}""".format(dforward_rate_dspecies = dforward_rate_dspecies, dbackward_rate_dspecies = dbackward_rate_dspecies)
+
+            if not args.ignore_other_species:
+                formatted_text += """
         {drate_of_progress_dspecies_all_species} =
         scale_gen({forward_rate}, dforward_reaction_{reaction_index}_dspecies) -
         scale_gen(divide({backward_rate},
@@ -308,8 +311,6 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                         """.format(reaction_index = reaction_index,
                     forward_rate = forward_rate,
                     backward_rate = backward_rate,
-                    dforward_rate_dspecies = dforward_rate_dspecies,
-                    dbackward_rate_dspecies = dbackward_rate_dspecies,
                     all_species = add_to_jacobian_all("drate_of_progress_dspecies_all_species", indexes_of_species_in_reaction, stoichiometric_production),
                     drate_of_progress_dspecies_all_species = drate_of_progress_dspecies_all_species,
                     **vars(configuration))
@@ -355,17 +356,20 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                     dforward_rate_dspecies += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
 
-            formatted_text += """
+            if not args.ignore_other_species:
+                formatted_text += """
         {drate_of_progress_dspecies_all_species} =
         scale_gen({forward_rate}, dforward_reaction_{reaction_index}_dspecies);
 {all_species}
-{dforward_rate_dspecies}
                         """.format(reaction_index = reaction_index,
                     forward_rate = forward_rate,
-                    dforward_rate_dspecies = dforward_rate_dspecies,
                     drate_of_progress_dspecies_all_species = drate_of_progress_dspecies_all_species,
                     all_species = add_to_jacobian_all("drate_of_progress_dspecies_all_species", indexes_of_species_in_reaction, stoichiometric_production),
                     **vars(configuration))
+
+            formatted_text += """
+{dforward_rate_dspecies}
+""".format(dforward_rate_dspecies = dforward_rate_dspecies)
         else:
             formatted_text += """
         //drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
