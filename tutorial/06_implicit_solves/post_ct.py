@@ -58,8 +58,6 @@ try:
     plt.plot(d[:, 0]*1000.0, d[:, 1],'-ok', label = "ChemGen Backward Euler", markevery=int(len(d[:, 0])/10))
 except IndexError:
     pass
-#d = np.loadtxt("rk4.txt")
-#plt.plot(d[:, 0]*1000.0, d[:, 1],'--ok', label = "ChemGen RK4",markevery=int(len(d[:, 0])/10))
 d = np.loadtxt("sdirk2.txt")
 try:
     plt.plot(d[:, 0]*1000.0, d[:, 1],'-ob', label = "ChemGen SDIRK2", markevery=int(len(d[:, 0])/10))
@@ -80,11 +78,16 @@ try:
     plt.plot(d[:, 0]*1000.0, d[:, 1],'-d',color='orange', label = "ChemGen YASS", markevery=int(len(d[:, 0])/10))
 except IndexError:
     pass
+    d = np.loadtxt("rk4.txt")
+try:
+    plt.plot(d[:, 0]*1000.0, d[:, 1],'--ok', label = "ChemGen RK4",markevery=int(len(d[:, 0])/10))
+except IndexError:
+    pass
 
 plt.legend()
 plt.xlabel("Time ($\\mu$s)")
 plt.ylabel("Temperature (K)")
-plt.ylim([300,4000])
+# plt.ylim([300,4000])
 plt.title("Temperature Evolution in Homogeneous Reactor")
 plt.savefig("rk4.png",dpi=300)
 plt.show()
