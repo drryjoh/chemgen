@@ -85,13 +85,16 @@ gmres_eigen({jacobian_parameter} A_, {chemical_state_parameter} b_, {scalar} abs
     GMRES<MatrixXd, IdentityPreconditioner> gmres;
     #endif
 
-    gmres.setMaxIterations(n_variables * 10);
-    gmres.set_restart(n_variables);  // Full-size Krylov subspace
-    gmres.setTolerance(abs_tol);  // You can scale with norm(b) if needed
+    gmres.setMaxIterations(n_variables); // total number of iterations including restarts
+    gmres.set_restart(n_variables); // # iterations before restart (Full-size Krylov subspace)
 
     gmres.compute(A);
-    VectorXd x = gmres.solve(b);  // ✅ This is dynamic and safe
 
+    // eigen uses relative tolerance - https://eigen.tuxfamily.org/dox/unsupported/GMRES_8h_source.html
+    {scalar} tol = std::max(rel_tol, divide(abs_tol, gmres.preconditioner().solve(b).norm()));
+    gmres.setTolerance(tol);
+
+    VectorXd x = gmres.solve(b);
 
     // Step 5: Convert result back to std::array
     {chemical_state} result = {{}};
