@@ -190,10 +190,11 @@ def main():
             print("Warning: cannot get sparsity pattern if skipping code generation")
     else:
         if args.get_sparsity:
-            if temperature_jacobian or args.remove_reactions:
+            if args.remove_reactions:
                 raise NotImplementedError
 
-            sparsity_pattern = np.zeros([gas.n_species, gas.n_species], dtype=int)
+            sparsity_pattern = np.zeros([gas.n_species+1, gas.n_species+1], dtype=int)
+            if args.temperature_equation: sparsity_pattern[0] += 1 # temperature source is dependent on entire state
         else:
             sparsity_pattern = None
             if args.plot_sparsity:

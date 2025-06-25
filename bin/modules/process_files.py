@@ -56,7 +56,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         create_equilibrium_constants(stoichiometric_production, reaction_index, indexes_of_species_in_reaction, equilibrium_constants, dequilibrium_constants_dtemperature, configuration, fit_gibbs_reaction, temperature_jacobian=temperature_jacobian)
 
         accrue_species_production(indexes_of_species_in_reaction, stoichiometric_production, species_production_texts, species_production_function_texts, species_production_on_fly_function_texts, reaction_index, configuration)
-        create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose=verbose, temperature_jacobian=temperature_jacobian, sparsity_pattern=sparsity_pattern)
+        create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose=verbose, temperature_jacobian=temperature_jacobian)
         create_rates_of_progress(progress_rates, species_production_function_texts, reaction_index, forward_rate, backward_rate, is_reversible, configuration) 
         create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, reactions_depend_on, species_production_function_texts, reaction_index, forward_rate, backward_rate, forward_rate_derivatives, backward_rate_derivatives, is_reversible, indexes_of_species_in_reaction, stoichiometric_production, reaction, configuration, temperature_jacobian=temperature_jacobian, sparsity_pattern=sparsity_pattern)
         
