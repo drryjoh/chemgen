@@ -70,6 +70,7 @@ def main():
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
     parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
     parser.add_argument("--temperature-equation", action="store_true", help="Solve temperature equation instead of assuming constant internal energy")
+    parser.add_argument("--ignore-other-species", action="store_true", help="Ignore third-body and pressure dependence when calculating derivatives with respect to species")
 
     args = parser.parse_args()
     
