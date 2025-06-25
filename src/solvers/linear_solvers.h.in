@@ -76,11 +76,10 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
 	{chemical_state} b_ = b;
 #endif
 
-    {chemical_state} r = b_ - (A_ * x);
+    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
 	{scalar} norm2_r = norm2(r);
-    {scalar} norm2_A = norm2(A_);
-    
-    if (norm2_r < abs_tol)
+
+    if (norm2_r < std::numeric_limits<{scalar}>::epsilon())
     {{
         // std::cout << "# GMRES iterations = 0" << std::endl;
         return x;
@@ -108,8 +107,7 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
         }}
 
         H[j+1][j] = norm2(w);
-        if (H[j+1][j] < abs_tol * norm2_A)
-            break;
+
         V[j+1] = scale_gen(inv_gen(H[j+1][j]),w); // not used if j == n_variables - 1
 
 		// Apply Givens rotations to new column of H
