@@ -37,14 +37,13 @@ def modify_jacobian_text_eigen(configuration, formatted_text):
         ij_split = ij_text.strip('][').split('][')
         i_string = ij_split[0]
         j_string = ij_split[1]
-        return """
-        jacobian_triplets.push_back(Triplet({i}, {j}, {value}));
-""".format(i=i_string, j=j_string, value=rhs_text.replace(';', ''))
+        return "        jacobian_triplets.push_back(Triplet({i}, {j}, {value}));\n".format(i=i_string, j=j_string, value=rhs_text.replace(';', ''))
     else:
         return NotImplementedError
 
 def jacobian_all_text_eigen(configuration, row_index, species_row_to_be_added_text):
     if not configuration.eigen:
+        # TODO: modify jacobian_net_production_rates[{row_index}] in place?
         return f"        jacobian_net_production_rates[{row_index}] = add_species_to_chemical_state(jacobian_net_production_rates[{row_index}], {species_row_to_be_added_text});\n"
     elif configuration.eigen_sparse:
         return f"        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, {row_index}, {species_row_to_be_added_text});\n"

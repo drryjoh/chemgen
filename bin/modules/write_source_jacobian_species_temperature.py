@@ -280,9 +280,8 @@ void update_jacobian_reaction_{reaction_index}({jacobian_input},
             else:
                 file.write("""        update_dsource_species_dtemperature_reaction_{reaction_index}(dsource_species_dtemperature_, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
 
-        formatted_text = """
-        jacobian_net_production_rates[0][0] = dtemperature_source_dtemperature(temperature, species, dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature, dsource_species_dtemperature_));
-""".format(**vars(configuration))
+        file.write("\n")
+        formatted_text = "        jacobian_net_production_rates[0][0] = dtemperature_source_dtemperature(temperature, species, dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature, dsource_species_dtemperature_));\n".format(**vars(configuration))
 
         file.write(modify_jacobian_text_eigen(configuration, formatted_text))
 
