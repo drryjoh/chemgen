@@ -198,6 +198,8 @@ def main():
     setattr(configuration, "eigen",  eigen)
     setattr(configuration, "eigen_sparse",  eigen_sparse)
 
+    update_configuration_eigen(configuration)
+
     third_parties = [use_third_parties, third_party_path, libraries]
 
     test_file = 'chemgen.cpp'
