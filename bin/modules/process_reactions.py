@@ -114,53 +114,6 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         species_index = index))
     species_production_on_fly_function_texts[reaction_index] = '\n'.join(on_the_fly_production)
 
-'''
-def accrue_species_production_jacobian(indexes_of_species_in_reaction, stoichiometric_production, species_production_jacobian_species_texts, species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, reactions_depend_on, reaction_index, configuration, temperature_jacobian = False):
-    depends_on_temperature = True; depends_on_species = True
-    begin = '0'
-    end = 'n_species'
-    if temperature_jacobian:
-        begin = '1'
-        end = 'n_species + 1'
-    for index in indexes_of_species_in_reaction:
-        if depends_on_temperature:
-            if temperature_jacobian:
-                if species_production_jacobian_temperature_texts[index] == "":
-                    species_production_jacobian_temperature_texts[index] = "{scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dtemperature".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)  
-                else:
-                    species_production_jacobian_temperature_texts[index] += "+ {scalar_cast}({stoichiometric_production}) * drate_of_progress_{reaction_index}_dtemperature".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)  
-        if depends_on_species:
-                species_production_jacobian_species_texts[index].append( "{stoichiometric_production}".format(**vars(configuration), stoichiometric_production = stoichiometric_production[index], reaction_index = reaction_index)) 
-                species_production_jacobian_species_indexes[index].append("{reaction_index}".format(reaction_index= reaction_index))
-
-
-def add_to_loops(species_production_jacobian_texts, species_production_jacobian_species_texts, species_production_jacobian_species_indexes, species_production_jacobian_temperature_texts, configuration, temperature_jacobian = False):
-    begin = '0'
-    end = 'n_species'
-    jacobian_temperature = ""
-    if temperature_jacobian:
-        begin = '1'
-        end = 'n_species + 1'
-    
-    for i, jacobian_texts in enumerate(species_production_jacobian_species_texts):
-        if temperature_jacobian:
-            jacobian_temperature = "jacobian_net_production_rates[{species_index}+{begin}][0] = {jacobian_temperature_text};".format(species_index = i, begin =begin, jacobian_temperature_text = species_production_jacobian_temperature_texts[i])
-        else:
-            jacobian_temperature  = "        //no temperature jacobian"
-        if jacobian_texts != []:
-            n_coefficients = len(jacobian_texts)
-            jacobian_species_texts = """
-            const {index} n_rates_of_progres_species_jacobian_{species_index} = {n_coefficients};
-            static constexpr {scalar_list}<{scalar}, n_rates_of_progres_species_jacobian_{species_index}> coefficients_{species_index} = {{{coeffs}}};
-            static constexpr {scalar_list}<{index}, n_rates_of_progres_species_jacobian_{species_index}> idx_{species_index} = {{{indexes}}};
-            """.format(**vars(configuration), n_coefficients = n_coefficients, coeffs = ','.join(jacobian_texts), indexes = ",".join(species_production_jacobian_species_indexes[i]), species_index = i)
-            species_production_jacobian_texts[i] = """""".format(**vars(configuration), species_index = i, begin = begin, end = end, jacobian_texts = jacobian_texts, jacobian_temperature = jacobian_temperature, jacobian_species_texts = jacobian_species_texts)
-        else:
-            species_production_jacobian_texts[i] ="""
-        //no species jacobian
-            """
-'''
-
 def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose=False, temperature_jacobian=False):
     is_reversible[reaction_index] = reaction.reversible
 
@@ -227,7 +180,6 @@ def add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, 
 
 def add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration):
     running_text = []
-    # THIS IS CURRENTLY UNUSED!!!!! running_text.append("        {species} drate_of_progress_{reaction_index}_dtemperature_times_dtemperature_dspecies_ = scale_gen(drate_of_progress_{reaction_index}_dtemperature, dtemperature_dspecies_);\n".format(**vars(configuration), reaction_index=reaction_index))
     for i, species_index in enumerate(indexes_of_species_in_reaction):
         if stoichiometric_production[species_index]!=0:
             running_text.append(f"        jacobian_net_production_rates[{species_index+1}] = add_species_to_chemical_state(jacobian_net_production_rates[{species_index+1}], scale_gen({stoichiometric_production[species_index]}*drate_of_progress_{reaction_index}_dtemperature, dtemperature_dspecies_));\n")
