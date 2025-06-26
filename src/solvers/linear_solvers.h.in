@@ -1,6 +1,7 @@
 {preconditioner}
 {direct_solver}
 {eigen}
+{neural_net} //forJay
 
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 {device_option}
@@ -42,8 +43,7 @@
 
 #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 {device_option}
-{chemical_state_function}
-apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
+{chemical_state_function} apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 {{
 	{chemical_state} z = {{}};
     for ({index} i = 0; i < n_variables; ++i)
@@ -105,9 +105,60 @@ gmres_eigen({jacobian_parameter} A_, {chemical_state_parameter} b_, {scalar} abs
 }}
 #endif
 
+#ifdef CHEMGEN_PRECONDITIONER_NN //forJay
+{device_option}
+{jacobian_function} flatten_jacobian({jacobian_parameter} A)
+{{
+    {jacobian} flat_A:
+    for (int i = 0; i < n_variables; i++)
+    {{
+        for (int j = 0; j < n_variables; i++)
+        {{
+            flat_A[(i*96)+j] = A[i][j];
+        }}
+    }}
+    return flat_A;
+}}
+
+{jacobian_function} unflatten_jacobian({jacobian_parameter} flat_A)
+{{
+    {jacobian} Q;
+    for (int i = 0; i < n_variables; i++)
+    {{
+        for (int j = 0; j < n_variables; j++)
+        {{
+            Q[i][j] = A[(i*96)+j];
+        }}
+    }}
+    return Q;
+}}
+
+std::pair< {jacobian_function}, {jacobian_function}> split_matrix(std::array<{scalar}, n_variables * n_variables * 2> LU)
+{
+    std::array<{scalar}, n_variables * n_variables> L;
+    std::array<{scalar}, n_variables * n_variables> U;
+    for (int i = 0; i < n_variables; i++)
+    {
+        for (int j = 0; j < n_variables; j++)
+        {
+            L[(i*n_variables)+j] = LU[(i*n_variables*2)+j];
+            U[(i*n_variables)+j] = LU[(i*n_variables*2)+j+n_variables];
+        }
+    }
+    return {L,U};
+}
+#endif
+
+
 {device_option}
 {chemical_state_function}
-gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4)
+gmres_solve({jacobian_parameter} A, 
+    {chemical_state_parameter} b, 
+    // std::chrono::duration<double>& NN_total_time, //forJay
+    // std::chrono::duration<double>& P_total_time, //forJay 
+    // int& cvs_iter, //forJay
+    {scalar} abs_tol = 1e-8, 
+    {scalar} rel_tol = 1e-4)
 {{
 #ifdef CHEMGEN_EIGEN
     return gmres_eigen(A, b, abs_tol, rel_tol);
@@ -120,12 +171,32 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
 	{jacobian} P = inverse_diagonal(A);
 	{jacobian} A_ = apply_diagonal(P, A);
 	{chemical_state} b_ = apply_diagonal(P, b);
+    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
+#ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
+    SpeciesJacobian A_ = A;
+    Species b_ = apply_gauss_seidel(A, b);
+    Species r = b_ - (A_ * x); // preconditioned residual
+#ifdef CHEMGEN_PRECONDITIONER_NN //forJay
+    SpeciesJacobian A_ = A;
+    std::array<{scalar}, n_variables * n_variables> A_flat = flatten_jacobian(A);
+
+    // //inv_A
+    std::array<{scalar}, n_variables * n_variables> P_flat = MLP_1_BE(A_flat);
+    {jacobian} P = unflatten_jacobian(P_flat);
+    Species r = P*(b - A_*x); // preconditioned residual
+
+    // //LU
+    // std::array<double, n_variables * n_variables * 2> LU_flat = MLP_x_1(A_flat);
+    // auto [L_flat, U_flat] = split_matrix(LU_flat);
+    // SpeciesJacobian L = unflatten_jacobian(L_flat);
+    // SpeciesJacobian U = unflatten_jacobian(U_flat);
+    // Species r = L * ( U * (b - A * x));
 #else
 	{jacobian} A_ = A;
 	{chemical_state} b_ = b;
+    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
 #endif
 
-    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
 	{scalar} norm2_r = norm2(r);
 
     if (norm2_r < std::numeric_limits<{scalar}>::epsilon())
@@ -146,8 +217,21 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
     for ({index} j = 0; j < n_variables; ++j)
     {{
 		final_iter = j;
-        {chemical_state} w = A_ * V[j];
 
+        {chemical_state} w;
+        #ifdef CHEMGEN_PRECONDITIONER_NN
+        {
+            w = P * (A * V[j]);
+        }
+        #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
+        {
+            w = apply_gauss_seidel(A, A * V[j]);
+        }
+        #else
+        {
+            w = A_ * V[j];
+        }
+            
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
         {{

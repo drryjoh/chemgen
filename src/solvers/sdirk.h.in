@@ -8,6 +8,9 @@
 {chemical_state} 
 sdirk2({chemical_state} y,  
        {scalar_parameter} dt, 
+    //    std::chrono::duration<double>& NN_total_time, //forJay
+    //    std::chrono::duration<double>& P_total_time, //forJay
+    //    int& cvs_iter, //forJay
        {scalar} newton_tol = 1e-6, 
        {index}  max_iter = 5,
        {scalar} linear_abs_tol = 1e-8, 
@@ -38,6 +41,7 @@ sdirk2({chemical_state} y,
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
             {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            // {chemical_state} dk = gmres_solve(J, res, NN_total_time, P_total_time, cvs_iter, linear_abs_tol, linear_rel_tol); //forJay
             #endif
             k1 = k1 + dk;
         }}
@@ -59,6 +63,7 @@ sdirk2({chemical_state} y,
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
             {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            // {chemical_state} dk = gmres_solve(J, res, NN_total_time, P_total_time, cvs_iter, linear_abs_tol, linear_rel_tol); //forJay
             #endif
             k2 = k2 + dk;
         }}

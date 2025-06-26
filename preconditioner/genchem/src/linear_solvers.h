@@ -85,7 +85,6 @@ SpeciesJacobian unflatten_matrix(std::array<double, 96 * 96> A)
     }
     return Q;
 }
-#endif
 
 std::pair<std::array<double, 96 * 96>, std::array<double, 96 * 96>> split_matrix(std::array<double, 96 * 96 * 2> LU)
 {
@@ -101,6 +100,7 @@ std::pair<std::array<double, 96 * 96>, std::array<double, 96 * 96>> split_matrix
     }
     return {L,U};
 }
+#endif
 
 // #define CHEMGEN_PRECONDITIONER_NN_DIAGONAL
 #ifdef CHEMGEN_PRECONDITIONER_NN_DIAGONAL

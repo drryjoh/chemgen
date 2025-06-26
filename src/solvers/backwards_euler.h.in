@@ -2,6 +2,9 @@
 {chemical_state} 
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt,
+                // std::chrono::duration<double>& NN_total_time, //forJay
+                // std::chrono::duration<double>& P_total_time, //forJay
+                // int& cvs_iter, //forJay
                 {scalar} abs_newton_tol = 1e-10,                  
                 {scalar} rel_newton_tol = 1e-10, 
                 {index}  max_iter = 5,
@@ -29,6 +32,7 @@ backwards_euler({chemical_state} y,
             {chemical_state} dy = invert_jacobian(A) * res;
             #else
             {chemical_state} dy = gmres_solve(A, res, linear_abs_tol, linear_rel_tol);
+            // {chemical_state} dy = gmres_solve(A, res, NN_total_time, P_total_time, cvs_iter, linear_abs_tol, linear_rel_tol); //forJay
             #endif
 
             //Increment

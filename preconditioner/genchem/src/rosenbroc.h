@@ -28,8 +28,7 @@ rosenbroc(ChemicalState y,
         Species k1 = invert_jacobian(G) * rhs1;
         #else
         Species k1 = gmres_solve(G, rhs1, 
-            NN_total_time, P_total_time,
-            cvs_iter
+            NN_total_time, P_total_time, cvs_iter
         ); //forJay
         #endif
         
