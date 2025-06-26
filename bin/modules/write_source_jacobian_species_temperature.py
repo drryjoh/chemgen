@@ -54,10 +54,12 @@ class SourceJacobianWriter:
         else:
             pressure_dependency = ""
 
+        jacobian_input = update_jacobian_input(configuration)
+
         if is_reversible[reaction_index]:
             file.write("""
 
-void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_production_rates,
+void update_jacobian_reaction_{reaction_index}({jacobian_input},
                                                {species_parameter} species,
                                                {scalar_parameter} temperature,
                                                {scalar_parameter} log_temperature,
@@ -68,11 +70,11 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
                                                {scalar_parameter} dequilibrium_constant_{reaction_index}_dtemperature,
                                                {scalar_parameter} dlog_temperature_dtemperature)
 {{
-        """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency))
+        """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency, jacobian_input=jacobian_input))
         else:
             file.write("""
 
-void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_production_rates,
+void update_jacobian_reaction_{reaction_index}({jacobian_input},
                                                {species_parameter} species,
                                                {scalar_parameter} temperature,
                                                {scalar_parameter} log_temperature,
@@ -81,7 +83,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
                                                {species_parameter} dtemperature_dspecies_,
                                                {scalar_parameter} dlog_temperature_dtemperature)
 {{
-        """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency))
+        """.format(reaction_index = reaction_index, **vars(configuration), pressure_dependency = pressure_dependency, jacobian_input=jacobian_input))
     
     def write_eq_and_derivatives(self, file, progress_rates, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration ):
         for i, progress_rate in enumerate(progress_rates):
@@ -282,7 +284,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
         jacobian_net_production_rates[0][0] = dtemperature_source_dtemperature(temperature, species, dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature, dsource_species_dtemperature_));
 """.format(**vars(configuration))
 
-        file.write(modify_jacobian_text_eigen_sparse(configuration, formatted_text))
+        file.write(modify_jacobian_text_eigen(configuration, formatted_text))
 
         file.write(dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configuration))
 

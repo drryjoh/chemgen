@@ -2,26 +2,34 @@ import numpy as np
 
 def jacobian_output_text(configuration):
     if not configuration.eigen:
-        jacobian_output = configuration.jacobian_function
+        return configuration.jacobian_function
     elif configuration.eigen_sparse:
-        jacobian_output = """SparseMatrix<{scalar}>""".format(**vars(configuration))
+        return """SparseMatrix<{scalar}>""".format(**vars(configuration))
     else:
-        NotImplementedError
-
-    return jacobian_output
+        return NotImplementedError
 
 def jacobian_initialize_text(configuration, sparsity_pattern):
-    if configuration.eigen_sparse:
-        jacobian_initialize = """std::vector<Triplet> jacobian_triplets;
-        jacobian_triplets.reserve({nonzeros});""".format(**vars(configuration), nonzeros=np.count_nonzero(sparsity_pattern))
+    if not configuration.eigen:
+        return "{jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};".format(**vars(configuration))
+    elif configuration.eigen_sparse:
+        return """std::vector<Triplet> jacobian_triplets;
+        jacobian_triplets.reserve({nonzeros});""".format(**vars(configuration), nonzeros=np.sum(sparsity_pattern))
     else:
-        jacobian_initialize = "{jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};".format(**vars(configuration))
+        return NotImplementedError
 
-    return jacobian_initialize
+def update_jacobian_input(configuration):
+    if not configuration.eigen:
+        return "{jacobian}& jacobian_net_production_rates".format(**vars(configuration))
+    elif configuration.eigen_sparse:
+        return "std::vector<Triplet>& jacobian_triplets".format(**vars(configuration))
+    else:
+        return NotImplementedError
 
-def modify_jacobian_text_eigen_sparse(configuration, formatted_text):
-    if configuration.eigen_sparse:
-        text_split = formatted_text.split('=')
+def modify_jacobian_text_eigen(configuration, formatted_text):
+    if not configuration.eigen:
+        return formatted_text
+    elif configuration.eigen_sparse:
+        text_split = formatted_text.replace('+=', '=').split('=')
         assert(len(text_split) == 2)
         lhs_text = text_split[0].strip()
         rhs_text = text_split[1].strip()
@@ -29,11 +37,19 @@ def modify_jacobian_text_eigen_sparse(configuration, formatted_text):
         ij_split = ij_text.strip('][').split('][')
         i_string = ij_split[0]
         j_string = ij_split[1]
-        formatted_text = """
+        return """
         jacobian_triplets.push_back(Triplet({i}, {j}, {value}));
 """.format(i=i_string, j=j_string, value=rhs_text.replace(';', ''))
+    else:
+        return NotImplementedError
 
-    return formatted_text
+def jacobian_all_text_eigen(configuration, row_index, species_row_to_be_added_text):
+    if not configuration.eigen:
+        return f"        jacobian_net_production_rates[{row_index}] = add_species_to_chemical_state(jacobian_net_production_rates[{row_index}], {species_row_to_be_added_text});\n"
+    elif configuration.eigen_sparse:
+        return f"        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, {row_index}, {species_row_to_be_added_text});\n"
+    else:
+        return NotImplementedError
 
 def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configuration):
     if not configuration.eigen:
@@ -60,8 +76,8 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
             // Derivative of species source terms with respect to temperature
             {store_dsource_species_dtemperature}
         }}
-""".format(**vars(configuration), store_dtemperature_source_dspecies=modify_jacobian_text_eigen_sparse(configuration, "jacobian_net_production_rates[0][i+1] = dtemperature_source_dspecies_[i];"),
-           store_dsource_species_dtemperature=modify_jacobian_text_eigen_sparse(configuration, "jacobian_net_production_rates[i+1][0] = dsource_species_dtemperature_[i];"))
+""".format(**vars(configuration), store_dtemperature_source_dspecies=modify_jacobian_text_eigen(configuration, "jacobian_net_production_rates[0][i+1] = dtemperature_source_dspecies_[i];"),
+           store_dsource_species_dtemperature=modify_jacobian_text_eigen(configuration, "jacobian_net_production_rates[i+1][0] = dsource_species_dtemperature_[i];"))
 
     elif configuration.eigen_sparse:
         return """
@@ -74,6 +90,7 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
             jacobian_triplets.push_back(Triplet(i+1, 0, dsource_species_dtemperature_[i]));
 
             // Only one term (out of two terms) of dtemperature_source_dspecies so the first row is fully allocated after compression
+            // Will update with second term below
             jacobian_triplets.push_back(Triplet(0, i+1, dtemperature_source_dspecies_1[i]));
         }}
 
@@ -116,3 +133,5 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
             }}
         }}
 """.format(**vars(configuration))
+    else:
+        return NotImplementedError
