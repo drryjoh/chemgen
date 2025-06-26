@@ -2,11 +2,11 @@
 {chemical_state} 
 rosenbroc({chemical_state} y,  
           {scalar_parameter} dt, 
-          {scalar} tol = 1e-10,
-          {index} max_iter = 10) 
+          {scalar} linear_abs_tol = 1e-8,
+          {scalar} linear_rel_tol = 1e-4) 
 {{
         //constants
-        {species} y_init = get_species(y);
+        {chemical_state} y_init = y;
         {scalar} gamma = 1.0 + 1.0 / sqrt_gen({scalar}(2));
         {scalar} alpha = 1.0/gamma;
         {scalar} beta = -2.0/gamma;
@@ -20,27 +20,26 @@ rosenbroc({chemical_state} y,
         {jacobian} G = scale_gen((1.0/(gamma* dt)),  I) - J;// shared for all stages
 
         // Stage 1
-        {species} rhs1 = source(y_init, temperature_);
+        {chemical_state} rhs1 = source(y_init, temperature_);
         #ifdef CHEMGEN_DIRECT_SOLVER
-        {species} k1 = invert_jacobian(G) * rhs1;
+        {chemical_state} k1 = invert_jacobian(G) * rhs1;
         #else
-        {species} k1 = gmres_solve(G, rhs1);
+        {chemical_state} k1 = gmres_solve(G, rhs1, linear_abs_tol, linear_rel_tol);
         #endif
         
         // Stage 2
-        {species} y_stage = y_init + alpha * k1;
+        {chemical_state} y_stage = y_init + alpha * k1;
         {scalar} temperature_stage = temperature(y[0], y_stage);
 
-        {species} rhs2 = source(y_stage, temperature_stage) + beta/dt * k1 - rhs1; //source(y_stage) - J @ (a21 * dt * k1)
+        {chemical_state} rhs2 = source(y_stage, temperature_stage) + beta/dt * k1 - rhs1; //source(y_stage) - J @ (a21 * dt * k1)
 
         #ifdef CHEMGEN_DIRECT_SOLVER
-        {species} dk = invert_jacobian(G) * rhs2;
+        {chemical_state} dk = invert_jacobian(G) * rhs2;
         #else
-        {species} dk = gmres_solve(G, rhs2);
+        {chemical_state} dk = gmres_solve(G, rhs2, linear_abs_tol, linear_rel_tol);
         #endif
 
-        {species} k2 = k1 + dk;
+        {chemical_state} k2 = k1 + dk;
         return 
-        set_chemical_state(y[0], 
-                           y_init + scale_gen(m1, k1) + scale_gen(m2, k2)); //yn = yn + m1 * k1 + m2 * k2
+        y_init + scale_gen(m1, k1) + scale_gen(m2, k2); //yn = yn + m1 * k1 + m2 * k2
 }}

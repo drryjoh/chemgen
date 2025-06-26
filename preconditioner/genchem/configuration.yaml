@@ -73,10 +73,7 @@ decorators:
 
 build:
   chemgen_smp: None 
-  # chemgen_input: "-lyaml-cpp"
-  ## ADDED FOR JAY MACBOOK
-  chemgen_input: "-I/Users/jsampa/miniconda3/envs/chemgen/include -L/Users/jsampa/miniconda3/envs/chemgen/lib -lyaml-cpp"
-  chemgen_optimized: O2
+  chemgen_input: "-O3"
 
 solver:
   chemistry_solver: all

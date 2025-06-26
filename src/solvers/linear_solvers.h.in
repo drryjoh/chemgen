@@ -7,7 +7,7 @@
 {jacobian_function} inverse_diagonal({jacobian_function} J) {const_option}
 {{
     {jacobian} M_inv = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+    for ({index} i = 0; i < n_variables; ++i)
     {{
         M_inv[i][i] = std::abs(J[i][i]) > 1e-14 ? 1.0 / J[i][i] : 0.0;
     }}
@@ -18,9 +18,9 @@
 {jacobian_function} apply_diagonal({jacobian_function} P, {jacobian_function} A) {const_option}
 {{
     {jacobian} M = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+    for ({index} i = 0; i < n_variables; ++i)
     {{
-        for ({index} j = 0; j < n_species; ++j)
+        for ({index} j = 0; j < n_variables; ++j)
         {{
             M[i][j] = P[i][i] * A[i][j];
         }}
@@ -29,10 +29,10 @@
 }}
 
 {device_option}
-{species_function} apply_diagonal({jacobian_function} P, {species} b) {const_option}
+{chemical_state_function} apply_diagonal({jacobian_function} P, {chemical_state} b) {const_option}
 {{
-    {species} m = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+    {chemical_state} m = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
     {{
         m[i] = P[i][i] * b[i];
     }}
@@ -42,11 +42,11 @@
 
 #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 {device_option}
-{species_function}
-apply_gauss_seidel({jacobian_function} A, {species_function} v)
+{chemical_state_function}
+apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 {{
-	{species} z = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+	{chemical_state} z = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
     {{
         {scalar} sum = 0.0;
         for ({index} j = 0; j < i; ++j)
@@ -62,19 +62,18 @@ apply_gauss_seidel({jacobian_function} A, {species_function} v)
 
 #ifdef CHEMGEN_EIGEN
 {device_option}
-{species_function}
-gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
+{chemical_state_function}
+gmres_eigen({jacobian_parameter} A_, {chemical_state_parameter} b_, {scalar} abs_tol, {scalar} rel_tol)
 {{
     using namespace Eigen;
 
-    MatrixXd A(n_species, n_species);  // or A.resize(n_species, n_species);
-    VectorXd b(n_species);
+    MatrixXd A(n_variables, n_variables);  // or A.resize(n_variables, n_variables);
+    VectorXd b(n_variables);
 
-
-    for ({index} i = 0; i < n_species; ++i)
+    for ({index} i = 0; i < n_variables; ++i)
     {{
         b(i) = b_[i];
-        for ({index} j = 0; j < n_species; ++j) 
+        for ({index} j = 0; j < n_variables; ++j)
         {{
             A(i, j) = A_[i][j];
         }}
@@ -86,18 +85,20 @@ gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 
     GMRES<MatrixXd, IdentityPreconditioner> gmres;
     #endif
 
+    gmres.setMaxIterations(n_variables); // total number of iterations including restarts
+    gmres.set_restart(n_variables); // # iterations before restart (Full-size Krylov subspace)
 
-    gmres.setMaxIterations(n_species * 10);
-    gmres.set_restart(n_species);  // Full-size Krylov subspace
-    gmres.setTolerance(abs_tol);  // You can scale with norm(b) if needed
-    
     gmres.compute(A);
-    VectorXd x = gmres.solve(b);  // ✅ This is dynamic and safe
 
+    // eigen uses relative tolerance - https://eigen.tuxfamily.org/dox/unsupported/GMRES_8h_source.html
+    {scalar} tol = std::max(rel_tol, divide(abs_tol, gmres.preconditioner().solve(b).norm()));
+    gmres.setTolerance(tol);
+
+    VectorXd x = gmres.solve(b);
 
     // Step 5: Convert result back to std::array
-    {species} result = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+    {chemical_state} result = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
         result[i] = x(i);
 
     return result;
@@ -105,47 +106,47 @@ gmres_eigen({jacobian_parameter} A_, {species_parameter} b_, {scalar} abs_tol = 
 #endif
 
 {device_option}
-{species_function}
-gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4) 
+{chemical_state_function}
+gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4)
 {{
 #ifdef CHEMGEN_EIGEN
     return gmres_eigen(A, b, abs_tol, rel_tol);
 #else
 	{index} max_iter = 100;
-    {species} x = {{}};
-	{species} cs = {{}};
-	{species} sn = {{}};
+    {chemical_state} x = {{}};
+	{chemical_state} cs = {{}};
+	{chemical_state} sn = {{}};
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 	{jacobian} P = inverse_diagonal(A);
 	{jacobian} A_ = apply_diagonal(P, A);
-	{species} b_ = apply_diagonal(P, b);
+	{chemical_state} b_ = apply_diagonal(P, b);
 #else
 	{jacobian} A_ = A;
-	{species} b_ = b;
+	{chemical_state} b_ = b;
 #endif
 
-    {species} r = b_ - (A_ * x);
+    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
 	{scalar} norm2_r = norm2(r);
-    {scalar} norm2_A = norm2(A_);
-    
-    if (norm2_r < abs_tol)
+
+    if (norm2_r < std::numeric_limits<{scalar}>::epsilon())
     {{
+        // std::cout << "# GMRES iterations = 0" << std::endl;
         return x;
     }}
 
-    std::array<Species, n_species + 1> V = {{}};
+    std::array<{chemical_state}, n_variables + 1> V = {{}};
     V[0] = scale_gen(inv_gen(norm2_r), r);
 
-    std::array<std::array<{scalar}, n_species + 1>, n_species + 1> H = {{}};
-    std::array<{scalar}, n_species + 1> g = {{}};
+    std::array<std::array<{scalar}, n_variables>, n_variables + 1> H = {{}};
+    std::array<{scalar}, n_variables + 1> g = {{}};
     g[0] = norm2(r);
 
 	{index} final_iter = 0;
 
-    for ({index} j = 0; j < n_species; ++j)
+    for ({index} j = 0; j < n_variables; ++j)
     {{
 		final_iter = j;
-        {species} w = A_ * V[j];
+        {chemical_state} w = A_ * V[j];
 
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
@@ -155,9 +156,8 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
         }}
 
         H[j+1][j] = norm2(w);
-        if (H[j+1][j] < abs_tol * norm2_A)
-            break;
-        V[j+1] = scale_gen(inv_gen(H[j+1][j]),w);
+
+        V[j+1] = scale_gen(inv_gen(H[j+1][j]),w); // not used if j == n_variables - 1
 
 		// Apply Givens rotations to new column of H
 		for (int i = 0; i < j; ++i)
@@ -177,9 +177,8 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
         H[j][j] = r_val;
         H[j+1][j] = 0.0;
 		
-		g[j+1] = 0.0; // Ensure valid memory before rotation
-        {scalar} temp_g = cs[j] * g[j] + sn[j] * g[j+1];
-        g[j+1] = -sn[j] * g[j] + cs[j] * g[j+1];
+        {scalar} temp_g = cs[j] * g[j];
+        g[j+1] = -sn[j] * g[j];
         g[j] = temp_g;
 		
         // Convergence check
@@ -188,20 +187,24 @@ gmres_solve({jacobian_parameter} A, {species_parameter} b, {scalar} abs_tol = 1e
             break;
     }}
 
-
-    // Solve least squares problem Hy = g using back-substitution on H (upper triangular approx)
-    std::array<{scalar}, n_species> y = {{}};
+    // Solve least squares problem Hy = g using back-substitution on H (upper triangular, rectangular)
+    std::array<{scalar}, n_variables> y = {{}};
     for ({index} i = final_iter; i >= 0; --i)
     {{
         {scalar} sum = 0;
 		for ({index} j = i + 1; j <= final_iter; ++j)
             sum += H[i][j] * y[j];
         y[i] = (g[i] - sum) / H[i][i];
-
     }}
-    {species} result = {{}};
-    for ({index} i = 0; i < n_species; ++i)
+
+    {chemical_state} result = {{}};
+    for ({index} i = 0; i < final_iter + 1; ++i)
         result = result + y[i] * V[i];
+
+    if (final_iter + 1 < n_variables)
+    {{
+        // std::cout << "# GMRES iterations = " << final_iter + 1 << std::endl;
+    }}
 
     return result;
 #endif

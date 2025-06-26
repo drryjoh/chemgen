@@ -1,4 +1,38 @@
 class SourceWriter:
+    def write_energy_source(self, file, temperature_equation, configuration):
+        if temperature_equation:
+            file.write("""
+            {device_option}
+            {scalar_function}
+            species_internal_energy_mole_source_sum({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return {sum}(molecular_weights() * multiply(species_internal_energy_mass_specific(temperature), source_species(species, temperature)));
+            }}
+
+            {device_option}
+            {scalar_function}
+            temperature_source({scalar_parameter} temperature, {species_parameter} species) {const_option}
+            {{
+                return
+                -divide(species_internal_energy_mole_source_sum(species, temperature),
+                        specific_heat_constant_volume_volume_specific(species, temperature));
+            }}
+
+            {device_option}
+            {scalar_function}
+            source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return temperature_source(temperature, species);
+            }}
+            """.format(**vars(configuration)))
+        else:
+            file.write("""
+            {device_option}
+            {scalar} source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return {scalar_cast}(0);
+            }}""".format(**vars(configuration)))
+
     def write_start_of_source_function(self, file, configuration, fit_gibbs_reaction = True):
         if fit_gibbs_reaction:
             gibbs = "{reactions} gibbs_reactions = gibbs_reaction(log_temperature);".format(**vars(configuration)) 
@@ -6,7 +40,7 @@ class SourceWriter:
             gibbs = "{species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);".format(**vars(configuration)) 
         file.write("""
         {device_option}
-        {species_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option} 
+        {species_function} source_species({species_parameter} species, {scalar_parameter} temperature) {const_option}
         {{
             {species} net_production_rates = {{{scalar_cast}(0)}};
             {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
@@ -35,15 +69,24 @@ class SourceWriter:
             file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
 
 
-    def write_end_of_function(self, file):
+    def write_end_of_function(self, file, temperature_equation, configuration):
         file.write("        return net_production_rates;\n    }")
+
+        self.write_energy_source(file, temperature_equation, configuration)
+
+        file.write("""
+        {device_option}
+        {chemical_state_function} source({species_parameter} species, {scalar_parameter} temperature) {const_option}
+        {{
+            return set_chemical_state(source_energy(species, temperature), source_species(species, temperature));
+        }}\n""".format(**vars(configuration)))
 
     def write_source(self, file, equilibrium_constants, 
                      reaction_calls,  progress_rates, is_reversible, species_production_on_fly_function_texts,
-                     species_production_texts, headers, configuration, fit_gibbs_reaction = True): 
+                     species_production_texts, headers, configuration, temperature_equation, fit_gibbs_reaction = True):
         self.write_start_of_source_function(file, configuration, fit_gibbs_reaction = fit_gibbs_reaction)
         self.write_reaction_calculations(file, reaction_calls, configuration)
         self.write_progress_rates(file, progress_rates, is_reversible, equilibrium_constants, configuration)
         self.write_species_production(file, species_production_texts, configuration)
-        self.write_end_of_function(file)
+        self.write_end_of_function(file, temperature_equation, configuration)
         headers.append('source.h')

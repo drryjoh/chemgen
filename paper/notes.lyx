@@ -1,0 +1,321 @@
+#LyX 2.4 created this file. For more info see https://www.lyx.org/
+\lyxformat 620
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children no
+\language american
+\language_package default
+\inputencoding utf8
+\fontencoding auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement class
+\float_alignment class
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_formatted_ref 0
+\use_minted 0
+\use_lineno 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tablestyle default
+\tracking_changes false
+\output_changes false
+\change_bars false
+\postpone_fragile_content true
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Temperature dependence
+\end_layout
+
+\begin_layout Standard
+Assuming that internal energy is the energy variable,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\partial\omega_{i}}{\partial C_{j}}=\left(\frac{\partial\omega_{i}}{\partial C_{j}}\right)_{C_{k\neq j},T}+\left(\frac{\partial\omega_{i}}{\partial T}\right)_{C_{k}}\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}
+\]
+
+\end_inset
+
+where
+\begin_inset Formula 
+\begin{align*}
+\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}} & =-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}\\
+ & =-\frac{1}{\rho c_{v}}W_{j}u_{j}\\
+ & =-\frac{W_{j}u_{j}}{\rho c_{v}}
+\end{align*}
+
+\end_inset
+
+Also,
+\begin_inset Formula 
+\[
+\omega_{i}=\sum_{j=1}^{n_{r}}\nu_{ij}q_{j},
+\]
+
+\end_inset
+
+so
+\begin_inset Formula 
+\[
+\frac{\partial\omega_{i}}{\partial C_{j}}=\sum_{l=1}^{n_{r}}\nu_{il}\frac{\partial q_{l}}{\partial C_{j}}=\sum_{l=1}^{n_{r}}\nu_{il}\left(\frac{\partial q_{l}}{\partial C_{j}}\right)_{C_{k\neq j},T}+\sum_{l=1}^{n_{r}}\nu_{il}\left(\frac{\partial q_{l}}{\partial T}\right)_{C_{k}}\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Variable transformations
+\end_layout
+
+\begin_layout Subsection
+Temperature equation
+\end_layout
+
+\begin_layout Standard
+We have
+\begin_inset Formula 
+\[
+\frac{\partial u}{\partial t}=0=\frac{\partial u}{\partial T}\frac{\partial T}{\partial t}+\sum_{i}\frac{\partial u}{\partial Y_{i}}\frac{\partial Y_{i}}{\partial t},
+\]
+
+\end_inset
+
+which can be rewritten as
+\begin_inset Formula 
+\[
+c_{v}\frac{\partial T}{\partial t}=-\sum_{i}u_{i}\frac{\partial Y_{i}}{\partial t},
+\]
+
+\end_inset
+
+where,
+ since 
+\begin_inset Formula $\rho$
+\end_inset
+
+ is constant by mass conservation,
+\begin_inset Formula 
+\[
+\frac{\partial Y_{i}}{\partial t}=\frac{1}{\rho}\frac{\partial\rho_{i}}{\partial t}=\frac{1}{\rho}W_{i}\omega_{i}.
+\]
+
+\end_inset
+
+This gives
+\begin_inset Formula 
+\begin{align}
+\frac{\partial T}{\partial t} & =-\frac{1}{\rho c_{v}}\sum_{i}u_{i}W_{i}\omega_{i}\\
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{\rho c_{v}}=-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{\sum_{k=1}^{n_{s}}W_{k}C_{k}c_{v,k}}.
+\end{align}
+
+\end_inset
+
+In mole-based quantities,
+ we have
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i}\widehat{u}_{i}\omega_{i}}{\sum_{k}\rho_{k}\widehat{c}_{v,k}\frac{1}{W_{k}}}\\
+\frac{\partial T}{\partial t} & =-\frac{\sum_{i}\widehat{u}_{i}\omega_{i}}{\sum_{k}C_{k}\widehat{c}_{v,k}}.
+\end{align*}
+
+\end_inset
+
+Rewriting as 
+\begin_inset Formula 
+\[
+\frac{\partial T}{\partial t}=\omega_{T}=-\frac{\alpha_{T}}{\beta_{T}},\quad\alpha_{T}=\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i},\beta_{T}=\rho c_{v},
+\]
+
+\end_inset
+
+we have
+\begin_inset Formula 
+\[
+\left(\frac{\partial\alpha_{T}}{\partial T}\right)_{C_{i}}=\sum_{i=1}^{n_{s}}W_{i}\left(u_{i}\frac{\partial\omega_{i}}{\partial T}+\frac{\partial u_{i}}{\partial T}\omega_{i}\right)
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+\left(\frac{\partial\beta_{T}}{\partial T}\right)_{C_{i}}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{dc_{v,i}}{dT}
+\]
+
+\end_inset
+
+We also have
+\begin_inset Formula 
+\[
+\left(\frac{\partial\alpha_{T}}{\partial C_{j}}\right)_{T}=\sum_{i=1}^{n_{s}}W_{i}u_{i}\frac{\partial\omega_{i}}{\partial C_{j}}
+\]
+
+\end_inset
+
+and
+\begin_inset Formula 
+\[
+\left(\frac{\partial\beta_{T}}{\partial C_{j}}\right)_{T}=\frac{\partial}{\partial C_{j}}\left(\sum_{i=1}^{n_{s}}W_{i}C_{i}c_{v,i}\right)=W_{j}c_{v,j},
+\]
+
+\end_inset
+
+so
+\begin_inset Formula 
+\[
+\left(\frac{\partial\omega_{T}}{\partial C_{j}}\right)_{T}=-\frac{1}{\beta_{T}}\left(\frac{\partial\alpha_{T}}{\partial C_{j}}\right)_{T}+\frac{\alpha_{T}}{\left(\beta_{T}\right)^{2}}\left(\frac{\partial\beta_{T}}{\partial C_{j}}\right)_{T}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Total concentration
+\end_layout
+
+\begin_layout Standard
+Consider the total concentration,
+\begin_inset Formula 
+\[
+C=\sum_{i=1}^{n_{s}}C_{i}.
+\]
+
+\end_inset
+
+Pressure-dependent reactions dramatically reduce matrix sparsity since pressure couples all species concentrations.
+ However,
+ sparsity can largely be recovered if 
+\begin_inset Formula $C$
+\end_inset
+
+ is treated as a state variable since most efficiencies are unity.
+ At the same time,
+ if one 
+\begin_inset Formula $C_{k}$
+\end_inset
+
+ is replaced by 
+\begin_inset Formula $C$
+\end_inset
+
+ in the state vector for some 
+\begin_inset Formula $k$
+\end_inset
+
+,
+ then any reactions directly involving the 
+\begin_inset Formula $k$
+\end_inset
+
+th species becomes dependent on all other species (though overall sparsity should still be increased).
+ 
+\end_layout
+
+\begin_layout Standard
+Alternatively,
+ we can retain all 
+\begin_inset Formula $C_{i}$
+\end_inset
+
+ in the state vector and append an 
+\emph on
+auxiliary
+\emph default
+ 
+\begin_inset Formula $C$
+\end_inset
+
+,
+ denoted 
+\begin_inset Formula $C^{*}$
+\end_inset
+
+,
+ to the state vector.
+ This 
+\begin_inset Formula $C^{*}$
+\end_inset
+
+ would only be used to compute the pressure for pressure-dependent reactions.
+ This would significantly increase sparsity,
+ unless (for some reason) the default efficiency is not unity.
+ Of course,
+ the row corresponding to 
+\begin_inset Formula $C^{*}$
+\end_inset
+
+ would be dense.
+\end_layout
+
+\end_body
+\end_document

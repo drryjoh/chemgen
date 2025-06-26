@@ -1,43 +1,49 @@
 {device_option}
 {chemical_state} 
 backwards_euler({chemical_state} y,  
-                {scalar_parameter} dt, 
-                {scalar} tol = 1e-10, 
-                {index} max_iter = 10) 
+                {scalar_parameter} dt,
+                {scalar} abs_newton_tol = 1e-10,                  
+                {scalar} rel_newton_tol = 1e-10, 
+                {index}  max_iter = 5,
+                {scalar} linear_abs_tol = 1e-10, 
+                {scalar} linear_rel_tol = 1e-10) 
 {{
-        
-        
-        {species} y_init = get_species(y);
-        {scalar} temperature_guess = temperature(y[0], y_init);
-        {species} y_guess = get_species(y);
-        for ({index} iter = 0; iter < 5; ++iter) 
+        {chemical_state} y_init = y;
+        {chemical_state} y_guess = y;
+        for ({index} iter = 0; iter < max_iter; ++iter)
         {{
             {scalar} temperature_ = temperature(y[0], y_guess);
-            {species} f = source(y_guess, temperature_);
+            {chemical_state} f = source(y_guess, temperature_);
             {jacobian} J = source_jacobian(y_guess, temperature_);
             {jacobian} A = jacobian_I();
-            {species} res = {{}};
+            {chemical_state} res = {{}};
             
             //LHS
-            for ({index} i = 0; i < n_species; ++i) A[i][i] = A[i][i]/dt; 
+            for ({index} i = 0; i < n_variables; ++i) A[i][i] = A[i][i]/dt;
             A = A - J;
 
             //RHS
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
             //Solve
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {species} dy = invert_jacobian(A) * res;
+            {chemical_state} dy = invert_jacobian(A) * res;
             #else
-            {species} dy = gmres_solve(A, res, tol = 1e-10);
+            {chemical_state} dy = gmres_solve(A, res, linear_abs_tol, linear_rel_tol);
             #endif
 
             //Increment
             y_guess = y_guess + dy;
 
-            if (norm2(dy) < 1e-10)
+            {scalar} dy_norm = norm2(dy);
+            {scalar} y_norm  = norm2(y_guess);
+            if (dy_norm < abs_newton_tol || dy_norm / (y_norm + 1e-20) < rel_newton_tol)
             {{
-                return set_chemical_state(y[0], y_guess); 
-            }};
+                std::cout << "# Newton iterations = " << iter + 1 << std::endl;
+                return y_guess;
+            }}
         }}
-        return set_chemical_state(y[0], y_guess); //sets energy to zero to signal integration broke
+
+        std::cout << "Newton solve did not converge!" << std::endl;
+
+        return y_guess; //sets energy to zero to signal integration broke
 }}
