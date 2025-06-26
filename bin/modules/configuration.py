@@ -64,3 +64,56 @@ def get_default_configuration():
     print("** No configuration file detected, using decorators defaults in /bin/configuration.yaml **")
 
     return configuration_filename
+
+def update_configuration_eigen(configuration):
+    if not configuration.eigen:
+        species_eigen = configuration.species
+        species_function_eigen = configuration.species_function
+        species_parameter_eigen = configuration.species_parameter
+
+        chemical_state_eigen = configuration.chemical_state
+        chemical_state_function_eigen = configuration.chemical_state_function
+        chemical_state_parameter_eigen = configuration.chemical_state_parameter
+
+        jacobian_eigen = configuration.jacobian
+        jacobian_function_eigen = configuration.jacobian_function
+        jacobian_parameter_eigen = configuration.jacobian_parameter
+
+    elif configuration.eigen_sparse:
+        species_eigen = "VectorXd"
+        species_function_eigen = "VectorXd"
+        species_parameter_eigen = "const VectorXd&"
+
+        chemical_state_eigen = "VectorXd"
+        chemical_state_function_eigen = "VectorXd"
+        chemical_state_parameter_eigen = "const VectorXd&"
+
+        jacobian_eigen = "SparseMatrix<{scalar}>"
+        jacobian_function_eigen = "SparseMatrix<{scalar}>"
+        jacobian_parameter_eigen = "const SparseMatrix<{scalar}>&"
+
+    else:
+        species_eigen = "VectorXd"
+        species_function_eigen = "VectorXd"
+        species_parameter_eigen = "const VectorXd&"
+
+        chemical_state_eigen = "VectorXd"
+        chemical_state_function_eigen = "VectorXd"
+        chemical_state_parameter_eigen = "const VectorXd&"
+
+        jacobian_eigen = "MatrixXd"
+        jacobian_function_eigen = "MatrixXd"
+        jacobian_parameter_eigen = "const MatrixXd&"
+
+    setattr(configuration, "species_eigen", species_eigen)
+    setattr(configuration, "species_function_eigen", species_function_eigen)
+    setattr(configuration, "species_parameter_eigen", species_parameter_eigen)
+
+    setattr(configuration, "chemical_state_eigen", chemical_state_eigen)
+    setattr(configuration, "chemical_state_function_eigen", chemical_state_function_eigen)
+    setattr(configuration, "chemical_state_parameter_eigen", chemical_state_parameter_eigen)
+
+    setattr(configuration, "jacobian_eigen", jacobian_eigen)
+    setattr(configuration, "jacobian_function_eigen", jacobian_function_eigen)
+    setattr(configuration, "jacobian_parameter_eigen", jacobian_parameter_eigen)
+
