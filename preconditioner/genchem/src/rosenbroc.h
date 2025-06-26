@@ -2,6 +2,9 @@
 ChemicalState 
 rosenbroc(ChemicalState y,  
           const double& dt, 
+          std::chrono::duration<double>& NN_total_time,
+          std::chrono::duration<double>& P_total_time,
+          int& cvs_iter,
           double tol = 1e-10,
           int max_iter = 10) 
 {
@@ -24,9 +27,14 @@ rosenbroc(ChemicalState y,
         #ifdef CHEMGEN_DIRECT_SOLVER
         Species k1 = invert_jacobian(G) * rhs1;
         #else
-        Species k1 = gmres_solve(G, rhs1);
+        Species k1 = gmres_solve(G, rhs1, 
+            NN_total_time, P_total_time,
+            cvs_iter
+        ); //forJay
         #endif
         
+        // std::cout << "cvs_iter " << cvs_iter << std::endl; //forJAY
+
         // Stage 2
         Species y_stage = y_init + alpha * k1;
         double temperature_stage = temperature(y[0], y_stage);
@@ -36,7 +44,10 @@ rosenbroc(ChemicalState y,
         #ifdef CHEMGEN_DIRECT_SOLVER
         Species dk = invert_jacobian(G) * rhs2;
         #else
-        Species dk = gmres_solve(G, rhs2);
+        Species dk = gmres_solve(G, rhs2, 
+            NN_total_time, P_total_time,
+            cvs_iter
+        ); //forJay
         #endif
 
         Species k2 = k1 + dk;

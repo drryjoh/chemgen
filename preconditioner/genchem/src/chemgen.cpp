@@ -40,6 +40,9 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "chemical_state_functions.h"
 #include "rk4.h"
 //...........................................................................
+// #include "./neural_net/MLP_1_BE_third.hpp"
+#include "./neural_net/MLP_1_BE_second.hpp"
+#include "./neural_net/MLP_1_BE.hpp"
 #include "./neural_net/MLP_LU_1.hpp"
 #include "./neural_net/pinn.h"
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -168,6 +171,8 @@ main()
                            end_time);
     double int_energy = internal_energy_volume_specific(species, temperature_);
 
+    std::cout << "\nUSING -> MLP_LU_1" << std::endl; //forJay
+
     ChemicalState y_init = set_chemical_state(int_energy, species);
     ChemicalState y = y_init;
     double dt, t;
@@ -184,27 +189,18 @@ main()
         for (const auto& val : get_species(y)) be_file << " " << val;
         be_file << "\n";
 
-        std::chrono::duration<double> NN_total_time; // FOR JAY
-        std::chrono::duration<double> P_total_time; // FOR JAY
-        std::cout << "\nUSING -> MLP_LU_1" << std::endl;
-        // int cvs_iter = 0;
+        std::chrono::duration<double> NN_total_time; // forJay
+        std::chrono::duration<double> P_total_time; // forJay
+        int cvs_iter = 0;
 
         auto be_start = std::chrono::high_resolution_clock::now();
         for(int i = 0; i < n_run; i++)
         {
-
-            // y = backwards_euler(y, dt);
-            // t = t + dt;
-            // be_file << t << " " << temperature(y);
-            // for (const auto& val : get_species(y)) be_file << " " << val;
-            // be_file << "\n";
-
-            // cvs_iter = i;
             y = backwards_euler(y,
                                 dt,
                                 NN_total_time,
                                 P_total_time,
-                                // cvs_iter,
+                                cvs_iter,
                                 1e-12,
                                 10);
             t = t + dt;
@@ -215,14 +211,11 @@ main()
         }
         auto be_end = std::chrono::high_resolution_clock::now();
         
-        std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // FOR JAY
-        std::cout << "Total Preconditioning Time: " << P_total_time.count() << " seconds" << std::endl; // FOR JAY
+        std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // forJay
+        std::cout << "Total Preconditioning Time: " << P_total_time.count() << " seconds" << std::endl; // forJay
 
         std::chrono::duration<double> be_duration = be_end - be_start;
         std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
-
-        // auto be_adjusted_duration = be_duration - NN_total_time; // FOR JAY
-        // std::cout << "[Backwards Euler] Adjusted Time elapsed: " << be_adjusted_duration.count() << " seconds" << std::endl // FOR JAY
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     }
 
@@ -236,16 +229,28 @@ main()
         for (const auto& val : get_species(y)) sdirk2_file << " " << val;
         sdirk2_file << "\n";
 
+        std::chrono::duration<double> NN_total_time; // forJay
+        std::chrono::duration<double> P_total_time; // forJay
+        int cvs_iter = 0;
+
         auto sdirk2_start = std::chrono::high_resolution_clock::now();
         for(int i = 0; i < n_run; i++)
         {
-            y = sdirk2(y, dt);
+            y = sdirk2(y, dt, 
+                NN_total_time,
+                P_total_time,
+                cvs_iter
+            ); //forJay
             t = t + dt;
             sdirk2_file << t << " " << temperature(y);
             for (const auto& val : get_species(y)) sdirk2_file << " " << val;
             sdirk2_file << "\n";
         }
         auto sdirk2_end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // forJay
+        std::cout << "Total Preconditioning Time: " << P_total_time.count() << " seconds" << std::endl; // forJay
+
         std::chrono::duration<double> sdirk2_duration = sdirk2_end - sdirk2_start;
         std::cout << "[SDIRK2] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
     }
@@ -260,16 +265,28 @@ main()
         for (const auto& val : get_species(y)) ros_file << " " << val;
         ros_file << "\n";
 
+        std::chrono::duration<double> NN_total_time; // forJay
+        std::chrono::duration<double> P_total_time; // forJay
+        int cvs_iter = 0;
+
         auto ros_start = std::chrono::high_resolution_clock::now();
         for(int i = 0; i < n_run; i++)
         {
-            y = rosenbroc(y, dt);
+            y = rosenbroc(y, dt,
+                NN_total_time,
+                P_total_time,
+                cvs_iter
+            ); //forJay
             t = t + dt;
             ros_file << t << " " << temperature(y);
             for (const auto& val : get_species(y)) ros_file << " " << val;
             ros_file << "\n";
         }
         auto ros_end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Total NN Inference Time: " << NN_total_time.count() << " seconds" << std::endl; // forJay
+        std::cout << "Total Preconditioning Time: " << P_total_time.count() << " seconds" << std::endl; // forJay
+
         std::chrono::duration<double> ros_duration = ros_end - ros_start;
         std::cout << "[ROSENBROC] Time elapsed: " << ros_duration.count() << " seconds" << std::endl;
     }

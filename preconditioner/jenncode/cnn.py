@@ -173,11 +173,12 @@ from tensorflow.keras import layers, callbacks, models, optimizers
 
 # Config
 DATA_DIR        = "EULER_825"
-MODEL_PATH      = "CNN_1.keras"
+FILE_NAME       = "CNN_1.keras"
+MODEL_DIR       = "bin"
 NUM_SAMPLES     = 825
 M               = 96
 FILTER_SIZE     = 8
-KERNEL_SIZE     = 6
+KERNEL_SIZE     = 3
 EPOCHS          = 50
 BATCH_SIZE      = 16
 LEARNING_RATE   = 1e-3
@@ -198,8 +199,8 @@ A = np.stack(A_list, axis=0)
 inv_A = np.stack(invA_list, axis=0)  
 
 # Normalize data
-A_mean, A_std = A.mean(), A.std() + EPS
-A_inv_std, A_inv_mean = inv_A.std() + EPS, inv_A.mean()
+A_mean, A_std = A.mean(axis=0), A.std(axis=0) + EPS
+A_inv_std, A_inv_mean = inv_A.std(axis=0) + EPS, inv_A.mean(axis=0)
 
 # Shuffle and split data
 dataset = tf.data.Dataset.from_tensor_slices((A, inv_A)).shuffle(512, seed=RANDOM_SEED, reshuffle_each_iteration=True)
@@ -216,7 +217,7 @@ model = models.Sequential([
     # layers.LayerNormalization(axis=[1,2,3]),
     layers.Conv2D(FILTER_SIZE, KERNEL_SIZE, padding='same', activation='gelu'),
     layers.Conv2D(FILTER_SIZE, KERNEL_SIZE, padding='same', activation='gelu'),
-    layers.Conv2D(1, 3, padding='same'),
+    layers.Conv2D(1, KERNEL_SIZE, padding='same'),
     layers.Reshape((96,96)),
 
     layers.Rescaling(A_inv_std, offset=A_inv_mean)
@@ -233,7 +234,7 @@ model.compile(optimizer=opt,
 
 # Callbacks
 early_stop = callbacks.EarlyStopping(monitor="val_loss", patience=30, restore_best_weights=True)
-checkpoint = callbacks.ModelCheckpoint(MODEL_PATH, save_best_only=True)
+checkpoint = callbacks.ModelCheckpoint(os.path.join(MODEL_DIR, FILE_NAME), save_best_only=True)
 
 # Train
 history = model.fit(

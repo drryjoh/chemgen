@@ -4,7 +4,7 @@ backwards_euler(ChemicalState y,
                 //...........................................
                 std::chrono::duration<double>& NN_total_time,
                 std::chrono::duration<double>& P_total_time,
-                // int& cvs_iter,
+                int& cvs_iter,
                 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 double tol = 1e-12, 
                 int max_iter = 10
@@ -73,16 +73,6 @@ backwards_euler(ChemicalState y,
         double temperature_guess = temperature(y[0], y_init);
         Species y_guess = get_species(y);
 
-        //...............................................
-        // ////////////////////////////////////////////
-        // //// THIS IS USED FOR TRAINING PURPOSES ////
-        // ////////////////////////////////////////////
-        // SpeciesJacobian last_A;
-        // SpeciesJacobian last_invA;
-        // Species last_res;
-        // Species last_dy;
-        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
         int n = 0;
         for (int iter = 0; iter < 5; ++iter) 
         {
@@ -110,112 +100,11 @@ backwards_euler(ChemicalState y,
             Species dy = gmres_solve(A, res, 
                                     NN_total_time,
                                     P_total_time,
+                                    cvs_iter,
                                     tol);
             #endif
 
-            //.............................................
-            // ////////////////////////////////////////////
-            // //// THIS IS USED FOR TRAINING PURPOSES ////
-            // ////////////////////////////////////////////
-            // last_A = A;
-            // last_invA = invert_jacobian(A);
-            // last_res = res;
-            // last_dy = dy;
-            //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-            //............................................................................
-            // ////////////////////////////////////////////
-            // //// THIS IS USED FOR TRAINING PURPOSES ////
-            // ////////////////////////////////////////////
-            // // if (final_step)
-            // // {
-            //     std::string output_dir = "./neural_net/data_825/"; 
-
-            //     // std::ofstream A_file(output_dir + "A_inv_{cvs_iter}.csv");
-            //     std::ofstream A_file(output_dir + "A_" + std::to_string(cvs_iter) + ".csv");
-            //     if (A_file.is_open())
-            //     {
-            //         for (int i = 0; i < n_species; ++i)
-            //         {
-            //             for (int j = 0; j < n_species; ++j)
-            //             {
-            //                 A_file << last_A[i][j];
-            //                 if (j != n_species - 1)
-            //                     A_file << ","; // builds reach row
-            //             }
-            //             A_file << "\n";
-            //         }
-            //         A_file.close();
-            //     }
-            //     else
-            //     {
-            //         std::cerr << "Error opening file for A output!" << std::endl;
-            //     }
-
-            //     // std::ofstream A_file(output_dir + "A_inv_{cvs_iter}.csv");
-            //     std::ofstream invA_file(output_dir + "A_inv_" + std::to_string(cvs_iter) + ".csv");
-            //     if (invA_file.is_open())
-            //     {
-            //         for (int i = 0; i < n_species; ++i)
-            //         {
-            //             for (int j = 0; j < n_species; ++j)
-            //             {
-            //                 invA_file << last_invA[i][j];
-            //                 if (j != n_species - 1)
-            //                     invA_file << ","; // builds reach row
-            //             }
-            //             invA_file << "\n";
-            //         }
-            //         invA_file.close();
-            //     }
-            //     else
-            //     {
-            //         std::cerr << "Error opening file for A output!" << std::endl;
-            //     }
-                
-            //     // std::ofstream res_file(output_dir + "res.csv");
-            //     std::ofstream res_file(output_dir + "res_" + std::to_string(cvs_iter) + ".csv");
-            //     if (res_file.is_open())
-            //     {
-            //         for (int j = 0; j < n_species; ++j)
-            //         {
-            //             res_file << last_res[j];
-            //             if (j != n_species - 1)
-            //                 res_file << ",";
-            //         }
-            //         res_file << "\n";
-            //         res_file.close();
-            //     }
-            //     else
-            //     {
-            //         std::cerr << "Error opening file for residual output!" << std::endl;
-            //     }
-
-            //     // std::ofstream dy_file(output_dir + "dy.csv");
-            //     std::ofstream dy_file(output_dir + "dy_" + std::to_string(cvs_iter) + ".csv");
-            //     if (dy_file.is_open())
-            //     {
-            //         for (int j = 0; j < n_species; ++j)
-            //         {
-            //             dy_file << last_dy[j];
-            //             if (j != n_species - 1)
-            //                 dy_file << ",";
-            //         }
-            //         dy_file << "\n";
-            //         dy_file.close();
-            //     }
-            //     else
-            //     {
-            //         std::cerr << "Error opening file for dy output!" << std::endl;
-            //     }
-            // // }
-            //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
             y_guess = y_guess + dy;
-
-            // cvs_iter += 1;
-            // std::cout << "CVS_ITER " << cvs_iter << std::endl;
-
             n = iter;
             if (norm2(dy) < 1e-10) // check convergence
             {

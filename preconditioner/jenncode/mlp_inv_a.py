@@ -113,24 +113,25 @@ from tensorflow.keras import layers, callbacks, models, optimizers
 
 # config
 DATA_DIR        = "EULER_825"
-MODEL_PATH      = "TEST.keras"
-CSV_FILE        = "TEST.csv"
-NUM_SAMPLES     = 825
+MODEL_PATH      = "bin/MLP_1_BE_second.keras"
+CSV_FILE        = "bin/MLP_1_BE_second.csv"
+NUM_SAMPLES     = 824-320
 M               = 96
 FLAT_DIM        = M * M      
-BATCH_SIZE      = 16
-EPOCHS          = 100
-HIDDEN_UNITS    = 8
+BATCH_SIZE      = 8
+EPOCHS          = 2000
+HIDDEN_UNITS    = 2
 LEARNING_RATE   = 1e-3
-CLIP_NORM       = 1.0        
+CLIP_NORM       = 1.0 
 VALIDATION_SPLIT= 0.3
 RANDOM_SEED     = 42
+EPS             = 1e-12 #1e-12
 
 # load and flatten data
 X_list, y_list = [], []
 for i in range(NUM_SAMPLES):
-    A  = np.loadtxt(os.path.join(DATA_DIR, f"A_{i}.csv"), delimiter=",", dtype=np.float32)
-    iA = np.loadtxt(os.path.join(DATA_DIR, f"A_inv_{i}.csv"), delimiter=",", dtype=np.float32)
+    A  = np.loadtxt(os.path.join(DATA_DIR, f"A_{824-i}.csv"), delimiter=",", dtype=np.float32)
+    iA = np.loadtxt(os.path.join(DATA_DIR, f"A_inv_{824-i}.csv"), delimiter=",", dtype=np.float32)
     X_list.append(A.ravel())
     y_list.append(iA.ravel())
 
@@ -138,17 +139,17 @@ X = np.stack(X_list, axis=0)
 y = np.stack(y_list, axis=0)
 
 # compute mean and std per feature
-eps    = 1e-8
 X_mean = X.mean(axis=0)
-X_std  = X.std(axis=0) + eps
+X_std  = X.std(axis=0) + EPS
 y_mean = y.mean(axis=0)
-y_std  = y.std(axis=0) + eps
+y_std  = y.std(axis=0) + EPS
 X_norm = (X - X_mean) / (X_std)
 y_norm = (y - y_mean) / (y_std)
 
 # split into train and validation sets
 X_tr, X_val, y_tr, y_val = train_test_split(
     X_norm, y_norm,
+    # X, y,
     test_size=VALIDATION_SPLIT,
     random_state=RANDOM_SEED,
     shuffle=True
@@ -157,38 +158,64 @@ X_tr, X_val, y_tr, y_val = train_test_split(
 ###########
 ## MODEL ##
 ###########
-# inputs = layers.Input(shape=(FLAT_DIM,))
-# x = layers.Dense(HIDDEN_UNITS, activation=None)(inputs)
-# x = layers.BatchNormalization()(x) 
-# x = layers.Activation("relu")(x)
+inputs = layers.Input(shape=(FLAT_DIM,))
+
+x = layers.Dense(HIDDEN_UNITS, activation=None)(inputs)
+x = layers.BatchNormalization()(x) 
+x = layers.LeakyReLU(negative_slope=0.02)(x)
+
+x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
+x = layers.LeakyReLU(negative_slope=0.02)(x)
+
+x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
+x = layers.LeakyReLU(negative_slope=0.02)(x)
+
 # x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
-# x = layers.BatchNormalization()(x)
-# x = layers.Activation("relu")(x)
-# x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
-# x = layers.BatchNormalization()(x)
-# x = layers.Activation("relu")(x)
-# outputs = layers.Dense(FLAT_DIM, activation=None)(x)
-# model = models.Model(inputs, outputs)
+# x = layers.LeakyReLU(negative_slope=0.02)(x)
+
+outputs = layers.Dense(FLAT_DIM, activation=None)(x)
+
+model = models.Model(inputs, outputs)
 ###########
-model = tf.keras.Sequential([
-    layers.Input(shape=(FLAT_DIM,)),
-    layers.Dense(HIDDEN_UNITS),
-    # layers.UnitNormalization(axis=-1),
-    layers.BatchNormalization(),
-    # layers.Activation("relu"),
-    layers.LeakyReLU(negative_slope=0.01),
-    layers.Dense(HIDDEN_UNITS),
-    # layers.BatchNormalization(),
-    # layers.Activation("relu"),
-    layers.LeakyReLU(negative_slope=0.01),
-    layers.Dense(FLAT_DIM, activation="linear")
-])
+# model = tf.keras.Sequential([
+#     layers.Input(shape=(FLAT_DIM,)),
+#     # layers.Rescaling(1.0/X_std, offset=-X_mean/X_std),
+
+#     layers.Dense(HIDDEN_UNITS),
+#     # layers.UnitNormalization(axis=-1),
+#     layers.BatchNormalization(),
+#     # layers.Activation("relu"),
+#     layers.LeakyReLU(negative_slope=0.1),
+
+#     layers.Dense(HIDDEN_UNITS),
+#     layers.BatchNormalization(),
+#     # layers.Activation("relu"),
+#     layers.LeakyReLU(negative_slope=0.1),
+
+#     layers.Dense(HIDDEN_UNITS),
+#     layers.BatchNormalization(),
+#     # layers.Activation("relu"),
+#     layers.LeakyReLU(negative_slope=0.1),
+
+#     layers.Dense(FLAT_DIM, activation="linear"),
+#     # layers.Rescaling(y_std, offset=y_mean)
+# ])
 ###########
+#........................................................................
+# y_mean_const = tf.constant(y_mean, dtype=tf.float32)
+# y_std_const  = tf.constant(y_std,  dtype=tf.float32)
+# def normalized_mse_loss(y_true_raw, y_pred_raw):
+#     y_true_norm = (y_true_raw - y_mean_const) / y_std_const
+#     y_pred_norm = (y_pred_raw - y_mean_const) / y_std_const
+#     return tf.reduce_mean(tf.square(y_pred_norm - y_true_norm), axis=-1)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 # compile model with gradient clipping
 opt = optimizers.Adam(learning_rate=LEARNING_RATE, clipnorm=CLIP_NORM)
 model.compile(optimizer=opt, 
+            #   loss=normalized_mse_loss,
             #   loss=tf.keras.losses.MeanSquaredError()
+            #   loss=tf.keras.losses.MeanAbsolutePercentageError()
               loss=tf.keras.losses.LogCosh()
             #   loss='binary_crossentropy',
             #   metrics=['accuracy']
@@ -197,6 +224,12 @@ model.compile(optimizer=opt,
 # set up early stopping and checkpoint
 early_stop = callbacks.EarlyStopping(monitor="val_loss", patience=500, restore_best_weights=True)
 checkpoint = callbacks.ModelCheckpoint(MODEL_PATH, save_best_only=True)
+reduce_lr = callbacks.ReduceLROnPlateau(
+    monitor="val_loss", 
+    factor=0.025, 
+    patience=100, 
+    min_lr=1e-10
+)
 
 # train the model
 history = model.fit(
@@ -204,7 +237,7 @@ history = model.fit(
     validation_data=(X_val, y_val),
     epochs=EPOCHS,
     batch_size=BATCH_SIZE,
-    callbacks=[early_stop, checkpoint],
+    callbacks=[early_stop, checkpoint, reduce_lr],
     verbose=1
 )
 

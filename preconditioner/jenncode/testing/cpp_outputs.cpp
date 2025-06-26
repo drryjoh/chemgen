@@ -3,7 +3,7 @@
 #include <sstream>
 #include <array>
 #include <iomanip> 
-#include "../bin/MLP_LU_1.hpp" 
+#include "../bin/MLP_2_BE.hpp" 
 #include <chrono>
 
 using namespace std;
@@ -11,6 +11,8 @@ using Scalar = double;
 
 int main() {
     
+    std::cout << std::fixed << std::setprecision(8);
+
     ifstream file("../EULER_825/A_824.csv");
     if (!file) {
         std::cerr << "Error opening file A.csv" << std::endl;
@@ -28,11 +30,11 @@ int main() {
         }
     }
 
-    // auto start = std::chrono::high_resolution_clock::now();
-    auto output = MLP_LU_1(A);
-    // auto end = std::chrono::high_resolution_clock::now();
-    // std::chrono::duration<double> elapsed = end - start;
-    // std::cout << "NN time = " << elapsed.count() << " seconds" << std::endl; 
+    auto start = std::chrono::high_resolution_clock::now();
+    auto output = MLP_2_BE(A);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    std::cout << "NN time outside = " << elapsed.count() << " seconds" << std::endl; 
 
     // // Print the results with high precision
     // std::cout << std::scientific << std::setprecision(15);  // Set precision and scientific notation

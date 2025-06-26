@@ -8,6 +8,9 @@ SpeciesJacobian preconditioned_J = apply_diagonal(M_inv, J);
 ChemicalState 
 sdirk2(ChemicalState y,  
        const double& dt, 
+       std::chrono::duration<double>& NN_total_time,
+       std::chrono::duration<double>& P_total_time,
+       int& cvs_iter,
        double tol = 1e-10,
        int max_iter = 10) 
 {
@@ -34,7 +37,11 @@ sdirk2(ChemicalState y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             Species dk = invert_jacobian(J) * res;
             #else
-            Species dk = gmres_solve(J, res);
+            Species dk = gmres_solve(J, res,
+            NN_total_time,
+            P_total_time,
+            cvs_iter
+            );
             #endif
             k1 = k1 + dk;
         }
@@ -55,7 +62,11 @@ sdirk2(ChemicalState y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             Species dk = invert_jacobian(J) * res;
             #else
-            Species dk = gmres_solve(J, res);
+            Species dk = gmres_solve(J, res,
+            NN_total_time,
+            P_total_time,
+            cvs_iter
+            );
             #endif
             k2 = k2 + dk;
         }
