@@ -187,9 +187,14 @@ def main():
             eigen = "#define CHEMGEN_EIGEN"
             print("Running with eigen!")
 
+    eigen_sparse = configuration_file.get('solver', {}).get('eigen_sparse', False)
+    if eigen_sparse:
+        args.get_sparsity = True
+
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
     setattr(configuration, "eigen",  eigen)
+    setattr(configuration, "eigen_sparse",  eigen_sparse)
 
     third_parties = [use_third_parties, third_party_path, libraries]
 

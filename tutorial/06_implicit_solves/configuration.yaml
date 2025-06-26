@@ -80,3 +80,5 @@ solver:
   linear_solver: gmres
   preconditioner: jacobi
   eigen: on
+  eigen_sparse: on
+  
