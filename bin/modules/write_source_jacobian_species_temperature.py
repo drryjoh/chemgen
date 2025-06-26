@@ -255,10 +255,6 @@ void update_jacobian_reaction_{reaction_index}({jacobian}& jacobian_net_producti
             progress_rate_derivatives_split = progress_rate_derivatives.split(';')
             for i, line in reversed(list(enumerate(progress_rate_derivatives_split))): # reverse order so pop doesn't alter subsequent i; note that this creates a copy
                 if "drate_of_progress_{reaction_index}_dtemperature".format(reaction_index=reaction_index) in line:
-                    if "jacobian_net_production_rates" in line:
-                        line = line.replace("jacobian_net_production_rates", "dsource_species_dtemperature_")
-                        line = line.replace("[0]", "")
-                        line = line.replace("] +=", "-1] +=")
                     progress_rate_temperature_derivative.append(line)
                     progress_rate_derivatives_split.pop(i)
 

@@ -220,7 +220,8 @@ def add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, 
     running_text = []
     for i, species_index in enumerate(indexes_of_species_in_reaction):
         if stoichiometric_production[species_index]!=0:
-            running_text.append(f"        jacobian_net_production_rates[{species_index+1}][0] += {stoichiometric_production[species_index]}*drate_of_progress_{reaction_index}_dtemperature;\n")
+            # will be modified later
+            running_text.append(f"        dsource_species_dtemperature_[{species_index}] += {stoichiometric_production[species_index]}*drate_of_progress_{reaction_index}_dtemperature;\n")
             if sparsity_pattern is not None:
                 sparsity_pattern[species_index+1][0] += 1
     return ''.join(running_text)
