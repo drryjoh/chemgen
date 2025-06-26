@@ -182,13 +182,15 @@ def main():
             exit()
 
     eigen = ""
+    eigen_sparse = ""
     if chemistry_solver_eigen and chemistry_solver:
         if chemistry_solver_eigen:
             eigen = "#define CHEMGEN_EIGEN"
             print("Running with eigen!")
+            eigen_sparse = configuration_file.get('solver', {}).get('eigen_sparse', False)
 
-    eigen_sparse = configuration_file.get('solver', {}).get('eigen_sparse', False)
     if eigen_sparse:
+        print("Running with sparse data structures!")
         args.get_sparsity = True
 
     setattr(configuration, "preconditioner",  preconditioner)
