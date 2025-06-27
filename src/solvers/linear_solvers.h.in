@@ -75,9 +75,9 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
     }}
 
     #ifdef CHEMGEN_PRECONDITIONER_JACOBI
-    GMRES<Matrix<{scalar}, Dynamic, Dynamic>, DiagonalPreconditioner<{scalar}>> gmres;
+    GMRES<{jacobian_eigen_dynamic}, DiagonalPreconditioner<{scalar}>> gmres;
     #else
-    GMRES<Matrix<{scalar}, Dynamic, Dynamic>, IdentityPreconditioner> gmres;
+    GMRES<{jacobian_eigen_dynamic}, IdentityPreconditioner> gmres;
     #endif
 
     gmres.setMaxIterations(n_variables); // total number of iterations including restarts

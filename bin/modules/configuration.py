@@ -78,6 +78,7 @@ def update_configuration_eigen(configuration):
         jacobian_eigen = configuration.jacobian
         jacobian_function_eigen = configuration.jacobian_function
         jacobian_parameter_eigen = configuration.jacobian_parameter
+        jacobian_eigen_dynamic = configuration.jacobian
     else:
         scalar = configuration.scalar
         species_eigen = f"Matrix<{scalar}, n_species, 1>"
@@ -91,11 +92,13 @@ def update_configuration_eigen(configuration):
         jacobian_eigen = f"Matrix<{scalar}, n_variables, n_variables>"
         jacobian_function_eigen = f"Matrix<{scalar}, n_variables, n_variables>"
         jacobian_parameter_eigen = f"const Matrix<{scalar}, n_variables, n_variables>&"
+        jacobian_eigen_dynamic = f"Matrix<{scalar}, Dynamic, Dynamic>"
 
         if configuration.eigen_sparse:
             jacobian_eigen = f"SparseMatrix<{scalar}>"
             jacobian_function_eigen = f"SparseMatrix<{scalar}>"
             jacobian_parameter_eigen = f"const SparseMatrix<{scalar}>&"
+            jacobian_eigen_dynamic = f"SparseMatrix<{scalar}>"
 
     setattr(configuration, "species_eigen", species_eigen)
     setattr(configuration, "species_function_eigen", species_function_eigen)
@@ -108,4 +111,5 @@ def update_configuration_eigen(configuration):
     setattr(configuration, "jacobian_eigen", jacobian_eigen)
     setattr(configuration, "jacobian_function_eigen", jacobian_function_eigen)
     setattr(configuration, "jacobian_parameter_eigen", jacobian_parameter_eigen)
+    setattr(configuration, "jacobian_eigen_dynamic", jacobian_eigen_dynamic)
 
