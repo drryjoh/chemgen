@@ -10,7 +10,7 @@ class SourceJacobianWriter:
 
         file.write("""
     {device_option}
-    {jacobian_output} source_jacobian({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} scaling_factor=1, {scalar_parameter} diagonal_add=0) {const_option}
+    {jacobian_output} source_jacobian({species_parameter} species, {scalar_parameter} temperature, {scalar} scaling_factor=1, {scalar} diagonal_add=0) {const_option}
     {{
         // after J is filled, do J = scaling_factor*J + diagonal_add
         {species} net_production_rates = {{{scalar_cast}(0)}};

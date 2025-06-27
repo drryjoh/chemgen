@@ -67,7 +67,7 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
 {{
     using namespace Eigen;
 
-    VectorXd b(n_variables);
+    {chemical_state_eigen} b(n_variables);
 
     for ({index} i = 0; i < n_variables; ++i)
     {{
@@ -75,9 +75,9 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
     }}
 
     #ifdef CHEMGEN_PRECONDITIONER_JACOBI
-    GMRES<MatrixXd, DiagonalPreconditioner<{scalar}>> gmres;
+    GMRES<Matrix<{scalar}, Dynamic, Dynamic>, DiagonalPreconditioner<{scalar}>> gmres;
     #else
-    GMRES<MatrixXd, IdentityPreconditioner> gmres;
+    GMRES<Matrix<{scalar}, Dynamic, Dynamic>, IdentityPreconditioner> gmres;
     #endif
 
     gmres.setMaxIterations(n_variables); // total number of iterations including restarts
@@ -89,7 +89,7 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
     {scalar} tol = std::max(rel_tol, divide(abs_tol, gmres.preconditioner().solve(b).norm()));
     gmres.setTolerance(tol);
 
-    VectorXd x = gmres.solve(b);
+    {chemical_state_eigen} x = gmres.solve(b);
 
     // Convert back to chemical_state
     {chemical_state} result = {{}};

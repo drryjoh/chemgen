@@ -387,9 +387,15 @@ jacobian_I()
 
 #if defined(CHEMGEN_EIGEN)
 void
-add_species_to_jacobian_row_eigen_sparse(std::vector<Triplet>& triplet, {index} row_index, {species_parameter} b_s)
+add_species_to_jacobian_row_eigen_sparse(std::vector<Triplet_>& triplet, {index} row_index, {species_parameter} b_s)
 {{
-    for ({index} j = 0; j < n_species; ++j) triplet.push_back(Triplet(row_index, j+1, b_s[j]));
+    for ({index} j = 0; j < n_species; ++j) triplet.push_back(Triplet_(row_index, j+1, b_s[j]));
+}}
+
+void
+add_species_to_jacobian_row_eigen({jacobian_eigen}& jacobian, {index} row_index, {species_parameter} b_s)
+{{
+    for ({index} j = 0; j < n_species; ++j) jacobian(row_index, j+1) += b_s[j];
 }}
 
 #else

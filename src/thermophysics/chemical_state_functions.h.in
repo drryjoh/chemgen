@@ -45,7 +45,7 @@ source({chemical_state_parameter} chemical_state) {const_option}
 }}
 
 {device_option}
-{jacobian_function}
+{jacobian_function_eigen}
 source_jacobian({chemical_state_parameter} chemical_state, {scalar} temperature, {scalar_parameter} scaling_factor=1, {scalar_parameter} diagonal_add=0) {const_option}
 {{
     return

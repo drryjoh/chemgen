@@ -20,7 +20,7 @@ yass({chemical_state} y,
     {{
 
         {scalar} temperature_ = temperature(y[0], y_n);
-        {jacobian} G = source_jacobian(y_n, temperature_, -dt_, 1);
+        {jacobian_eigen} G = source_jacobian(y_n, temperature_, -dt_, 1);
         {chemical_state} rhs1 = scale_gen(dt_, source(y_n, temperature_));
 
         #ifdef CHEMGEN_DIRECT_SOLVER

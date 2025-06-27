@@ -14,7 +14,7 @@ backwards_euler({chemical_state} y,
         {{
             {scalar} temperature_ = temperature(y[0], y_guess);
             {chemical_state} f = source(y_guess, temperature_);
-            {jacobian} A = source_jacobian(y_guess, temperature_, -1, 1/dt);
+            {jacobian_eigen} A = source_jacobian(y_guess, temperature_, -1, 1/dt);
             {chemical_state} res = {{}};
 
             //RHS

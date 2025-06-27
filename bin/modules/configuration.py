@@ -79,22 +79,23 @@ def update_configuration_eigen(configuration):
         jacobian_function_eigen = configuration.jacobian_function
         jacobian_parameter_eigen = configuration.jacobian_parameter
     else:
-        species_eigen = "VectorXd"
-        species_function_eigen = "VectorXd"
-        species_parameter_eigen = "const VectorXd&"
+        scalar = configuration.scalar
+        species_eigen = f"Matrix<{scalar}, n_species, 1>"
+        species_function_eigen = f"Matrix<{scalar}, n_species, 1>"
+        species_parameter_eigen = f"const Matrix<{scalar}, n_species, 1>&"
 
-        chemical_state_eigen = "VectorXd"
-        chemical_state_function_eigen = "VectorXd"
-        chemical_state_parameter_eigen = "const VectorXd&"
+        chemical_state_eigen = f"Matrix<{scalar}, n_variables, 1>"
+        chemical_state_function_eigen = f"Matrix<{scalar}, n_variables, 1>"
+        chemical_state_parameter_eigen = f"const Matrix<{scalar}, n_variables, 1>&"
 
-        jacobian_eigen = "MatrixXd"
-        jacobian_function_eigen = "MatrixXd"
-        jacobian_parameter_eigen = "const MatrixXd&"
+        jacobian_eigen = f"Matrix<{scalar}, n_variables, n_variables>"
+        jacobian_function_eigen = f"Matrix<{scalar}, n_variables, n_variables>"
+        jacobian_parameter_eigen = f"const Matrix<{scalar}, n_variables, n_variables>&"
 
         if configuration.eigen_sparse:
-            jacobian_eigen = "SparseMatrix<{scalar}>"
-            jacobian_function_eigen = "SparseMatrix<{scalar}>"
-            jacobian_parameter_eigen = "const SparseMatrix<{scalar}>&"
+            jacobian_eigen = f"SparseMatrix<{scalar}>"
+            jacobian_function_eigen = f"SparseMatrix<{scalar}>"
+            jacobian_parameter_eigen = f"const SparseMatrix<{scalar}>&"
 
     setattr(configuration, "species_eigen", species_eigen)
     setattr(configuration, "species_function_eigen", species_function_eigen)
