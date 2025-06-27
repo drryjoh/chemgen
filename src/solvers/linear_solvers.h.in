@@ -63,20 +63,15 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 #ifdef CHEMGEN_EIGEN
 {device_option}
 {chemical_state_function}
-gmres_eigen({jacobian_parameter} A_, {chemical_state_parameter} b_, {scalar} abs_tol, {scalar} rel_tol)
+gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar} abs_tol, {scalar} rel_tol)
 {{
     using namespace Eigen;
 
-    MatrixXd A(n_variables, n_variables);  // or A.resize(n_variables, n_variables);
     VectorXd b(n_variables);
 
     for ({index} i = 0; i < n_variables; ++i)
     {{
         b(i) = b_[i];
-        for ({index} j = 0; j < n_variables; ++j)
-        {{
-            A(i, j) = A_[i][j];
-        }}
     }}
 
     #ifdef CHEMGEN_PRECONDITIONER_JACOBI
@@ -103,15 +98,13 @@ gmres_eigen({jacobian_parameter} A_, {chemical_state_parameter} b_, {scalar} abs
 
     return result;
 }}
-#endif
+
+#else
 
 {device_option}
 {chemical_state_function}
 gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4)
 {{
-#ifdef CHEMGEN_EIGEN
-    return gmres_eigen(A, b, abs_tol, rel_tol);
-#else
 	{index} max_iter = 100;
     {chemical_state} x = {{}};
 	{chemical_state} cs = {{}};
@@ -207,6 +200,5 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
     }}
 
     return result;
-#endif
 }}
-
+#endif
