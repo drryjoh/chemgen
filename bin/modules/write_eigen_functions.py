@@ -89,17 +89,13 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
         SparseMatrix<{scalar}> jacobian_net_production_rates(n_variables, n_variables);
         jacobian_net_production_rates.setFromTriplets(jacobian_triplets.begin(), jacobian_triplets.end());
 
-        if (jacobian_net_production_rates.outerSize() != n_variables) std::cerr << "jacobian_net_production_rates.outerSize() != n_variables" << std::endl;
-
         Species dspecies_internal_energy_mole_source_sum_dspecies_ = {{{scalar_cast}(0)}};
         Species species_internal_energy_mole_ = molecular_weights() * species_internal_energy_mass_specific(temperature);
 
         for ({index} i = 0; i < n_species; ++i)
         {{
-            for (/* typename */ SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
+            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
             {{
-                if (it.col() != i+1) std::cerr << "it.col() != i+1" << std::endl;
-
                 {index} j = it.row();
 
                 // skip first row (energy source)
@@ -114,10 +110,10 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
                 }}
 
                 dspecies_internal_energy_mole_source_sum_dspecies_[i] += species_internal_energy_mole_[j-1] * value;
-                // it.value();
+                // it.value(); // value
                 // it.row();   // row index
-                // it.col();   // col index  (here it is equal to i+1)
-                // it.index(); // inner index, here it is equal to it.row()
+                // it.col();   // col index - here, it is equal to i+1
+                // it.index(); // inner index - here, it is equal to it.row()
             }}
         }}
 
@@ -125,7 +121,7 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
         {{
             // Derivative of temperature source term with respect to concentrations
             // Second part
-            for (/* typename */ SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
+            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
             {{
                 if (it.row() != 0) std::cerr << "it.row() != 0" << std::endl; // first row is dense
 
