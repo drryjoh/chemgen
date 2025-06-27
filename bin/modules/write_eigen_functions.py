@@ -75,7 +75,9 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
         // Divide diagonal_add by scaling_factor here since we will do J = scaling_factor*J at the end
         {scalar} diagonal_add_ = divide(diagonal_add, scaling_factor);
 
-        // Add to diagonal
+        // Add to diagonal - append to triplets (before scaling by scaling_factor) for two reasons:
+        // (1) Ensure memory is allocated for the diagonal
+        // (2) So we don't have to access solely the diagonal later
         if (diagonal_add != 0)
         {{
             for ({index} i = 0; i < n_variables; i++)
