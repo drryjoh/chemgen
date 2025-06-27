@@ -142,9 +142,9 @@ void update_jacobian_reaction_{reaction_index}({jacobian_input},
             if "pressure" in reactions_depend_on[i]:
                 pressure_dependency = "dpressure_dtemperature_, dpressure_dspecies_,"
             if is_reversible[i]:
-                file.write("""        update_jacobian_reaction_{reaction_index}(jacobian_net_production_rates, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, equilibrium_constant_{reaction_index}, dequilibrium_constant_{reaction_index}_dtemperature,dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
+                file.write("""        update_jacobian_reaction_{reaction_index}({jacobian_input}, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, equilibrium_constant_{reaction_index}, dequilibrium_constant_{reaction_index}_dtemperature,dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency, jacobian_input="jacobian_triplets" if configuration.eigen_sparse else "jacobian_net_production_rates"))
             else:
-                file.write("""        update_jacobian_reaction_{reaction_index}(jacobian_net_production_rates, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
+                file.write("""        update_jacobian_reaction_{reaction_index}({jacobian_input}, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency, jacobian_input="jacobian_triplets" if configuration.eigen_sparse else "jacobian_net_production_rates"))
 
         
     def write_species_production_jacobian(self, file, species_production_rates, configuration):

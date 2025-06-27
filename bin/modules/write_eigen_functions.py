@@ -60,7 +60,7 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
     if configuration.eigen_sparse:
         return """
         {scalar} specific_heat_constant_volume_volume_specific_ = specific_heat_constant_volume_volume_specific(species, temperature);
-        Species dtemperature_source_dspecies_1 = scale_gen(divide(species_internal_energy_mole_source_sum(species, temperature), pow2(specific_heat_constant_volume_volume_specific_)), dspecific_heat_constant_volume_volume_specific_dspecies(species, temperature))
+        Species dtemperature_source_dspecies_1 = scale_gen(divide(species_internal_energy_mole_source_sum(species, temperature), pow2(specific_heat_constant_volume_volume_specific_)), dspecific_heat_constant_volume_volume_specific_dspecies(species, temperature));
 
         for ({index} i = 0; i < n_species; i++)
         {{
@@ -72,12 +72,12 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
             jacobian_triplets.push_back(Triplet_(0, i+1, dtemperature_source_dspecies_1[i]));
         }}
 
+        // Divide diagonal_add by scaling_factor here since we will do J = scaling_factor*J at the end
+        {scalar} diagonal_add_ = divide(diagonal_add, scaling_factor);
+
         // Add to diagonal
         if (diagonal_add != 0)
         {{
-            // Divide diagonal_add by scaling_factor here since we will do J = scaling_factor*J at the end
-            {scalar} diagonal_add_ = divide(diagonal_add, scaling_factor);
-
             for ({index} i = 0; i < n_variables; i++)
             {{
                 jacobian_triplets.push_back(Triplet_(i, i, diagonal_add_));
@@ -98,10 +98,20 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
             {{
                 if (it.col() != i+1) std::cerr << "it.col() != i+1" << std::endl;
 
-                // skip first row
-                if (it.row() == 0) continue;
+                {index} j = it.row();
 
-                dspecies_internal_energy_mole_source_sum_dspecies_[i] += species_internal_energy_mole_[it.row()-1] * it.value();
+                // skip first row (energy source)
+                if (j == 0) continue;
+
+                {scalar} value = it.value();
+
+                // Undo diagonal_add
+                if (i+1 == j)
+                {{
+                    value -= diagonal_add_;
+                }}
+
+                dspecies_internal_energy_mole_source_sum_dspecies_[i] += species_internal_energy_mole_[j-1] * value;
                 // it.value();
                 // it.row();   // row index
                 // it.col();   // col index  (here it is equal to i+1)

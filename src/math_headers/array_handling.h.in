@@ -393,7 +393,7 @@ add_species_to_jacobian_row_eigen_sparse(std::vector<Triplet_>& triplet, {index}
 }}
 
 void
-add_species_to_jacobian_row_eigen({jacobian_eigen}& jacobian, {index} row_index, {species_parameter} b_s)
+add_species_to_jacobian_row_eigen({jacobian_eigen_dense}& jacobian, {index} row_index, {species_parameter} b_s)
 {{
     for ({index} j = 0; j < n_species; ++j) jacobian(row_index, j+1) += b_s[j];
 }}
