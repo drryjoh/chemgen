@@ -97,7 +97,7 @@ std::vector<std::vector<{scalar}>> source_jacobian_py(const std::vector<{scalar}
 }}
 
 
-std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} norm, {index} max_iter, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
+std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} nonlinear_abs_tol, {scalar} nonlinear_rel_tol, {index} max_iter, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
@@ -108,7 +108,7 @@ std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} t
     {chemical_state} y = set_chemical_state(temperature, sp);
 #endif
     
-    auto result = sdirk4(y, dt, norm, max_iter, linear_abs_tol, linear_rel_tol);
+    auto result = sdirk4(y, dt, nonlinear_abs_tol, nonlinear_rel_tol, max_iter, linear_abs_tol, linear_rel_tol);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}

@@ -28,7 +28,7 @@ reactor = ct.IdealGasReactor(gas)
 network = ct.ReactorNet([reactor])
 
 # Define simulation time (in seconds)
-time_end = 2e-5
+time_end = 8e-5
 dt_small = 1e-7
 n_steps = int(time_end/dt_small)
 #time_end = 200 * 2e-7  # Convert ns to seconds

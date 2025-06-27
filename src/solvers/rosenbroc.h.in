@@ -3,7 +3,7 @@
 rosenbroc({chemical_state} y,  
           {scalar_parameter} dt, 
           {scalar} linear_abs_tol = 1e-8,
-          {scalar} linear_rel_tol = 1e-4) 
+          {scalar} linear_rel_tol = 1e-6) 
 {{
         //constants
         {chemical_state} y_init = y;

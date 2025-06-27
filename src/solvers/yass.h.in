@@ -7,7 +7,7 @@ yass({chemical_state} y,
      {scalar} min_dt  = 1e-10,
      {index} max_iter = 20,
      {scalar} linear_abs_tol = 1e-8, 
-     {scalar} linear_rel_tol = 1e-4) 
+     {scalar} linear_rel_tol = 1e-6) 
 {{
 
     {chemical_state} y_init = y;
@@ -31,10 +31,11 @@ yass({chemical_state} y,
         {chemical_state} dy = gmres_solve(G, rhs1, linear_abs_tol, linear_rel_tol);
         #endif
 
-        {scalar} dy_norm  = norm2(dy);
+        {scalar} dy_norm  = norm2(get_species(dy));
 
         if (dy_norm > max_norm)
         {{
+            std::cout << "refining YASS; dy: " <<dy_norm<<std::endl;
             dt_ *= {scalar_cast}(0.5);
             if (dt_ < min_dt)
             {{
