@@ -30,3 +30,6 @@
 {device_option} {scalar_function} dsqrt_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(0.5) * inv_gen({sqrtmath}(a));}}
 {device_option} {scalar_function} sqrt_chain({scalar_parameter} a, {scalar_parameter} da) {const_option} {{ return {scalar_cast}(0.5) * da * inv_gen({sqrtmath}(a));}}
 
+//abs/min/max
+{device_option} {scalar_function} abs_gen({scalar_parameter} a) {const_option} {{ return std::abs(a);}}
+

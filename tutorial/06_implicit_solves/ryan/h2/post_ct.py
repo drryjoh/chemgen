@@ -84,6 +84,7 @@ except IndexError:
 plt.legend()
 plt.xlabel("Time ($\\mu$s)")
 plt.ylabel("Temperature (K)")
+plt.ylim([1500,3000])
 plt.title("Temperature Evolution in Homogeneous Reactor")
 plt.savefig("rk4.png",dpi=300)
 plt.show()

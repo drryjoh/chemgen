@@ -34,9 +34,7 @@ backwards_euler({chemical_state} y,
             //Increment
             y_guess = y_guess + dy;
 
-            {scalar} dy_norm = norm2(dy);
-            {scalar} y_norm  = norm2(y_guess);
-            if (dy_norm < abs_newton_tol || dy_norm / (y_norm + 1e-20) < rel_newton_tol)
+            if (kercher_norm(dy, y_guess, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 std::cout << "# Newton iterations = " << iter + 1 << std::endl;
                 return y_guess;
