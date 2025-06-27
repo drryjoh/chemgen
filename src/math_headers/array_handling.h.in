@@ -263,6 +263,7 @@ get_energy({chemical_state_parameter} y) {const_option}
 set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
                    {species_parameter} species) {const_option}
 {{
+    // TODO: modify in place?
     {chemical_state} y;
     for ({index} i = 1; i <= n_species; i++)
     {{
@@ -273,7 +274,7 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 }}
 
 {device_option}
-{scalar_function} norm2({species_parameter} x) 
+{scalar_function} norm2({species_parameter} x)
 {{
     {scalar} sum = {scalar_cast}(0.0);
     for ({index} i  = 0; i<n_species; i++)
