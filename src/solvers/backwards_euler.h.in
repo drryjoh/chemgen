@@ -2,11 +2,11 @@
 {chemical_state} 
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt,
-                {scalar} abs_newton_tol = 1e-10,                  
-                {scalar} rel_newton_tol = 1e-10, 
+                {scalar} abs_newton_tol = 1e-10,
+                {scalar} rel_newton_tol = 1e-10,
                 {index}  max_iter = 5,
-                {scalar} linear_abs_tol = 1e-10, 
-                {scalar} linear_rel_tol = 1e-10) 
+                {scalar} linear_abs_tol = 1e-10,
+                {scalar} linear_rel_tol = 1e-10)
 {{
         {chemical_state} y_init = y;
         {chemical_state} y_guess = y;
