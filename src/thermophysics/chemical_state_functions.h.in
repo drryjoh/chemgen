@@ -46,10 +46,10 @@ source({chemical_state_parameter} chemical_state) {const_option}
 
 {device_option}
 {jacobian_function}
-source_jacobian({chemical_state_parameter} chemical_state, {scalar} temperature) {const_option}
+source_jacobian({chemical_state_parameter} chemical_state, {scalar} temperature, {scalar_parameter} scaling_factor=1, {scalar_parameter} diagonal_add=0) {const_option}
 {{
     return
-    source_jacobian(get_species(chemical_state), temperature);
+    source_jacobian(get_species(chemical_state), temperature, scaling_factor, diagonal_add);
 }}
 
 #undef {internal_energy_or_temperature}

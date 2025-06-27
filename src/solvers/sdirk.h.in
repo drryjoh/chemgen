@@ -33,7 +33,7 @@ sdirk2({chemical_state} y,
             {{
                 break;
             }};
-            {jacobian} J = I -scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            {jacobian} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
@@ -54,7 +54,7 @@ sdirk2({chemical_state} y,
             {{
                 break;
             }};
-            {jacobian} J = I -scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            {jacobian} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
@@ -121,7 +121,7 @@ sdirk4({chemical_state} y,
             {{
                 break;
             }};
-            {jacobian} J = I -scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            {jacobian} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
@@ -145,7 +145,7 @@ sdirk4({chemical_state} y,
             {{
                 break;
             }};
-            {jacobian} J = I -scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            {jacobian} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
@@ -168,7 +168,7 @@ sdirk4({chemical_state} y,
             {{
                 break;
             }};
-            {jacobian} J = I -scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            {jacobian} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
@@ -194,7 +194,7 @@ sdirk4({chemical_state} y,
                 break;
             }};
 
-            {jacobian} J = I - scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            {jacobian} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
@@ -219,7 +219,7 @@ sdirk4({chemical_state} y,
             {{
                 break;
             }};
-            {jacobian} J = I -scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
+            {jacobian} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else

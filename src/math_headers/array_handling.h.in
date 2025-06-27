@@ -354,7 +354,13 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 }}
 
 {device_option}
-{scalar_function} dot({species_parameter} a, {species_parameter} b) 
+{jacobian_function} operator*({scalar_parameter} s, {jacobian_parameter} a)
+{{
+    return scale_gen(s, a);
+}}
+
+{device_option}
+{scalar_function} dot({species_parameter} a, {species_parameter} b)
 {{
     {scalar} dot_sum = {scalar_cast}(0.0);
     for ({index} i = 0; i < n_species; ++i) dot_sum += a[i]*b[i];

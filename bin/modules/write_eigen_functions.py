@@ -75,6 +75,21 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
             // Derivative of species source terms with respect to temperature
             {store_dsource_species_dtemperature}
         }}
+
+        // Scale Jacobian
+        if (scaling_factor != 1)
+        {{
+            jacobian_net_production_rates = scale_gen(scaling_factor, jacobian_net_production_rates);
+        }}
+
+        // Add to diagonal
+        if (diagonal_add != 0)
+        {{
+            for ({index} i = 0; i < n_variables; i++)
+            {{
+                jacobian_net_production_rates[i][i] += diagonal_add;
+            }}
+        }}
 """.format(**vars(configuration), store_dtemperature_source_dspecies=modify_jacobian_text_eigen(configuration, "jacobian_net_production_rates[0][i+1] = dtemperature_source_dspecies_[i];"),
            store_dsource_species_dtemperature=modify_jacobian_text_eigen(configuration, "jacobian_net_production_rates[i+1][0] = dsource_species_dtemperature_[i];"))
 
@@ -91,6 +106,18 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
             // Only one term (out of two terms) of dtemperature_source_dspecies so the first row is fully allocated after compression
             // Will update with second term below
             jacobian_triplets.push_back(Triplet(0, i+1, dtemperature_source_dspecies_1[i]));
+        }}
+
+        // Add to diagonal
+        if (diagonal_add != 0)
+        {{
+            // Divide diagonal_add by scaling_factor here since we will do J = scaling_factor*J at the end
+            {scalar} diagonal_add_ = divide(diagonal_add, scaling_factor);
+
+            for ({index} i = 0; i < n_variables; i++)
+            {{
+                jacobian_triplets.push_back(Triplet(i, i, diagonal_add_));
+            }}
         }}
 
         SparseMatrix<{scalar}> jacobian_net_production_rates(n_variables, n_variables);
@@ -130,6 +157,12 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
 
                 break; // only first row
             }}
+        }}
+
+        // Scale Jacobian
+        if (scaling_factor != 1)
+        {{
+            jacobian_net_production_rates *= scaling_factor;
         }}
 """.format(**vars(configuration))
     else:
