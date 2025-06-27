@@ -31,6 +31,7 @@ chemical_state_tyedef = "{species_typedef}".format(**vars(configuration)).replac
 
     if configuration.eigen_sparse:
         file.write("""
+using namespace Eigen;
 using Triplet = Eigen::Triplet<{scalar}>;""")
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
