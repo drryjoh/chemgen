@@ -8,11 +8,11 @@
 {chemical_state} 
 sdirk2({chemical_state} y,  
        {scalar_parameter} dt, 
-       {scalar} abs_newton_tol = 1e-8,                  
-       {scalar} rel_newton_tol = 1e-6, 
+       {scalar} abs_newton_tol = 1e-8,
+       {scalar} rel_newton_tol = 1e-6,
        {index}  max_iter = 5,
-       {scalar} linear_abs_tol = 1e-8, 
-       {scalar} linear_rel_tol = 1e-6) 
+       {scalar} linear_abs_tol = 1e-8,
+       {scalar} linear_rel_tol = 1e-6)
 {{
         {chemical_state} y_init = y;
         {scalar} gamma = 1.0 - 1.0 / sqrt_gen({scalar}(2));
@@ -73,11 +73,11 @@ sdirk2({chemical_state} y,
 {chemical_state} 
 sdirk4({chemical_state} y,  
        {scalar_parameter} dt, 
-       {scalar} abs_newton_tol = 1e-8,                  
+       {scalar} abs_newton_tol = 1e-8,
        {scalar} rel_newton_tol = 1e-6,
        {index}  max_iter = 5,
-       {scalar} linear_abs_tol = 1e-8, 
-       {scalar} linear_rel_tol = 1e-6) 
+       {scalar} linear_abs_tol = 1e-8,
+       {scalar} linear_rel_tol = 1e-6)
 {{
         {scalar} gamma = .26666666666666666666666666666666670;
         {scalar} a11 = .26666666666666666666666666666666670;
@@ -232,7 +232,7 @@ sdirk4({chemical_state} y,
             }};
         }}
 
-        return 
+        return
         y_init + scale_gen(dt, (scale_gen(b1, k1) + scale_gen(b2, k2) + scale_gen(b3, k3) + scale_gen(b4, k4) + scale_gen(b5, k5)));
 }}
 
