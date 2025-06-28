@@ -412,13 +412,11 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 }}
 
 {device_option}
-{scalar_function} kercher_norm({chemical_state_parameter} x,
-                               {chemical_state_parameter} x_ref,
-                               {scalar} abs_tolerance,
-                               {scalar} rel_tolerance) {const_option}
+{scalar_function} error_norm({chemical_state_parameter} x,
+                             {chemical_state_parameter} x_ref,
+                             {scalar} abs_tolerance,
+                             {scalar} rel_tolerance) {const_option}
 {{
-    //sqrt_intrinsic(mag_sqr(tuple_weight(inv(tuple_constant<State>(absolute_tolerance()) + relative_tolerance() * abs_intrinsic(state)), residual)));//
-    //sqrt(mag_srt(inv_gen(a+r*abs(y)) * res));
     return norm2(inv_gen(fill_gen_chemical_state(abs_tolerance) + scale_gen(rel_tolerance, abs(x_ref))) * x);
 }}
 
