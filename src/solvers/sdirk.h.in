@@ -37,7 +37,7 @@ sdirk2({chemical_state} y,
             {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
             #endif
             k1 = k1 + dk;
-            if (kercher_norm(dk, k1, abs_newton_tol, linear_rel_tol) < 1.0)
+            if (kercher_norm(dk, k1, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
@@ -58,7 +58,7 @@ sdirk2({chemical_state} y,
             {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
             #endif
             k2 = k2 + dk;
-            if (kercher_norm(dk, k1, abs_newton_tol, linear_rel_tol) < 1.0)
+            if (kercher_norm(dk, k2, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
@@ -126,7 +126,7 @@ sdirk4({chemical_state} y,
             {chemical_state} dk =  gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
             #endif
             k1 = k1 + dk;
-            if (kercher_norm(dk, k1, abs_newton_tol, linear_rel_tol) < 1.0)
+            if (kercher_norm(dk, k1, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
@@ -150,7 +150,7 @@ sdirk4({chemical_state} y,
             {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
             #endif
             k2 = k2 + dk;
-            if (kercher_norm(dk, k2, abs_newton_tol, linear_rel_tol) < 1.0)
+            if (kercher_norm(dk, k2, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
@@ -173,7 +173,7 @@ sdirk4({chemical_state} y,
             {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
             #endif
             k3 = k3 + dk;
-            if (kercher_norm(dk, k3, abs_newton_tol, linear_rel_tol) < 1.0)
+            if (kercher_norm(dk, k3, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
@@ -199,7 +199,7 @@ sdirk4({chemical_state} y,
             {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
             #endif
             k4 = k4 + dk;
-            if (kercher_norm(dk, k3, abs_newton_tol, linear_rel_tol) < 1.0)
+            if (kercher_norm(dk, k4, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
@@ -226,7 +226,7 @@ sdirk4({chemical_state} y,
 
 
             k5 = k5 + dk;
-            if (kercher_norm(dk, k3, abs_newton_tol, linear_rel_tol) < 1.0)
+            if (kercher_norm(dk, k5, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
