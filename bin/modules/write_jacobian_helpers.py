@@ -201,7 +201,8 @@ def set_jacobian_from_triplets_text(configuration):
 """.format(**vars(configuration))
 
 def write_helpers_eigen_sparse(file, temperature_equation, configuration):
-    assert(configuration.eigen_sparse and not temperature_equation)
-
-    file.write(add_diagonal_text(configuration))
-    file.write(set_jacobian_from_triplets_text(configuration))
+    assert(configuration.eigen_sparse)
+    
+    if not temperature_equation:
+        file.write(add_diagonal_text(configuration))
+        file.write(set_jacobian_from_triplets_text(configuration))
