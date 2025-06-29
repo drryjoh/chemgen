@@ -145,6 +145,18 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
            store_dsource_species_dtemperature=modify_jacobian_text_eigen(configuration, "jacobian_net_production_rates[i+1][0] = dsource_species_dtemperature_[i];"),
            scale_jacobian="= scale_gen(scaling_factor, jacobian_net_production_rates)" if not configuration.eigen else "*= scaling_factor")
 
+def update_jacobian_temperature_dependence_text(configuration):
+    return """
+        for ({index} i = 0; i < n_species; i++)
+        {{
+            for ({index} j = 0; j < n_species; j++)
+            {{
+                // temperature dependence
+            {update_jacobian}
+            }}
+        }}
+""".format(**vars(configuration), update_jacobian=modify_jacobian_text_eigen(configuration, "jacobian_net_production_rates[i+1][j+1] += scale_gen(dsource_species_dtemperature_[i], dtemperature_dspecies_[j]);"))
+
 def scale_jacobian_text(configuration):
     return """
         // Scale Jacobian
@@ -202,7 +214,7 @@ def set_jacobian_from_triplets_text(configuration):
 
 def write_helpers_eigen_sparse(file, temperature_equation, configuration):
     assert(configuration.eigen_sparse)
-    
+
     if not temperature_equation:
         file.write(add_diagonal_text(configuration))
         file.write(set_jacobian_from_triplets_text(configuration))

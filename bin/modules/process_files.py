@@ -117,11 +117,11 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
             if temperature_jacobian:
                 source_jacobian_species_temperature().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                                                                             reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
-                                                                            species_production_texts, species_production_jacobian_texts, headers, configuration, args.temperature_equation, fit_gibbs_reaction=fit_gibbs_reaction)
+                                                                            species_production_texts, species_production_jacobian_texts, headers, configuration, args.temperature_equation, sparsity_pattern, fit_gibbs_reaction=fit_gibbs_reaction)
             else:
                 source_jacobian_species().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                                                             reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
-                                                            species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction=fit_gibbs_reaction)
+                                                            species_production_texts, species_production_jacobian_texts, headers, configuration, sparsity_pattern, fit_gibbs_reaction=fit_gibbs_reaction)
                 if remove_reactions:
                     source_jacobian_species_R().write_source_jacobian(file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                                                                       reaction_calls, progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts, 
