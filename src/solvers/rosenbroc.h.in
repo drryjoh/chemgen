@@ -13,9 +13,7 @@ rosenbroc({chemical_state} y,
         {scalar} one_minus_gamma = 1.0 - gamma;
 
         {scalar} temperature_ = temperature(y[0], y_init);
-        const {jacobian} I = jacobian_I();
-        {jacobian} J = source_jacobian(y_init, temperature_);
-        {jacobian} G = scale_gen((1.0/(gamma* dt)),  I) - J;// shared for all stages
+        {jacobian_eigen} G = source_jacobian(y_init, temperature_, -1, 1.0/(gamma* dt));
 
         // Stage 1
         {chemical_state} rhs1 = source(y_init, temperature_);
