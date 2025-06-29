@@ -1,5 +1,6 @@
 {preconditioner}
 {direct_solver}
+{eigen}
 
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 {device_option}
@@ -33,6 +34,49 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
     return z;
 }}
 #endif
+
+#ifdef CHEMGEN_EIGEN
+{device_option}
+{chemical_state_function}
+gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
+{{
+    using namespace Eigen;
+
+    {chemical_state_eigen} b(n_variables);
+
+    for ({index} i = 0; i < n_variables; ++i)
+    {{
+        b(i) = b_[i];
+    }}
+
+    #ifdef CHEMGEN_PRECONDITIONER_JACOBI
+    GMRES<{jacobian_eigen_dynamic}, DiagonalPreconditioner<{scalar}>> gmres;
+    #else
+    GMRES<{jacobian_eigen_dynamic}, IdentityPreconditioner> gmres;
+    #endif
+
+    gmres.setMaxIterations(n_variables); // total number of iterations including restarts
+    gmres.set_restart(n_variables); // # iterations before restart (Full-size Krylov subspace)
+
+    gmres.compute(A);
+
+    // eigen uses relative tolerance - https://eigen.tuxfamily.org/dox/unsupported/GMRES_8h_source.html
+    {scalar} tol = std::max(rel_tol, divide(abs_tol, gmres.preconditioner().solve(b).norm()));
+    gmres.setTolerance(tol);
+
+    {chemical_state_eigen} x = gmres.solve(b);
+
+    // Convert back to chemical_state
+    {chemical_state} result = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
+    {{
+        result[i] = x(i);
+    }}
+
+    return result;
+}}
+
+#else
 
 {device_option}
 {chemical_state_function}
@@ -141,4 +185,4 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
 
     return result;
 }}
-
+#endif

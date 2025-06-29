@@ -61,7 +61,7 @@ sdirk2({chemical_state} y,
             }};
         }}
 
-        return 
+        return
         y_init + scale_gen(dt * one_minus_gamma, k1) + scale_gen(gamma * dt, k2);
 }}
 
@@ -150,7 +150,7 @@ sdirk4({chemical_state} y,
             }};
         }}
         /*
-        #stage 3 
+        #stage 3
         */
         k3 = k2;
         for (int iter = 0; iter < max_iter; ++iter)
