@@ -78,4 +78,6 @@ build:
 solver:
   chemistry_solver: all
   linear_solver: gmres
-  preconditioner: jacobi 
+  preconditioner: jacobi
+  eigen: on
+  eigen_sparse: off
