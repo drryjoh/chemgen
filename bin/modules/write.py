@@ -29,6 +29,11 @@ temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**v
 chemical_state_tyedef = "{species_typedef}".format(**vars(configuration)).replace("n_species", "n_species + 1"))
     )
 
+    if configuration.eigen != "":
+        file.write("""
+using namespace Eigen;
+using Triplet_ = Eigen::Triplet<{scalar}>;""".format(**vars(configuration)))
+
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
     content += "\n"+"{device_option} {constexpr} {species_function} inv_molecular_weights() {const_option} {{return {inv_molecular_weights};}}".format(**vars(configuration), inv_molecular_weights = inv_molecular_weights)

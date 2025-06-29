@@ -73,7 +73,7 @@ def main():
     parser.add_argument("--ignore-other-species", action="store_true", help="Ignore third-body and pressure dependence when calculating derivatives with respect to species")
 
     args = parser.parse_args()
-    
+
     # Convert arguments to Path objects
     chemical_mechanism = find_chemical_mechanism(args.chemical_mechanism)
     destination_folder = Path(args.destination)/'src'
@@ -82,7 +82,7 @@ def main():
     if args.fit_gibbs_reaction == False:
         fit_gibbs_reaction  = False
         print("Gibbs free energies will be fitted per species and then summation will be performed according to stoicheimetry.\n Warning, this has shown to cause some errors when compared to cantera.")
-    
+
     temperature_jacobian = True
     if args.ignore_temp_dependence:
         if args.temperature_equation:
@@ -97,7 +97,7 @@ def main():
     if args.force == True:
         force  = True
         print("ChemGen will continue despite warnings")
-    
+
     # Check if the destination folder exists, if not, create it
     if not destination_folder.exists():
         print(f"Destination folder '{destination_folder}' does not exist. Creating it...")
@@ -105,7 +105,7 @@ def main():
 
     # Core logic of the script
     print(f"Processing file: {args.chemical_mechanism}")
-    
+
 
     gas = ct.Solution(chemical_mechanism)
     [configuration, configuration_file] = get_configuration(configuration_filename='configuration.yaml')
@@ -130,6 +130,8 @@ def main():
     generate_chemistry_solver = False
     chemistry_solver = configuration_file.get('solver', {}).get('chemistry_solver', None)
     chemistry_solver_preconditioner = configuration_file.get('solver', {}).get('preconditioner', None)
+    chemistry_solver_eigen = configuration_file.get('solver', {}).get('eigen', None)
+
     direct_solver = ''
     if chemistry_solver:
         generate_chemistry_solver = True
@@ -164,10 +166,10 @@ def main():
     else:
         generate_chemistry_solver = False
         print("Not generating with a chemgen chemistry solver.")
-    
+
     preconditioner = ""
     if chemistry_solver_preconditioner and chemistry_solver:
-        
+
         if chemistry_solver_preconditioner.lower() == "none":
             print("none was specified for solver: preconditioner in configuration file, no preconditioner will be used")
             preconditioner = ""
@@ -178,9 +180,25 @@ def main():
         else:
             print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
             exit()
-    
+
+    eigen = ""
+    eigen_sparse = ""
+    if chemistry_solver_eigen and chemistry_solver:
+        if chemistry_solver_eigen:
+            eigen = "#define CHEMGEN_EIGEN"
+            print("Running with eigen!")
+            eigen_sparse = configuration_file.get('solver', {}).get('eigen_sparse', False)
+
+    if eigen_sparse:
+        print("Running with sparse data structures!")
+        args.get_sparsity = True
+
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
+    setattr(configuration, "eigen",  eigen)
+    setattr(configuration, "eigen_sparse",  eigen_sparse)
+
+    update_configuration_eigen(configuration)
 
     third_parties = [use_third_parties, third_party_path, libraries]
 

@@ -1,11 +1,12 @@
 #pragma once
 #include <numeric>  // For std::accumulate
+{eigen}
 {device_option}
-{scalar_function} 
+{scalar_function}
 sum_gen({species_parameter} a_s) {const_option} {{return {device_sum_inl};}}
 
 {device_option}
-{species_function} 
+{species_function}
 fill_gen({scalar_parameter} a) {const_option}
 {{
     Species b_s{{}};  // Create an empty array
@@ -51,7 +52,7 @@ inv_gen({chemical_state} a_s) {const_option}
 
 
 {device_option}
-{species_function} 
+{species_function}
 scale_gen({scalar_parameter} a, {species_parameter} b_s) {const_option}
 {{
     {species} c_s;
@@ -60,7 +61,7 @@ scale_gen({scalar_parameter} a, {species_parameter} b_s) {const_option}
 }}
 
 {device_option}
-{chemical_state_function} 
+{chemical_state_function}
 scale_gen({scalar_parameter} a, {chemical_state_parameter} b_s) {const_option}
 {{
     {chemical_state} c_s;
@@ -69,7 +70,7 @@ scale_gen({scalar_parameter} a, {chemical_state_parameter} b_s) {const_option}
 }}
 
 {device_option}
-{reactions_function} 
+{reactions_function}
 scale_gen({scalar_parameter} a, {reactions_parameter} b_s) {const_option}
 {{
     {reactions} c_s;
@@ -78,7 +79,7 @@ scale_gen({scalar_parameter} a, {reactions_parameter} b_s) {const_option}
 }}
 
 {device_option}
-{temperature_monomial_function} 
+{temperature_monomial_function}
 scale_gen({scalar_parameter} a, {temperature_monomial_parameter} b_s) {const_option}
 {{
     {temperature_monomial} c_s;
@@ -87,14 +88,14 @@ scale_gen({scalar_parameter} a, {temperature_monomial_parameter} b_s) {const_opt
 }}
 
 {device_option}
-{scalar_function} 
+{scalar_function}
 scale_gen({scalar_parameter} a, {scalar_parameter} b) {const_option}
 {{
     return a * b;
 }}
 
 {device_option}
-{jacobian_function} 
+{jacobian_function}
 scale_gen({scalar_parameter} a, {jacobian_parameter} b) {const_option}
 {{
     {jacobian} c = {{}};
@@ -110,7 +111,7 @@ scale_gen({scalar_parameter} a, {jacobian_parameter} b) {const_option}
 }}
 
 {device_option}
-{species_function} 
+{species_function}
 operator+({species_parameter} a_s, {species_parameter} b_s) {const_option}
 {{
     {species} c_s;
@@ -119,7 +120,7 @@ operator+({species_parameter} a_s, {species_parameter} b_s) {const_option}
 }}
 
 {device_option}
-{jacobian_function} 
+{jacobian_function}
 operator+({jacobian_parameter} a, {jacobian_parameter} b) {const_option}
 {{
     {jacobian} c = {{}};
@@ -135,7 +136,7 @@ operator+({jacobian_parameter} a, {jacobian_parameter} b) {const_option}
 }}
 
 {device_option}
-{species_function} 
+{species_function}
 operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_option}
 {{
     {species} c_s;
@@ -145,7 +146,7 @@ operator-({species_parameter} a_s, {species_parameter} b_s_positive) {const_opti
 }}
 
 {device_option}
-{species_function} 
+{species_function}
 safe_inv({species_parameter} a_s) {const_option}
 {{
     {species} b = {{}};
@@ -157,7 +158,7 @@ safe_inv({species_parameter} a_s) {const_option}
 }}
 
 {device_option}
-{species_function} 
+{species_function}
 safe_divide({species_parameter} a_s, {species_parameter} b_s_divide) {const_option}
 {{
     {species} c_s;
@@ -192,7 +193,7 @@ abs({chemical_state} a_s) {const_option}
 }}
 
 {device_option}
-{reactions_function} 
+{reactions_function}
 operator+({reactions_parameter} a_s, {reactions_parameter} b_s) {const_option}
 {{
     {reactions} c_s;
@@ -201,7 +202,7 @@ operator+({reactions_parameter} a_s, {reactions_parameter} b_s) {const_option}
 }}
 
 {device_option}
-{reactions_function} 
+{reactions_function}
 operator-({reactions_parameter} a_s, {reactions_parameter} b_s_positive) {const_option}
 {{
     {reactions} c_s;
@@ -211,7 +212,7 @@ operator-({reactions_parameter} a_s, {reactions_parameter} b_s_positive) {const_
 }}
 
 {device_option}
-{jacobian_function} 
+{jacobian_function}
 operator-({jacobian_parameter} a, {jacobian_parameter} b) {const_option}
 {{
     {jacobian} c = {{}};
@@ -227,7 +228,7 @@ operator-({jacobian_parameter} a, {jacobian_parameter} b) {const_option}
 }}
 
 {device_option}
-{scalar_function} 
+{scalar_function}
 L2({jacobian_parameter} a) {const_option}
 {{
     {scalar} sum = {scalar_cast}(0.0);
@@ -244,7 +245,7 @@ L2({jacobian_parameter} a) {const_option}
 
 
 {device_option}
-{temperature_monomial_function} 
+{temperature_monomial_function}
 operator+({temperature_monomial_parameter} a_s, {temperature_monomial_parameter} b_s) {const_option}
 {{
     {temperature_monomial} c_s;
@@ -253,7 +254,7 @@ operator+({temperature_monomial_parameter} a_s, {temperature_monomial_parameter}
 }}
 
 {device_option}
-{temperature_monomial_function} 
+{temperature_monomial_function}
 operator-({temperature_monomial_parameter} a_s, {temperature_monomial_parameter} b_s_positive) {const_option}
 {{
     {temperature_monomial} c_s;
@@ -264,7 +265,7 @@ operator-({temperature_monomial_parameter} a_s, {temperature_monomial_parameter}
 
 
 {device_option}
-{chemical_state_function} 
+{chemical_state_function}
 operator+({chemical_state_parameter} a_s, {chemical_state_parameter} b_s) {const_option}
 {{
     {chemical_state} c_s;
@@ -273,7 +274,7 @@ operator+({chemical_state_parameter} a_s, {chemical_state_parameter} b_s) {const
 }}
 
 {device_option}
-{chemical_state_function} 
+{chemical_state_function}
 operator-({chemical_state_parameter} a_s, {chemical_state_parameter} b_s_positive) {const_option}
 {{
     {chemical_state} c_s;
@@ -283,7 +284,7 @@ operator-({chemical_state_parameter} a_s, {chemical_state_parameter} b_s_positiv
 }}
 
 {device_option}
-{species_function} 
+{species_function}
 operator*({species_parameter} a_s, {species_parameter} b_s) {const_option}
 {{
     {species} c_s;
@@ -292,7 +293,7 @@ operator*({species_parameter} a_s, {species_parameter} b_s) {const_option}
 }}
 
 {device_option}
-{chemical_state_function} 
+{chemical_state_function}
 operator*({chemical_state_parameter} a_s, {chemical_state_parameter} b_s) {const_option}
 {{
     {chemical_state} c_s;
@@ -301,7 +302,7 @@ operator*({chemical_state_parameter} a_s, {chemical_state_parameter} b_s) {const
 }}
 
 {device_option}
-{species_function} 
+{species_function}
 get_species({chemical_state_parameter} y) {const_option}
 {{
     {species} s;
@@ -313,17 +314,18 @@ get_species({chemical_state_parameter} y) {const_option}
 }}
 
 {device_option}
-{scalar_function} 
+{scalar_function}
 get_energy({chemical_state_parameter} y) {const_option}
 {{
     return y[0];
 }}
 
 {device_option}
-{chemical_state_function} 
+{chemical_state_function}
 set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
                    {species_parameter} species) {const_option}
 {{
+    // TODO: modify in place?
     {chemical_state} y;
     for ({index} i = 1; i <= n_species; i++)
     {{
@@ -339,7 +341,7 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
     {scalar} sum = {scalar_cast}(0.0);
     for ({index} i  = 0; i<n_species; i++)
     {{
-        sum += x[i] * x[i]; 
+        sum += x[i] * x[i];
     }}
     return sqrt_gen(sum);
 }}
@@ -405,7 +407,7 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
     {{
         for ({index} j  = 0; j < n_variables; j++)
         {{
-            sum += x[i][j] * x[i][j]; 
+            sum += x[i][j] * x[i][j];
         }}
     }}
     return sqrt_gen(sum);
@@ -488,7 +490,7 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 }}
 
 {device_option}
-{jacobian_function} 
+{jacobian_function}
 jacobian_I() {const_option}
 {{
     {jacobian} I = {{}};
@@ -496,6 +498,20 @@ jacobian_I() {const_option}
     return I;
 }}
 
+#if defined(CHEMGEN_EIGEN)
+void
+add_species_to_jacobian_row_eigen_sparse(std::vector<Triplet_>& triplet, {index} row_index, {species_parameter} b_s)
+{{
+    for ({index} j = 0; j < n_species; ++j) triplet.push_back(Triplet_(row_index, j+1, b_s[j]));
+}}
+
+void
+add_species_to_jacobian_row_eigen({jacobian_eigen_dense}& jacobian, {index} row_index, {species_parameter} b_s)
+{{
+    for ({index} j = 0; j < n_species; ++j) jacobian(row_index, j+1) += b_s[j];
+}}
+
+#else
 {device_option}
 {chemical_state_function}
 add_species_to_chemical_state({chemical_state_parameter} a_s, {species_parameter} b_s) {const_option}
@@ -505,6 +521,7 @@ add_species_to_chemical_state({chemical_state_parameter} a_s, {species_parameter
     {device_element_sum_offset_inl}
     return c_s;
 }}
+#endif
 
 {device_option}
 {species_function}

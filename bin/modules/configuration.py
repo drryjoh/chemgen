@@ -64,3 +64,67 @@ def get_default_configuration():
     print("** No configuration file detected, using decorators defaults in /bin/configuration.yaml **")
 
     return configuration_filename
+
+def update_configuration_eigen(configuration):
+    if not configuration.eigen:
+        species_eigen = configuration.species
+        species_function_eigen = configuration.species_function
+        species_parameter_eigen = configuration.species_parameter
+
+        chemical_state_eigen = configuration.chemical_state
+        chemical_state_function_eigen = configuration.chemical_state_function
+        chemical_state_parameter_eigen = configuration.chemical_state_parameter
+
+        jacobian_eigen = configuration.jacobian
+        jacobian_function_eigen = configuration.jacobian_function
+        jacobian_parameter_eigen = configuration.jacobian_parameter
+        jacobian_eigen_dynamic = configuration.jacobian
+        jacobian_eigen_dense = configuration.jacobian
+
+        left = "["
+        mid = "]["
+        right = "]"
+    else:
+        scalar = configuration.scalar
+        species_eigen = f"Matrix<{scalar}, n_species, 1>"
+        species_function_eigen = f"Matrix<{scalar}, n_species, 1>"
+        species_parameter_eigen = f"const Matrix<{scalar}, n_species, 1>&"
+
+        chemical_state_eigen = f"Matrix<{scalar}, n_variables, 1>"
+        chemical_state_function_eigen = f"Matrix<{scalar}, n_variables, 1>"
+        chemical_state_parameter_eigen = f"const Matrix<{scalar}, n_variables, 1>&"
+
+        jacobian_eigen = f"Matrix<{scalar}, n_variables, n_variables>"
+        jacobian_function_eigen = f"Matrix<{scalar}, n_variables, n_variables>"
+        jacobian_parameter_eigen = f"const Matrix<{scalar}, n_variables, n_variables>&"
+        jacobian_eigen_dynamic = f"Matrix<{scalar}, Dynamic, Dynamic>"
+        jacobian_eigen_dense = jacobian_eigen
+
+        left = "("
+        mid = ","
+        right = ")"
+
+        if configuration.eigen_sparse:
+            jacobian_eigen = f"SparseMatrix<{scalar}>"
+            jacobian_function_eigen = f"SparseMatrix<{scalar}>"
+            jacobian_parameter_eigen = f"const SparseMatrix<{scalar}>&"
+            jacobian_eigen_dynamic = f"SparseMatrix<{scalar}>"
+
+    setattr(configuration, "species_eigen", species_eigen)
+    setattr(configuration, "species_function_eigen", species_function_eigen)
+    setattr(configuration, "species_parameter_eigen", species_parameter_eigen)
+
+    setattr(configuration, "chemical_state_eigen", chemical_state_eigen)
+    setattr(configuration, "chemical_state_function_eigen", chemical_state_function_eigen)
+    setattr(configuration, "chemical_state_parameter_eigen", chemical_state_parameter_eigen)
+
+    setattr(configuration, "jacobian_eigen", jacobian_eigen)
+    setattr(configuration, "jacobian_function_eigen", jacobian_function_eigen)
+    setattr(configuration, "jacobian_parameter_eigen", jacobian_parameter_eigen)
+    setattr(configuration, "jacobian_eigen_dynamic", jacobian_eigen_dynamic)
+    setattr(configuration, "jacobian_eigen_dense", jacobian_eigen_dense)
+
+    setattr(configuration, "left", left)
+    setattr(configuration, "mid", mid)
+    setattr(configuration, "right", right)
+
