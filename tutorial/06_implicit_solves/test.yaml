@@ -14,4 +14,4 @@ test_conditions:
   # dt_sdirk4: 1e-7
   # dt_ros: 1e-8
   # dt_rk4: 5e-8
-  # dt_yass: 1e-8
+  dt_yass: 1e-7

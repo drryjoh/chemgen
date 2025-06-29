@@ -11,6 +11,14 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <cmath>\n")
         file.write("#include <algorithm>\n")
         file.write("#include <array>\n#include <chrono>\n")
+        file.write("""
+{eigen}
+#ifdef CHEMGEN_EIGEN
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+#include <unsupported/Eigen/IterativeSolvers>
+#endif
+        """.format(**vars(configuration)))
         file.write("#include <iostream>  // For printing the result to the console\n#include <fstream>\n")
         file.write("""
 
