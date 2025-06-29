@@ -466,6 +466,12 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
 }}
 
 {device_option}
+{jacobian_function} operator*({scalar_parameter} s, {jacobian_parameter} a) {const_option}
+{{
+    return scale_gen(s, a);
+}}
+
+{device_option}
 {scalar_function} dot({species_parameter} a, {species_parameter} b) {const_option}
 {{
     {scalar} dot_sum = {scalar_cast}(0.0);
