@@ -44,6 +44,12 @@ def create_headers(configuration, chemistry_solver, destination_folder):
             print("Chemistry Solver not recognized")
             exit()
         make_headers(code_directory, file_names, headers, configuration, destination_folder)
+
+        if configuration.eigen != "":
+            file_name = 'custom_preconditioners_eigen.h'
+            headers.append(file_name)
+            write_formatted_code(code_directory, file_name, configuration, destination_folder, format_code=False)
+            
     return headers
 
 def clear_headers(directory):

@@ -36,6 +36,8 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 #endif
 
 #ifdef CHEMGEN_EIGEN
+#include "./custom_preconditioners_eigen.h"
+
 {device_option}
 {chemical_state_function}
 gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
@@ -49,9 +51,12 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index}
         b(i) = b_[i];
     }}
 
-    #ifdef CHEMGEN_PRECONDITIONER_JACOBI
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+
     GMRES<{jacobian_eigen_dynamic}, DiagonalPreconditioner<{scalar}>> gmres;
-    #elif defined(CHEMGEN_PRECONDITIONER_ILU)
+
+#elif defined(CHEMGEN_PRECONDITIONER_ILU)
+
     GMRES<{jacobian_eigen_dynamic}, IncompleteLUT<{scalar}>> gmres;
 
     // gmres.preconditioner().setFillfactor(10); // default value
@@ -59,9 +64,15 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index}
 
     gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
     //gmres.preconditioner().setDroptol(0.001);
-    #else
+
+#elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
+
+    GMRES<{jacobian_eigen_dynamic}, CustomPreconditioner<{scalar}>> gmres;
+
+#else
+
     GMRES<{jacobian_eigen_dynamic}, IdentityPreconditioner> gmres;
-    #endif
+#endif
 
     gmres.setMaxIterations(n_variables); // total number of iterations including restarts
     gmres.set_restart(n_variables); // # iterations before restart (Full-size Krylov subspace)

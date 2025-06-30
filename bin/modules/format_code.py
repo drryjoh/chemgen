@@ -19,22 +19,25 @@ def get_text_to_format(code_directory, file_to_format):
     content = content.replace('\t', '    ')
     return content
 
-def write_formatted_code(code_directory, file_to_format, configuration, destination_folder, target_file = None, append = False):
+def write_formatted_code(code_directory, file_to_format, configuration, destination_folder, target_file = None, append = False, format_code=True):
     content = get_text_to_format(code_directory, file_to_format)
-    try:
-        new_content = content.format(**vars(configuration))
-    except:
-        # Split the text into lines for easier tracking
-        lines = content.splitlines()
-        for k, line in enumerate(lines):
-            try:
-                line.format(**vars(configuration))
-            except:
-                print(f"while formatting: {file_to_format}")
-                print(f"unescaped braces found in line {k+1}")
-                print(line)
-        sys.exit(f"unescaped braces found in file {file_to_format}")
 
+    if format_code:
+        try:
+            new_content = content.format(**vars(configuration))
+        except:
+            # Split the text into lines for easier tracking
+            lines = content.splitlines()
+            for k, line in enumerate(lines):
+                try:
+                    line.format(**vars(configuration))
+                except:
+                    print(f"while formatting: {file_to_format}")
+                    print(f"unescaped braces found in line {k+1}")
+                    print(line)
+            sys.exit(f"unescaped braces found in file {file_to_format}")
+    else:
+        new_content = content
     
     if target_file == None:
         target_file = file_to_format.replace('.in','')
