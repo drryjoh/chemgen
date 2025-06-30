@@ -2,6 +2,7 @@
 {chemical_state} 
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt,
+                {index}  &n_gmres_iter_total,
                 {scalar} abs_newton_tol = newton_abs_tol_default,
                 {scalar} rel_newton_tol = newton_rel_tol_default,
                 {index}  max_iter = newton_iter_max_default)
@@ -21,7 +22,7 @@ backwards_euler({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dy = invert_jacobian(A) * res;
             #else
-            {chemical_state} dy = gmres_solve(A, res);
+            {chemical_state} dy = gmres_solve(A, res, n_gmres_iter_total);
             #endif
 
             //Increment

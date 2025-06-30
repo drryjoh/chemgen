@@ -38,7 +38,7 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 #ifdef CHEMGEN_EIGEN
 {device_option}
 {chemical_state_function}
-gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
+gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
 {{
     using namespace Eigen;
 
@@ -74,6 +74,8 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
     // std::cout << "gmres.iterations() = " << gmres.iterations() << std::endl;
     if (gmres.info() != Success) std::cerr << "GMRES failed!" << std::endl;
 
+    n_gmres_iter_total += gmres.iterations();
+
     // Convert back to chemical_state
     {chemical_state} result = {{}};
     for ({index} i = 0; i < n_variables; ++i)
@@ -88,7 +90,7 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
 
 {device_option}
 {chemical_state_function}
-gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
+gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
 {{
 	{index} max_iter = 100;
     {chemical_state} x = {{}};
@@ -190,6 +192,8 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
     {{
         // std::cout << "# GMRES iterations = " << final_iter + 1 << std::endl;
     }}
+
+    n_gmres_iter_total += final_iter + 1;
 
     return result;
 }}
