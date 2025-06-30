@@ -5,7 +5,7 @@ namespace Eigen {
 
 // Diagonal preconditioner - just used as an example
 template <typename _Scalar>
-class CustomPreconditioner
+class JacobiPreconditioner
 {
     typedef _Scalar Scalar;
     typedef Matrix<Scalar,Dynamic,1> Vector;
@@ -16,10 +16,10 @@ class CustomPreconditioner
       MaxColsAtCompileTime = Dynamic
     };
 
-    CustomPreconditioner() : m_isInitialized(false) {}
+    JacobiPreconditioner() : m_isInitialized(false) {}
 
     template<typename MatType>
-    explicit CustomPreconditioner(const MatType& mat) : m_invdiag(mat.cols())
+    explicit JacobiPreconditioner(const MatType& mat) : m_invdiag(mat.cols())
     {
       compute(mat);
     }
@@ -28,13 +28,13 @@ class CustomPreconditioner
     EIGEN_CONSTEXPR Index cols() const EIGEN_NOEXCEPT { return m_invdiag.size(); }
 
     template<typename MatType>
-    CustomPreconditioner& analyzePattern(const MatType& )
+    JacobiPreconditioner& analyzePattern(const MatType& )
     {
       return *this;
     }
 
     template<typename MatType>
-    CustomPreconditioner& factorize(const MatType& mat)
+    JacobiPreconditioner& factorize(const MatType& mat)
     {
       m_invdiag.resize(mat.cols());
       for(int j=0; j<mat.outerSize(); ++j)
@@ -51,7 +51,7 @@ class CustomPreconditioner
     }
 
     template<typename MatType>
-    CustomPreconditioner& compute(const MatType& mat)
+    JacobiPreconditioner& compute(const MatType& mat)
     {
       return factorize(mat);
     }
@@ -63,19 +63,103 @@ class CustomPreconditioner
       x = m_invdiag.array() * b.array() ;
     }
 
-    template<typename Rhs> inline const Solve<CustomPreconditioner, Rhs>
+    template<typename Rhs> inline const Solve<JacobiPreconditioner, Rhs>
     solve(const MatrixBase<Rhs>& b) const
     {
-      eigen_assert(m_isInitialized && "CustomPreconditioner is not initialized.");
+      eigen_assert(m_isInitialized && "JacobiPreconditioner is not initialized.");
       eigen_assert(m_invdiag.size()==b.rows()
-                && "CustomPreconditioner::solve(): invalid number of rows of the right hand side matrix b");
-      return Solve<CustomPreconditioner, Rhs>(*this, b.derived());
+                && "JacobiPreconditioner::solve(): invalid number of rows of the right hand side matrix b");
+      return Solve<JacobiPreconditioner, Rhs>(*this, b.derived());
     }
 
     ComputationInfo info() { return Success; }
 
   protected:
     Vector m_invdiag;
+    bool m_isInitialized;
+};
+
+// LU (exact) preconditioner - just used as an example
+template <typename _Scalar>
+class LUPreconditioner
+{
+    typedef _Scalar Scalar;
+    typedef Matrix<Scalar,Dynamic,1> Vector;
+  public:
+    typedef typename Vector::StorageIndex StorageIndex;
+    typedef PartialPivLU<MatrixXd> LU;
+    enum {
+      ColsAtCompileTime = Dynamic,
+      MaxColsAtCompileTime = Dynamic
+    };
+
+    LUPreconditioner() : m_isInitialized(false) {}
+
+    template<typename MatType>
+    explicit LUPreconditioner(const MatType& mat)
+    {
+      compute(mat);
+    }
+
+    EIGEN_CONSTEXPR Index rows() const EIGEN_NOEXCEPT { return lu.rows(); }
+    EIGEN_CONSTEXPR Index cols() const EIGEN_NOEXCEPT { return lu.cols(); }
+
+    template<typename MatType>
+    LUPreconditioner& analyzePattern(const MatType& )
+    {
+      return *this;
+    }
+
+    template<typename MatType>
+    LUPreconditioner& factorize(const MatType& mat)
+    {
+      lu = LU(mat);
+      m_isInitialized = true;
+      return *this;
+    }
+
+    template<typename MatType>
+    LUPreconditioner& compute(const MatType& mat)
+    {
+      // analyzePattern(mat);
+      factorize(mat);
+      return *this;
+    }
+
+    /** \internal */
+    template<typename Rhs, typename Dest>
+    void _solve_impl(const Rhs& b, Dest& x) const
+    {
+      /* The decomposition PA = LU can be rewritten as A = P^{-1} L U.
+       * So we proceed as follows:
+       * Step 1: compute c = Pb.
+       * Step 2: replace c by the solution x to Lx = c.
+       * Step 3: replace c by the solution x to Ux = c.
+       */
+
+      // Step 1
+      x = lu.permutationP() * b;
+
+      // Step 2
+      lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
+
+      // Step 3
+      lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
+    }
+
+    template<typename Rhs> inline const Solve<LUPreconditioner, Rhs>
+    solve(const MatrixBase<Rhs>& b) const
+    {
+      eigen_assert(m_isInitialized && "LUPreconditioner is not initialized.");
+      eigen_assert(lu.cols()==b.rows()
+                && "LUPreconditioner::solve(): invalid number of rows of the right hand side matrix b");
+      return Solve<LUPreconditioner, Rhs>(*this, b.derived());
+    }
+
+    ComputationInfo info() { return Success; }
+
+  protected:
+    LU lu;
     bool m_isInitialized;
 };
 
