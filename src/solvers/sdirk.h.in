@@ -136,7 +136,7 @@ sdirk4({chemical_state} y,
         # Stage 2 confirmed
         */
         k2 = k1;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (one_minus_gamma * k1 + gamma * k2)
             {chemical_state} y_stage = y_init + scale_gen(dt, scale_gen(a21, k1) + scale_gen(gamma, k2));
@@ -159,7 +159,7 @@ sdirk4({chemical_state} y,
         #stage 3 
         */
         k3 = k2;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (a31 * k[0] + a32 * k[1] + gamma * k[2])
             {chemical_state} y_stage = y_init + scale_gen(dt, scale_gen(a31, k1) + scale_gen(a32, k2) + scale_gen(gamma, k3));
@@ -183,7 +183,7 @@ sdirk4({chemical_state} y,
         stage 4
         */
         k4 = k3;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + gamma * k[3])
             {chemical_state} y_stage = y_init +
@@ -209,7 +209,7 @@ sdirk4({chemical_state} y,
         stage 5
         */
         k5 = k4;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + gamma * k[3])
             {chemical_state} y_stage = y_init +
