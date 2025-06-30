@@ -8,8 +8,8 @@ backwards_euler({chemical_state} y,
                 {scalar} abs_newton_tol = 1e-10,                  
                 {scalar} rel_newton_tol = 1e-10, 
                 {index}  max_iter = 5,
-                {scalar} linear_abs_tol = 1e-10, 
-                {scalar} linear_rel_tol = 1e-10) 
+                {scalar} linear_abs_tol = 1e-10,
+                {scalar} linear_rel_tol = 1e-10)
 {{
         {chemical_state} y_init = y;
         {chemical_state} y_guess = y;
@@ -17,13 +17,8 @@ backwards_euler({chemical_state} y,
         {{
             {scalar} temperature_ = temperature(y[0], y_guess);
             {chemical_state} f = source(y_guess, temperature_);
-            {jacobian} J = source_jacobian(y_guess, temperature_);
-            {jacobian} A = jacobian_I();
+            {jacobian_eigen} A = source_jacobian(y_guess, temperature_, -1, 1/dt);
             {chemical_state} res = {{}};
-            
-            //LHS
-            for ({index} i = 0; i < n_variables; ++i) A[i][i] = A[i][i]/dt;
-            A = A - J;
 
             //RHS
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;

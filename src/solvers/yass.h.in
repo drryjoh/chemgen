@@ -18,14 +18,12 @@ yass({chemical_state} y,
     {scalar} dt_ = dt;
     {scalar} time = 0;
     {index} iteration = 0;
-    const {jacobian} I = jacobian_I();
 
     while(time < dt && iteration < max_iter)
     {{
 
         {scalar} temperature_ = temperature(y[0], y_n);
-        {jacobian} J = source_jacobian(y_n, temperature_);
-        {jacobian} G = I - scale_gen(dt_, J);
+        {jacobian_eigen} G = source_jacobian(y_n, temperature_, -dt_, 1);
         {chemical_state} rhs1 = scale_gen(dt_, source(y_n, temperature_));
 
         #ifdef CHEMGEN_DIRECT_SOLVER

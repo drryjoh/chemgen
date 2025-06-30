@@ -10,8 +10,9 @@ class SourceJacobianWriter:
 
         file.write("""
     {device_option}
-    {jacobian_output} source_jacobian({species_parameter} species, {scalar_parameter} temperature) {const_option}
+    {jacobian_output} source_jacobian({species_parameter} species, {scalar_parameter} temperature, {scalar} scaling_factor=1, {scalar} diagonal_add=0) {const_option}
     {{
+        // after J is filled, do J = scaling_factor*J + diagonal_add
         {species} net_production_rates = {{{scalar_cast}(0)}};
         {jacobian_initialize}
         {scalar} drate_of_progress_dspecies  = {scalar_cast}(0);
@@ -141,9 +142,9 @@ void update_jacobian_reaction_{reaction_index}({jacobian_input},
             if "pressure" in reactions_depend_on[i]:
                 pressure_dependency = "dpressure_dtemperature_, dpressure_dspecies_,"
             if is_reversible[i]:
-                file.write("""        update_jacobian_reaction_{reaction_index}(jacobian_net_production_rates, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, equilibrium_constant_{reaction_index}, dequilibrium_constant_{reaction_index}_dtemperature,dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
+                file.write("""        update_jacobian_reaction_{reaction_index}({jacobian_input}, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, equilibrium_constant_{reaction_index}, dequilibrium_constant_{reaction_index}_dtemperature,dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency, jacobian_input="jacobian_triplets" if configuration.eigen_sparse else "jacobian_net_production_rates"))
             else:
-                file.write("""        update_jacobian_reaction_{reaction_index}(jacobian_net_production_rates, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency))
+                file.write("""        update_jacobian_reaction_{reaction_index}({jacobian_input}, species, temperature, log_temperature, mixture_concentration, pressure_, {pressure_dependency}dtemperature_dspecies_, dlog_temperature_dtemperature); \n""".format(reaction_index = i, pressure_dependency = pressure_dependency, jacobian_input="jacobian_triplets" if configuration.eigen_sparse else "jacobian_net_production_rates"))
 
         
     def write_species_production_jacobian(self, file, species_production_rates, configuration):
