@@ -113,9 +113,9 @@ from tensorflow.keras import layers, callbacks, models, optimizers
 
 # config
 DATA_DIR        = "EULER_825"
-MODEL_PATH      = "bin/MLP_1_BE_second.keras"
-CSV_FILE        = "bin/MLP_1_BE_second.csv"
-NUM_SAMPLES     = 824-320
+MODEL_PATH      = "bin/MLP_2_BE.keras"
+CSV_FILE        = "bin/MLP_2_BE.csv"
+NUM_SAMPLES     = 340
 M               = 96
 FLAT_DIM        = M * M      
 BATCH_SIZE      = 8
@@ -125,13 +125,14 @@ LEARNING_RATE   = 1e-3
 CLIP_NORM       = 1.0 
 VALIDATION_SPLIT= 0.3
 RANDOM_SEED     = 42
-EPS             = 1e-12 #1e-12
+EPS             = 1e-16 #1e-12
+NEGATIVE_SLOPE  = 0.0001
 
 # load and flatten data
 X_list, y_list = [], []
 for i in range(NUM_SAMPLES):
-    A  = np.loadtxt(os.path.join(DATA_DIR, f"A_{824-i}.csv"), delimiter=",", dtype=np.float32)
-    iA = np.loadtxt(os.path.join(DATA_DIR, f"A_inv_{824-i}.csv"), delimiter=",", dtype=np.float32)
+    A  = np.loadtxt(os.path.join(DATA_DIR, f"A_{i}.csv"), delimiter=",", dtype=np.float32)
+    iA = np.loadtxt(os.path.join(DATA_DIR, f"A_inv_{i}.csv"), delimiter=",", dtype=np.float32)
     X_list.append(A.ravel())
     y_list.append(iA.ravel())
 
@@ -162,13 +163,12 @@ inputs = layers.Input(shape=(FLAT_DIM,))
 
 x = layers.Dense(HIDDEN_UNITS, activation=None)(inputs)
 x = layers.BatchNormalization()(x) 
-x = layers.LeakyReLU(negative_slope=0.02)(x)
+x = layers.LeakyReLU(negative_slope=NEGATIVE_SLOPE)(x)
+# x = layers.Activation('gelu')(x)
 
 x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
-x = layers.LeakyReLU(negative_slope=0.02)(x)
-
-x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
-x = layers.LeakyReLU(negative_slope=0.02)(x)
+x = layers.LeakyReLU(negative_slope=NEGATIVE_SLOPE)(x)
+# x = layers.Activation('gelu')(x)
 
 # x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
 # x = layers.LeakyReLU(negative_slope=0.02)(x)
@@ -216,7 +216,8 @@ model.compile(optimizer=opt,
             #   loss=normalized_mse_loss,
             #   loss=tf.keras.losses.MeanSquaredError()
             #   loss=tf.keras.losses.MeanAbsolutePercentageError()
-              loss=tf.keras.losses.LogCosh()
+              loss=tf.keras.losses.LogCosh(),
+            #   loss = tf.keras.losses.Huber(delta=0.25),
             #   loss='binary_crossentropy',
             #   metrics=['accuracy']
               )

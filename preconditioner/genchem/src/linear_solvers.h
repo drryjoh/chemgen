@@ -56,7 +56,7 @@ Species apply_gauss_seidel(const SpeciesJacobian &A, const Species &v)
 }
 #endif
 
-//..................................................................
+// ..................................................................
 #define CHEMGEN_PRECONDITIONER_NN
 #ifdef CHEMGEN_PRECONDITIONER_NN
 
@@ -337,14 +337,10 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
     std::array<double, 96 * 96> A_flat = flatten_matrix(A);
     auto nn_start = std::chrono::high_resolution_clock::now(); //start inference timer
     std::array<double, 96 * 96> P_flat;
-    if (cvs_iter < 320) 
+    if (cvs_iter < 340) 
     {
-        P_flat = MLP_1_BE(A_flat);
+        P_flat = MLP_2_BE(A_flat);
     } 
-    // else if (cvs_iter >= 320 && cvs_iter < 440) 
-    // {
-    //     P_flat = MLP_1_BE_second(A_flat);
-    // } 
     else 
     {
         P_flat = MLP_1_BE_second(A_flat);
@@ -494,12 +490,12 @@ Species gmres_solve(const SpeciesJacobian &A, const Species &b,
 
     std::cout << "# GMRES iterations = " << final_iter + 1 << std::endl;
     // std::cout << "ITER #: " << cvs_iter << std::endl;
-    if (cvs_iter == 320){
+    if (cvs_iter == 340){
         std::cout << "================" << std::endl;
     }
-    if (cvs_iter == 440){
-        std::cout << "================" << std::endl;
-    }
+    // if (cvs_iter == 400){
+    //     std::cout << "================" << std::endl;
+    // }
     cvs_iter += 1;
 
     return result;

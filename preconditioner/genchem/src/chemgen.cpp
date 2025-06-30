@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "chemical_state_functions.h"
 #include "rk4.h"
 //...........................................................................
-// #include "./neural_net/MLP_1_BE_third.hpp"
+#include "./neural_net/MLP_2_BE.hpp"
 #include "./neural_net/MLP_1_BE_second.hpp"
 #include "./neural_net/MLP_1_BE.hpp"
 #include "./neural_net/MLP_LU_1.hpp"
