@@ -67,7 +67,7 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index}
 
 #elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
 
-    GMRES<{jacobian_eigen_dynamic}, CustomPreconditioner<{scalar}>> gmres;
+    GMRES<{jacobian_eigen_dynamic}, LUPreconditioner<{scalar}>> gmres;
 
 #else
 
