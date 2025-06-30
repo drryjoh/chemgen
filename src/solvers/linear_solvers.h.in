@@ -58,13 +58,16 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
     gmres.setMaxIterations(n_variables); // total number of iterations including restarts
     gmres.set_restart(n_variables); // # iterations before restart (Full-size Krylov subspace)
 
-    gmres.compute(A);
+    gmres.compute(A); // preconditioner initialized here
+    if (gmres.preconditioner().info() != Success) std::cerr << "Preconditioner failed!" << std::endl;
 
     // eigen uses relative tolerance - https://eigen.tuxfamily.org/dox/unsupported/GMRES_8h_source.html
     {scalar} tol = std::max(rel_tol, divide(abs_tol, gmres.preconditioner().solve(b).norm()));
     gmres.setTolerance(tol);
 
     {chemical_state_eigen} x = gmres.solve(b);
+
+    if (gmres.info() != Success) std::cerr << "GMRES failed!" << std::endl;
 
     // Convert back to chemical_state
     {chemical_state} result = {{}};
