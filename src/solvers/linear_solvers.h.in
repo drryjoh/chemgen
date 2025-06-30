@@ -71,6 +71,7 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
 
     {chemical_state_eigen} x = gmres.solve(b);
 
+    // std::cout << "gmres.iterations() = " << gmres.iterations() << std::endl;
     if (gmres.info() != Success) std::cerr << "GMRES failed!" << std::endl;
 
     // Convert back to chemical_state
