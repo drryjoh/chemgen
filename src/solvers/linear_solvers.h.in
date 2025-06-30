@@ -53,6 +53,10 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index}
     GMRES<{jacobian_eigen_dynamic}, DiagonalPreconditioner<{scalar}>> gmres;
     #elif defined(CHEMGEN_PRECONDITIONER_ILU)
     GMRES<{jacobian_eigen_dynamic}, IncompleteLUT<{scalar}>> gmres;
+
+    // gmres.preconditioner().setFillfactor(10); // default value
+    gmres.preconditioner().setFillfactor(n_variables * n_variables); // allow for maximum fill-in, such that only droptol controls ilu sparsity
+
     gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
     //gmres.preconditioner().setDroptol(0.001);
     #else
