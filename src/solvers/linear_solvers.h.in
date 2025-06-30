@@ -51,6 +51,10 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
 
     #ifdef CHEMGEN_PRECONDITIONER_JACOBI
     GMRES<{jacobian_eigen_dynamic}, DiagonalPreconditioner<{scalar}>> gmres;
+    #elif defined(CHEMGEN_PRECONDITIONER_ILU)
+    GMRES<{jacobian_eigen_dynamic}, IncompleteLUT<{scalar}>> gmres;
+    gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
+    //gmres.preconditioner().setDroptol(0.001);
     #else
     GMRES<{jacobian_eigen_dynamic}, IdentityPreconditioner> gmres;
     #endif
