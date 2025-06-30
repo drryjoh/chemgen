@@ -85,9 +85,10 @@ class LUPreconditioner
 {
     typedef _Scalar Scalar;
     typedef Matrix<Scalar,Dynamic,1> Vector;
+    using Matrixd = Matrix<Scalar, n_variables, n_variables>;
   public:
     typedef typename Vector::StorageIndex StorageIndex;
-    typedef PartialPivLU<MatrixXd> LU;
+    typedef PartialPivLU<Matrixd> LU;
     enum {
       ColsAtCompileTime = Dynamic,
       MaxColsAtCompileTime = Dynamic
@@ -145,6 +146,16 @@ class LUPreconditioner
 
       // Step 3
       lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
+
+      // Matrixd m_lu = lu.matrixLU(); // LU decomposition where L (excluding unit diagonal) is stored in lower triangular part and U is stored in upper triangular part
+      // Matrixd m_l = m_lu.triangularView<UnitLower>(); // lower triangular part of m_lu with unit diagonal
+      // Matrixd m_u = m_lu.triangularView<Upper>(); // upper triangular part of m_lu
+
+      // std::cout << "m_lu = \n" << m_lu << std::endl;
+      // std::cout << "m_l = \n" << m_l << std::endl;
+      // std::cout << "m_u = \n" << m_u << std::endl;
+
+      // std::exit(0);
     }
 
     template<typename Rhs> inline const Solve<LUPreconditioner, Rhs>
