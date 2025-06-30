@@ -29,12 +29,12 @@ backwards_euler({chemical_state} y,
 
             if (error_norm(dy, y_guess, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
-                std::cout << "# Newton iterations = " << iter + 1 << std::endl;
+                // std::cout << "# Newton iterations = " << iter + 1 << std::endl;
                 return y_guess;
             }}
         }}
 
-        std::cout << "Newton solve did not converge!" << std::endl;
+        // std::cout << "Newton solve did not converge!" << std::endl;
 
         return y_guess; //sets energy to zero to signal integration broke
 }}
