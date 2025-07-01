@@ -40,6 +40,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "chemical_state_functions.h"
 #include "rk4.h"
 //...........................................................................
+#include "./neural_net/MLP_2_BE_second.hpp"
 #include "./neural_net/MLP_2_BE.hpp"
 #include "./neural_net/MLP_1_BE_second.hpp"
 #include "./neural_net/MLP_1_BE.hpp"
@@ -171,8 +172,6 @@ main()
                            end_time);
     double int_energy = internal_energy_volume_specific(species, temperature_);
 
-    std::cout << "\nUSING -> MLP_LU_1" << std::endl; //forJay
-
     ChemicalState y_init = set_chemical_state(int_energy, species);
     ChemicalState y = y_init;
     double dt, t;
@@ -184,7 +183,6 @@ main()
         n_run = int(end_time/dt_be);
         t = 0;
 
-        //..............................................................................................................................
         be_file << t << " " << temperature(y);
         for (const auto& val : get_species(y)) be_file << " " << val;
         be_file << "\n";
@@ -216,7 +214,6 @@ main()
 
         std::chrono::duration<double> be_duration = be_end - be_start;
         std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
-        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     }
 
     if (dt_sdirk2 > 0.)

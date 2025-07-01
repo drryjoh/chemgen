@@ -9,5 +9,5 @@
 # exec 2>/dev/null
 rm -rf test
 PREFIX=$(brew --prefix yaml-cpp)
-clang++ -std=c++23 -O3 -march=native -I"${PREFIX}/include" -L"${PREFIX}/lib" -lyaml-cpp  chemgen.cpp -o test
+clang++ -std=c++23 -O2 -march=native -I"${PREFIX}/include" -L"${PREFIX}/lib" -lyaml-cpp  chemgen.cpp -o test
 ./test  

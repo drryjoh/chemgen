@@ -110,23 +110,24 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 from tensorflow.keras import layers, callbacks, models, optimizers
+from tensorflow.keras.utils import get_custom_objects
 
 # config
 DATA_DIR        = "EULER_825"
-MODEL_PATH      = "bin/MLP_2_BE.keras"
-CSV_FILE        = "bin/MLP_2_BE.csv"
+MODEL_PATH      = "bin/MLP_3_BE.keras"
+CSV_FILE        = "bin/MLP_3_BE.csv"
 NUM_SAMPLES     = 340
 M               = 96
 FLAT_DIM        = M * M      
-BATCH_SIZE      = 8
+BATCH_SIZE      = 64
 EPOCHS          = 2000
-HIDDEN_UNITS    = 2
+HIDDEN_UNITS    = 1
 LEARNING_RATE   = 1e-3
 CLIP_NORM       = 1.0 
 VALIDATION_SPLIT= 0.3
 RANDOM_SEED     = 42
-EPS             = 1e-16 #1e-12
-NEGATIVE_SLOPE  = 0.0001
+EPS             = 1e-10 #1e-16 for 1st and 2nd for 2 units
+# NEGATIVE_SLOPE  = 0.001 #0.001 for 1st and 2nd for 2 units
 
 # load and flatten data
 X_list, y_list = [], []
@@ -156,6 +157,10 @@ X_tr, X_val, y_tr, y_val = train_test_split(
     shuffle=True
 )
 
+# def custom_act_fun(x):
+#     exp = x*tf.exp(-1*tf.abs((4.0*x)/1e-4)+2)
+#     return x + exp
+
 ###########
 ## MODEL ##
 ###########
@@ -163,43 +168,16 @@ inputs = layers.Input(shape=(FLAT_DIM,))
 
 x = layers.Dense(HIDDEN_UNITS, activation=None)(inputs)
 x = layers.BatchNormalization()(x) 
-x = layers.LeakyReLU(negative_slope=NEGATIVE_SLOPE)(x)
-# x = layers.Activation('gelu')(x)
+# x = layers.LeakyReLU(negative_slope=NEGATIVE_SLOPE)(x)
+x = layers.Activation('gelu')(x)
 
 x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
-x = layers.LeakyReLU(negative_slope=NEGATIVE_SLOPE)(x)
-# x = layers.Activation('gelu')(x)
-
-# x = layers.Dense(HIDDEN_UNITS, activation=None)(x)
-# x = layers.LeakyReLU(negative_slope=0.02)(x)
+# x = layers.LeakyReLU(negative_slope=NEGATIVE_SLOPE)(x)
+x = layers.Activation('gelu')(x)
 
 outputs = layers.Dense(FLAT_DIM, activation=None)(x)
 
 model = models.Model(inputs, outputs)
-###########
-# model = tf.keras.Sequential([
-#     layers.Input(shape=(FLAT_DIM,)),
-#     # layers.Rescaling(1.0/X_std, offset=-X_mean/X_std),
-
-#     layers.Dense(HIDDEN_UNITS),
-#     # layers.UnitNormalization(axis=-1),
-#     layers.BatchNormalization(),
-#     # layers.Activation("relu"),
-#     layers.LeakyReLU(negative_slope=0.1),
-
-#     layers.Dense(HIDDEN_UNITS),
-#     layers.BatchNormalization(),
-#     # layers.Activation("relu"),
-#     layers.LeakyReLU(negative_slope=0.1),
-
-#     layers.Dense(HIDDEN_UNITS),
-#     layers.BatchNormalization(),
-#     # layers.Activation("relu"),
-#     layers.LeakyReLU(negative_slope=0.1),
-
-#     layers.Dense(FLAT_DIM, activation="linear"),
-#     # layers.Rescaling(y_std, offset=y_mean)
-# ])
 ###########
 #........................................................................
 # y_mean_const = tf.constant(y_mean, dtype=tf.float32)
