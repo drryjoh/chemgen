@@ -61,7 +61,7 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 
 {device_option}
 {chemical_state_function}
-gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_tol = 1e-8, {scalar} rel_tol = 1e-4)
+gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
 {{
 	{index} max_iter = 100;
     {chemical_state} x = {{}};

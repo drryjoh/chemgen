@@ -226,6 +226,10 @@ def main():
             headers.remove("chemical_state_functions.h")
             headers.append("chemical_state_functions.h")
 
+        if "default_parameters.h" in headers:
+            headers.remove("default_parameters.h")
+            headers.append("default_parameters.h")
+
         if "rk4.h" in headers:
             headers.remove("rk4.h")
             headers.append("rk4.h")

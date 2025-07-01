@@ -5,14 +5,12 @@
 */
 
 {device_option}
-{chemical_state} 
-sdirk2({chemical_state} y,  
-       {scalar_parameter} dt, 
-       {scalar} abs_newton_tol = 1e-8,
-       {scalar} rel_newton_tol = 1e-6,
-       {index}  max_iter = 5,
-       {scalar} linear_abs_tol = 1e-8,
-       {scalar} linear_rel_tol = 1e-6)
+{chemical_state}
+sdirk2({chemical_state} y,
+       {scalar_parameter} dt,
+       {scalar} abs_newton_tol = newton_abs_tol_default,
+       {scalar} rel_newton_tol = newton_rel_tol_default,
+       {index}  max_iter = newton_iter_max_default)
 {{
         {chemical_state} y_init = y;
         {scalar} gamma = 1.0 - 1.0 / sqrt_gen({scalar}(2));
@@ -34,7 +32,7 @@ sdirk2({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res);
             #endif
             k1 = k1 + dk;
             if (error_norm(dk, k1, abs_newton_tol, rel_newton_tol) < 1.0)
@@ -55,7 +53,7 @@ sdirk2({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res);
             #endif
             k2 = k2 + dk;
             if (error_norm(dk, k2, abs_newton_tol, rel_newton_tol) < 1.0)
@@ -70,14 +68,12 @@ sdirk2({chemical_state} y,
 
 
 {device_option}
-{chemical_state} 
-sdirk4({chemical_state} y,  
-       {scalar_parameter} dt, 
-       {scalar} abs_newton_tol = 1e-8,
-       {scalar} rel_newton_tol = 1e-6,
-       {index}  max_iter = 5,
-       {scalar} linear_abs_tol = 1e-8,
-       {scalar} linear_rel_tol = 1e-6)
+{chemical_state}
+sdirk4({chemical_state} y,
+       {scalar_parameter} dt,
+       {scalar} abs_newton_tol = newton_abs_tol_default,
+       {scalar} rel_newton_tol = newton_rel_tol_default,
+       {index}  max_iter = newton_iter_max_default)
 {{
         {scalar} gamma = .26666666666666666666666666666666670;
         {scalar} a11 = .26666666666666666666666666666666670;
@@ -123,7 +119,7 @@ sdirk4({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk =  gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk =  gmres_solve(J, res);
             #endif
             k1 = k1 + dk;
             if (error_norm(dk, k1, abs_newton_tol, rel_newton_tol) < 1.0)
@@ -147,7 +143,7 @@ sdirk4({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res);
             #endif
             k2 = k2 + dk;
             if (error_norm(dk, k2, abs_newton_tol, rel_newton_tol) < 1.0)
@@ -170,7 +166,7 @@ sdirk4({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res);
             #endif
             k3 = k3 + dk;
             if (error_norm(dk, k3, abs_newton_tol, rel_newton_tol) < 1.0)
@@ -196,7 +192,7 @@ sdirk4({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res);
             #endif
             k4 = k4 + dk;
             if (error_norm(dk, k4, abs_newton_tol, rel_newton_tol) < 1.0)
@@ -221,7 +217,7 @@ sdirk4({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res);
             #endif
 
 
