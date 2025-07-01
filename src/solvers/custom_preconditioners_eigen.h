@@ -1,9 +1,9 @@
-// This file is derived from Eigen, a lightweight C++ template library
-// for linear algebra, to enable user-defined preconditioners.
+// This file provides user-defined preconditioners for Eigen.
 
 namespace Eigen {
 
 // Diagonal preconditioner - just used as an example
+// This is just a copy of Eigen's DiagonalPreconditioner
 template <typename _Scalar>
 class JacobiPreconditioner
 {
@@ -60,6 +60,7 @@ class JacobiPreconditioner
     template<typename Rhs, typename Dest>
     void _solve_impl(const Rhs& b, Dest& x) const
     {
+      // Elementwise multiplication
       x = m_invdiag.array() * b.array() ;
     }
 
@@ -80,15 +81,16 @@ class JacobiPreconditioner
 };
 
 // LU (exact) preconditioner - just used as an example
+// Note: in practice, if LU decomposition is desired, should use SparseLU for sparse matrices
 template <typename _Scalar>
 class LUPreconditioner
 {
     typedef _Scalar Scalar;
     typedef Matrix<Scalar,Dynamic,1> Vector;
-    using Matrixd = Matrix<Scalar, n_variables, n_variables>;
+    using Matrix_ = Matrix<Scalar, n_variables, n_variables>;
   public:
     typedef typename Vector::StorageIndex StorageIndex;
-    typedef PartialPivLU<Matrixd> LU;
+    typedef PartialPivLU<Matrix_> LU;
     enum {
       ColsAtCompileTime = Dynamic,
       MaxColsAtCompileTime = Dynamic
@@ -114,6 +116,7 @@ class LUPreconditioner
     template<typename MatType>
     LUPreconditioner& factorize(const MatType& mat)
     {
+      // Get LU decomposition
       lu = LU(mat);
       m_isInitialized = true;
       return *this;
@@ -147,9 +150,11 @@ class LUPreconditioner
       // Step 3
       lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
 
-      // Matrixd m_lu = lu.matrixLU(); // LU decomposition where L (excluding unit diagonal) is stored in lower triangular part and U is stored in upper triangular part
-      // Matrixd m_l = m_lu.triangularView<UnitLower>(); // lower triangular part of m_lu with unit diagonal
-      // Matrixd m_u = m_lu.triangularView<Upper>(); // upper triangular part of m_lu
+      /* Below: directly access lower and upper triangular parts and print out */
+      // Note: triangularView creates a reference so can read/write
+      // Matrix_ m_lu = lu.matrixLU(); // LU decomposition where L (excluding unit diagonal) is stored in lower triangular part and U is stored in upper triangular part
+      // Matrix_ m_l = m_lu.triangularView<UnitLower>(); // lower triangular part of m_lu with unit diagonal
+      // Matrix_ m_u = m_lu.triangularView<Upper>(); // upper triangular part of m_lu
 
       // std::cout << "m_lu = \n" << m_lu << std::endl;
       // std::cout << "m_l = \n" << m_l << std::endl;
