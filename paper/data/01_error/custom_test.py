@@ -125,7 +125,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         content = """
 {scalar_function} safe_divide({scalar_parameter} a, {scalar_parameter} b) {const_option}
 {{
-    if(std::abs(b) <= 1e-10)
+    if(std::abs(b) <= 1e-8)
     {{
         return 0;
     }}
@@ -160,10 +160,10 @@ void l2_norm({scalar_parameter} temperature, {species_parameter} result, {specie
     for (size_t i = 0; i < n_species; ++i) 
     {{
         //weight = concentrations[i]/sum_c;
-        l2_norm += pow_gen2(safe_divide(result[i]- cantera_source[i], cantera_source[i]));
+        l2_norm += std::sqrt(pow_gen2(safe_divide(result[i]- cantera_source[i], cantera_source[i])));
 
     }}
-    file<< ", " << ({scalar_cast}(1)/{scalar_cast}(n_species)) * std::sqrt(l2_norm);
+    file<< ", " << ({scalar_cast}(1)/{scalar_cast}(n_species)) * l2_norm;
     file<< std::endl;
   
 }}
@@ -200,15 +200,59 @@ void write_states({species_parameter} concentrations, {scalar_parameter} tempera
     states << std::endl;
 }}
 
+#include <sstream>
+#include <fstream>
+
+template<typename Container>
+void read_csv_2d(const std::string& filename, Container& data) {{
+    std::ifstream file(filename);
+    if (!file.is_open()) {{
+        throw std::runtime_error("Could not open " + filename);
+    }}
+    std::string line;
+    size_t row = 0;
+    while (std::getline(file, line) && row < data.size()) {{
+        std::stringstream ss(line);
+        std::string cell;
+        size_t col = 0;
+        while (std::getline(ss, cell, ',') && col < data[row].size()) {{
+            data[row][col] = static_cast<{scalar}>(std::stod(cell));
+            ++col;
+        }}
+        ++row;
+    }}
+}}
+
+template<typename Container>
+void read_csv_1d(const std::string& filename, Container& data) {{
+    std::ifstream file(filename);
+    if (!file.is_open()) {{
+        throw std::runtime_error("Could not open " + filename);
+    }}
+    std::string line;
+    size_t i = 0;
+    while (std::getline(file, line) && i < data.size()) {{
+        std::stringstream ss(line);
+        std::string cell;
+        if (std::getline(ss, cell, ',')) {{
+            data[i] = static_cast<{scalar}>(std::stod(cell));
+        }}
+        ++i;
+    }}
+}}
+
+
+
 {index} main() {{
     std::cout << "*** ChemGen ***" <<std::endl;
     PointSpecies concentration_tests = std::make_unique<{scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>>();
     PointSpecies cantera_sources = std::make_unique<{scalar_list}<{scalar_list}<{scalar}, n_species>, n_points>>();
     PointScalar temperatures = std::make_unique<{scalar_list}<{scalar}, n_points>>();
+    read_csv_2d("{mech_name}_concentrations.csv", *concentration_tests);
+    read_csv_1d("{mech_name}_temperatures.csv", *temperatures);
+    read_csv_2d("{mech_name}_cantera_sources.csv", *cantera_sources);
 
-    {concentration_tests};
-    {temperature_tests};
-    {point_cantera_net_production_rates};
+
 
     // Open the CSV file
     std::ofstream file("l2_{mech_name}.csv");
@@ -230,9 +274,10 @@ void write_states({species_parameter} concentrations, {scalar_parameter} tempera
     file << "temperature, L2"<<std::endl;
     file_max << "temperature, L2"<<std::endl;
     // Process each point
+
     for ({index} i = 0; i < n_points; i++)
     {{
-        {species} result = source((*concentration_tests)[i], (*temperatures)[i]);
+        {species} result = source_species((*concentration_tests)[i], (*temperatures)[i]);
         write_states((*concentration_tests)[i], (*temperatures)[i], states);
         l2_norm((*temperatures)[i], result, (*cantera_sources)[i], (*concentration_tests)[i], file);
         max_err((*temperatures)[i], result, (*cantera_sources)[i], (*concentration_tests)[i], file_max);
@@ -246,9 +291,26 @@ void write_states({species_parameter} concentrations, {scalar_parameter} tempera
     return 0;
 }}
             """
+        import csv
+
+        # Write concentrations
+        with open( f"{mech_name}_concentrations.csv", 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for row in point_concentrations:
+                writer.writerow(row)
+
+        # Write temperatures
+        with open( f"{mech_name}_temperatures.csv", 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for temp in point_temperatures:
+                writer.writerow([temp])
+
+        # Write net production rates
+        with open( f"{mech_name}_cantera_sources.csv", 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            for row in point_source:
+                writer.writerow(row)
+
         file.write(content.format(**vars(configuration), 
-                   concentration_tests = concentration_tests, 
-                   temperature_tests = temperature_tests, 
-                   point_cantera_net_production_rates = point_cantera_net_production_rates,
                    n_points = n_points,
                    mech_name = mech_name))
