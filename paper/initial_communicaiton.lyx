@@ -2570,7 +2570,7 @@ h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k},\label{eq:internal-energy-polynomial}
+u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-RT=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k},\label{eq:internal-energy-polynomial}
 \end{equation}
 
 \end_inset
@@ -3304,7 +3304,7 @@ where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\rho u(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{k,n_{p}+1}}{\partial T}\right>
+\frac{\partial\rho u(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{k,n_{p}+1}}{\partial T}\right>\label{eq:denominator_for_temp_solve}
 \end{equation}
 
 \end_inset
@@ -3331,7 +3331,58 @@ and
 
 \end_inset
 
+Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:denominator_for_temp_solve"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
 
+\end_inset
+
+ is also the definition of the volume specific heat at constant volume,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+c_{v}=\frac{\partial\rho u}{\partial T}=c_{p}-R.\label{eq:cv_equation}
+\end{equation}
+
+\end_inset
+
+Starting with a guess value,
+ 
+\begin_inset Formula $T_{0}$
+\end_inset
+
+,
+ a target tolerance of 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ can be used or a set number of iterations,
+ 
+\begin_inset Formula $n_{T}$
+\end_inset
+
+,
+ can be used to terminate the Newton iterations.
+ In general,
+ we have found in our past work that 
+\begin_inset Formula $n_{T}=3$
+\end_inset
+
+ is sufficient to be within 
+\begin_inset Formula $1e-8$
+\end_inset
+
+ relative error for a variety of models at different temperatures.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Note Comment
 status collapsed
 
@@ -3370,33 +3421,7 @@ T_{n+1}=T_{n}-\frac{\sum_{i=1}^{n_{s}}\left<C_{i}^{\dagger},T_{n_{p}+1}\right>}{
 
 \end_inset
 
-Starting with a guess value,
- 
-\begin_inset Formula $T_{0}$
-\end_inset
 
-,
- a target tolerance of 
-\begin_inset Formula $\epsilon$
-\end_inset
-
- can be used or a set number of iterations,
- 
-\begin_inset Formula $n_{T}$
-\end_inset
-
-,
- can be used to terminate the Newton iterations.
- In general,
- we have found in our past work that 
-\begin_inset Formula $n_{T}=3$
-\end_inset
-
- is sufficient to be within 
-\begin_inset Formula $1e-8$
-\end_inset
-
- relative error for a variety of models at different temperatures.
 \end_layout
 
 \begin_layout Subsection
@@ -4700,7 +4725,7 @@ The Newton's method can be used to iteratively find
 
 \begin_layout Standard
 \begin_inset Note Comment
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Formula 
@@ -4841,28 +4866,19 @@ nolink "false"
 
 \end_inset
 
- in a singular matrix as well as a larger matrix that can be generated to utilize the chain rule from Equation
-\begin_inset space ~
+ in a singular 
+\begin_inset Formula $\mathcal{J}_{ij}$
 \end_inset
 
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:chain_int_energy"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-
+ matrices that are generated to include optimizations to only compute necessary components for efficient Jacobian assimilation.
+ For the internal energy formulation,
+ the elements of the Jacobian are
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{ij}=\frac{\partial\omega_{i}\left(C,T\right)}{\partial C_{j}}=\left(\frac{\partial\omega_{i}}{\partial C_{j}}\right)_{C_{k\neq j},T}+\left(\frac{\partial\omega_{i}}{\partial T}\right)_{C}\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}},\label{eq:derivative_matrices}
+\mathcal{J}_{ij}=\frac{\partial\omega_{i}\left(C,T\right)}{\partial C_{j}}=\frac{\partial\omega_{i}}{\partial C_{j}}+\frac{\partial\omega_{i}}{\partial T}\frac{\partial T}{\partial C_{j}},\label{eq:derivative_matrices}
 \end{equation}
 
 \end_inset
@@ -4870,12 +4886,21 @@ nolink "false"
 where
 \begin_inset Formula 
 \begin{equation}
-\left(\frac{\partial T}{\partial C_{j}}\right)_{C_{k\neq j}}=-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}=-\frac{1}{\rho c_{v}}W_{j}u_{j}=-\frac{W_{j}u_{j}}{\rho c_{v}}.\label{eq:temperature_wrt_species}
+\frac{\partial T}{\partial C_{j}}=-\left(\frac{\partial\rho u}{\partial T}\right)^{-1}\frac{\partial\rho u}{\partial C_{j}}=-\frac{1}{\rho c_{v}}W_{j}u_{j}=-\frac{W_{j}u_{j}}{\rho c_{v}}.\label{eq:temperature_wrt_species}
 \end{equation}
 
 \end_inset
 
-Equation 
+Here 
+\begin_inset Formula $\frac{\partial T}{\partial C_{j}}$
+\end_inset
+
+ is required because 
+\begin_inset Formula $T$
+\end_inset
+
+ is a function of species.
+ The Jacobian in Equation 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:temperature_wrt_species"
@@ -4899,8 +4924,9 @@ nolink "false"
 \begin_inset Formula $j$
 \end_inset
 
-.
- It also requires a 
+,
+ due to this temperature dependency.
+ It also requires 
 \begin_inset Formula $n_{s}$
 \end_inset
 
@@ -4913,13 +4939,37 @@ nolink "false"
 \end_inset
 
 .
- This can be removed by utilizing a nonconservative formulation based on temperature evolution by extracting,
+ ChemGen provides faster approximate Jacobians by utilizing two methods.
+ The first is to simply assume 
+\begin_inset Formula $\frac{\partial T}{\partial C_{j}}\approx0$
+\end_inset
+
+,
+ 
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\rho u}{\partial t}=\rho\frac{\partial u}{\partial t}=\frac{\partial u}{\partial T}\frac{\partial T}{\partial t}+\sum_{i=1}^{n_{s}}\frac{\partial u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}=0\rightarrow\frac{\partial T}{\partial t}=-\frac{\sum_{i=1}^{n_{s}}\frac{\partial u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}}{\frac{\partial u}{\partial T}},\label{eq:temperature_source}
+\mathcal{J}_{ij,\partial T=0}=\frac{\partial\omega_{i}}{\partial C_{j}},\label{eq:derivativee_matrix_const_dT}
+\end{equation}
+
+\end_inset
+
+Which keeps the state size the same but has the benefit of introducing sparseness and reducing computational cost,
+ however,
+ it can introduce error by removing 
+\begin_inset Formula $\frac{\partial T}{\partial C_{j}}$
+\end_inset
+
+.
+ The second is by utilizing a nonconservative formulation based on temperature evolution by extracting a source term on temperature,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\rho u}{\partial t}=\frac{\partial\rho u}{\partial T}\frac{\partial T}{\partial t}+\sum_{i=1}^{n_{s}}\frac{\partial\rho u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}=0\rightarrow\frac{\partial T}{\partial t}=-\frac{\sum_{i=1}^{n_{s}}\frac{\partial\rho u}{\partial C_{i}}\omega}{c_{v}}.\label{eq:temperature_source}
 \end{equation}
 
 \end_inset
@@ -4930,29 +4980,61 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial T}{\partial t}=-\frac{\sum_{i=1}^{n_{s}}\frac{\partial u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}}{\frac{\partial u}{\partial T}}=-\frac{\sum_{i=1}^{n_{s}}u_{i}\frac{\partial Y_{i}}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}}{\frac{\partial u}{\partial T}}=-\frac{\sum_{i=1}^{n_{s}}u_{i}\frac{\partial}{\partial C_{i}}\left(\frac{W_{i}C_{i}}{\rho}\right)\omega_{i}}{\frac{\partial u}{\partial T}}\label{eq:temperature_source_2}
+\frac{\partial T}{\partial t}=\omega_{T}=-\frac{\sum_{i=1}^{n_{s}}\frac{\partial\left(W_{i}C_{i}u_{i}\right)}{\partial C_{i}}\omega_{i}}{c_{v}}=-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{c_{v}}\label{eq:temperature_source_2}
 \end{equation}
 
 \end_inset
 
-
+The state is now
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial}{\partial C_{i}}\left(W_{i}C_{i}\rho^{-1}\right)=W_{i}\left(\frac{1}{\rho}-\frac{C_{i}}{\rho^{2}}\frac{\partial\rho}{\partial C_{i}}\right)=W_{i}\left(\frac{1}{\rho}-\frac{W_{i}C_{i}}{\rho^{2}}\right)=\frac{W_{i}}{\rho}\left(1-Y_{i}\right)\label{eq:dmass_fraction_dconcentration}
+\begin{array}{ccc}
+\frac{dy}{dt}=S\left(y\right); & y=\left(T,C_{1},\ldots,C_{n_{s}}\right); & S\left(y\right)=\left(\omega_{T},\omega_{1},\ldots,\omega_{n_{s}}\right).\end{array}\label{eq:extracted_problem-1}
 \end{equation}
 
 \end_inset
 
+with 
+\begin_inset Formula $n_{s}+1\times n_{s}+1$
+\end_inset
 
+ Jacobian
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial T}{\partial t}=\omega_{T}=-\frac{\sum_{i=1}^{n_{s}}u_{i}W_{i}\left(1-Y_{i}\right)\omega_{i}}{\rho^{}\frac{\partial u}{\partial T}}\label{eq:final_temperature_source}
+\mathcal{J}_{ij,T}=\begin{cases}
+\frac{\partial\omega_{T}}{\partial T} & j=1\\
+\frac{\partial\omega_{T}}{\partial C_{j-1}} & i=1;\quad j>1\\
+\frac{\partial\omega_{i-1}}{\partial T} & i>1;\quad j=1\\
+\frac{\partial\omega_{i-1}}{\partial C_{j-1}} & i>1;j>1
+\end{cases},\label{eq:derivative_matrices-1}
+\end{equation}
+
+\end_inset
+
+where
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\omega_{T}}{\partial T}=-\frac{\sum_{i=1}^{n_{s}}W_{i}\frac{\partial u_{i}}{\partial T}\omega_{i}}{c_{v}}+\frac{\sum_{i=1}^{n_{s}}W_{i}\frac{\partial u_{i}}{\partial T}\omega_{i}}{c_{v}^{2}}\frac{\partial c_{v}}{\partial T}\label{eq:temperature_source_2-1}
+\end{equation}
+
+\end_inset
+
+and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\omega_{T}}{\partial C_{k}}=\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{c_{v}^{2}}\frac{\partial c_{v}}{\partial C_{k}}\label{eq:temperature_source_2-1-1}
 \end{equation}
 
 \end_inset
@@ -4962,7 +5044,7 @@ nolink "false"
 
 \begin_layout Standard
 \begin_inset Note Note
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Formula 
@@ -5106,66 +5188,6 @@ Appendix
 \begin_inset Text
 
 \begin_layout Plain Layout
-SDIRK-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4th
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $n$
-\end_inset
-
--iterations until convergence per stage
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "subsec:SDIRK-4"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 SDIRK-2
 \end_layout
 
@@ -5208,6 +5230,66 @@ SDIRK-2
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "subsec:SDIRK-2"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SDIRK-4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4th
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $n$
+\end_inset
+
+-iterations until convergence per stage
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:SDIRK-4"
 plural "false"
 caps "false"
 noprefix "false"
@@ -5559,7 +5641,7 @@ literal "false"
 .
  
 \begin_inset Note Comment
-status open
+status collapsed
 
 \begin_layout Plain Layout
 The order of operations needed for GMRES is 
