@@ -114,9 +114,9 @@ from tensorflow.keras.utils import get_custom_objects
 
 # config
 DATA_DIR        = "EULER_825"
-MODEL_PATH      = "bin/MLP_3_BE.keras"
-CSV_FILE        = "bin/MLP_3_BE.csv"
-NUM_SAMPLES     = 340
+MODEL_PATH      = "bin/MLP_BE.keras"
+CSV_FILE        = "bin/MLP_BE.csv"
+NUM_SAMPLES     = 824
 M               = 96
 FLAT_DIM        = M * M      
 BATCH_SIZE      = 64

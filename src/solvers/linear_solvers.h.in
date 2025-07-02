@@ -162,21 +162,12 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmr
     {chemical_state} r = diag_inv * (b);
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
     {chemical_state} r = apply_gauss_seidel(A, b);
-#ifdef CHEMGEN_PRECONDITIONER_NN
+#elif CHEMGEN_PRECONDITIONER_NN
     SpeciesJacobian A_ = A;
     std::array<{scalar}, n_variables * n_variables> A_flat = flatten_jacobian(A);
-
-    // //inv_A
-    std::array<{scalar}, n_variables * n_variables> P_flat = MLP_1_BE(A_flat);
+    std::array<{scalar}, n_variables * n_variables> P_flat = MLP_BE(A_flat);
     {jacobian} P = unflatten_jacobian(P_flat);
-    Species r = P*(b - A_*x); // preconditioned residual
-
-    // //LU
-    // std::array<double, n_variables * n_variables * 2> LU_flat = MLP_x_1(A_flat);
-    // auto [L_flat, U_flat] = split_matrix(LU_flat);
-    // SpeciesJacobian L = unflatten_jacobian(L_flat);
-    // SpeciesJacobian U = unflatten_jacobian(U_flat);
-    // Species r = L * ( U * (b - A * x));
+    Species r = P*(b - A_*x); 
 #else
 	{chemical_state} r = b;
 #endif
@@ -207,6 +198,8 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmr
         w = diag_inv * w;
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
         w = apply_gauss_seidel(A, w);
+#elif defined(CHEMGEN_PRECONDITIONER_NN)
+        w = P * w;
 #endif
 
         #ifdef CHEMGEN_PRECONDITIONER_NN

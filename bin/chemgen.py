@@ -193,6 +193,9 @@ def main():
         elif chemistry_solver_preconditioner.lower() == "jacobi":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_JACOBI"
 
+        elif chemistry_solver_preconditioner.lower() == "neural_net":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_NN"
+
         elif chemistry_solver_preconditioner.lower() == "custom":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_CUSTOM"
             if not eigen:
