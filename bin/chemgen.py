@@ -204,6 +204,8 @@ def main():
             print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
             exit()
 
+    assert(not preconditioner or not direct_solver) # only one should be set
+
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
     setattr(configuration, "eigen",  eigen)
