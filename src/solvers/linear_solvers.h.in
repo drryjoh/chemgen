@@ -96,7 +96,7 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index}
     gmres.preconditioner().setFillfactor(n_variables * n_variables); // allow for maximum fill-in, such that only droptol controls ilu sparsity
 
     gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
-    //gmres.preconditioner().setDroptol(0.001);
+    // gmres.preconditioner().setDroptol(0.001); //0.0001 is most optimal
 
 #elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
 

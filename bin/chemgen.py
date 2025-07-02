@@ -153,7 +153,7 @@ def main():
                 print("linear solver not recognized, defaulting to GMRES")
         elif chemistry_solver.lower() == "all":
             linear_solver = configuration_file.get('solver', {}).get('linear_solver', None)
-            print("All solver options will be compiled in")
+            print("All solver options will be compiled in") #TODO
             if linear_solver!=None and linear_solver.lower() == "gmres":
                 print("GMRES linear solver chosen")
             elif linear_solver!=None and linear_solver.lower() == "direct":

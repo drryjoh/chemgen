@@ -43,7 +43,7 @@ def compile_cpp_code(build_dir, source_files, config):
 
 def run_tests(build_dir):
     """Run tests on the compiled binary."""
-    test_command = f"./{build_dir}/bin/chemgen"
+    test_command = f"{build_dir}/bin/chemgen"
     print("Running tests...")
     run_command(test_command)
 

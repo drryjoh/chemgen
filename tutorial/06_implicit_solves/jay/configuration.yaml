@@ -78,7 +78,7 @@ build:
 solver:
   chemistry_solver: all
   linear_solver: gmres
-  preconditioner: ilu
+  preconditioner: none
   eigen: on
   eigen_sparse: on
 
