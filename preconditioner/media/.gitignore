@@ -1,6 +1,0 @@
-data_*
-*.txt
-bin/
-__pycache__
-*.npy
-*.csv
