@@ -76,5 +76,5 @@ decorators:
 
 build:
   chemgen_smp: None 
-  chemgen_input: "-O0"
+  chemgen_input: "-O3"
 

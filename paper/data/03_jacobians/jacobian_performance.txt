@@ -1,230 +1,276 @@
+>>> Running ffcm2_h2 with setting: Ignoring Temperature Derivative
+Source Jacobian will be created without temperature dependence
+Processing file: ./ffcm2_h2.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 0.0485248 ms
+Analytical Jacobian loop time: 0.00621664 ms
+Ratio: 7.80563 ms
+1.92743e+11
+
+>>> Running ffcm2_h2 with setting: Temperature Equation
+Processing file: ./ffcm2_h2.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 0.0909828 ms
+Analytical Jacobian loop time: 0.0320129 ms
+Ratio: 2.84206 ms
+2.95775e+27
+
+>>> Running ffcm2_h2 with setting: Internal Energy
+Processing file: ./ffcm2_h2.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 0.0647655 ms
+Analytical Jacobian loop time: 0.0216641 ms
+Ratio: 2.98953 ms
+-1.30591e+11
+
 >>> Running OConnaire with setting: Ignoring Temperature Derivative
 Source Jacobian will be created without temperature dependence
 Processing file: ./OConnaire.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 0.432668 ms
-Analytical Jacobian loop time: 0.0963961 ms
-Ratio: 4.48844 ms
-3.13634e+12
+Finite difference loop time: 0.0540566 ms
+Analytical Jacobian loop time: 0.00831387 ms
+Ratio: 6.50198 ms
+-1.93436e+09
 
 >>> Running OConnaire with setting: Temperature Equation
 Processing file: ./OConnaire.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 0.909597 ms
-Analytical Jacobian loop time: 0.439192 ms
-Ratio: 2.07107 ms
+Finite difference loop time: 0.097085 ms
+Analytical Jacobian loop time: 0.0300311 ms
+Ratio: 3.23282 ms
 nan
 
 >>> Running OConnaire with setting: Internal Energy
 Processing file: ./OConnaire.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 1.14993 ms
-Analytical Jacobian loop time: 0.268624 ms
-Ratio: 4.28083 ms
--5.58295e+12
+Finite difference loop time: 0.0726547 ms
+Analytical Jacobian loop time: 0.0193021 ms
+Ratio: 3.76408 ms
+-7.73477e+12
 
 >>> Running burke with setting: Ignoring Temperature Derivative
 Source Jacobian will be created without temperature dependence
 Processing file: ./burke.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 0.790775 ms
-Analytical Jacobian loop time: 0.144587 ms
-Ratio: 5.46919 ms
--1.13687e+11
+Finite difference loop time: 0.0787948 ms
+Analytical Jacobian loop time: 0.00795086 ms
+Ratio: 9.91022 ms
+5.58102e+10
 
 >>> Running burke with setting: Temperature Equation
 Processing file: ./burke.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 1.15275 ms
-Analytical Jacobian loop time: 0.425682 ms
-Ratio: 2.70801 ms
-1.30938e+45
+Finite difference loop time: 0.10416 ms
+Analytical Jacobian loop time: 0.0343652 ms
+Ratio: 3.03098 ms
+nan
 
 >>> Running burke with setting: Internal Energy
 Processing file: ./burke.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 1.66339 ms
-Analytical Jacobian loop time: 0.276329 ms
-Ratio: 6.01961 ms
--1.18186e+11
+Finite difference loop time: 0.101096 ms
+Analytical Jacobian loop time: 0.019906 ms
+Ratio: 5.07867 ms
+-1.50746e+10
 
 >>> Running gri30 with setting: Ignoring Temperature Derivative
 Source Jacobian will be created without temperature dependence
 Processing file: ./gri30.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 23.8638 ms
-Analytical Jacobian loop time: 1.85144 ms
-Ratio: 12.8893 ms
-4.0961e+12
+Finite difference loop time: 3.44127 ms
+Analytical Jacobian loop time: 0.211021 ms
+Ratio: 16.3077 ms
+1.58713e+13
 
 >>> Running gri30 with setting: Temperature Equation
 Processing file: ./gri30.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 49.2026 ms
-Analytical Jacobian loop time: 4.99572 ms
-Ratio: 9.84895 ms
+Finite difference loop time: 6.44075 ms
+Analytical Jacobian loop time: 0.67665 ms
+Ratio: 9.51859 ms
 nan
 
 >>> Running gri30 with setting: Internal Energy
 Processing file: ./gri30.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 39.7511 ms
-Analytical Jacobian loop time: 3.62327 ms
-Ratio: 10.971 ms
--3.64274e+13
-
->>> Running FFCM2_model with setting: Ignoring Temperature Derivative
-Source Jacobian will be created without temperature dependence
-Processing file: ./FFCM2_model.yaml
-Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
-Compiling C++ files: ['src/chemgen.cpp']
-
-Running tests...
-*** ChemGen ***
-
-Finite difference loop time: 146.374 ms
-Analytical Jacobian loop time: 8.57118 ms
-Ratio: 17.0775 ms
-4.69588e+15
-
->>> Running FFCM2_model with setting: Temperature Equation
-Processing file: ./FFCM2_model.yaml
-Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
-Compiling C++ files: ['src/chemgen.cpp']
-
-Running tests...
-*** ChemGen ***
-
-Finite difference loop time: 294.264 ms
-Analytical Jacobian loop time: 18.9842 ms
-Ratio: 15.5005 ms
-nan
-
->>> Running FFCM2_model with setting: Internal Energy
-Processing file: ./FFCM2_model.yaml
-Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
-Compiling C++ files: ['src/chemgen.cpp']
-
-Running tests...
-*** ChemGen ***
-
-Finite difference loop time: 199.245 ms
-Analytical Jacobian loop time: 14.4331 ms
-Ratio: 13.8047 ms
--2.98348e+16
+Finite difference loop time: 4.09753 ms
+Analytical Jacobian loop time: 0.39925 ms
+Ratio: 10.2631 ms
+-1.13813e+13
 
 >>> Running sandiego with setting: Ignoring Temperature Derivative
 Source Jacobian will be created without temperature dependence
 Processing file: ./sandiego.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 21.5169 ms
-Analytical Jacobian loop time: 1.4558 ms
-Ratio: 14.7801 ms
-3.85263e+13
+Finite difference loop time: 2.97944 ms
+Analytical Jacobian loop time: 0.142997 ms
+Ratio: 20.8357 ms
+7.98162e+16
 
 >>> Running sandiego with setting: Temperature Equation
 Processing file: ./sandiego.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 44.2069 ms
-Analytical Jacobian loop time: 4.31352 ms
-Ratio: 10.2484 ms
+Finite difference loop time: 5.23343 ms
+Analytical Jacobian loop time: 0.544645 ms
+Ratio: 9.60888 ms
 nan
 
 >>> Running sandiego with setting: Internal Energy
 Processing file: ./sandiego.yaml
 Not generating with a chemgen chemistry solver.
-building with options: -O0
-clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
 Compiling C++ files: ['src/chemgen.cpp']
 
 Running tests...
 *** ChemGen ***
 
-Finite difference loop time: 39.4795 ms
-Analytical Jacobian loop time: 3.00863 ms
-Ratio: 13.1221 ms
--7.16317e+17
+Finite difference loop time: 3.68026 ms
+Analytical Jacobian loop time: 0.323064 ms
+Ratio: 11.3917 ms
+-2.08513e+17
+
+>>> Running FFCM2_model with setting: Ignoring Temperature Derivative
+Source Jacobian will be created without temperature dependence
+Processing file: ./FFCM2_model.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 37.2292 ms
+Analytical Jacobian loop time: 0.8931 ms
+Ratio: 41.6853 ms
+2.94702e+15
+
+>>> Running FFCM2_model with setting: Temperature Equation
+Processing file: ./FFCM2_model.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 63.6802 ms
+Analytical Jacobian loop time: 3.30268 ms
+Ratio: 19.2814 ms
+nan
+
+>>> Running FFCM2_model with setting: Internal Energy
+Processing file: ./FFCM2_model.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O3
+clang++ -std=c++17 -O3 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 38.9055 ms
+Analytical Jacobian loop time: 1.84851 ms
+Ratio: 21.047 ms
+-2.17632e+14
 

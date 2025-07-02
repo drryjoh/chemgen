@@ -7926,109 +7926,105 @@ name "tab:jacobian_timings"
 status collapsed
 
 \begin_layout Plain Layout
-Mechanism,Setting,Finite Difference Time (ms),Analytical Jacobian Time (ms),Ratio
+ffcm2_h2,Ignoring Temperature Derivative,0.0485248,0.00621664,7.80563
 \end_layout
 
 \begin_layout Plain Layout
-OConnaire,
- Ignoring Temperature Derivative,
- 0.432668,0.0963961,4.48844
+ffcm2_h2,Temperature Equation,0.0909828,0.0320129,2.84206
 \end_layout
 
 \begin_layout Plain Layout
-OConnaire,
- Temperature Equation,
- 0.909597,0.439192,2.07107
+ffcm2_h2,Internal Energy,0.0647655,0.0216641,2.98953
 \end_layout
 
 \begin_layout Plain Layout
-OConnaire,
- Internal Energy,
- 1.14993,0.268624,4.28083
+OConnaire,Ignoring Temperature Derivative,0.0540566,0.00831387,6.50198
 \end_layout
 
 \begin_layout Plain Layout
-burke,
- Ignoring Temperature Derivative,
- 0.790775,0.144587,5.46919
+OConnaire,Temperature Equation,0.097085,0.0300311,3.23282
 \end_layout
 
 \begin_layout Plain Layout
-burke,
- Temperature Equation,
- 1.15275,0.425682,2.70801
+OConnaire,Internal Energy,0.0726547,0.0193021,3.76408
 \end_layout
 
 \begin_layout Plain Layout
-burke,
- Internal Energy,
- 1.66339,0.276329,6.01961
+burke,Ignoring Temperature Derivative,0.0787948,0.00795086,9.91022
 \end_layout
 
 \begin_layout Plain Layout
-gri30,
- Ignoring Temperature Derivative,
- 23.8638,1.85144,12.8893
+burke,Temperature Equation,0.10416,0.0343652,3.03098
 \end_layout
 
 \begin_layout Plain Layout
-gri30,
- Temperature Equation,
- 49.2026,4.99572,9.84895
+burke,Internal Energy,0.101096,0.019906,5.07867
 \end_layout
 
 \begin_layout Plain Layout
-gri30,
- Internal Energy,
- 39.7511,3.62327,10.971
+gri30,Ignoring Temperature Derivative,3.44127,0.211021,16.3077
 \end_layout
 
 \begin_layout Plain Layout
-FFCM2_model,
- Ignoring Temperature Derivative,
- 146.374,8.57118,17.0775
+gri30,Temperature Equation,6.44075,0.67665,9.51859
 \end_layout
 
 \begin_layout Plain Layout
-FFCM2_model,
- Temperature Equation,
- 294.264,18.9842,15.5005
+gri30,Internal Energy,4.09753,0.39925,10.2631
 \end_layout
 
 \begin_layout Plain Layout
-FFCM2_model,
- Internal Energy,
- 199.245,14.4331,13.8047
+sandiego,Ignoring Temperature Derivative,2.97944,0.142997,20.8357
 \end_layout
 
 \begin_layout Plain Layout
-sandiego,
- Ignoring Temperature Derivative,
- 21.5169,1.4558,14.7801
+sandiego,Temperature Equation,5.23343,0.544645,9.60888
 \end_layout
 
 \begin_layout Plain Layout
-sandiego,
- Temperature Equation,
- 44.2069,4.31352,10.2484
+sandiego,Internal Energy,3.68026,0.323064,11.3917
 \end_layout
 
 \begin_layout Plain Layout
-sandiego,
- Internal Energy,
- 39.4795,3.00863,13.1221
+FFCM2_model,Ignoring Temperature Derivative,37.2292,0.8931,41.6853
 \end_layout
 
 \begin_layout Plain Layout
-ffcm2_h2,Ignoring Temperature Derivative,0.354941,0.0824431,4.30528
+FFCM2_model,Temperature Equation,63.6802,3.30268,19.2814
 \end_layout
 
 \begin_layout Plain Layout
-ffcm2_h2,Temperature Equation,0.633635,0.37078,1.70893
+FFCM2_model,Internal Energy,38.9055,1.84851,21.047
 \end_layout
 
 \begin_layout Plain Layout
-ffcm2_h2,Internal Energy,0.833225,0.194619,4.28131
+ffcm2_h2 ratio with temp to no tem:
+ 3.484856771503577
+\end_layout
+
+\begin_layout Plain Layout
+OConnaire ratio with temp to no tem:
+ 2.321674502969135
+\end_layout
+
+\begin_layout Plain Layout
+burke ratio with temp to no tem:
+ 2.503628538296486
+\end_layout
+
+\begin_layout Plain Layout
+gri30 ratio with temp to no tem:
+ 1.8919917922860758
+\end_layout
+
+\begin_layout Plain Layout
+sandiego ratio with temp to no tem:
+ 2.2592362077526102
+\end_layout
+
+\begin_layout Plain Layout
+FFCM2_model ratio with temp to no tem:
+ 2.0697682230433325
 \end_layout
 
 \end_inset
@@ -8211,7 +8207,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.29
+2.99
 \end_layout
 
 \end_inset
@@ -8220,7 +8216,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.31
+7.80
 \end_layout
 
 \end_inset
@@ -8229,7 +8225,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-1.708
+2.84
 \end_layout
 
 \end_inset
@@ -8238,7 +8234,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.36
+3.48
 \end_layout
 
 \end_inset
@@ -8267,7 +8263,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.28
+3.76
 \end_layout
 
 \end_inset
@@ -8276,7 +8272,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-4.48
+6.50
 \end_layout
 
 \end_inset
@@ -8285,7 +8281,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.00
+3.23
 \end_layout
 
 \end_inset
@@ -8294,7 +8290,7 @@ FFCM-2 (H2 submodel)
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.78
+2.32
 \end_layout
 
 \end_inset
@@ -8323,7 +8319,7 @@ Burke
 \begin_inset Text
 
 \begin_layout Plain Layout
-6.02
+5.07
 \end_layout
 
 \end_inset
@@ -8332,7 +8328,7 @@ Burke
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.46
+9.91
 \end_layout
 
 \end_inset
@@ -8341,7 +8337,7 @@ Burke
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.71
+3.03
 \end_layout
 
 \end_inset
@@ -8350,7 +8346,7 @@ Burke
 \begin_inset Text
 
 \begin_layout Plain Layout
-1.91
+2.50
 \end_layout
 
 \end_inset
@@ -8379,7 +8375,7 @@ GRI-Mech 3.0
 \begin_inset Text
 
 \begin_layout Plain Layout
-10.97
+10.26
 \end_layout
 
 \end_inset
@@ -8388,7 +8384,7 @@ GRI-Mech 3.0
 \begin_inset Text
 
 \begin_layout Plain Layout
-12.89
+16.30
 \end_layout
 
 \end_inset
@@ -8397,7 +8393,7 @@ GRI-Mech 3.0
 \begin_inset Text
 
 \begin_layout Plain Layout
-9.85
+9.52
 \end_layout
 
 \end_inset
@@ -8406,7 +8402,7 @@ GRI-Mech 3.0
 \begin_inset Text
 
 \begin_layout Plain Layout
-1.96
+1.89
 \end_layout
 
 \end_inset
@@ -8435,7 +8431,7 @@ UCSD
 \begin_inset Text
 
 \begin_layout Plain Layout
-13.25
+11.39
 \end_layout
 
 \end_inset
@@ -8444,7 +8440,7 @@ UCSD
 \begin_inset Text
 
 \begin_layout Plain Layout
-14.78
+20.84
 \end_layout
 
 \end_inset
@@ -8453,7 +8449,7 @@ UCSD
 \begin_inset Text
 
 \begin_layout Plain Layout
-10.25
+9.61
 \end_layout
 
 \end_inset
@@ -8462,7 +8458,7 @@ UCSD
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.07
+2.25
 \end_layout
 
 \end_inset
@@ -8471,9 +8467,6 @@ UCSD
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $4.07\times10^{-4}$
-\end_inset
-
 
 \end_layout
 
@@ -8485,7 +8478,7 @@ UCSD
 \begin_inset Text
 
 \begin_layout Plain Layout
-FFCM-2 (full mode)
+FFCM-2 (full model)
 \end_layout
 
 \end_inset
@@ -8494,7 +8487,7 @@ FFCM-2 (full mode)
 \begin_inset Text
 
 \begin_layout Plain Layout
-13.80
+21.05
 \end_layout
 
 \end_inset
@@ -8503,7 +8496,7 @@ FFCM-2 (full mode)
 \begin_inset Text
 
 \begin_layout Plain Layout
-17.08
+41.69
 \end_layout
 
 \end_inset
@@ -8512,7 +8505,7 @@ FFCM-2 (full mode)
 \begin_inset Text
 
 \begin_layout Plain Layout
-15.50
+19.28
 \end_layout
 
 \end_inset
@@ -8521,7 +8514,7 @@ FFCM-2 (full mode)
 \begin_inset Text
 
 \begin_layout Plain Layout
-1.68
+2.07
 \end_layout
 
 \end_inset

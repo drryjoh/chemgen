@@ -3,7 +3,7 @@ set -e
 source ~/python_environments/chemgen/bin/activate
 
 # Array of mechanism names
-NAMES=("OConnaire" "burke" "gri30" "FFCM2_model" "sandiego")
+NAMES=("ffcm2_h2" "OConnaire" "burke" "gri30" "sandiego" "FFCM2_model")
 OPTIONS=("--ignore-temp-dependence" "--temperature-equation" "")
 RUNS=("Ignoring Temperature Derivative" "Temperature Equation" "Internal Energy")
 
