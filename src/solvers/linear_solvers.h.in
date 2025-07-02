@@ -3,39 +3,14 @@
 
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 {device_option}
-{jacobian_function} inverse_diagonal({jacobian_function} J) {const_option}
+{chemical_state_function} inverse_diagonal({jacobian_function} J) {const_option}
 {{
-    {jacobian} M_inv = {{}};
+    {chemical_state} diag_inv;
     for ({index} i = 0; i < n_variables; ++i)
     {{
-        M_inv[i][i] = std::abs(J[i][i]) > 1e-14 ? 1.0 / J[i][i] : 0.0;
+        diag_inv[i] = std::abs(J[i][i]) > 1e-14 ? 1.0 / J[i][i] : 0.0;
     }}
-    return M_inv;
-}}
-
-{device_option}
-{jacobian_function} apply_diagonal({jacobian_function} P, {jacobian_function} A) {const_option}
-{{
-    {jacobian} M = {{}};
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
-        for ({index} j = 0; j < n_variables; ++j)
-        {{
-            M[i][j] = P[i][i] * A[i][j];
-        }}
-    }}
-    return M;
-}}
-
-{device_option}
-{chemical_state_function} apply_diagonal({jacobian_function} P, {chemical_state} b) {const_option}
-{{
-    {chemical_state} m = {{}};
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
-        m[i] = P[i][i] * b[i];
-    }}
-    return m;
+    return diag_inv;
 }}
 #endif
 
@@ -44,7 +19,7 @@
 {chemical_state_function}
 apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 {{
-	{chemical_state} z = {{}};
+    {chemical_state} z = {{}};
     for ({index} i = 0; i < n_variables; ++i)
     {{
         {scalar} sum = 0.0;
@@ -53,7 +28,7 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 
         // Diagonal + lower
         {scalar} diag = A[i][i];
-        z[i] = (v[i] - sum) / (std::abs(diag) > 1e-14 ? diag : 1.0); // Avoid div by zero
+        z[i] = (v[i] - sum) / (std::abs(diag) > 100.*std::numeric_limits<{scalar}>::epsilon() ? diag : 1.0); // Avoid div by zero
     }}
     return z;
 }}
@@ -67,16 +42,17 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
     {chemical_state} x = {{}};
 	{chemical_state} cs = {{}};
 	{chemical_state} sn = {{}};
+
+    // Note: if initial guess for x is nonzero, need to replace b below with (b - A*x)
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
-	{jacobian} P = inverse_diagonal(A);
-	{jacobian} A_ = apply_diagonal(P, A);
-	{chemical_state} b_ = apply_diagonal(P, b);
+	{chemical_state} diag_inv = inverse_diagonal(A);
+    {chemical_state} r = diag_inv * (b);
+#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+    {chemical_state} r = apply_gauss_seidel(A, b);
 #else
-	{jacobian} A_ = A;
-	{chemical_state} b_ = b;
+	{chemical_state} r = b;
 #endif
 
-    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
 	{scalar} norm2_r = norm2(r);
 
     if (norm2_r < std::numeric_limits<{scalar}>::epsilon())
@@ -97,7 +73,13 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
     for ({index} j = 0; j < n_variables; ++j)
     {{
 		final_iter = j;
-        {chemical_state} w = A_ * V[j];
+
+        {chemical_state} w = A * V[j];
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+        w = diag_inv * w;
+#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+        w = apply_gauss_seidel(A, w);
+#endif
 
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
