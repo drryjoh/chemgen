@@ -1,5 +1,49 @@
 #ifdef CHEMGEN_EIGEN
 
+{device_option}
+{chemical_state_function}
+direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_)
+{{
+    using namespace Eigen;
+
+    {chemical_state_eigen} b(n_variables);
+
+    for ({index} i = 0; i < n_variables; ++i)
+    {{
+        b(i) = b_[i];
+    }}
+
+    {chemical_state_eigen} x;
+
+#ifdef CHEMGEN_EIGEN_SPARSE
+
+    SparseLU<SparseMatrix<{scalar}>, COLAMDOrdering<{index}>> lu;
+
+    lu.compute(A);
+    if (lu.info() != Success) std::cerr << "lu factorization failed!" << std::endl;
+    x = lu.solve(b);
+
+#else
+
+    typedef PartialPivLU<{jacobian_eigen}> LU;
+
+    LU lu = LU(A);
+
+    x = lu.permutationP() * b;
+    lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
+    lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
+
+#endif
+
+    // Convert back to chemical_state
+    {chemical_state} result = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
+    {{
+        result[i] = x(i);
+    }}
+
+    return result;
+}}
 
 #else
 
@@ -63,12 +107,9 @@ void swap_gen(T& a, T& b)
 
     return inv;
 }}
-#endif
 
 {chemical_state_function} direct_solve({jacobian_parameter} J, {chemical_state_parameter} rhs)
 {{
-#ifdef CHEMGEN_EIGEN
-#else
     return invert_jacobian(J) * rhs;
-#endif
 }}
+#endif

@@ -175,9 +175,11 @@ def main():
             print("Running with eigen!")
             eigen_sparse = configuration_file.get('solver', {}).get('eigen_sparse', False)
 
+    eigen_sparse_directive = ""
     if eigen_sparse:
         print("Running with sparse data structures!")
         args.get_sparsity = True
+        eigen_sparse_directive = "#define CHEMGEN_EIGEN_SPARSE"
 
     preconditioner = ""
     if chemistry_solver_preconditioner and chemistry_solver:
@@ -210,6 +212,7 @@ def main():
     setattr(configuration, "direct_solver",  direct_solver)
     setattr(configuration, "eigen",  eigen)
     setattr(configuration, "eigen_sparse",  eigen_sparse)
+    setattr(configuration, "eigen_sparse_directive",  eigen_sparse_directive)
 
     update_configuration_eigen(configuration)
 
