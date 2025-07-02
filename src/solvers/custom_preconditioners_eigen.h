@@ -2,6 +2,77 @@
 
 namespace Eigen {
 
+// Gauss-Seidel preconditioner - this one can actually be used in practice
+template <typename _Scalar, typename MatrixType>
+class GaussSeidelPreconditioner
+{
+    typedef _Scalar Scalar;
+    typedef Matrix<Scalar,Dynamic,1> Vector;
+    using Matrix_ = MatrixType;
+  public:
+    typedef typename Vector::StorageIndex StorageIndex;
+    enum {
+      ColsAtCompileTime = Dynamic,
+      MaxColsAtCompileTime = Dynamic
+    };
+
+    GaussSeidelPreconditioner() : m_isInitialized(false) {}
+
+    template<typename MatType>
+    explicit GaussSeidelPreconditioner(const MatType& mat)
+    {
+      compute(mat);
+    }
+
+    EIGEN_CONSTEXPR Index rows() const EIGEN_NOEXCEPT { return A.rows(); }
+    EIGEN_CONSTEXPR Index cols() const EIGEN_NOEXCEPT { return A.cols(); }
+
+    template<typename MatType>
+    GaussSeidelPreconditioner& analyzePattern(const MatType& )
+    {
+      return *this;
+    }
+
+    template<typename MatType>
+    GaussSeidelPreconditioner& factorize(const MatType& mat)
+    {
+      // Store lower triangular portion (including diagonal)
+      A = mat.template triangularView<Lower>();
+      m_isInitialized = true;
+      return *this;
+    }
+
+    template<typename MatType>
+    GaussSeidelPreconditioner& compute(const MatType& mat)
+    {
+      analyzePattern(mat);
+      factorize(mat);
+      return *this;
+    }
+
+    /** \internal */
+    template<typename Rhs, typename Dest>
+    void _solve_impl(const Rhs& b, Dest& x) const
+    {
+      x = A.template triangularView<Lower>().solve(b);
+    }
+
+    template<typename Rhs> inline const Solve<GaussSeidelPreconditioner, Rhs>
+    solve(const MatrixBase<Rhs>& b) const
+    {
+      eigen_assert(m_isInitialized && "GaussSeidelPreconditioner is not initialized.");
+      eigen_assert(A.cols()==b.rows()
+                && "GaussSeidelPreconditioner::solve(): invalid number of rows of the right hand side matrix b");
+      return Solve<GaussSeidelPreconditioner, Rhs>(*this, b.derived());
+    }
+
+    ComputationInfo info() { return Success; }
+
+  protected:
+    Matrix_ A;
+    bool m_isInitialized;
+};
+
 // Diagonal preconditioner - just used as an example
 // This is just a copy of Eigen's DiagonalPreconditioner
 template <typename _Scalar>
