@@ -62,21 +62,6 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
     }}
     return Q;
 }}
-
-std::pair< {jacobian_function}, {jacobian_function}> split_matrix(std::array<{scalar}, n_variables * n_variables * 2> LU)
-{
-    std::array<{scalar}, n_variables * n_variables> L;
-    std::array<{scalar}, n_variables * n_variables> U;
-    for (int i = 0; i < n_variables; i++)
-    {
-        for (int j = 0; j < n_variables; j++)
-        {
-            L[(i*n_variables)+j] = LU[(i*n_variables*2)+j];
-            U[(i*n_variables)+j] = LU[(i*n_variables*2)+j+n_variables];
-        }
-    }
-    return {L,U};
-}
 #endif
 
 #ifdef CHEMGEN_EIGEN
@@ -203,9 +188,9 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmr
 #endif
 
         #ifdef CHEMGEN_PRECONDITIONER_NN
-        {
+        {{
             w = P * (A * V[j]);
-        }
+        }}
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
         {{
