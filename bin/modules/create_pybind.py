@@ -97,7 +97,7 @@ std::vector<std::vector<{scalar}>> source_jacobian_py(const std::vector<{scalar}
 }}
 
 
-std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} nonlinear_abs_tol, {scalar} nonlinear_rel_tol, {index} max_iter, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
+std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt) 
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
@@ -108,12 +108,12 @@ std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} t
     {chemical_state} y = set_chemical_state(temperature, sp);
 #endif
     
-    auto result = sdirk4(y, dt, nonlinear_abs_tol, nonlinear_rel_tol, max_iter, linear_abs_tol, linear_rel_tol);
+    auto result = sdirk4(y, dt);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
-std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
+std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt) 
 
 {{
     Species sp;
@@ -125,13 +125,13 @@ std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar
     {chemical_state} y = set_chemical_state(temperature, sp);
 #endif
     
-    auto result = rosenbroc(y, dt, linear_abs_tol, linear_rel_tol);
+    auto result = rosenbroc(y, dt);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
 
-std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} max_norm, {scalar} min_dt, {index} max_iter, {scalar} linear_abs_tol, {scalar} linear_rel_tol) 
+std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} max_norm, {scalar} min_dt, {index} max_iter) 
 {{
     Species sp;
     std::copy(species.begin(), species.end(), sp.begin());
@@ -143,7 +143,7 @@ std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} tem
     {chemical_state} y = set_chemical_state(temperature, sp);
 #endif
 
-    auto result = yass(y, dt, max_norm, min_dt, max_iter, linear_abs_tol, linear_rel_tol);
+    auto result = yass(y, dt, max_norm, min_dt, max_iter);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}

@@ -4972,7 +4972,7 @@ with an
 \frac{\partial\omega_{T}}{\partial C_{j-1}} & i=1;\quad j>1\\
 \frac{\partial\omega_{i-1}}{\partial T} & i>1;\quad j=1\\
 \frac{\partial\omega_{i-1}}{\partial C_{j-1}} & i>1;j>1
-\end{cases},\label{eq:derivative_matrices-1}
+\end{cases},\label{eq:derivative_matrices_temp_evol}
 \end{equation}
 
 \end_inset
@@ -7543,51 +7543,61 @@ name "subsec:Jacobian-Verification"
 
 \begin_layout Standard
 We performed Jacobian calculation confirmation in order to build confidence in their use for implicit time integration strategies.
- Recall ChemGen supplies two Jacobians,
+ Recall ChemGen supplies three Jacobians,
  
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{a}\left(C_{},T\right)_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}\text{ and }\mathcal{J}_{b}\left(C_{},T\right)_{ij}=\begin{cases}
-\frac{\partial\omega_{i}}{\partial T} & i=1\dots n_{s};j=1\\
-\frac{\partial\omega_{i}}{\partial C_{j-1}} & i=1\dots n_{s};j=2\dots n_{s}+1;
-\end{cases}\label{eq:Ja_Jb_results}
+\mathcal{J}_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}+\frac{\partial\omega_{i}}{\partial T}\frac{\partial T}{\partial C_{j}},\quad\mathcal{J}_{ij,\delta T=0}=\frac{\partial\omega_{i}}{\partial C_{j}},\quad\mathcal{J}_{ij,T}=\begin{cases}
+\frac{\partial\omega_{T}}{\partial T} & j=1\\
+\frac{\partial\omega_{T}}{\partial C_{j-1}} & i=1;\quad j>1\\
+\frac{\partial\omega_{i-1}}{\partial T} & i>1;\quad j=1\\
+\frac{\partial\omega_{i-1}}{\partial C_{j-1}} & i>1;j>1
+\end{cases},\label{eq:Ja_Jb_results}
 \end{equation}
 
 \end_inset
 
-The 
-\begin_inset Formula $\mathcal{J}_{b}$
-\end_inset
-
- Jacobian is built off of the 
-\begin_inset Formula $\mathcal{J}_{a}$
-\end_inset
-
- Jacobian.
- Thus,
- in this section we present verification of 
-\begin_inset Formula $\mathcal{J}_{b}$
-\end_inset
-
- using the finite difference method confirms the the correct derivatives in ChemGen.
- To calculate the finite difference approximation of 
-\begin_inset Formula $\mathcal{J}_{b}$
-\end_inset
-
- we utilized the second order finite difference approximation for each element,
+In this section we present verification of the Jacobians using the finite difference method confirms the the correct derivatives in ChemGen.
+ To calculate the finite difference approximation of the Jacobians we utilized the second order finite difference approximation for each element by perturbing each species 
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}=\begin{cases}
-\frac{S_{i}\left(C_{1},\dots,C_{n_{s}},T+\delta T\right)-S_{i}\left(C_{1},\dots,C_{n_{s}},T-\delta T\right)}{2\delta T} & i=1\dots n_{s};j=1\\
-\frac{S_{i}\left(C_{1}+\delta_{1j}\cdot\delta C,\dots,C_{n_{s}}+\delta_{n_{s}j}\cdot\delta C,T+\delta T\right)-S_{i}\left(C_{1}-\delta_{1j}\cdot\delta C,\dots,C_{n_{s}}-\delta_{n_{s}j}\cdot\delta C,T+\delta T\right)}{2\delta C} & i=1\dots n_{s};j=2\dots n_{s}+1,
-\end{cases}\label{eq:finite_difference}
+\hat{C_{j}}^{+}=\left(C_{1}+\delta_{1j}\delta C,\dots,C_{n_{s}}+\delta_{n_{s}j}\delta C\right)\label{eq:Ja_Jb_results-1}
 \end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\hat{C_{j}}^{-}=\left(C_{1}-\delta_{1j}\delta C,\dots,C_{n_{s}}-\delta_{n_{s}j}\delta C\right)\label{eq:Ja_Jb_results-1-1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+\hat{\mathcal{J}_{ij}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},(\rho u,\hat{C_{j}}^{+})\rightarrow T\right)-\omega_{i}\left(\hat{C_{j}}^{-},(\rho u,\hat{C_{j}}^{-})\rightarrow T\right)}{2\delta C}\label{eq:finite_difference_rho}\\
+\hat{\mathcal{J}_{ij,\delta T=0}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},T\right)-\omega_{i}\left(\hat{C_{j}}^{-},T\right)}{2\delta C}\label{eq:finite_difference_rho_T}\\
+\hat{\mathcal{J}_{ij,T}} & = & \begin{cases}
+\frac{\omega_{T}(C,T+\delta T)-\omega_{T}(C,T-\delta T)}{2\delta T} & j=1\\
+\frac{\omega_{T}(\hat{C_{j-1}}^{+},T)-\omega_{T}(\hat{C_{j-1}}^{-},T)}{\delta C} & i=1;\quad j>1\\
+\frac{\omega_{i-1}(C,T+\delta T)-\omega_{i-1}(C,T-\delta T)}{2\delta T} & i>1;\quad j=1\\
+\frac{\omega_{i-1}\left(\hat{C_{j-1}}^{+},T\right)-\omega_{i-1}\left(\hat{C_{j-1}}^{-},T\right)}{2\delta C} & i>1;j>1
+\end{cases}\label{eq:finite_difference_Tevolve}
+\end{eqnarray}
 
 \end_inset
 
@@ -7620,7 +7630,16 @@ nolink "false"
 \end_inset
 
  are the temperature and concentration perturbations,
- respectively.
+ respectively,
+ and 
+\begin_inset Formula $\left(\rho u,C\right)\rightarrow T$
+\end_inset
+
+ is the Newton solve for the temperature given concentration 
+\begin_inset Formula $C$
+\end_inset
+
+.
  This finite difference approximation is second order accurate.
  An initial test to verify the Jacobian is to check the order of convergence of the finite difference errors when compared to the analytical Jacobian provided by ChemGen.
  The order of accuracy describes how quickly the numerical error decreases as the step size is reduced.
@@ -7633,7 +7652,7 @@ nolink "false"
 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:finite_difference"
+reference "eq:finite_difference_rho"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7682,7 +7701,7 @@ for four refinement levels using smaller values of
 
 ,
  of the smallest non-zero concentration,
- and the initial was chosen 
+ and the initial temperature perturbation was chosen as 
 \begin_inset Formula $\delta T=100$
 \end_inset
 
@@ -7745,31 +7764,7 @@ literal "false"
 \end_inset
 
 ,
- the expected order of accuracy was recovered.Niemeyer et al. 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Nie17"
-literal "false"
-
-\end_inset
-
- reported error metrics that can be used to verify Jacobian accuracy.
- These metrics are utilized in Appendix
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "subsec:jacobianErel"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- to provide additional confidence in the correctness of ChemGen's Jacobians.
+ the expected order of accuracy was recovered.
 \end_layout
 
 \begin_layout Standard
@@ -7778,7 +7773,7 @@ placement H
 alignment document
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \align center
@@ -7813,6 +7808,321 @@ Order of accuracy convergence for
 ,
  demonstrating 
 \end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Niemeyer et al. 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Nie17"
+literal "false"
+
+\end_inset
+
+ reported error metrics that can be used to verify Jacobian accuracy.
+ These metrics are utilized in Appendix
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "subsec:jacobianErel"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ to provide additional confidence in the correctness of ChemGen's Jacobians.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset Formula $E_{norm}$
+\end_inset
+
+ and 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ mean and max errors for different chemical models given 10,000 randomly produced states each.
+ Overall,
+ the 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ errors were generally higher,
+ but never exceeding 
+\begin_inset Formula $3\times10^{-3}$
+\end_inset
+
+.
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:jacobian_timings"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Model
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathcal{J}_{ij}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\mathcal{J}_{ij,\delta T=0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\mathcal{J}_{ij,T}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\nospellcheck off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+average 
+\begin_inset Formula $||\mathcal{J}_{ij,\delta T=0}-\mathcal{J}_{ij}||_{F}/||\mathcal{J}_{ij}||_{F}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UCSD
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $8.46\times10^{-11}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $5.57\times10^{-9}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $8.10\times10^{-6}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $4.07\times10^{-4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FFCM-2 (H2 submodel)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $7.55\times10^{-12}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $7.27\times10^{-10}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $9.06\times10^{-5}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $2.53\times10^{-3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
 
 \end_inset
 
@@ -11072,211 +11382,6 @@ literal "false"
 
 .
  Updating ChemGen to address these edge cases and avoid numerical instabilities led to reduced error and unlocked the expected trend that higher-order polynomial fits improved accuracy relative to Cantera.
-\end_layout
-
-\begin_layout Subsection
-RK4 Integration Error due to thermodynamic polynomial order
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:RK4-Integration-Error"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The ChemGen steady-state temperature differs from the Cantera result by about 10 K,
- which is well within the typical experimental uncertainty for combustion applications.
- For examples,
- a typical uncertainty of approximately 50 K is generally state of the art for non-invasive techniques such as coherent anti-Stokes Raman scattering
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Ded21"
-literal "false"
-
-\end_inset
-
-.
- The results in Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:RK4_T_C"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-were generated using 
-\begin_inset Formula $n_{p}=7$
-\end_inset
-
-.
- To investigate further,
- we performed RK4 integrations using
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- and 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
-..
- The temperature evolution over the time domain 
-\begin_inset Formula $t=[0.06,0.20]$
-\end_inset
-
- 
-\begin_inset Formula $\mu$
-\end_inset
-
-s,
- comparing results from increasing thermodynamic polynomial degree and Cantera,
- is shown in Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "fig:RK4_np_T"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-Like the results in Section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "subsec:sourcetermpoly"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-,
- the agreement with the Cantera solution improves with increasing polynomial degree.
- For this case,
- 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
- achieved an agreement within 1 K of Cantera.
- This suggests that,
- while higher 
-\begin_inset Formula $n_{p}$
-\end_inset
-
- can more closely match Cantera,
- lower np values may still provide predictive accuracy within experimental uncertainty at reduced computational cost.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-alignment document
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename data/02_explicit_time_integration/temperature_np.png
-	lyxscale 20
-	scale 40
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:RK4_np_T"
-
-\end_inset
-
-Temperature evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions from Equation Section
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:chemical_state_02"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-.
- These results were produced using hydrogen submodel from FFCM2 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha23"
-literal "false"
-
-\end_inset
-
- .
- The solid line is from the Cantera solution and the dashed lines are the corresponding ChemGen results from 
-\begin_inset Formula $n_{p}=4$
-\end_inset
-
- (green),
- 
-\begin_inset Formula $n_{p}=7$
-\end_inset
-
- (black),
- and 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
- (blue).
- The agreement with the Cantera solution improves with increasing polynomial degree.
- For this case,
- 
-\begin_inset Formula $n_{p}=12$
-\end_inset
-
- achieved an agreement within 1 K of Cantera.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
