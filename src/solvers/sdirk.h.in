@@ -30,7 +30,7 @@ sdirk2({chemical_state} y,
 
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dk = invert_jacobian(J) * res;
+            {chemical_state} dk = direct_solve(J, res);
             #else
             {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
@@ -51,7 +51,7 @@ sdirk2({chemical_state} y,
             {chemical_state} res = f_val - k2;
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dk = invert_jacobian(J) * res;
+            {chemical_state} dk = direct_solve(J, res);
             #else
             {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
@@ -117,7 +117,7 @@ sdirk4({chemical_state} y,
             {chemical_state} res = f_val - k1;
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dk = invert_jacobian(J) * res;
+            {chemical_state} dk = direct_solve(J, res);
             #else
             {chemical_state} dk =  gmres_solve(J, res, n_gmres_iter_total);
             #endif
@@ -141,7 +141,7 @@ sdirk4({chemical_state} y,
             {chemical_state} res = f_val - k2;
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dk = invert_jacobian(J) * res;
+            {chemical_state} dk = direct_solve(J, res);
             #else
             {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
@@ -164,7 +164,7 @@ sdirk4({chemical_state} y,
             {chemical_state} res = f_val - k3;
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dk = invert_jacobian(J) * res;
+            {chemical_state} dk = direct_solve(J, res);
             #else
             {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
@@ -190,7 +190,7 @@ sdirk4({chemical_state} y,
 
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dk = invert_jacobian(J) * res;
+            {chemical_state} dk = direct_solve(J, res);
             #else
             {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
@@ -215,7 +215,7 @@ sdirk4({chemical_state} y,
             {chemical_state} res = f_val - k5;;
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dk = invert_jacobian(J) * res;
+            {chemical_state} dk = direct_solve(J, res);
             #else
             {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif

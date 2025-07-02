@@ -20,7 +20,7 @@ backwards_euler({chemical_state} y,
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
             //Solve
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dy = invert_jacobian(A) * res;
+            {chemical_state} dy = direct_solve(A, res);
             #else
             {chemical_state} dy = gmres_solve(A, res, n_gmres_iter_total);
             #endif
