@@ -187,8 +187,6 @@ def main():
 
         elif chemistry_solver_preconditioner.lower() == "gauss_seidel":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL"
-            if chemistry_solver_eigen:
-                raise NotImplementedError("gauss_seidel preconditioner not compatible with eigen")
 
         elif chemistry_solver_preconditioner.lower() == "jacobi":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_JACOBI"
@@ -204,7 +202,7 @@ def main():
         elif chemistry_solver_preconditioner.lower() == "ilu":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_ILU"
             if not eigen_sparse:
-                raise NotImplementedError("gauss_seidel preconditioner requires sparse eigen")
+                raise NotImplementedError("ilu preconditioner requires sparse eigen")
         else:
             print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
             exit()
