@@ -35,6 +35,50 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 }}
 #endif
 
+#ifdef CHEMGEN_PRECONDITIONER_NN
+{device_option}
+{jacobian_function} flatten_jacobian({jacobian_parameter} A)
+{{
+    {jacobian} flat_A:
+    for (int i = 0; i < n_variables; i++)
+    {{
+        for (int j = 0; j < n_variables; i++)
+        {{
+            flat_A[(i*96)+j] = A[i][j];
+        }}
+    }}
+    return flat_A;
+}}
+
+{jacobian_function} unflatten_jacobian({jacobian_parameter} flat_A)
+{{
+    {jacobian} Q;
+    for (int i = 0; i < n_variables; i++)
+    {{
+        for (int j = 0; j < n_variables; j++)
+        {{
+            Q[i][j] = A[(i*96)+j];
+        }}
+    }}
+    return Q;
+}}
+
+std::pair< {jacobian_function}, {jacobian_function}> split_matrix(std::array<{scalar}, n_variables * n_variables * 2> LU)
+{
+    std::array<{scalar}, n_variables * n_variables> L;
+    std::array<{scalar}, n_variables * n_variables> U;
+    for (int i = 0; i < n_variables; i++)
+    {
+        for (int j = 0; j < n_variables; j++)
+        {
+            L[(i*n_variables)+j] = LU[(i*n_variables*2)+j];
+            U[(i*n_variables)+j] = LU[(i*n_variables*2)+j+n_variables];
+        }
+    }
+    return {L,U};
+}
+#endif
+
 #ifdef CHEMGEN_EIGEN
 #include "./custom_preconditioners_eigen.h"
 
@@ -118,7 +162,7 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmr
     {chemical_state} r = diag_inv * (b);
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
     {chemical_state} r = apply_gauss_seidel(A, b);
-#ifdef CHEMGEN_PRECONDITIONER_NN //forJay
+#ifdef CHEMGEN_PRECONDITIONER_NN
     SpeciesJacobian A_ = A;
     std::array<{scalar}, n_variables * n_variables> A_flat = flatten_jacobian(A);
 
