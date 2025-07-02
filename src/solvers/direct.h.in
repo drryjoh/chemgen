@@ -1,3 +1,8 @@
+#ifdef CHEMGEN_EIGEN
+
+
+#else
+
 template<typename T>
 void swap_gen(T& a, T& b)
 {{
@@ -57,4 +62,13 @@ void swap_gen(T& a, T& b)
     }}
 
     return inv;
+}}
+#endif
+
+{chemical_state_function} direct_solve({jacobian_parameter} J, {chemical_state_parameter} rhs)
+{{
+#ifdef CHEMGEN_EIGEN
+#else
+    return invert_jacobian(J) * rhs;
+#endif
 }}
