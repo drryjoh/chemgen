@@ -1,51 +1,26 @@
 {preconditioner}
 {direct_solver}
 {eigen}
-{neural_net} //forJay
 
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
 {device_option}
-{jacobian_function} inverse_diagonal({jacobian_function} J) {const_option}
+{chemical_state_function} inverse_diagonal({jacobian_function} J) {const_option}
 {{
-    {jacobian} M_inv = {{}};
+    {chemical_state} diag_inv;
     for ({index} i = 0; i < n_variables; ++i)
     {{
-        M_inv[i][i] = std::abs(J[i][i]) > 1e-14 ? 1.0 / J[i][i] : 0.0;
+        diag_inv[i] = std::abs(J[i][i]) > 1e-14 ? 1.0 / J[i][i] : 0.0;
     }}
-    return M_inv;
-}}
-
-{device_option}
-{jacobian_function} apply_diagonal({jacobian_function} P, {jacobian_function} A) {const_option}
-{{
-    {jacobian} M = {{}};
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
-        for ({index} j = 0; j < n_variables; ++j)
-        {{
-            M[i][j] = P[i][i] * A[i][j];
-        }}
-    }}
-    return M;
-}}
-
-{device_option}
-{chemical_state_function} apply_diagonal({jacobian_function} P, {chemical_state} b) {const_option}
-{{
-    {chemical_state} m = {{}};
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
-        m[i] = P[i][i] * b[i];
-    }}
-    return m;
+    return diag_inv;
 }}
 #endif
 
 #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
 {device_option}
-{chemical_state_function} apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
+{chemical_state_function}
+apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 {{
-	{chemical_state} z = {{}};
+    {chemical_state} z = {{}};
     for ({index} i = 0; i < n_variables; ++i)
     {{
         {scalar} sum = 0.0;
@@ -54,16 +29,18 @@
 
         // Diagonal + lower
         {scalar} diag = A[i][i];
-        z[i] = (v[i] - sum) / (std::abs(diag) > 1e-14 ? diag : 1.0); // Avoid div by zero
+        z[i] = (v[i] - sum) / (std::abs(diag) > 100.*std::numeric_limits<{scalar}>::epsilon() ? diag : 1.0); // Avoid div by zero
     }}
     return z;
 }}
 #endif
 
 #ifdef CHEMGEN_EIGEN
+#include "./custom_preconditioners_eigen.h"
+
 {device_option}
 {chemical_state_function}
-gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar} abs_tol, {scalar} rel_tol)
+gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
 {{
     using namespace Eigen;
 
@@ -74,22 +51,45 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
         b(i) = b_[i];
     }}
 
-    #ifdef CHEMGEN_PRECONDITIONER_JACOBI
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+
     GMRES<{jacobian_eigen_dynamic}, DiagonalPreconditioner<{scalar}>> gmres;
-    #else
+
+#elif defined(CHEMGEN_PRECONDITIONER_ILU)
+
+    GMRES<{jacobian_eigen_dynamic}, IncompleteLUT<{scalar}>> gmres;
+
+    // gmres.preconditioner().setFillfactor(10); // default value
+    gmres.preconditioner().setFillfactor(n_variables * n_variables); // allow for maximum fill-in, such that only droptol controls ilu sparsity
+
+    gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
+    //gmres.preconditioner().setDroptol(0.001);
+
+#elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
+
+    GMRES<{jacobian_eigen_dynamic}, JacobiPreconditioner<{scalar}>> gmres;
+
+#else
+
     GMRES<{jacobian_eigen_dynamic}, IdentityPreconditioner> gmres;
-    #endif
+#endif
 
     gmres.setMaxIterations(n_variables); // total number of iterations including restarts
     gmres.set_restart(n_variables); // # iterations before restart (Full-size Krylov subspace)
 
-    gmres.compute(A);
+    gmres.compute(A); // preconditioner initialized here
+    if (gmres.preconditioner().info() != Success) std::cerr << "Preconditioner failed!" << std::endl;
 
     // eigen uses relative tolerance - https://eigen.tuxfamily.org/dox/unsupported/GMRES_8h_source.html
     {scalar} tol = std::max(rel_tol, divide(abs_tol, gmres.preconditioner().solve(b).norm()));
     gmres.setTolerance(tol);
 
     {chemical_state_eigen} x = gmres.solve(b);
+
+    // std::cout << "gmres.iterations() = " << gmres.iterations() << std::endl;
+    if (gmres.info() != Success) std::cerr << "GMRES failed!" << std::endl;
+
+    n_gmres_iter_total += gmres.iterations();
 
     // Convert back to chemical_state
     {chemical_state} result = {{}};
@@ -103,74 +103,21 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {scalar
 
 #else
 
-#ifdef CHEMGEN_PRECONDITIONER_NN //forJay
-{device_option}
-{jacobian_function} flatten_jacobian({jacobian_parameter} A)
-{{
-    {jacobian} flat_A:
-    for (int i = 0; i < n_variables; i++)
-    {{
-        for (int j = 0; j < n_variables; i++)
-        {{
-            flat_A[(i*96)+j] = A[i][j];
-        }}
-    }}
-    return flat_A;
-}}
-
-{jacobian_function} unflatten_jacobian({jacobian_parameter} flat_A)
-{{
-    {jacobian} Q;
-    for (int i = 0; i < n_variables; i++)
-    {{
-        for (int j = 0; j < n_variables; j++)
-        {{
-            Q[i][j] = A[(i*96)+j];
-        }}
-    }}
-    return Q;
-}}
-
-std::pair< {jacobian_function}, {jacobian_function}> split_matrix(std::array<{scalar}, n_variables * n_variables * 2> LU)
-{
-    std::array<{scalar}, n_variables * n_variables> L;
-    std::array<{scalar}, n_variables * n_variables> U;
-    for (int i = 0; i < n_variables; i++)
-    {
-        for (int j = 0; j < n_variables; j++)
-        {
-            L[(i*n_variables)+j] = LU[(i*n_variables*2)+j];
-            U[(i*n_variables)+j] = LU[(i*n_variables*2)+j+n_variables];
-        }
-    }
-    return {L,U};
-}
-#endif
-
-
 {device_option}
 {chemical_state_function}
-gmres_solve({jacobian_parameter} A, 
-    {chemical_state_parameter} b, 
-    // std::chrono::duration<double>& NN_total_time, //forJay
-    // std::chrono::duration<double>& P_total_time, //forJay 
-    // int& cvs_iter, //forJay
-    {scalar} abs_tol = 1e-8, 
-    {scalar} rel_tol = 1e-4)
+gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
 {{
 	{index} max_iter = 100;
     {chemical_state} x = {{}};
 	{chemical_state} cs = {{}};
 	{chemical_state} sn = {{}};
+
+    // Note: if initial guess for x is nonzero, need to replace b below with (b - A*x)
 #ifdef CHEMGEN_PRECONDITIONER_JACOBI
-	{jacobian} P = inverse_diagonal(A);
-	{jacobian} A_ = apply_diagonal(P, A);
-	{chemical_state} b_ = apply_diagonal(P, b);
-    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
-#ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
-    SpeciesJacobian A_ = A;
-    Species b_ = apply_gauss_seidel(A, b);
-    Species r = b_ - (A_ * x); // preconditioned residual
+	{chemical_state} diag_inv = inverse_diagonal(A);
+    {chemical_state} r = diag_inv * (b);
+#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+    {chemical_state} r = apply_gauss_seidel(A, b);
 #ifdef CHEMGEN_PRECONDITIONER_NN //forJay
     SpeciesJacobian A_ = A;
     std::array<{scalar}, n_variables * n_variables> A_flat = flatten_jacobian(A);
@@ -187,9 +134,7 @@ gmres_solve({jacobian_parameter} A,
     // SpeciesJacobian U = unflatten_jacobian(U_flat);
     // Species r = L * ( U * (b - A * x));
 #else
-	{jacobian} A_ = A;
-	{chemical_state} b_ = b;
-    {chemical_state} r = b_ - (A_ * x); // preconditioned residual
+	{chemical_state} r = b;
 #endif
 
 	{scalar} norm2_r = norm2(r);
@@ -213,20 +158,17 @@ gmres_solve({jacobian_parameter} A,
     {{
 		final_iter = j;
 
-        {chemical_state} w;
+        {chemical_state} w = A * V[j];
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+        w = diag_inv * w;
+#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+        w = apply_gauss_seidel(A, w);
+#endif
+
         #ifdef CHEMGEN_PRECONDITIONER_NN
         {
             w = P * (A * V[j]);
         }
-        #ifdef CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL
-        {
-            w = apply_gauss_seidel(A, A * V[j]);
-        }
-        #else
-        {
-            w = A_ * V[j];
-        }
-            
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
         {{
@@ -284,6 +226,8 @@ gmres_solve({jacobian_parameter} A,
     {{
         // std::cout << "# GMRES iterations = " << final_iter + 1 << std::endl;
     }}
+
+    n_gmres_iter_total += final_iter + 1;
 
     return result;
 }}

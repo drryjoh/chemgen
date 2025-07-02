@@ -5,16 +5,13 @@
 */
 
 {device_option}
-{chemical_state} 
-sdirk2({chemical_state} y,  
-       {scalar_parameter} dt, 
-    //    std::chrono::duration<double>& NN_total_time, //forJay
-    //    std::chrono::duration<double>& P_total_time, //forJay
-    //    int& cvs_iter, //forJay
-       {scalar} newton_tol = 1e-6, 
-       {index}  max_iter = 5,
-       {scalar} linear_abs_tol = 1e-8,
-       {scalar} linear_rel_tol = 1e-4)
+{chemical_state}
+sdirk2({chemical_state} y,
+       {scalar_parameter} dt,
+       {index} &n_gmres_iter_total,
+       {scalar} abs_newton_tol = newton_abs_tol_default,
+       {scalar} rel_newton_tol = newton_rel_tol_default,
+       {index}  max_iter = newton_iter_max_default)
 {{
         {chemical_state} y_init = y;
         {scalar} gamma = 1.0 - 1.0 / sqrt_gen({scalar}(2));
@@ -30,19 +27,18 @@ sdirk2({chemical_state} y,
 
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k1;
-            if (norm2(res) < newton_tol)
 
-            {{
-                break;
-            }};
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
-            // {chemical_state} dk = gmres_solve(J, res, NN_total_time, P_total_time, cvs_iter, linear_abs_tol, linear_rel_tol); //forJay
+            {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
             k1 = k1 + dk;
+            if (error_norm(dk, k1, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                break;
+            }};
         }}
 
         //stage2
@@ -53,33 +49,32 @@ sdirk2({chemical_state} y,
             {scalar} temperature_ = temperature(y[0], y_stage);
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k2;
-            if (norm2(res) < newton_tol)
-            {{
-                break;
-            }};
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
-            // {chemical_state} dk = gmres_solve(J, res, NN_total_time, P_total_time, cvs_iter, linear_abs_tol, linear_rel_tol); //forJay
+            {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
             k2 = k2 + dk;
+            if (error_norm(dk, k2, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                break;
+            }};
         }}
 
-        return 
+        return
         y_init + scale_gen(dt * one_minus_gamma, k1) + scale_gen(gamma * dt, k2);
 }}
 
 
 {device_option}
-{chemical_state} 
-sdirk4({chemical_state} y,  
-       {scalar_parameter} dt, 
-       {scalar} newton_tol = 1e-6,
-       {index}  max_iter = 5,
-       {scalar} linear_abs_tol = 1e-8,
-       {scalar} linear_rel_tol = 1e-4)
+{chemical_state}
+sdirk4({chemical_state} y,
+       {scalar_parameter} dt,
+       {index} &n_gmres_iter_total,
+       {scalar} abs_newton_tol = newton_abs_tol_default,
+       {scalar} rel_newton_tol = newton_rel_tol_default,
+       {index}  max_iter = newton_iter_max_default)
 {{
         {scalar} gamma = .26666666666666666666666666666666670;
         {scalar} a11 = .26666666666666666666666666666666670;
@@ -120,71 +115,71 @@ sdirk4({chemical_state} y,
             {scalar} temperature_ = temperature(y[0], y_stage);
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k1;
-            if (norm2(res) < newton_tol)
-            {{
-                break;
-            }};
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk =  gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk =  gmres_solve(J, res, n_gmres_iter_total);
             #endif
             k1 = k1 + dk;
+            if (error_norm(dk, k1, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                break;
+            }};
         }}
 
         /*
         # Stage 2 confirmed
         */
         k2 = k1;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (one_minus_gamma * k1 + gamma * k2)
             {chemical_state} y_stage = y_init + scale_gen(dt, scale_gen(a21, k1) + scale_gen(gamma, k2));
             {scalar} temperature_ = temperature(y[0], y_stage);
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k2;
-            if (norm2(res) < newton_tol)
-            {{
-                break;
-            }};
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
             k2 = k2 + dk;
+            if (error_norm(dk, k2, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                break;
+            }};
         }}
         /*
-        #stage 3 
+        #stage 3
         */
         k3 = k2;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (a31 * k[0] + a32 * k[1] + gamma * k[2])
             {chemical_state} y_stage = y_init + scale_gen(dt, scale_gen(a31, k1) + scale_gen(a32, k2) + scale_gen(gamma, k3));
             {scalar} temperature_ = temperature(y[0], y_stage);
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k3;
-            if (norm2(res) < newton_tol)
-            {{
-                break;
-            }};
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
             k3 = k3 + dk;
+            if (error_norm(dk, k3, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                break;
+            }};
         }}
 
         /*
         stage 4
         */
         k4 = k3;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + gamma * k[3])
             {chemical_state} y_stage = y_init +
@@ -192,25 +187,25 @@ sdirk4({chemical_state} y,
             {scalar} temperature_ = temperature(y[0], y_stage);
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k4;
-            if (norm2(res) < newton_tol)
-            {{
-                break;
-            }};
 
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
             k4 = k4 + dk;
+            if (error_norm(dk, k4, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                break;
+            }};
         }}
 
         /*
         stage 5
         */
         k5 = k4;
-        for (int iter = 0; iter < 5; ++iter) 
+        for (int iter = 0; iter < max_iter; ++iter)
         {{
             //y_stage = yn + dt * (a41 * k[0] + a42 * k[1] + a43 * k[2] + gamma * k[3])
             {chemical_state} y_stage = y_init +
@@ -218,23 +213,22 @@ sdirk4({chemical_state} y,
             {scalar} temperature_ = temperature(y[0], y_stage);
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k5;;
-            if (norm2(res) < newton_tol)
-            {{
-                break;
-            }};
             {jacobian_eigen} J = source_jacobian(y_stage, temperature_, -gamma*dt, 1);
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
-            {chemical_state} dk = gmres_solve(J, res, linear_abs_tol, linear_rel_tol);
+            {chemical_state} dk = gmres_solve(J, res, n_gmres_iter_total);
             #endif
 
 
             k5 = k5 + dk;
+            if (error_norm(dk, k5, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                break;
+            }};
         }}
 
-
-        return 
+        return
         y_init + scale_gen(dt, (scale_gen(b1, k1) + scale_gen(b2, k2) + scale_gen(b3, k3) + scale_gen(b4, k4) + scale_gen(b5, k5)));
 }}
 

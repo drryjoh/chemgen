@@ -1,0 +1,7 @@
+*
+!.gitignore
+!*.png
+!*.py
+!*.sh
+!*.yaml
+!chem_out.txt

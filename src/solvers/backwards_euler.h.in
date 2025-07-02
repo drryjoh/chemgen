@@ -2,14 +2,10 @@
 {chemical_state} 
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt,
-                // std::chrono::duration<double>& NN_total_time, //forJay
-                // std::chrono::duration<double>& P_total_time, //forJay
-                // int& cvs_iter, //forJay
-                {scalar} abs_newton_tol = 1e-10,                  
-                {scalar} rel_newton_tol = 1e-10, 
-                {index}  max_iter = 5,
-                {scalar} linear_abs_tol = 1e-10,
-                {scalar} linear_rel_tol = 1e-10)
+                {index}  &n_gmres_iter_total,
+                {scalar} abs_newton_tol = newton_abs_tol_default,
+                {scalar} rel_newton_tol = newton_rel_tol_default,
+                {index}  max_iter = newton_iter_max_default)
 {{
         {chemical_state} y_init = y;
         {chemical_state} y_guess = y;
@@ -26,23 +22,20 @@ backwards_euler({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dy = invert_jacobian(A) * res;
             #else
-            {chemical_state} dy = gmres_solve(A, res, linear_abs_tol, linear_rel_tol);
-            // {chemical_state} dy = gmres_solve(A, res, NN_total_time, P_total_time, cvs_iter, linear_abs_tol, linear_rel_tol); //forJay
+            {chemical_state} dy = gmres_solve(A, res, n_gmres_iter_total);
             #endif
 
             //Increment
             y_guess = y_guess + dy;
 
-            {scalar} dy_norm = norm2(dy);
-            {scalar} y_norm  = norm2(y_guess);
-            if (dy_norm < abs_newton_tol || dy_norm / (y_norm + 1e-20) < rel_newton_tol)
+            if (error_norm(dy, y_guess, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
-                std::cout << "# Newton iterations = " << iter + 1 << std::endl;
+                // std::cout << "# Newton iterations = " << iter + 1 << std::endl;
                 return y_guess;
             }}
         }}
 
-        std::cout << "Newton solve did not converge!" << std::endl;
+        // std::cout << "Newton solve did not converge!" << std::endl;
 
         return y_guess; //sets energy to zero to signal integration broke
 }}

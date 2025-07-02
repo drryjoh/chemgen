@@ -167,22 +167,8 @@ def main():
         generate_chemistry_solver = False
         print("Not generating with a chemgen chemistry solver.")
 
-    preconditioner = ""
-    if chemistry_solver_preconditioner and chemistry_solver:
-
-        if chemistry_solver_preconditioner.lower() == "none":
-            print("none was specified for solver: preconditioner in configuration file, no preconditioner will be used")
-            preconditioner = ""
-        elif chemistry_solver_preconditioner.lower() == "gauss_seidel":
-            preconditioner = "#define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL"
-        elif chemistry_solver_preconditioner.lower() == "jacobi":
-            preconditioner = "#define CHEMGEN_PRECONDITIONER_JACOBI"
-        else:
-            print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
-            exit()
-
     eigen = ""
-    eigen_sparse = ""
+    eigen_sparse = False
     if chemistry_solver_eigen and chemistry_solver:
         if chemistry_solver_eigen:
             eigen = "#define CHEMGEN_EIGEN"
@@ -192,6 +178,33 @@ def main():
     if eigen_sparse:
         print("Running with sparse data structures!")
         args.get_sparsity = True
+
+    preconditioner = ""
+    if chemistry_solver_preconditioner and chemistry_solver:
+        if chemistry_solver_preconditioner.lower() == "none":
+            print("none was specified for solver: preconditioner in configuration file, no preconditioner will be used")
+            preconditioner = ""
+
+        elif chemistry_solver_preconditioner.lower() == "gauss_seidel":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL"
+            if chemistry_solver_eigen:
+                raise NotImplementedError("gauss_seidel preconditioner not compatible with eigen")
+
+        elif chemistry_solver_preconditioner.lower() == "jacobi":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_JACOBI"
+
+        elif chemistry_solver_preconditioner.lower() == "custom":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_CUSTOM"
+            if not eigen:
+                raise NotImplementedError("custom preconditioner requires eigen")
+
+        elif chemistry_solver_preconditioner.lower() == "ilu":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_ILU"
+            if not eigen_sparse:
+                raise NotImplementedError("gauss_seidel preconditioner requires sparse eigen")
+        else:
+            print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
+            exit()
 
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
@@ -244,6 +257,10 @@ def main():
             headers.remove("chemical_state_functions.h")
             headers.append("chemical_state_functions.h")
 
+        if "default_parameters.h" in headers:
+            headers.remove("default_parameters.h")
+            headers.append("default_parameters.h")
+
         if "rk4.h" in headers:
             headers.remove("rk4.h")
             headers.append("rk4.h")
@@ -267,6 +284,9 @@ def main():
         if "yass.h" in headers:
             headers.remove("yass.h")
             headers.append("yass.h")
+
+        if "custom_preconditioners_eigen.h" in headers:
+            headers.remove("custom_preconditioners_eigen.h")
 
         if args.custom_test:
             try:

@@ -4,7 +4,7 @@ from .headers import *
 from .configuration import *
 from .thermo_chemistry import *
 from .write import *
-from .write_eigen_functions import *
+from .write_jacobian_helpers import *
 import sys
 
 def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration):
@@ -171,21 +171,15 @@ def add_to_jacobian_all(variable, configuration, indexes_of_species_in_reaction,
             running_text.append(jacobian_all_text_eigen(configuration, species_index+1, f"scale_gen({stoichiometric_production[species_index]}, {variable})"))
     return ''.join(running_text)
 
-def add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, n_species, configuration, sparsity_pattern):
+def add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, n_species, configuration, temperature_equation, sparsity_pattern):
     running_text = []
     for i, species_index in enumerate(indexes_of_species_in_reaction):
         if stoichiometric_production[species_index]!=0:
             # will be modified later
             running_text.append(f"        dsource_species_dtemperature_[{species_index}] += {stoichiometric_production[species_index]}*drate_of_progress_{reaction_index}_dtemperature;\n")
-            if sparsity_pattern is not None:
+            if temperature_equation and sparsity_pattern is not None:
+                # if not temperature_equation, then row is fully dense (excluding first column for internal energy) due to dtemperature_dspecies term
                 sparsity_pattern[species_index+1][0] += 1
-    return ''.join(running_text)
-
-def add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration):
-    running_text = []
-    for i, species_index in enumerate(indexes_of_species_in_reaction):
-        if stoichiometric_production[species_index]!=0:
-            running_text.append(jacobian_all_text_eigen(configuration, species_index+1, f"scale_gen({stoichiometric_production[species_index]}*drate_of_progress_{reaction_index}_dtemperature, dtemperature_dspecies_)"))
     return ''.join(running_text)
 
 def create_drate_of_progress_i_dtemperature(reaction_index, forward_rate, backward_rate, is_reversible, configuration):
@@ -227,8 +221,7 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
 
                 formatted_text += """
 {jacobian_temperature}
-""".format(jacobian_temperature=(add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, gas.n_species, configuration, sparsity_pattern) if args.temperature_equation \
-                                 else add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration)))
+""".format(jacobian_temperature=(add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, gas.n_species, configuration, args.temperature_equation, sparsity_pattern)))
 
         else:
             formatted_text += """
@@ -295,8 +288,7 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
 
                 formatted_text += """
 {jacobian_temperature}
-""".format(jacobian_temperature=(add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, gas.n_species, configuration, sparsity_pattern) if args.temperature_equation \
-                                 else add_to_jacobian_temperature_all(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, configuration)))
+""".format(jacobian_temperature=(add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, gas.n_species, configuration, args.temperature_equation, sparsity_pattern)))
             else:
                 formatted_text += """
                 // rate_of_progress temperature derivative unused
@@ -338,7 +330,7 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", configuration, species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
     progress_rates_derivatives[reaction_index] = f"\n\n        // Reaction {reaction_index}: {reaction}\n"+formatted_text.replace('1 * ','').replace('1.0*','')
 
-    # Sparsity for add_to_jacobian_all and add_to_jacobian_temperature_all
+    # Sparsity for add_to_jacobian_all and temperature_jacobian
     if sparsity_pattern is not None:
         if not args.ignore_other_species:
             if ("species" in reactions_depend_on[reaction_index]):

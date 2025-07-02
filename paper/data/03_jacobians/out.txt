@@ -1,0 +1,46 @@
+>>> Running ffcm2_h2 with setting: Ignoring Temperature Derivative
+Source Jacobian will be created without temperature dependence
+Processing file: ./ffcm2_h2.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O0
+clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 0.354941 ms
+Analytical Jacobian loop time: 0.0824431 ms
+Ratio: 4.30528 ms
+3.94513e+11
+
+>>> Running ffcm2_h2 with setting: Temperature Equation
+Processing file: ./ffcm2_h2.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O0
+clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 0.633635 ms
+Analytical Jacobian loop time: 0.37078 ms
+Ratio: 1.70893 ms
+nan
+
+>>> Running ffcm2_h2 with setting: Internal Energy
+Processing file: ./ffcm2_h2.yaml
+Not generating with a chemgen chemistry solver.
+building with options: -O0
+clang++ -std=c++17 -O0 -o ./bin/chemgen src/chemgen.cpp
+Compiling C++ files: ['src/chemgen.cpp']
+
+Running tests...
+*** ChemGen ***
+
+Finite difference loop time: 0.833225 ms
+Analytical Jacobian loop time: 0.194619 ms
+Ratio: 4.28131 ms
+-6.62065e+10
+
