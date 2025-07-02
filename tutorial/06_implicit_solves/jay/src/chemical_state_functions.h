@@ -1,4 +1,4 @@
-#define CHEMGEN_TEMPERATURE_EQUATION
+#define CHEMGEN_INTERNAL_ENERGY_EQUATION
 
 
 double
@@ -52,4 +52,4 @@ source_jacobian(const ChemicalState& chemical_state, double temperature, const d
     source_jacobian(get_species(chemical_state), temperature, scaling_factor, diagonal_add);
 }
 
-#undef CHEMGEN_TEMPERATURE_EQUATION
+#undef CHEMGEN_INTERNAL_ENERGY_EQUATION

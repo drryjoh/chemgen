@@ -313,7 +313,7 @@ dinternal_energy_volume_specific_dtemperature(const Species& species,
     return  sum_gen(species * molecular_weights() * species_internal_energy_mass_specific(dtemperature_energy_monomial_dtemperature(temperature)));
 }
 
-#define CHEMGEN_TEMPERATURE_EQUATION
+#define CHEMGEN_INTERNAL_ENERGY_EQUATION
 
 #if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
 
@@ -364,4 +364,4 @@ dspecific_heat_constant_volume_volume_specific_dspecies(const Species& species, 
 }
 #endif
 
-#undef CHEMGEN_TEMPERATURE_EQUATION
+#undef CHEMGEN_INTERNAL_ENERGY_EQUATION

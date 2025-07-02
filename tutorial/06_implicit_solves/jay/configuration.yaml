@@ -81,3 +81,5 @@ solver:
   preconditioner: jacobi
   eigen: on
   eigen_sparse: on
+
+# python3 /Users/jsampa/Code/chemgen/bin/chemgen.py FFCM2_model.yaml . --custom-test custom_test.py --compile --temperature-equation --ignore-other-species

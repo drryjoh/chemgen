@@ -51,7 +51,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {
 #include "rosenbroc.h"
 #include "yass.h"
 
-#define CHEMGEN_TEMPERATURE_EQUATION
+#define CHEMGEN_INTERNAL_ENERGY_EQUATION
 
 auto read_scalar_or_default = [](const YAML::Node& node, const std::string& key, double default_value) 
 {
@@ -343,5 +343,5 @@ main()
     return 0;
 }
 
-#undef CHEMGEN_TEMPERATURE_EQUATION
+#undef CHEMGEN_INTERNAL_ENERGY_EQUATION
             

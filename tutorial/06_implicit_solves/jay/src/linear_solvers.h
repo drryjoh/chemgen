@@ -84,6 +84,10 @@ gmres_solve(const SparseMatrix<double>& A, const ChemicalState& b_, int &n_gmres
 
     GMRES<SparseMatrix<double>, DiagonalPreconditioner<double>> gmres;
 
+#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+
+    GMRES<SparseMatrix<double>, GaussSeidelPreconditioner<double, SparseMatrix<double>>> gmres;
+
 #elif defined(CHEMGEN_PRECONDITIONER_ILU)
 
     GMRES<SparseMatrix<double>, IncompleteLUT<double>> gmres;

@@ -3071,66 +3071,16 @@
         return net_production_rates;
     }
             
-            double
-            species_internal_energy_mole_source_sum(const Species& species, const double& temperature) 
+            double source_energy(const Species& species, const double& temperature) 
             {
-                return sum_gen(molecular_weights() * multiply(species_internal_energy_mass_specific(temperature), source_species(species, temperature)));
+                return double(0);
             }
-
-            
-            double
-            temperature_source(const double& temperature, const Species& species) 
-            {
-                return
-                -divide(species_internal_energy_mole_source_sum(species, temperature),
-                        specific_heat_constant_volume_volume_specific(species, temperature));
-            }
-
-            
-            double
-            source_energy(const Species& species, const double& temperature) 
-            {
-                return temperature_source(temperature, species);
-            }
-            
         
         ChemicalState source(const Species& species, const double& temperature) 
         {
             return set_chemical_state(source_energy(species, temperature), source_species(species, temperature));
         }
 
-        
-        double
-        dspecies_internal_energy_mole_source_sum_dtemperature(const Species& species, const double& temperature, const Species& dsource_species_dtemperature_) 
-        {
-            return sum_gen(molecular_weights() * multiply_chain(species_internal_energy_mass_specific(temperature),
-                                                              dspecies_internal_energy_mass_specific_dtemperature(temperature),
-                                                              source_species(species, temperature),
-                                                              dsource_species_dtemperature_));
-        }
-
-        
-        double
-        dtemperature_source_dtemperature(const double& temperature, const Species& species, const double& dspecies_internal_energy_mole_source_sum_dtemperature_) 
-        {
-            return
-            -divide_chain(species_internal_energy_mole_source_sum(species, temperature),
-                          dspecies_internal_energy_mole_source_sum_dtemperature_,
-                          specific_heat_constant_volume_volume_specific(species, temperature),
-                          dspecific_heat_constant_volume_volume_specific_dtemperature(species, temperature));
-        }
-
-        
-        Species
-        dtemperature_source_dspecies(const double& temperature, const Species& species, const Species& dspecies_internal_energy_mole_source_sum_dspecies_) 
-        {
-            double alpha = species_internal_energy_mole_source_sum(species, temperature);
-            double beta = specific_heat_constant_volume_volume_specific(species, temperature);
-
-            return
-            scale_gen(-inv_gen(beta), dspecies_internal_energy_mole_source_sum_dspecies_) + scale_gen(divide(alpha, pow2(beta)), dspecific_heat_constant_volume_volume_specific_dspecies(species, temperature));
-        }
-        
         void update_dsource_species_dtemperature_reaction_0(Species& dsource_species_dtemperature_,
                                                            const Species& species,
                                                            const double& temperature,
@@ -38404,7 +38354,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(2, 1, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 1, 2.0*drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[1] - divide(pow_gen2(species[0]), equilibrium_constant_5),
+                  dforward_reaction_5_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(2.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_6(std::vector<Triplet_>& jacobian_triplets,
@@ -38438,7 +38395,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(2, 1, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 1, 2.0*drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[1] - divide(pow_gen2(species[0]), equilibrium_constant_6),
+                  dforward_reaction_6_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(2.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_7(std::vector<Triplet_>& jacobian_triplets,
@@ -38472,7 +38436,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(2, 1, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 1, 2.0*drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[1] - divide(pow_gen2(species[0]), equilibrium_constant_7),
+                  dforward_reaction_7_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(2.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_8(std::vector<Triplet_>& jacobian_triplets,
@@ -38506,7 +38477,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(3, 4, -2.0*drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(4, 4, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[2]) - divide(species[3], equilibrium_constant_8),
+                  dforward_reaction_8_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 3, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_9(std::vector<Triplet_>& jacobian_triplets,
@@ -38540,7 +38518,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(3, 4, -2.0*drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(4, 4, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[2]) - divide(species[3], equilibrium_constant_9),
+                  dforward_reaction_9_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 3, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_10(std::vector<Triplet_>& jacobian_triplets,
@@ -38574,7 +38559,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(3, 4, -2.0*drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(4, 4, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[2]) - divide(species[3], equilibrium_constant_10),
+                  dforward_reaction_10_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 3, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_11(std::vector<Triplet_>& jacobian_triplets,
@@ -38614,7 +38606,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(3, 5, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(5, 5, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[2] - divide(species[4], equilibrium_constant_11),
+                  dforward_reaction_11_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 3, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_12(std::vector<Triplet_>& jacobian_triplets,
@@ -38654,7 +38654,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 5, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(5, 5, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[5] - divide(species[0] * species[4], equilibrium_constant_12),
+                  dforward_reaction_12_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_13(std::vector<Triplet_>& jacobian_triplets,
@@ -38694,7 +38702,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 5, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(5, 5, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[5] - divide(species[0] * species[4], equilibrium_constant_13),
+                  dforward_reaction_13_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_14(std::vector<Triplet_>& jacobian_triplets,
@@ -38734,7 +38750,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(4, 7, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(7, 7, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[3] - divide(species[6], equilibrium_constant_14),
+                  dforward_reaction_14_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 7, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_15(std::vector<Triplet_>& jacobian_triplets,
@@ -39104,7 +39128,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(8, 5, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(5, 5, 2.0*drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[7] - divide(pow_gen2(species[4]), equilibrium_constant_23),
+                  dforward_reaction_23_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 8, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(2.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_24(std::vector<Triplet_>& jacobian_triplets,
@@ -39369,7 +39400,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(3, 19, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(19, 19, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[17] * species[2] - divide(species[18], equilibrium_constant_29),
+                  dforward_reaction_29_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 3, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 19, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_30(std::vector<Triplet_>& jacobian_triplets,
@@ -39589,7 +39628,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(18, 18, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 18, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[19] - divide(species[17] * species[0], equilibrium_constant_34),
+                  dforward_reaction_34_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 20, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_35(std::vector<Triplet_>& jacobian_triplets,
@@ -40160,7 +40207,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(2, 16, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 16, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[12] * species[1] - divide(species[15], equilibrium_constant_47),
+                  dforward_reaction_47_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 13, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_48(std::vector<Triplet_>& jacobian_triplets,
@@ -40416,7 +40471,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(18, 31, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(31, 31, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[12] * species[17] - divide(species[30], equilibrium_constant_53),
+                  dforward_reaction_53_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 13, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 31, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_54(std::vector<Triplet_>& jacobian_triplets,
@@ -40501,7 +40564,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 16, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 16, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[13] * species[0] - divide(species[15], equilibrium_constant_55),
+                  dforward_reaction_55_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 14, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_56(std::vector<Triplet_>& jacobian_triplets,
@@ -41432,7 +41503,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(6, 24, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(24, 24, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[14] * species[5] - divide(species[23], equilibrium_constant_78),
+                  dforward_reaction_78_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 15, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 24, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_79(std::vector<Triplet_>& jacobian_triplets,
@@ -41519,7 +41598,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(2, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[14] * species[5] - divide(species[20] * species[1], equilibrium_constant_80),
+                  dforward_reaction_80_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 15, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_81(std::vector<Triplet_>& jacobian_triplets,
@@ -41723,7 +41811,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(20, 21, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[19] - divide(species[20], equilibrium_constant_85),
+                  dforward_reaction_85_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 20, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_86(std::vector<Triplet_>& jacobian_triplets,
@@ -41763,7 +41859,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(18, 18, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(2, 18, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[20] - divide(species[17] * species[1], equilibrium_constant_86),
+                  dforward_reaction_86_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_87(std::vector<Triplet_>& jacobian_triplets,
@@ -41833,6 +41937,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[20], dforward_reaction_88_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_88;
         jacobian_triplets.push_back(Triplet_(21, 21, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(18, 21, drate_of_progress_dspecies));
@@ -42355,7 +42466,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 17, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(17, 17, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[0] - divide(species[16], equilibrium_constant_100),
+                  dforward_reaction_100_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 17, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_101(std::vector<Triplet_>& jacobian_triplets,
@@ -42476,7 +42595,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(5, 24, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(24, 24, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[4] - divide(species[23], equilibrium_constant_103),
+                  dforward_reaction_103_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 24, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_104(std::vector<Triplet_>& jacobian_triplets,
@@ -42571,7 +42698,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(15, 15, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(6, 15, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[4] - divide(species[14] * species[5], equilibrium_constant_105),
+                  dforward_reaction_105_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 15, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_106(std::vector<Triplet_>& jacobian_triplets,
@@ -42621,7 +42757,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(2, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[4] - divide(species[20] * species[1], equilibrium_constant_106),
+                  dforward_reaction_106_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_107(std::vector<Triplet_>& jacobian_triplets,
@@ -43015,7 +43160,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 30, -2.0*drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(30, 30, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[15]) - divide(species[29], equilibrium_constant_115),
+                  dforward_reaction_115_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 30, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_116(std::vector<Triplet_>& jacobian_triplets,
@@ -43057,7 +43209,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(29, 29, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 29, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[15]) - divide(species[28] * species[0], equilibrium_constant_116),
+                  dforward_reaction_116_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_117(std::vector<Triplet_>& jacobian_triplets,
@@ -43187,7 +43347,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[22] - divide(species[20] * species[0], equilibrium_constant_119),
+                  dforward_reaction_119_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 23, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_120(std::vector<Triplet_>& jacobian_triplets,
@@ -43227,7 +43395,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 24, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(24, 24, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[22] * species[0] - divide(species[23], equilibrium_constant_120),
+                  dforward_reaction_120_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 23, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 24, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_121(std::vector<Triplet_>& jacobian_triplets,
@@ -43754,7 +43930,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[21] - divide(species[20] * species[0], equilibrium_constant_132),
+                  dforward_reaction_132_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 22, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_133(std::vector<Triplet_>& jacobian_triplets,
@@ -43794,7 +43978,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 24, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(24, 24, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[21] * species[0] - divide(species[23], equilibrium_constant_133),
+                  dforward_reaction_133_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 22, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 24, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_134(std::vector<Triplet_>& jacobian_triplets,
@@ -45438,7 +45630,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(4, 37, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(37, 37, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[3] - divide(species[36], equilibrium_constant_170),
+                  dforward_reaction_170_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 37, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_171(std::vector<Triplet_>& jacobian_triplets,
@@ -45535,7 +45735,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(23, 23, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(5, 23, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[37] - divide(species[22] * species[4], equilibrium_constant_173),
+                  dforward_reaction_173_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 38, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 23, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_174(std::vector<Triplet_>& jacobian_triplets,
@@ -45731,6 +45939,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[36], dforward_reaction_178_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 37, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_178;
         jacobian_triplets.push_back(Triplet_(37, 37, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(21, 37, drate_of_progress_dspecies));
@@ -46390,6 +46605,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[37], dforward_reaction_194_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 38, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_194;
         jacobian_triplets.push_back(Triplet_(38, 38, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(21, 38, drate_of_progress_dspecies));
@@ -46993,7 +47215,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(26, 36, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(36, 36, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] - divide(species[35], equilibrium_constant_209),
+                  dforward_reaction_209_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 36, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_210(std::vector<Triplet_>& jacobian_triplets,
@@ -47078,7 +47307,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 26, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(26, 26, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[24] * species[0] - divide(species[25], equilibrium_constant_211),
+                  dforward_reaction_211_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 25, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_212(std::vector<Triplet_>& jacobian_triplets,
@@ -47218,7 +47455,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(32, 32, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 32, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[4] - divide(species[31] * species[0], equilibrium_constant_214),
+                  dforward_reaction_214_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 32, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_215(std::vector<Triplet_>& jacobian_triplets,
@@ -47313,7 +47559,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 18, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(18, 18, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[4] - divide(species[15] * species[17], equilibrium_constant_216),
+                  dforward_reaction_216_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_217(std::vector<Triplet_>& jacobian_triplets,
@@ -47553,7 +47808,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(18, 32, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(32, 32, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[13] * species[17] - divide(species[31], equilibrium_constant_222),
+                  dforward_reaction_222_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 14, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 32, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_223(std::vector<Triplet_>& jacobian_triplets,
@@ -48035,7 +48298,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 27, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(27, 27, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[0] - divide(species[26], equilibrium_constant_233),
+                  dforward_reaction_233_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_234(std::vector<Triplet_>& jacobian_triplets,
@@ -48445,7 +48716,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(33, 33, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(3, 33, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[3] - divide(species[32] * species[2], equilibrium_constant_242),
+                  dforward_reaction_242_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 33, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 3, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_243(std::vector<Triplet_>& jacobian_triplets,
@@ -48495,7 +48775,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(26, 26, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(7, 26, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[3] - divide(species[25] * species[6], equilibrium_constant_243),
+                  dforward_reaction_243_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 7, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_244(std::vector<Triplet_>& jacobian_triplets,
@@ -48545,7 +48834,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(20, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[3] - divide(species[20] * species[19], equilibrium_constant_244),
+                  dforward_reaction_244_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 20, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_245(std::vector<Triplet_>& jacobian_triplets,
@@ -48572,6 +48870,15 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[3], dforward_reaction_245_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = multiply(species[26], forward_reaction_245);
         jacobian_triplets.push_back(Triplet_(27, 4, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(4, 4, -drate_of_progress_dspecies));
@@ -48612,6 +48919,15 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[3], dforward_reaction_246_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 20, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = multiply(species[26], forward_reaction_246);
         jacobian_triplets.push_back(Triplet_(27, 4, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(4, 4, -drate_of_progress_dspecies));
@@ -48652,6 +48968,15 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[3], dforward_reaction_247_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 31, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = multiply(species[26], forward_reaction_247);
         jacobian_triplets.push_back(Triplet_(27, 4, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(4, 4, -drate_of_progress_dspecies));
@@ -48715,7 +49040,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(32, 32, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(5, 32, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[3] - divide(species[31] * species[4], equilibrium_constant_248),
+                  dforward_reaction_248_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 32, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_249(std::vector<Triplet_>& jacobian_triplets,
@@ -48845,7 +49179,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(32, 32, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 32, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[32] - divide(species[31] * species[0], equilibrium_constant_251),
+                  dforward_reaction_251_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 33, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 32, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_252(std::vector<Triplet_>& jacobian_triplets,
@@ -48885,7 +49227,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 18, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(18, 18, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[32] - divide(species[15] * species[17], equilibrium_constant_252),
+                  dforward_reaction_252_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 33, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_253(std::vector<Triplet_>& jacobian_triplets,
@@ -48925,7 +49275,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 34, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(34, 34, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[32] * species[0] - divide(species[33], equilibrium_constant_253),
+                  dforward_reaction_253_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 33, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_254(std::vector<Triplet_>& jacobian_triplets,
@@ -49335,7 +49693,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 18, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(18, 18, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[34] - divide(species[15] * species[17], equilibrium_constant_263),
+                  dforward_reaction_263_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 35, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_264(std::vector<Triplet_>& jacobian_triplets,
@@ -49375,7 +49741,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 34, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(34, 34, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[34] * species[0] - divide(species[33], equilibrium_constant_264),
+                  dforward_reaction_264_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 35, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_265(std::vector<Triplet_>& jacobian_triplets,
@@ -49625,6 +49999,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[34], dforward_reaction_270_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 35, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_270;
         jacobian_triplets.push_back(Triplet_(35, 35, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 35, drate_of_progress_dspecies));
@@ -49796,7 +50177,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(5, 41, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(41, 41, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[4] - divide(species[40], equilibrium_constant_274),
+                  dforward_reaction_274_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 41, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_275(std::vector<Triplet_>& jacobian_triplets,
@@ -50281,7 +50670,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 28, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(28, 28, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[0] - divide(species[27], equilibrium_constant_286),
+                  dforward_reaction_286_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_287(std::vector<Triplet_>& jacobian_triplets,
@@ -50321,7 +50718,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(2, 36, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(36, 36, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] - divide(species[1] * species[35], equilibrium_constant_287),
+                  dforward_reaction_287_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 36, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_288(std::vector<Triplet_>& jacobian_triplets,
@@ -50686,7 +51091,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[4] - divide(species[20] * species[15], equilibrium_constant_295),
+                  dforward_reaction_295_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_296(std::vector<Triplet_>& jacobian_triplets,
@@ -50736,7 +51150,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(34, 34, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 34, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[4] - divide(species[33] * species[0], equilibrium_constant_296),
+                  dforward_reaction_296_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_297(std::vector<Triplet_>& jacobian_triplets,
@@ -50786,7 +51209,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(42, 42, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 42, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[4] - divide(species[41] * species[0], equilibrium_constant_297),
+                  dforward_reaction_297_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 42, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_298(std::vector<Triplet_>& jacobian_triplets,
@@ -50961,7 +51393,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(17, 18, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(18, 18, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[33] - divide(species[16] * species[17], equilibrium_constant_301),
+                  dforward_reaction_301_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 17, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_302(std::vector<Triplet_>& jacobian_triplets,
@@ -51001,7 +51441,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 20, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(20, 20, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[33] - divide(species[15] * species[19], equilibrium_constant_302),
+                  dforward_reaction_302_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 20, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_303(std::vector<Triplet_>& jacobian_triplets,
@@ -51432,7 +51880,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 42, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(42, 42, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[32] * species[0] - divide(species[41], equilibrium_constant_312),
+                  dforward_reaction_312_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 33, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 42, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_313(std::vector<Triplet_>& jacobian_triplets,
@@ -51472,7 +51928,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 42, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(42, 42, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[34] * species[0] - divide(species[41], equilibrium_constant_313),
+                  dforward_reaction_313_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 35, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 42, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_314(std::vector<Triplet_>& jacobian_triplets,
@@ -51512,7 +51976,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(20, 42, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(42, 42, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[19] - divide(species[41], equilibrium_constant_314),
+                  dforward_reaction_314_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 20, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 42, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_315(std::vector<Triplet_>& jacobian_triplets,
@@ -52397,7 +52869,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 29, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(29, 29, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[0] - divide(species[28], equilibrium_constant_335),
+                  dforward_reaction_335_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_336(std::vector<Triplet_>& jacobian_triplets,
@@ -52968,7 +53448,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 30, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(30, 30, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[28] * species[0] - divide(species[29], equilibrium_constant_348),
+                  dforward_reaction_348_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 30, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_349(std::vector<Triplet_>& jacobian_triplets,
@@ -53370,7 +53858,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(34, 34, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 34, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[45] - divide(species[33] * species[0], equilibrium_constant_357),
+                  dforward_reaction_357_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 46, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_358(std::vector<Triplet_>& jacobian_triplets,
@@ -53412,7 +53908,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(42, 42, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 42, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[45] - divide(species[41] * species[0], equilibrium_constant_358),
+                  dforward_reaction_358_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 46, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 42, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_359(std::vector<Triplet_>& jacobian_triplets,
@@ -53454,7 +53958,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(21, 21, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 21, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[45] - divide(species[20] * species[15], equilibrium_constant_359),
+                  dforward_reaction_359_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 46, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_360(std::vector<Triplet_>& jacobian_triplets,
@@ -53811,7 +54323,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(5, 45, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(45, 45, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[4] - divide(species[44], equilibrium_constant_367),
+                  dforward_reaction_367_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 45, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_368(std::vector<Triplet_>& jacobian_triplets,
@@ -54247,7 +54767,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(28, 28, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(6, 28, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[43] - divide(species[27] * species[5], equilibrium_constant_377),
+                  dforward_reaction_377_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 44, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_378(std::vector<Triplet_>& jacobian_triplets,
@@ -54287,7 +54815,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(5, 44, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(44, 44, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[28] * species[4] - divide(species[43], equilibrium_constant_378),
+                  dforward_reaction_378_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 44, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_379(std::vector<Triplet_>& jacobian_triplets,
@@ -54327,7 +54863,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 44, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(44, 44, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[21] * species[15] - divide(species[43], equilibrium_constant_379),
+                  dforward_reaction_379_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 22, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 44, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_380(std::vector<Triplet_>& jacobian_triplets,
@@ -55000,6 +55544,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[43], dforward_reaction_395_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 44, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 17, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_395;
         jacobian_triplets.push_back(Triplet_(44, 44, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(21, 44, drate_of_progress_dspecies));
@@ -55045,7 +55596,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(4, 39, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(39, 39, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[28] * species[3] - divide(species[38], equilibrium_constant_396),
+                  dforward_reaction_396_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 39, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_397(std::vector<Triplet_>& jacobian_triplets,
@@ -55085,7 +55644,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(28, 28, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(7, 28, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[38] - divide(species[27] * species[6], equilibrium_constant_397),
+                  dforward_reaction_397_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 39, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 7, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_398(std::vector<Triplet_>& jacobian_triplets,
@@ -55335,6 +55902,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[38], dforward_reaction_404_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 39, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 23, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_404;
         jacobian_triplets.push_back(Triplet_(39, 39, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(21, 39, drate_of_progress_dspecies));
@@ -55477,6 +56051,14 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[39], dforward_reaction_408_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 40, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_408;
         jacobian_triplets.push_back(Triplet_(40, 40, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(21, 40, drate_of_progress_dspecies));
@@ -55704,6 +56286,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[39], dforward_reaction_414_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 40, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_414;
         jacobian_triplets.push_back(Triplet_(40, 40, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(34, 40, drate_of_progress_dspecies));
@@ -56462,7 +57051,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(55, 55, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 55, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[26]) - divide(species[54] * species[15], equilibrium_constant_431),
+                  dforward_reaction_431_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_432(std::vector<Triplet_>& jacobian_triplets,
@@ -56504,7 +57101,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 53, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(53, 53, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[54] * species[0] - divide(species[52], equilibrium_constant_432),
+                  dforward_reaction_432_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_433(std::vector<Triplet_>& jacobian_triplets,
@@ -56554,7 +57159,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(53, 53, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 53, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[15] - divide(species[52] * species[0], equilibrium_constant_433),
+                  dforward_reaction_433_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_434(std::vector<Triplet_>& jacobian_triplets,
@@ -57166,7 +57780,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(53, 54, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(54, 54, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[52] - divide(species[53], equilibrium_constant_447),
+                  dforward_reaction_447_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 54, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_448(std::vector<Triplet_>& jacobian_triplets,
@@ -57208,7 +57829,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 54, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(54, 54, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[54] * species[0] - divide(species[53], equilibrium_constant_448),
+                  dforward_reaction_448_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 54, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_449(std::vector<Triplet_>& jacobian_triplets,
@@ -57295,7 +57924,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(54, 53, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(53, 53, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[53] - divide(species[52] * species[0], equilibrium_constant_450),
+                  dforward_reaction_450_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 54, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_451(std::vector<Triplet_>& jacobian_triplets,
@@ -57390,7 +58026,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 54, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(54, 54, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[15] - divide(species[0] * species[53], equilibrium_constant_452),
+                  dforward_reaction_452_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 54, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_453(std::vector<Triplet_>& jacobian_triplets,
@@ -58466,6 +59111,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[58], dforward_reaction_479_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 59, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_479;
         jacobian_triplets.push_back(Triplet_(59, 59, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(28, 59, drate_of_progress_dspecies));
@@ -58585,7 +59237,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 51, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[15] - divide(species[50], equilibrium_constant_482),
+                  dforward_reaction_482_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_483(std::vector<Triplet_>& jacobian_triplets,
@@ -58627,7 +59287,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 51, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[52] * species[0] - divide(species[50], equilibrium_constant_483),
+                  dforward_reaction_483_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_484(std::vector<Triplet_>& jacobian_triplets,
@@ -58669,7 +59337,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(54, 51, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[53] - divide(species[50], equilibrium_constant_484),
+                  dforward_reaction_484_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 54, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_485(std::vector<Triplet_>& jacobian_triplets,
@@ -58719,7 +59395,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[15] - divide(species[50] * species[0], equilibrium_constant_485),
+                  dforward_reaction_485_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_486(std::vector<Triplet_>& jacobian_triplets,
@@ -58814,7 +59499,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[14] - divide(species[50] * species[0], equilibrium_constant_487),
+                  dforward_reaction_487_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 15, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_488(std::vector<Triplet_>& jacobian_triplets,
@@ -58864,7 +59558,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[28] - divide(species[50] * species[15], equilibrium_constant_488),
+                  dforward_reaction_488_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_489(std::vector<Triplet_>& jacobian_triplets,
@@ -59116,6 +59819,14 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[50] * species[4], dforward_reaction_494_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 59, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(2.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = multiply(species[50], forward_reaction_494);
         jacobian_triplets.push_back(Triplet_(51, 5, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(5, 5, -drate_of_progress_dspecies));
@@ -59585,7 +60296,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 52, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(52, 52, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[52] * species[0] - divide(species[51], equilibrium_constant_505),
+                  dforward_reaction_505_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 52, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_506(std::vector<Triplet_>& jacobian_triplets,
@@ -59627,7 +60346,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(54, 52, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(52, 52, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[53] - divide(species[51], equilibrium_constant_506),
+                  dforward_reaction_506_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 54, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 52, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_507(std::vector<Triplet_>& jacobian_triplets,
@@ -59663,7 +60390,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(52, 51, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[51] - divide(species[50], equilibrium_constant_507),
+                  dforward_reaction_507_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 52, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_508(std::vector<Triplet_>& jacobian_triplets,
@@ -60085,7 +60819,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 76, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(76, 76, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[51] - divide(species[0] * species[75], equilibrium_constant_516),
+                  dforward_reaction_516_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 52, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_517(std::vector<Triplet_>& jacobian_triplets,
@@ -60170,7 +60913,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 50, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(50, 50, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[15] - divide(species[49], equilibrium_constant_518),
+                  dforward_reaction_518_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_519(std::vector<Triplet_>& jacobian_triplets,
@@ -60210,7 +60961,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 50, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(50, 50, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[50] * species[0] - divide(species[49], equilibrium_constant_519),
+                  dforward_reaction_519_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_520(std::vector<Triplet_>& jacobian_triplets,
@@ -60252,7 +61011,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(15, 50, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(50, 50, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[14] - divide(species[49], equilibrium_constant_520),
+                  dforward_reaction_520_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 15, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_521(std::vector<Triplet_>& jacobian_triplets,
@@ -60302,7 +61069,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(27, 27, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 27, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[14] - divide(species[26] * species[15], equilibrium_constant_521),
+                  dforward_reaction_521_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 15, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_522(std::vector<Triplet_>& jacobian_triplets,
@@ -60442,7 +61218,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(28, 28, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 28, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[49] * species[0] - divide(species[27] * species[15], equilibrium_constant_524),
+                  dforward_reaction_524_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_525(std::vector<Triplet_>& jacobian_triplets,
@@ -61204,6 +61989,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[59], dforward_reaction_542_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 60, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 59, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 2, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_542;
         jacobian_triplets.push_back(Triplet_(60, 60, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(59, 60, drate_of_progress_dspecies));
@@ -61557,7 +62349,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 49, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(49, 49, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[49] * species[0] - divide(species[48], equilibrium_constant_551),
+                  dforward_reaction_551_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 49, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_552(std::vector<Triplet_>& jacobian_triplets,
@@ -61652,7 +62452,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(29, 29, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 29, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[48] - divide(species[28] * species[15], equilibrium_constant_553),
+                  dforward_reaction_553_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 49, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_554(std::vector<Triplet_>& jacobian_triplets,
@@ -62036,7 +62845,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 48, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(48, 48, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[15] - divide(species[47], equilibrium_constant_562),
+                  dforward_reaction_562_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 48, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_563(std::vector<Triplet_>& jacobian_triplets,
@@ -62078,7 +62895,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 48, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(48, 48, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[49] * species[0] - divide(species[47], equilibrium_constant_563),
+                  dforward_reaction_563_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 48, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_564(std::vector<Triplet_>& jacobian_triplets,
@@ -62173,7 +62998,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(29, 29, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 29, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[47] - divide(species[28] * species[15], equilibrium_constant_565),
+                  dforward_reaction_565_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 48, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_566(std::vector<Triplet_>& jacobian_triplets,
@@ -62557,7 +63391,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 35, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(35, 35, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[56] - divide(species[15] * species[34], equilibrium_constant_574),
+                  dforward_reaction_574_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 57, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 35, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_575(std::vector<Triplet_>& jacobian_triplets,
@@ -63027,7 +63869,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 58, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(58, 58, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[31] * species[15] - divide(species[57], equilibrium_constant_585),
+                  dforward_reaction_585_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 32, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 58, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_586(std::vector<Triplet_>& jacobian_triplets,
@@ -63709,6 +64559,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[55], dforward_reaction_603_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 56, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 30, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 18, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_603;
         jacobian_triplets.push_back(Triplet_(56, 56, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(30, 56, drate_of_progress_dspecies));
@@ -63934,7 +64791,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(29, 29, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 29, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[46] - divide(species[28] * species[15], equilibrium_constant_609),
+                  dforward_reaction_609_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 47, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_610(std::vector<Triplet_>& jacobian_triplets,
@@ -65060,6 +65925,14 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[61], dforward_reaction_635_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 62, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_635;
         jacobian_triplets.push_back(Triplet_(62, 62, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(29, 62, drate_of_progress_dspecies));
@@ -65215,6 +66088,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[61], dforward_reaction_639_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 62, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 56, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_639;
         jacobian_triplets.push_back(Triplet_(62, 62, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(56, 62, drate_of_progress_dspecies));
@@ -65245,6 +66125,14 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[63], dforward_reaction_640_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 64, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_640;
         jacobian_triplets.push_back(Triplet_(64, 64, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 64, drate_of_progress_dspecies));
@@ -65400,6 +66288,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[63], dforward_reaction_644_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 64, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 57, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 6, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_644;
         jacobian_triplets.push_back(Triplet_(64, 64, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(57, 64, drate_of_progress_dspecies));
@@ -65447,7 +66342,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(4, 61, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(61, 61, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[47] * species[3] - divide(species[60], equilibrium_constant_645),
+                  dforward_reaction_645_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 48, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 61, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_646(std::vector<Triplet_>& jacobian_triplets,
@@ -66343,7 +67246,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(4, 63, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(63, 63, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[48] * species[3] - divide(species[62], equilibrium_constant_668),
+                  dforward_reaction_668_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 49, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 63, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_669(std::vector<Triplet_>& jacobian_triplets,
@@ -66595,6 +67506,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[62], dforward_reaction_675_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 63, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 34, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 23, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_675;
         jacobian_triplets.push_back(Triplet_(63, 63, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(34, 63, drate_of_progress_dspecies));
@@ -67543,7 +68461,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(26, 66, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(66, 66, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[24] * species[25] - divide(species[65], equilibrium_constant_698),
+                  dforward_reaction_698_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 25, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 66, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_699(std::vector<Triplet_>& jacobian_triplets,
@@ -67622,7 +68548,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(66, 67, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(67, 67, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[65] - divide(species[0] * species[66], equilibrium_constant_700),
+                  dforward_reaction_700_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 66, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 67, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_701(std::vector<Triplet_>& jacobian_triplets,
@@ -67672,7 +68605,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(26, 36, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(36, 36, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[65] - divide(species[25] * species[35], equilibrium_constant_701),
+                  dforward_reaction_701_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 66, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 36, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_702(std::vector<Triplet_>& jacobian_triplets,
@@ -67714,7 +68656,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(66, 68, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(68, 68, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[65] - divide(species[67], equilibrium_constant_702),
+                  dforward_reaction_702_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 66, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 68, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_703(std::vector<Triplet_>& jacobian_triplets,
@@ -68046,7 +68996,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(26, 67, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(67, 67, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[24] * species[25] - divide(species[66], equilibrium_constant_710),
+                  dforward_reaction_710_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 25, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 67, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_711(std::vector<Triplet_>& jacobian_triplets,
@@ -68133,7 +69091,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(26, 36, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(36, 36, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[66] - divide(species[25] * species[35], equilibrium_constant_712),
+                  dforward_reaction_712_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 67, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 36, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_713(std::vector<Triplet_>& jacobian_triplets,
@@ -68524,7 +69491,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(36, 68, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(68, 68, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[35] - divide(species[67], equilibrium_constant_721),
+                  dforward_reaction_721_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 36, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 68, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_722(std::vector<Triplet_>& jacobian_triplets,
@@ -68566,7 +69541,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(67, 68, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(68, 68, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[66] - divide(species[67], equilibrium_constant_722),
+                  dforward_reaction_722_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 67, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 68, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_723(std::vector<Triplet_>& jacobian_triplets,
@@ -68706,7 +69689,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(68, 68, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(1, 68, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[26] - divide(species[67] * species[0], equilibrium_constant_725),
+                  dforward_reaction_725_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 68, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_726(std::vector<Triplet_>& jacobian_triplets,
@@ -69054,7 +70046,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(27, 69, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(69, 69, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[26] - divide(species[68], equilibrium_constant_733),
+                  dforward_reaction_733_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_734(std::vector<Triplet_>& jacobian_triplets,
@@ -69094,7 +70094,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 69, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(69, 69, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[67] * species[0] - divide(species[68], equilibrium_constant_734),
+                  dforward_reaction_734_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 68, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_735(std::vector<Triplet_>& jacobian_triplets,
@@ -69181,7 +70189,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(69, 27, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(27, 27, 2.0*drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[68] - divide(pow_gen2(species[26]), equilibrium_constant_736),
+                  dforward_reaction_736_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(2.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_737(std::vector<Triplet_>& jacobian_triplets,
@@ -69231,7 +70247,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(55, 55, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 55, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[68] - divide(species[54] * species[15], equilibrium_constant_737),
+                  dforward_reaction_737_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_738(std::vector<Triplet_>& jacobian_triplets,
@@ -69273,7 +70298,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(69, 70, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(70, 70, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[68] - divide(species[0] * species[69], equilibrium_constant_738),
+                  dforward_reaction_738_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_739(std::vector<Triplet_>& jacobian_triplets,
@@ -69705,7 +70737,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(69, 70, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(70, 70, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[68] - divide(species[69], equilibrium_constant_748),
+                  dforward_reaction_748_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_749(std::vector<Triplet_>& jacobian_triplets,
@@ -69747,7 +70786,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(27, 70, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(70, 70, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[25] * species[26] - divide(species[69], equilibrium_constant_749),
+                  dforward_reaction_749_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 26, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_750(std::vector<Triplet_>& jacobian_triplets,
@@ -69787,7 +70834,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 70, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(70, 70, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[67] * species[0] - divide(species[69], equilibrium_constant_750),
+                  dforward_reaction_750_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 68, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_751(std::vector<Triplet_>& jacobian_triplets,
@@ -69837,7 +70892,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(55, 55, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 55, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[69] - divide(species[54] * species[15], equilibrium_constant_751),
+                  dforward_reaction_751_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_752(std::vector<Triplet_>& jacobian_triplets,
@@ -69924,7 +70988,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 70, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(70, 70, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[26]) - divide(species[0] * species[69], equilibrium_constant_753),
+                  dforward_reaction_753_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_754(std::vector<Triplet_>& jacobian_triplets,
@@ -70356,7 +71428,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(55, 55, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 55, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[70] * species[0] - divide(species[54] * species[15], equilibrium_constant_763),
+                  dforward_reaction_763_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 71, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_764(std::vector<Triplet_>& jacobian_triplets,
@@ -70398,7 +71479,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 74, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(74, 74, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[70] * species[0] - divide(species[73], equilibrium_constant_764),
+                  dforward_reaction_764_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 71, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 74, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_765(std::vector<Triplet_>& jacobian_triplets,
@@ -70560,7 +71649,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(27, 72, -2.0*drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(72, 72, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[26]) - divide(species[71], equilibrium_constant_768),
+                  dforward_reaction_768_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 72, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_769(std::vector<Triplet_>& jacobian_triplets,
@@ -70639,7 +71735,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 72, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(72, 72, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[54] * species[15] - divide(species[71], equilibrium_constant_770),
+                  dforward_reaction_770_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 72, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_771(std::vector<Triplet_>& jacobian_triplets,
@@ -70718,7 +71822,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(69, 72, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(72, 72, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[68] - divide(species[71], equilibrium_constant_772),
+                  dforward_reaction_772_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 72, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_773(std::vector<Triplet_>& jacobian_triplets,
@@ -70760,7 +71872,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(70, 72, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(72, 72, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[69] - divide(species[71], equilibrium_constant_773),
+                  dforward_reaction_773_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 72, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_774(std::vector<Triplet_>& jacobian_triplets,
@@ -71786,7 +72906,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(27, 73, -2.0*drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(73, 73, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[26]) - divide(species[72], equilibrium_constant_796),
+                  dforward_reaction_796_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 73, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_797(std::vector<Triplet_>& jacobian_triplets,
@@ -71828,7 +72955,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 73, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(73, 73, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[54] * species[15] - divide(species[72], equilibrium_constant_797),
+                  dforward_reaction_797_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 73, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_798(std::vector<Triplet_>& jacobian_triplets,
@@ -71870,7 +73005,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(69, 73, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(73, 73, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[68] - divide(species[72], equilibrium_constant_798),
+                  dforward_reaction_798_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 69, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 73, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_799(std::vector<Triplet_>& jacobian_triplets,
@@ -71912,7 +73055,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(70, 73, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(73, 73, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[69] - divide(species[72], equilibrium_constant_799),
+                  dforward_reaction_799_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 70, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 73, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_800(std::vector<Triplet_>& jacobian_triplets,
@@ -72463,7 +73614,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 74, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(74, 74, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[54] * species[15] - divide(species[73], equilibrium_constant_812),
+                  dforward_reaction_812_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 55, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 74, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_813(std::vector<Triplet_>& jacobian_triplets,
@@ -73655,7 +74814,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 75, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(75, 75, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[71] * species[0] - divide(species[74], equilibrium_constant_841),
+                  dforward_reaction_841_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 72, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 75, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_842(std::vector<Triplet_>& jacobian_triplets,
@@ -73705,7 +74872,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[74] * species[0] - divide(species[50] * species[15], equilibrium_constant_842),
+                  dforward_reaction_842_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 75, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_843(std::vector<Triplet_>& jacobian_triplets,
@@ -74051,7 +75227,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 76, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(76, 76, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[52] * species[15] - divide(species[75], equilibrium_constant_850),
+                  dforward_reaction_850_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_851(std::vector<Triplet_>& jacobian_triplets,
@@ -74101,7 +75285,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(51, 51, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 51, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[75] - divide(species[50] * species[15], equilibrium_constant_851),
+                  dforward_reaction_851_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_852(std::vector<Triplet_>& jacobian_triplets,
@@ -74297,6 +75490,15 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[75] * species[3], dforward_reaction_856_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 4, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 53, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 21, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 5, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = multiply(species[75], forward_reaction_856);
         jacobian_triplets.push_back(Triplet_(76, 4, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(4, 4, -drate_of_progress_dspecies));
@@ -74401,7 +75603,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(77, 76, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(76, 76, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[76] - divide(species[75], equilibrium_constant_858),
+                  dforward_reaction_858_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 77, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_859(std::vector<Triplet_>& jacobian_triplets,
@@ -74443,7 +75652,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(54, 77, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(77, 77, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[53] - divide(species[76], equilibrium_constant_859),
+                  dforward_reaction_859_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 54, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 77, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_860(std::vector<Triplet_>& jacobian_triplets,
@@ -74485,7 +75702,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(77, 76, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(76, 76, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[76] - divide(species[0] * species[75], equilibrium_constant_860),
+                  dforward_reaction_860_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 77, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_861(std::vector<Triplet_>& jacobian_triplets,
@@ -74535,7 +75759,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 52, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(52, 52, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[76] - divide(species[15] * species[51], equilibrium_constant_861),
+                  dforward_reaction_861_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 77, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 52, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_862(std::vector<Triplet_>& jacobian_triplets,
@@ -74739,7 +75972,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(29, 78, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(78, 78, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[26] * species[28] - divide(species[77], equilibrium_constant_866),
+                  dforward_reaction_866_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 27, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 78, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_867(std::vector<Triplet_>& jacobian_triplets,
@@ -74781,7 +76022,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 78, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(78, 78, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[50] * species[15] - divide(species[77], equilibrium_constant_867),
+                  dforward_reaction_867_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 51, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 78, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_868(std::vector<Triplet_>& jacobian_triplets,
@@ -74823,7 +76072,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 78, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(78, 78, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[74] * species[0] - divide(species[77], equilibrium_constant_868),
+                  dforward_reaction_868_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 75, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 78, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_869(std::vector<Triplet_>& jacobian_triplets,
@@ -75382,7 +76639,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 79, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(79, 79, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[74] * species[0] - divide(species[78], equilibrium_constant_881),
+                  dforward_reaction_881_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 75, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 79, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_882(std::vector<Triplet_>& jacobian_triplets,
@@ -75424,7 +76689,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(76, 79, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(79, 79, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[75] - divide(species[78], equilibrium_constant_882),
+                  dforward_reaction_882_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 79, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_883(std::vector<Triplet_>& jacobian_triplets,
@@ -75862,7 +77135,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(76, 80, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(80, 80, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[75] - divide(species[79], equilibrium_constant_892),
+                  dforward_reaction_892_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 76, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 80, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_893(std::vector<Triplet_>& jacobian_triplets,
@@ -75904,7 +77185,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(77, 80, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(80, 80, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[76] - divide(species[79], equilibrium_constant_893),
+                  dforward_reaction_893_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 77, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 80, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_894(std::vector<Triplet_>& jacobian_triplets,
@@ -75946,7 +77235,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(52, 80, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(80, 80, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[51] - divide(species[79], equilibrium_constant_894),
+                  dforward_reaction_894_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 52, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 80, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_895(std::vector<Triplet_>& jacobian_triplets,
@@ -76086,7 +77383,16 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(50, 50, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(16, 50, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[79] - divide(species[49] * species[15], equilibrium_constant_897),
+                  dforward_reaction_897_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 80, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_898(std::vector<Triplet_>& jacobian_triplets,
@@ -76753,7 +78059,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 81, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(81, 81, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[77] * species[0] - divide(species[80], equilibrium_constant_913),
+                  dforward_reaction_913_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 78, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 81, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_914(std::vector<Triplet_>& jacobian_triplets,
@@ -76793,7 +78107,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(29, 81, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(81, 81, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[27] * species[28] - divide(species[80], equilibrium_constant_914),
+                  dforward_reaction_914_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 81, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_915(std::vector<Triplet_>& jacobian_triplets,
@@ -76833,7 +78155,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(81, 85, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(85, 85, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[80] - divide(species[84], equilibrium_constant_915),
+                  dforward_reaction_915_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 81, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 85, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_916(std::vector<Triplet_>& jacobian_triplets,
@@ -77216,7 +78546,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 82, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(82, 82, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[77] * species[0] - divide(species[81], equilibrium_constant_924),
+                  dforward_reaction_924_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 78, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 82, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_925(std::vector<Triplet_>& jacobian_triplets,
@@ -77256,7 +78594,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 82, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(82, 82, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[78] * species[0] - divide(species[81], equilibrium_constant_925),
+                  dforward_reaction_925_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 79, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 82, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_926(std::vector<Triplet_>& jacobian_triplets,
@@ -77296,7 +78642,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 82, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(82, 82, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[49] * species[15] - divide(species[81], equilibrium_constant_926),
+                  dforward_reaction_926_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 82, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_927(std::vector<Triplet_>& jacobian_triplets,
@@ -77336,7 +78690,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(82, 85, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(85, 85, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[81] - divide(species[84], equilibrium_constant_927),
+                  dforward_reaction_927_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 82, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 85, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_928(std::vector<Triplet_>& jacobian_triplets,
@@ -77899,7 +79261,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(80, 83, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(83, 83, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[79] - divide(species[82], equilibrium_constant_940),
+                  dforward_reaction_940_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 80, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 83, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_941(std::vector<Triplet_>& jacobian_triplets,
@@ -77939,7 +79309,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(16, 83, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(83, 83, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[49] * species[15] - divide(species[82], equilibrium_constant_941),
+                  dforward_reaction_941_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 50, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 83, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_942(std::vector<Triplet_>& jacobian_triplets,
@@ -77979,7 +79357,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(83, 86, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(86, 86, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[82] - divide(species[85], equilibrium_constant_942),
+                  dforward_reaction_942_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 83, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 86, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_943(std::vector<Triplet_>& jacobian_triplets,
@@ -78370,7 +79756,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(1, 80, drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(80, 80, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[83] - divide(species[0] * species[79], equilibrium_constant_951),
+                  dforward_reaction_951_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 84, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 80, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_952(std::vector<Triplet_>& jacobian_triplets,
@@ -78410,7 +79804,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(84, 86, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(86, 86, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[83] - divide(species[85], equilibrium_constant_952),
+                  dforward_reaction_952_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 84, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 86, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_953(std::vector<Triplet_>& jacobian_triplets,
@@ -78846,7 +80248,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(48, 85, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(85, 85, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[47] - divide(species[84], equilibrium_constant_962),
+                  dforward_reaction_962_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 48, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 85, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_963(std::vector<Triplet_>& jacobian_triplets,
@@ -78880,7 +80290,14 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(29, 85, -2.0*drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(85, 85, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(pow_gen2(species[28]) - divide(species[84], equilibrium_constant_963),
+                  dforward_reaction_963_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 29, scale_gen(-2.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 85, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_964(std::vector<Triplet_>& jacobian_triplets,
@@ -79550,7 +80967,15 @@ double drate_of_progress_dspecies  = double(0);
         jacobian_triplets.push_back(Triplet_(49, 86, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(86, 86, drate_of_progress_dspecies));
 
-}
+
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[15] * species[48] - divide(species[85], equilibrium_constant_978),
+                  dforward_reaction_978_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 16, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 49, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 86, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        }
 
 
 void update_jacobian_reaction_979(std::vector<Triplet_>& jacobian_triplets,
@@ -80414,6 +81839,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[93], dforward_reaction_999_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 94, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 28, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 32, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = forward_reaction_999;
         jacobian_triplets.push_back(Triplet_(94, 94, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(28, 94, drate_of_progress_dspecies));
@@ -81626,6 +83058,13 @@ double drate_of_progress_dspecies  = double(0);
         
 
 
+        Species drate_of_progress_dspecies_all_species =
+        scale_gen(species[0] * species[2], dforward_reaction_1032_dspecies);
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 1, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 3, scale_gen(-1.0, drate_of_progress_dspecies_all_species));
+        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, 95, scale_gen(1.0, drate_of_progress_dspecies_all_species));
+
+                        
         drate_of_progress_dspecies = multiply(species[2], forward_reaction_1032);
         jacobian_triplets.push_back(Triplet_(1, 1, -drate_of_progress_dspecies));
         jacobian_triplets.push_back(Triplet_(3, 1, -drate_of_progress_dspecies));
@@ -82397,7 +83836,7 @@ double drate_of_progress_dspecies  = double(0);
         // after J is filled, do J = scaling_factor*J + diagonal_add
         Species net_production_rates = {double(0)};
         std::vector<Triplet_> jacobian_triplets;
-        jacobian_triplets.reserve(18049);
+        jacobian_triplets.reserve(464353);
         double drate_of_progress_dspecies  = double(0);
         double equilibrium_constant  = double(0);
         double dequilibrium_constant_dtemperature = double(0);
@@ -92228,21 +93667,16 @@ double drate_of_progress_dspecies  = double(0);
         update_dsource_species_dtemperature_reaction_1052(dsource_species_dtemperature_, species, temperature, log_temperature, mixture_concentration, pressure_, equilibrium_constant_1052, dequilibrium_constant_1052_dtemperature,dlog_temperature_dtemperature); 
         update_dsource_species_dtemperature_reaction_1053(dsource_species_dtemperature_, species, temperature, log_temperature, mixture_concentration, pressure_, equilibrium_constant_1053, dequilibrium_constant_1053_dtemperature,dlog_temperature_dtemperature); 
 
-        jacobian_triplets.push_back(Triplet_(0, 0, dtemperature_source_dtemperature(temperature, species, dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature, dsource_species_dtemperature_))));
-
-        double specific_heat_constant_volume_volume_specific_ = specific_heat_constant_volume_volume_specific(species, temperature);
-        Species dtemperature_source_dspecies_1 = scale_gen(divide(species_internal_energy_mole_source_sum(species, temperature), pow2(specific_heat_constant_volume_volume_specific_)), dspecific_heat_constant_volume_volume_specific_dspecies(species, temperature));
-
         for (int i = 0; i < n_species; i++)
         {
-            // Derivative of species source terms with respect to temperature
-            jacobian_triplets.push_back(Triplet_(i+1, 0, dsource_species_dtemperature_[i]));
+            for (int j = 0; j < n_species; j++)
+            {
+                // temperature dependence
+                    jacobian_triplets.push_back(Triplet_(i+1, j+1, scale_gen(dsource_species_dtemperature_[i], dtemperature_dspecies_[j])));
 
-            // Only one term (out of two terms) of dtemperature_source_dspecies so the first row is fully allocated after compression
-            // Will update with second term below
-            jacobian_triplets.push_back(Triplet_(0, i+1, dtemperature_source_dspecies_1[i]));
+            }
         }
-        
+
         // Divide diagonal_add by scaling_factor here since we will do J = scaling_factor*J at the end
         double diagonal_add_ = divide(diagonal_add, scaling_factor);
 
@@ -92257,51 +93691,8 @@ double drate_of_progress_dspecies  = double(0);
             }
         }
 
-        
         SparseMatrix<double> jacobian_net_production_rates(n_variables, n_variables);
         jacobian_net_production_rates.setFromTriplets(jacobian_triplets.begin(), jacobian_triplets.end());
-
-        Species dspecies_internal_energy_mole_source_sum_dspecies_ = {double(0)};
-        Species species_internal_energy_mole_ = molecular_weights() * species_internal_energy_mass_specific(temperature);
-
-        for (int i = 0; i < n_species; ++i)
-        {
-            for (SparseMatrix<double>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
-            {
-                int j = it.row();
-
-                // skip first row (energy source)
-                if (j == 0) continue;
-
-                double value = it.value();
-
-                // Undo diagonal_add
-                if (i+1 == j)
-                {
-                    value -= diagonal_add_;
-                }
-
-                dspecies_internal_energy_mole_source_sum_dspecies_[i] += species_internal_energy_mole_[j-1] * value;
-                // it.value(); // value
-                // it.row();   // row index
-                // it.col();   // col index - here, it is equal to i+1
-                // it.index(); // inner index - here, it is equal to it.row()
-            }
-        }
-
-        for (int i = 0; i < n_species; i++)
-        {
-            // Derivative of temperature source term with respect to concentrations
-            // Second part
-            for (SparseMatrix<double>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
-            {
-                if (it.row() != 0) std::cerr << "it.row() != 0" << std::endl; // first row is dense
-
-                it.valueRef() = it.value() - divide(dspecies_internal_energy_mole_source_sum_dspecies_[i], specific_heat_constant_volume_volume_specific_);
-
-                break; // only first row
-            }
-        }
 
         // Scale Jacobian
         if (scaling_factor != 1)

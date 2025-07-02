@@ -195,6 +195,7 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmr
         {{
             w = P * (A * V[j]);
         }}
+        #endif
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
         {{
