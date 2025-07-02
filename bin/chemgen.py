@@ -68,6 +68,7 @@ def main():
     parser.add_argument("--skip", action="store_true", help="Skip code generation")
     parser.add_argument("--skip-tests", action="store_true", help="Skip running tests")
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
+    parser.add_argument("--print-sparsity", action="store_true", help="Print the sparsity structure")
     parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
     parser.add_argument("--temperature-equation", action="store_true", help="Solve temperature equation instead of assuming constant internal energy")
     parser.add_argument("--ignore-other-species", action="store_true", help="Ignore third-body and pressure dependence when calculating derivatives with respect to species")
@@ -244,6 +245,9 @@ def main():
             sparsity_percent = 100.*(1. - n_nonzeros/n_entries)
             print("Jacobian: # nonzero entries = {}, # zero entries = {}, total # entries = {}".format(n_nonzeros, n_zeros, n_entries))
             print("Sparsity percentage = %g%%" % sparsity_percent)
+            if args.print_sparsity:
+                np.set_printoptions(threshold=np.inf)
+                print(sparsity_pattern)
             if args.plot_sparsity:
                 import matplotlib.pyplot as plt
                 plt.figure()

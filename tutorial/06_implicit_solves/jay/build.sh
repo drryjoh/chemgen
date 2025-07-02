@@ -1,7 +1,9 @@
 #!/bin/bash
 
 #JAYS VERSION
-python3 /Users/jsampa/Code/chemgen/bin/chemgen.py FFCM2_model.yaml bin/ --get-sparsity --plot-sparsity --skip-tests --custom-test custom_test.py
+python3 /Users/jsampa/Code/chemgen/bin/chemgen.py FFCM2_model.yaml bin/ --custom-test custom_test.py --temperature-equation --ignore-other-species \
+    --compile \
+    --get-sparsity \
 
 # #PURE COMPILING
 # BREW_PREFIX=$(brew --prefix yaml-cpp)
