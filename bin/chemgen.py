@@ -187,8 +187,6 @@ def main():
 
         elif chemistry_solver_preconditioner.lower() == "gauss_seidel":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL"
-            if chemistry_solver_eigen:
-                raise NotImplementedError("gauss_seidel preconditioner not compatible with eigen")
 
         elif chemistry_solver_preconditioner.lower() == "jacobi":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_JACOBI"
