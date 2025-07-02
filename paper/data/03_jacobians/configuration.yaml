@@ -27,6 +27,9 @@ decorators:
   species_cast: "Species"
   species_parameter: "const Species&"
   species_element: "species[{i}]"
+
+
+
   
   arbitrary_element: "{name}[{{i}}]"
 
@@ -44,13 +47,13 @@ decorators:
   chemical_state_parameter: "const ChemicalState&"
   chemical_state_element: "chemical_state[{i}]"
 
+  
   jacobian_typedef: "std::array<ChemicalState, n_species + 1>"
   jacobian: "SpeciesJacobian"
   jacobian_function: "SpeciesJacobian"
   jacobian_cast: "SpeciesJacobian"
   jacobian_parameter: "const SpeciesJacobian&"
   jacobian_end: "n_variables"
-
   source_element: "net_production_rates[{i}]"
   const_option: ""
   constexpr: "constexpr"
@@ -73,9 +76,5 @@ decorators:
 
 build:
   chemgen_smp: None 
-  chemgen_input: "-O3 -lyaml-cpp"
+  chemgen_input: "-O0"
 
-solver:
-  chemistry_solver: all
-  linear_solver: gmres
-  preconditioner: jacobi 
