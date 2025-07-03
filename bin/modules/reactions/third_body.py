@@ -28,7 +28,7 @@ def dthird_body_text_dmixture_concentration(reaction, i, A, B, E, efficiencies, 
     if requires_mixture_concentration:
         mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)
         dmixture_concentration_dspecies = get_mixture_concentration_derivatives(reaction, efficiencies, species_names, configuration)
-        return_text = "{device_option}\n{species_function} dcall_forward_reaction_{i}_dspecies({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option} {{ "+f"Species dmixture_concentration_dspecies = {{{{{dmixture_concentration_dspecies}}}}};" +"return scale_gen(dthird_body_dmixture_concentration({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, log_temperature, {mixture_concentration}),dmixture_concentration_dspecies);}}"
+        return_text = "{device_option}\n{species_function} dcall_forward_reaction_{i}_dspecies({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option} {{ {species}"+f" dmixture_concentration_dspecies = {{{{{dmixture_concentration_dspecies}}}}};" +"return scale_gen(dthird_body_dmixture_concentration({scalar_cast}({A}), {scalar_cast}({B}), {scalar_cast}({E}), temperature, log_temperature, {mixture_concentration}),dmixture_concentration_dspecies);}}"
     else:
         zero_species = ['{scalar_cast}(0)'.format(**vars(configuration))]*len(species_names)
         efficiency = reaction.third_body.efficiencies[reaction.third_body_name]
