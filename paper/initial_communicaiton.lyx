@@ -15,7 +15,8 @@
 \usetikzlibrary{shapes,arrows,calc,decorations.pathreplacing}
 \usepackage{listings}
 \usepackage{xcolor} % for colors
-
+\usepackage{booktabs}
+\usepackage{rotating}
 \lstset{
   language=C++,
   basicstyle=\ttfamily\small,
@@ -137,7 +138,8 @@ author{Ryan F.
  Eric J.
  Ching,
  and Andrew D.
- Kercher}
+ Kercher,
+ Jay Arcities}
 \end_layout
 
 \begin_layout Plain Layout
@@ -183,22 +185,23 @@ Chemistry,
 
 \begin_layout Abstract
 We introduce ChemGen,
- a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based CFD codes.
- The software is intended to bridge the gab between combustion and computational physics by making chemical kinetics more accessible.
- ChemGen employs decorators to enable flexible C++ code generation compatible with existing software ecosystems.
- The current focus is on generating thermodynamic properties,
+ a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based computational physics codes.
+ Designed to bridge the gap between combustion modeling and computational physics,
+ ChemGen aims to make chemical kinetics more accessible and performant in existing simulation frameworks.
+ The package employs decorators to enable flexible C++ code generation that integrates easily with established software ecosystems.
+ ChemGen currently focuses on generating thermodynamic property evaluations,
  chemical source terms,
- and their analytical derivatives,
- which facilitate Jacobian assembly for various time integration strategies relevant to CFD.
- ChemGen also provides compact implicit solvers,
- enabling problem-specific customization.
- We verify that the generated source terms match Cantera's results and that the Jacobians used in ChemGen's implicit solvers are correct.
+ and their analytical derivatives to support Jacobian assembly for various time integration strategies used in computational physics.
+ It also includes compact implicit solvers tailored for problem-specific customization.
+ We verify that ChemGen generated source terms agree with Cantera,
+ and that its Jacobians are correct for use in implicit integration schemes.
+ We further confirm that the chemical source terms can be reliably integrated in time.
  Finally,
- we demonstrate ChemGen by integrating it into OpenFOAM,
- replacing the native ODE solver.
- In this case,
- the chemistry solver achieved convergence approximately four times faster for the same order of accuracy.
- 
+ we demonstrate ChemGen's integration into OpenFOAM,
+ where it replaces the native chemistry solver and achieves convergence approximately four times faster.
+ ChemGen is an ongoing project released under the NRL Open License,
+ a source-available license provided by the U.S.
+ Naval Research Laboratory.
 \end_layout
 
 \begin_layout Standard
@@ -1691,18 +1694,18 @@ Chemical reactions are at the heart of many engineering applications,
  as chemical time scales are often orders of magnitude shorter than those of the overall system which can also be geometrically complex.
  These complexities necessitate the use of computational physics,
  leveraging advanced software and high-performance computing to achieve predictive capabilities.
- One of the most prominent areas where chemistry and computation intersect is in the modeling of reactive fluid flows.
+ One of the most prominent areas where chemistry and computation intersect is in the modeling of chemically reacting fluid flows.
  In such systems,
  from ground-based power-generating combustors to high-speed propulsion devices,
  the interaction between fluid dynamics and chemical kinetics is tightly coupled and highly nonlinear.
- Accurately capturing this behavior requires computational fluid dynamics (CFD) frameworks capable of resolving not only the conservation of mass,
+ Accurately capturing this behavior requires computational frameworks capable of resolving not only the conservation of mass,
  momentum,
  and energy,
  but also the detailed evolution of reacting species.
 \end_layout
 
 \begin_layout Standard
-CFD is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
+Computational Fluid Dynamics (CFD) is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
  and analytical solutions do not exist
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -1837,7 +1840,7 @@ literal "false"
 
 .
  The number of species increases with the complexity of the fuel,
- for instance the model for hydrogen is 10 chemical species with 17 reactions
+ for instance a model for hydrogen is 10 chemical species with 17 reactions
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Wes82,Chi22_2"
@@ -1923,7 +1926,8 @@ There are several approaches to integrate these features,
 \end_layout
 
 \begin_layout Enumerate
-Locate and adapt existing Fortran code from early versions of Chemkin
+Locate and adapt existing Fortran code from early versions of legacy codes,
+ such as Chemkin
 \begin_inset CommandInset citation
 LatexCommand citep
 key "chemkin89"
@@ -1931,6 +1935,7 @@ literal "false"
 
 \end_inset
 
+,
  for the target CFD.
 \begin_inset CommandInset label
 LatexCommand label
@@ -2025,7 +2030,7 @@ nolink "false"
 \end_inset
 
 ,
- the existing Chemkin and Senkin routines may not easily adapt to the specific requirements of the targeted CFD software,
+ the existing legacy routines may not easily adapt to the specific requirements of the targeted CFD software,
  which can limit scalability and complicate code maintenance.
  For 
 \begin_inset CommandInset ref
@@ -2040,7 +2045,7 @@ nolink "false"
 
 ,
  although the package is excellent for property calculations and other critical combustion scenarios,
- it is a third-party library and could lead to limited control over software funcionality.
+ it can only act as a third-party library and could lead to limited control over software functionality.
  Imbedding Cantera is certainly possible,
  but in some cases data would need to be transferred back and forth between the CFD's degrees of freedom (DoF) and Cantera,
  potentially restricting access to essential computational acceleration techniques.
@@ -2129,14 +2134,25 @@ literal "false"
 \begin_layout Standard
 In this work,
  we introduce the first iteration of ChemGen,
- a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++ based CFD codes.
+ a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++ based codes.
  ChemGen utilizes decorators,
- discussed in detail in Section 3,
+ discussed in detail in Section 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:Code-Generation"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
  to enable flexible C++ code generation tailored to existing software ecosystems.
  ChemGen currently focuses on thermodynamic properties and source term generation and their analytical derivatives.
  The analytical derivatives gives access to Jacobian assembly for various time integration strategies appropriate for CFD.
  In addition,
- compact linear solvers area also supplied by ChemGen to allow problem specific tailoring.
+ a compact linear solver is also supplied by ChemGen to allow problem specific tailoring.
 \end_layout
 
 \begin_layout Standard
@@ -2155,7 +2171,7 @@ This paper is organized as follows.
  Jacobian computation,
  and implicit time integration strategies.
  We demonstrate ChemGen’s performance by replacing OpenFOAM’s existing ODE-based chemical integrator in a detonation simulation,
- showing significant speedups enabled by ChemGen’s specialized,
+ showing preserved accuracy and overall more efficient time to solution enabled by ChemGen’s specialized,
  generated source code.
 \end_layout
 
@@ -2171,13 +2187,22 @@ name "sec:governing_equations"
 \end_layout
 
 \begin_layout Standard
-On this work,
+In this work,
  we focus on a compressible CFD formulation without viscous terms for simplicity,
  as we only seek to contextualize chemistry in the environment of fluid dynamics.
- It is important to note that ChemGen is suitable for low-Mach flows that decouple pressure from the energy equation,
+ 
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+It is important to note that ChemGen is suitable for low-Mach flows that decouple pressure from the energy equation,
  to which we comment on later in this section.
  In addition,
  we also provide a path forward to incorporate simplified physical diffusion models.
+\end_layout
+
+\end_inset
+
  Here,
  we primarily highlight the interaction between the fluid dynamic state,
  
@@ -2209,14 +2234,10 @@ where
 
  is time,
  
-\begin_inset Formula $y_{f}(x,t)$
+\begin_inset Formula $y_{f}$
 \end_inset
 
- is the conservative state vector (with 
-\begin_inset Formula $x=(x_{1},\ldots,x_{d})$
-\end_inset
-
- denoting the physical coordinates),
+ is the conservative state vector,
  
 \begin_inset Formula $\mathcal{F}(y_{f})$
 \end_inset
@@ -2239,6 +2260,11 @@ y_{f}=\left(\rho v_{1},\ldots,\rho v_{d},\rho e_{t},C_{1},\ldots,C_{n_{s}}\right
 \end_inset
 
 where 
+\begin_inset Formula $d$
+\end_inset
+
+ is the spatial dimension,
+ 
 \begin_inset Formula $n_{s}$
 \end_inset
 
@@ -2303,7 +2329,7 @@ where
 th species is defined as 
 \begin_inset Formula 
 \[
-Y_{i}=\frac{\rho_{i}}{\rho}.
+Y_{i}=\frac{W_{i}C_{i}}{\rho}=\frac{\rho_{i}}{\rho}.
 \]
 
 \end_inset
@@ -2320,7 +2346,7 @@ The
 th spatial convective flux component is written as
 \begin_inset Formula 
 \begin{equation}
-\mathcal{F}_{k}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right)^{},\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
+\mathcal{F}_{k}\left(y\right)=\left(\rho v_{k}v_{1}+p\delta_{k1},\ldots,\rho v_{k}v_{d}+p\delta_{kd},v_{k}\left(\rho e_{t}+p\right),v_{k}C_{1},\ldots,v_{k}C_{n_{s}}\right),\label{eq:reacting-navier-stokes-spatial-convective-flux-component}
 \end{equation}
 
 \end_inset
@@ -2329,7 +2355,24 @@ where
 \begin_inset Formula $p$
 \end_inset
 
- is the pressure.
+ is the pressure,
+ and 
+\begin_inset Formula $\delta_{k1}$
+\end_inset
+
+ is the Dirac-delta funnction 
+\begin_inset Formula $\delta_{ij}=1$
+\end_inset
+
+ for 
+\begin_inset Formula $i=j$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta_{ij}=0$
+\end_inset
+
+ elsewhere.
  The mass-specific total energy is the sum of the specific internal and kinetic energies,
  given by
 \end_layout
@@ -2395,13 +2438,13 @@ which is the complete derived state needed to calculate the components of
 \begin_layout Standard
 \begin_inset Formula 
 \[
-p=R^{o}T\sum_{i=1}^{n_{s}}C_{i},
+p=RT\sum_{i=1}^{n_{s}}C_{i},
 \]
 
 \end_inset
 
 with 
-\begin_inset Formula $R^{0}=8314.4621\,\mathrm{J\cdot Kmol}^{-1}\mathrm{K}^{-1}$
+\begin_inset Formula $R=8314.4621\,\mathrm{J\cdot Kmol}^{-1}\mathrm{K}^{-1}$
 \end_inset
 
  denoting the universal gas constant.
@@ -2438,7 +2481,7 @@ Thermodynamics
 \end_layout
 
 \begin_layout Standard
-This work assumes thermally perfect gases,
+This work assumes a thermally perfect gas,
  with 
 \begin_inset Formula $u_{i}$
 \end_inset
@@ -2473,7 +2516,7 @@ where
 
 th species,
  
-\begin_inset Formula $R_{i}=R^{0}/W_{i}$
+\begin_inset Formula $R_{i}=R/W_{i}$
 \end_inset
 
 ,
@@ -2585,7 +2628,7 @@ Here we target
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-h_{\text{ref},i}=h_{i}(T=298)-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1},\label{eq:enthalpy-adjustment}
+h_{\text{ref},i}=h_{i}(T=298.15)-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298.15\right)^{k+1},\label{eq:enthalpy-adjustment}
 \end{equation}
 
 \end_inset
@@ -2675,7 +2718,7 @@ where
 \begin_inset Formula $s_{\mathrm{ref},i}^{o}$
 \end_inset
 
- is the species formation entropy at the reference temperature and reference pressure (
+ is the species formation entropy at the reference temperature and reference pressure (usually 
 \begin_inset Formula $P_{\mathrm{ref}}=1\text{ atm}$
 \end_inset
 
@@ -2694,7 +2737,8 @@ where
 \begin_inset Formula $R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}}$
 \end_inset
 
- which accounts when the gas is not at atmospheric pressure but the term depends on concentration as well as temperature and can be addressed downstream of these thermodynamic relations if needed.
+ term accounts for when the gas is not at atmospheric pressure,
+ however the term depends on concentration as well as temperature and can be addressed downstream of these thermodynamic relations if needed.
  Focusing then on using the Equation
 \begin_inset space ~
 \end_inset
@@ -2740,9 +2784,10 @@ s_{\mathrm{ref},i}^{o} & k=0.
 \end_inset
 
 Finally the Gibbs free energy per species is
-\end_layout
+\begin_inset Note Comment
+status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}\right)T=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}T\ln T+\sum_{k=1}^{n_{p}+1}d_{i,k-1}T^{k}\right)\label{eq:gibbs-deriviation}
@@ -2753,21 +2798,26 @@ g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-g_{i}=b_{i0}-a_{io}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}}T^{n_{p}+1}\label{eq:gibbs-reformatted}
-\end{equation}
-
 \end_inset
 
-Which can be represented like the entropy fit as
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}\label{eq:gibbs-polynomial}
+g_{i}=h_{i}-Ts_{i}^{o}=b_{i0}-a_{io}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}}T^{n_{p}+1},\label{eq:gibbs-reformatted}
+\end{equation}
+
+\end_inset
+
+which can be represented like the entropy fit as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}.\label{eq:gibbs-polynomial}
 \end{equation}
 
 \end_inset
@@ -3260,7 +3310,7 @@ where the term
 
 \end_inset
 
-Newton's method are accurate once converged and can be quite efficient when using exact derivatives,
+Newton's method is accurate once converged and can be quite efficient when using exact derivatives,
  especially for scalar functions such as energy as a function of temperature,
  which does not require a linear solve.
  Included in ChemGen is a Newton iteration that is of the form
@@ -3372,7 +3422,7 @@ Starting with a guess value,
  can be used to terminate the Newton iterations.
  In general,
  we have found in our past work that 
-\begin_inset Formula $n_{T}=3$
+\begin_inset Formula $n_{T}=5$
 \end_inset
 
  is sufficient to be within 
@@ -3451,7 +3501,7 @@ nolink "false"
 
 \end_inset
 
- is a smooth function of the state variables,
+ is a function of the state variables,
  written as
 \begin_inset space ~
 \end_inset
@@ -3526,7 +3576,7 @@ The production rate is computed as
 \begin_inset Formula $j$
 \end_inset
 
-th reaction,
+-th reaction,
  computed as
 \begin_inset Formula 
 \begin{equation}
@@ -3549,7 +3599,7 @@ where
 \begin_inset Formula $j$
 \end_inset
 
-th reaction.
+-th reaction.
  The forward and reverse rate constants are related via the equilibrium constant 
 \end_layout
 
@@ -3577,7 +3627,7 @@ where
 \begin_inset Formula $j$
 \end_inset
 
-th reaction,
+-th reaction,
  given as
 \begin_inset Formula 
 \[
@@ -3671,7 +3721,7 @@ nolink "false"
 
 .
  The functions currently supported by ChemGen are discussed below.
- We also demonstrate any optimization that can be made during by ChemGen that can avoid unnecessary compute.
+ 
 \end_layout
 
 \begin_layout Subsubsection
@@ -3689,15 +3739,17 @@ k_{j}^{f}=k_{A,j}^{f}=A_{j}T^{b_{j}}\exp\left(-\frac{E_{j}}{R^{0}T}\right),
 \end_inset
 
  where 
-\begin_inset Formula $A_{j}>0$
+\begin_inset Formula $A_{j}$
 \end_inset
 
- and 
+ is the prefactor,
+ 
 \begin_inset Formula $b_{j}$
 \end_inset
 
- are parameters and 
-\begin_inset Formula $E_{j}\geq0$
+ is the temperature exponnent,
+ and 
+\begin_inset Formula $E_{j}$
 \end_inset
 
  is the activation energy
@@ -3753,15 +3805,8 @@ Three-body reactions
 \end_layout
 
 \begin_layout Standard
-These reactions require a 
-\begin_inset Quotes eld
-\end_inset
-
-third body
-\begin_inset Quotes erd
-\end_inset
-
- in order to proceed.
+Third-body reactions require the participation of the mixture concentration,
+ which represents the collective effect of all species acting as a third body.
  Dissociation and recombination reactions are often of this type.
  The rate of progress is scaled by a prefactor as
 \begin_inset space ~
@@ -3789,8 +3834,7 @@ where
 
  are the third-body efficiencies.
  In ChemGen,
- the rate of progress is kept the same for a down stream calculation,
- so 
+ the rate of progress is trageted to alwasy look like Equation 
 \begin_inset space ~
 \end_inset
 
@@ -3806,7 +3850,7 @@ nolink "false"
 \end_inset
 
 ,
- can still be utilized the prefactor is incorporated with the Arrenhius expression
+ therefore the prefactor for third-body reactions is incorporated with the Arrenhius expression
 \end_layout
 
 \begin_layout Standard
@@ -3856,7 +3900,7 @@ nolink "false"
 \end_inset
 
 .
- An additional optimization can be made in the code generation process for the 
+ An additional optimization is noted above and utilized during the code generation process for the 
 \begin_inset Formula $\alpha_{ij}$
 \end_inset
 
@@ -3874,6 +3918,10 @@ nolink "false"
  term can be removed,
  avoiding extra work to determine the efficiency from a sum of products of all species to a sum of products of all species with 
 \begin_inset Formula $\alpha_{ij}\ne1$
+\end_inset
+
+ through the utilization of the precomputed 
+\begin_inset Formula $M_{c}$
 \end_inset
 
 .
@@ -3944,7 +3992,8 @@ P_{r}=\frac{k_{A,0,j}}{k_{A,\infty,j}}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha
 
 \end_inset
 
-Where the same optimization for efficiencies can be made There is a family different fall off functions which all revolve in a different way to approximate 
+Where the same optimization for efficiencies can be made as in the third-body prefactor.
+ There is a family different fall off functions which all revolve in a different way to approximate 
 \begin_inset Formula $F$
 \end_inset
 
@@ -4002,7 +4051,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-\log_{10}F & = & \frac{\log_{10}F_{cent}}{1+f_{1}(P_{r})^{2}}\label{eq:f_and_fcent}\\
+\log_{10}F & = & \frac{\log_{10}F_{cent}}{1+f_{1}^{2}}\label{eq:f_and_fcent}\\
 F_{cent} & = & (1-\alpha_{j})\exp(-T/T_{j,3})+\alpha\exp(-T/T_{j,1})+\exp(-T_{j,2}/T)\nonumber \\
 f_{1} & = & (\log_{10}P_{r}+c)/(n-0.14(\log_{10}P_{r}+c))\nonumber \\
 c & = & -0.4-0.67\;\log_{10}F_{cent}\nonumber \\
@@ -4011,7 +4060,7 @@ n & = & 0.75-1.27\;\log_{10}F_{cent}\nonumber
 
 \end_inset
 
-The origin of the of are given in
+The origin of these fits are given in
 \begin_inset space ~
 \end_inset
 
@@ -4072,7 +4121,8 @@ Pressure-Dependent Arrhenius Rate Expressions
 \begin_layout Standard
 The previous fall-off reaction rates seek to fit between two reaction rates between a low and a high pressure.
  However,
- some rates have several pressure dependent zones which cannot be accurately represented by a single or two Arrhenius expressions.The pressure-dependent Arrhenius rate expressions was introduced to utilize pressure-dependent reaction rates by logarithmically interpolating between Arrhenius rate expressions at various pressures 
+ some rates have several pressure dependent zones which cannot be accurately represented by a single or two Arrhenius expressions.
+ The pressure-dependent Arrhenius rate expressions was introduced to utilize pressure-dependent reaction rates by logarithmically interpolating between Arrhenius rate expressions at various pressures 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Gou11_b"
@@ -4082,7 +4132,7 @@ literal "false"
 
 .
  In short it is known as the P-log reaction rate.
- Given two rate known Arrhenius reaction rates at two specific pressures,
+ Given two Arrhenius reaction rates at two specific pressures,
 \end_layout
 
 \begin_layout Standard
@@ -4114,14 +4164,19 @@ An additional complexity is that multiple rate expressions may be given at the s
 \end_inset
 
  are calculated during code generation.
- This along with the addition of a 
+ 
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+This along with the addition of a 
 \begin_inset Formula $\log k$
 \end_inset
 
  Arrhenius expression,
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula 
 \begin{equation}
 \ln k=\ln A+b\ln T+-E/RT,\label{eq:logK}
@@ -4138,11 +4193,15 @@ with precomputed
 \end_inset
 
  function.
+\end_layout
+
+\end_inset
+
  
 \end_layout
 
 \begin_layout Standard
-To further optimize this rate,
+To further elaborate on this rate,
  consider for example,
  the 81st reaction in FFCM2 
 \begin_inset CommandInset citation
@@ -4295,7 +4354,7 @@ which requires seven boolean conditionals be checked,
 \end_inset
 
  is in atm.
- We explored an optimization in ChemGen where 
+ ChemGen utilizes an optimization where 
 \begin_inset Formula $\ln p$
 \end_inset
 
@@ -4305,7 +4364,12 @@ which requires seven boolean conditionals be checked,
 \end_inset
 
  values.
- This can be coordinated with the pre-calculated 
+ 
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+This can be coordinated with the pre-calculated 
 \begin_inset Formula $\ln T$
 \end_inset
 
@@ -4328,32 +4392,28 @@ which requires seven boolean conditionals be checked,
 \end_inset
 
 .
- We found that,
+ 
+\end_layout
+
+\end_inset
+
+We found that,
  since these reaction rates are rare,
- that fully optimizing these boolean checks and 
-\begin_inset Formula $\ln$
-\end_inset
-
- calls wasn't required,
- and thus only utilize the generated 
+ that the generated 
 \begin_inset Formula $\ln p_{i}$
 \end_inset
 
- as removing 2 
+ removed 2 
 \begin_inset Formula $\ln$
 \end_inset
 
- calls,
- the eventual 
-\begin_inset Formula $\ln p_{i}$
-\end_inset
+ calls used both in the boolean check and in the rate expression was most useful and optimal for differentiation.
+ 
+\begin_inset Note Comment
+status collapsed
 
- and 
-\begin_inset Formula $\ln p_{i+1}$
-\end_inset
-
- was still useful and optimal for differentiation.
- The use of Equation 
+\begin_layout Plain Layout
+The use of Equation 
 \begin_inset space ~
 \end_inset
 
@@ -4377,6 +4437,11 @@ nolink "false"
 ,
  combining it with a bisection search to quickly locate the appropriate bin.
  This approach improves convergence and may reduce warp divergence by ensuring that different degrees of freedom evaluate a similar number of conditionals.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4544,11 +4609,9 @@ the state can be reduced to be purely concentration based for time-split algorit
 \end_inset
 
 In this section we will cover some tools provided by ChemGen to integrate this state in time.
- We also comment on how ChemGen provides tools for fully coupled methods.
  Isolating the source term as a system of ODEs allows the stiffness of the problem,
  which comes from disparate time scales between slow and fast chemical reactions,
- to be addressed more effectively.
- 
+ to be addressed more effectively but can introduce time-splitting errors.
 \end_layout
 
 \begin_layout Standard
@@ -4677,7 +4740,7 @@ This method achieves fourth-order accuracy in time,
 \end_inset
 
 .
- RK4 is particularly effective for non-stiff problems where high accuracy is desired without the overhead of the implicit solvers which deal with possible expensive linear as detailed below.
+ RK4 is particularly effective for non-stiff problems where high accuracy is desired without the overhead of the implicit solvers which deal with possible expensive linear systems as detailed below.
 \end_layout
 
 \begin_layout Subsection
@@ -4762,7 +4825,7 @@ and solving the decrement
 
 \end_inset
 
-Where 
+and where 
 \begin_inset Formula $\mathcal{G}\left(y_{k}^{n+1}\right)$
 \end_inset
 
@@ -4770,7 +4833,8 @@ Where
 \begin_inset Formula $f(y_{k}^{n+1})$
 \end_inset
 
- which for this backwards Euler method is
+.
+ For this backwards Euler method is
 \end_layout
 
 \begin_layout Standard
@@ -4792,13 +4856,13 @@ Where
 \begin_inset Formula $\mathcal{J}_{ij}$
 \end_inset
 
- is the Jacobian of the source terms with respect to chemical state.
+ is the Jacobian of the source terms with respect to chemical state and independent of the integration approach.
  
 \begin_inset Formula $\mathcal{J}_{ij}$
 \end_inset
 
  requires the partial derivative of the production term with respect to each individual species.
- ChemGen was designed to include full differentiation throughout;
+ ChemGen was designed to include analytical differentiation throughout;
  each function contains a derivative and possible chain rule with examples detailed in Section
 \begin_inset space ~
 \end_inset
@@ -4867,7 +4931,7 @@ Here
 \begin_inset Formula $T$
 \end_inset
 
- is a function of species.
+ is a function of species and not an independent variable.
  The Jacobian in Equation 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -4910,7 +4974,7 @@ nolink "false"
 \end_inset
 
 .
- ChemGen provides faster approximate Jacobians by utilizing two methods.
+ ChemGen provides faster Jacobians by utilizing two methods.
  The first is to simply assume 
 \begin_inset Formula $\frac{\partial T}{\partial C_{j}}=0$
 \end_inset
@@ -5102,7 +5166,7 @@ Additional time integrators
 \end_layout
 
 \begin_layout Standard
-While backward Euler time integration is inherently stable,
+While the backward Euler time integration is inherently stable,
  it may exhibit poor accuracy or convergence for certain chemical models and time step sizes.
  To address this,
  ChemGen offers additional implicit integration strategies,
@@ -5607,7 +5671,7 @@ literal "false"
  In CFD,
  such operations can be particularly challenging,
  as simulations often involve millions to billions of degrees of freedom,
- making each linear system solve computationally a core cost.
+ making each linear system solve a core cost.
  Moreover,
  these inversions are not performed just once per time step.
  For example,
@@ -5688,7 +5752,7 @@ The number of GMRES iterations is directly related to the condition number of ma
 \begin_inset Formula $A$
 \end_inset
 
- .
+ which can be improved by conditioning the system.
  ChemGen provides some standard preconditioners to assist in convergence of the GMRES solve 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -5782,26 +5846,6 @@ name "sec:Code-Generation"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-In the ChemGen software there are three main file types.
- The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
- The second file type are static code that are ingested by python code and reformatted to the desired target software.
- The remaining file types are a mixture of python code used to exercise tutorials,
- most of which covered in the results in Section
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "sec:Results-and-Demonstration"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-,
- and yaml files that contain kinetic data.
 \end_layout
 
 \begin_layout Subsection
@@ -6205,10 +6249,12 @@ Derivatives
 \end_layout
 
 \begin_layout Standard
-ChemGen makes use of mechanical differentiation approach where the underlying mathematics for essential problems have supply their derivatives and chain rules when necessary.
- This means that a functions derivative,
- when added to the static code base,
- should be immediately accessible giving the access to the underlying derivatives supplied by ChemGen.
+ChemGen employs a mechanical differentiation approach,
+ wherein the underlying mathematics for key operations provide their derivatives and chain rules as needed.
+ As a result,
+ once a function’s derivative is incorporated into the static code base,
+ it becomes immediately accessible,
+ granting access to the underlying derivative structure supplied by ChemGen.
  For instance,
  the Arrhenius function as generated using a default configuration in ChemGen is
 \end_layout
@@ -6380,9 +6426,9 @@ pow_gen_chain(const double& a,
 
 \end_inset
 
-The same derivatives,
- partial derivative per parameter and a chain rule contracting the partials with a perturbation,
- can assumed to be accessible when developing higher level functions.
+The partial derivative with respect to each parameter,
+ along with the corresponding chain rule that contracts these partials with a given perturbation,
+ can be assumed to be accessible when developing higher-level functions.
  Assuming this capability,
  the derivative of the Arrhenius function with respect to temperature is immediately known,
 \end_layout
@@ -6551,6 +6597,27 @@ Generation Process
 \end_layout
 
 \begin_layout Standard
+In the ChemGen software there are three main file types.
+ The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
+ The second file types are static code files that are ingested by python code and reformatted to the desired target software.
+ The remaining file types are a mixture of python code used to exercise tutorials,
+ most of which covered in the results in Section
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "sec:Results-and-Demonstration"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ and yaml files that contain kinetic data.
+ 
+\end_layout
+
+\begin_layout Standard
 The code generation process in ChemGen is designed to be as minimal and streamlined as possible.
  ChemGen relies on Cantera to interpret chemical model files.
  Cantera performs several key tasks:
@@ -6564,7 +6631,7 @@ The code generation process in ChemGen is designed to be as minimal and streamli
  should Cantera become unavailable,
  ChemGen could be extended to handle data parsing,
  unit conversion,
- and polynomial re-fitting internally.
+ and polynomial interfacing for re-fitting internally.
 \end_layout
 
 \begin_layout Standard
@@ -6612,34 +6679,7 @@ texttt{Jacobian}
 
 \end_inset
 
- which are size 
-\begin_inset Formula $n_{s}$
-\end_inset
-
-,
- 
-\begin_inset Formula $n_{s}+1$
-\end_inset
-
-,
- and 
-\begin_inset Formula $n_{s}\times n_{s}$
-\end_inset
-
- or 
-\begin_inset Formula $n_{s}\times\left(n_{s}+1\right)$
-\end_inset
-
- depending on selection of 
-\begin_inset Formula $\mathcal{J}_{a}$
-\end_inset
-
- or
-\begin_inset Formula $\mathcal{J}_{b}$
-\end_inset
-
-,
- respectively.
+ .
  The stoichemetric coefficients 
 \begin_inset Formula $\nu_{ij}$
 \end_inset
@@ -6820,7 +6860,56 @@ Where the rates of progress for each reaction,
 \end_inset
 
 ,
- rely on the stoichiometric coefficients and are generated 
+ rely on the stoichiometric coefficients and are generated.
+ 
+\end_layout
+
+\begin_layout Standard
+While many options can be specified during the generation process,
+ the simplest approach requires only the following terminal command to generate source code using ChemGen:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+chemgen.py mech.yaml .
+\end_layout
+
+\end_inset
+
+This command,
+ as long as 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{mech.yaml}
+\end_layout
+
+\end_inset
+
+ is a Cantera supported file,
+ generates C++ code in the current directory in a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{src}
+\end_layout
+
+\end_inset
+
+ folder using default settings.
 \end_layout
 
 \begin_layout Standard
@@ -6980,8 +7069,8 @@ Using equation of state,
 
 ,
  forming the complete state for ChemGen.
- We tested five different chemical models with increasing size that are common to computational simulations of chemically reacting flows by generating 10,000 random chemical states for each individual models.
- The 10-species Ó Connaire model 
+ We tested five different chemical models with increasing size that are common to computational simulations of chemically reacting flows by generating 10,000 random chemical states for each individual model;
+ the 10-species Ó Connaire model 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Oco04"
@@ -7325,6 +7414,7 @@ literal "false"
 \end_inset
 
  and integrate in time under a constant internal energy assumption,
+ i.e.,
  
 \begin_inset Formula $\rho u$
 \end_inset
@@ -7382,8 +7472,8 @@ nolink "false"
 \end_inset
 
  ,
- where ChemGen results are represented by dashed black lines and Cantera results are represented by solid colored lines.
- The Cantera results were produced using 
+ where the ChemGen results are represented by dashed black lines and Cantera results are represented by solid colored lines.
+ The Cantera results were produced using the 
 \begin_inset ERT
 status open
 
@@ -7560,7 +7650,7 @@ We performed Jacobian calculation confirmation in order to build confidence in t
 
 \end_inset
 
-In this section we present verification of the Jacobians using the finite difference method confirms the the correct derivatives in ChemGen.
+In this section we present verification of the Jacobians using the finite difference method.
  To calculate the finite difference approximation of the Jacobians we utilized the second order finite difference approximation for each element by perturbing each species 
 \end_layout
 
@@ -7675,7 +7765,7 @@ We utilized the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-L_{2}=||\mathcal{J}_{b}-\hat{\mathcal{J}_{b}}||=\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\mathcal{J}_{b}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}_{b}}\left(C_{i},T\right)_{ij}\right)^{2}},\label{eq:L2_fd}
+L_{2}=||\mathcal{J}-\hat{\mathcal{J}}||=\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\mathcal{J}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}}\left(C_{i},T\right)_{ij}\right)^{2}},\label{eq:L2_fd}
 \end{equation}
 
 \end_inset
@@ -7768,27 +7858,6 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-We evaluated the computational cost of the three Jacobians compared to their complementary discrete Jacobians.
- Using the same method to generate a random state as Equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:chemical_state_01"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- we calculated 1000 Jacobians and compared the overall compute time to compute time of the discrete Jacobian.
- The timings of these calculations are summarized in table,
- .
- For the discrete Jacobians we used first order approximations instead of the second order methods to yield the fastest calculations for comparison.
- Even with the reduction in cost,
- the analytical Jacobians were always faster.
-\end_layout
-
-\begin_layout Standard
 We evaluated the computational cost of the three analytical Jacobians relative to their corresponding finite difference approximations.
  Using the same approach to generate random chemical states as described in Equation 
 \begin_inset CommandInset ref
@@ -7827,7 +7896,7 @@ nolink "false"
 
 \end_inset
 
- in order to minimize computational cost,
+ in order to utilize the most minimal computational cost for finite difference approximations,
 \end_layout
 
 \begin_layout Standard
@@ -7839,16 +7908,38 @@ nolink "false"
 \frac{\omega_{T}(C,T+\delta T)-\omega_{T}(C,T)}{\delta T} & j=1\\
 \frac{\omega_{T}(\hat{C_{j-1}}^{+},T)-\omega_{T}(C,T)}{\delta C} & i=1;\quad j>1\\
 \frac{\omega_{i-1}(C,T+\delta T)-\omega_{i-1}(C,T)}{\delta T} & i>1;\quad j=1\\
-\frac{\omega_{i-1}\left(\hat{C_{j-1}}^{+},T\right)-\omega_{i-1}\left(C,T\right)}{\delta C} & i>1;j>1
+\frac{\omega_{i-1}\left(\hat{C_{j-1}}^{+},T\right)-\omega_{i-1}\left(C,T\right)}{\delta C} & i>1;j>1.
 \end{cases}\label{eq:finite_difference_Tevolve-1}
 \end{eqnarray}
 
 \end_inset
 
-The results are summarized in Table [ref] for a variety of chemical models ranging in size and complexity.
+The results are summarized in Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{tab:test}
+\end_layout
+
+\end_inset
+
+for a variety of chemical models ranging in size and complexity.
  Despite using the fastest discrete Jacobian optimization,
  the analytical Jacobians were consistently faster across all cases.
  Notably the analytical Jacobian was seen to increase in speed relative to the discrete as the mechanism increased in complexity.
+ In addition the results also summarize the relative speedup by using that approximate Jacobian 
+\begin_inset Formula $\mathcal{J}_{ij,\delta T=0}$
+\end_inset
+
+ over 
+\begin_inset Formula $\mathcal{J}_{ij}$
+\end_inset
+
+ which gives on average about a factor of two speed up.
 \end_layout
 
 \begin_layout Standard
@@ -7904,635 +7995,162 @@ Order of accuracy convergence for
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float table
-placement document
-alignment document
-wide false
-sideways false
+\begin_inset ERT
 status open
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
 
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "tab:jacobian_timings"
-
-\end_inset
-
-
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-ffcm2_h2,Ignoring Temperature Derivative,0.0485248,0.00621664,7.80563
-\end_layout
-
-\begin_layout Plain Layout
-ffcm2_h2,Temperature Equation,0.0909828,0.0320129,2.84206
-\end_layout
-
-\begin_layout Plain Layout
-ffcm2_h2,Internal Energy,0.0647655,0.0216641,2.98953
-\end_layout
-
-\begin_layout Plain Layout
-OConnaire,Ignoring Temperature Derivative,0.0540566,0.00831387,6.50198
-\end_layout
-
-\begin_layout Plain Layout
-OConnaire,Temperature Equation,0.097085,0.0300311,3.23282
-\end_layout
-
-\begin_layout Plain Layout
-OConnaire,Internal Energy,0.0726547,0.0193021,3.76408
-\end_layout
-
-\begin_layout Plain Layout
-burke,Ignoring Temperature Derivative,0.0787948,0.00795086,9.91022
-\end_layout
-
-\begin_layout Plain Layout
-burke,Temperature Equation,0.10416,0.0343652,3.03098
-\end_layout
-
-\begin_layout Plain Layout
-burke,Internal Energy,0.101096,0.019906,5.07867
-\end_layout
-
-\begin_layout Plain Layout
-gri30,Ignoring Temperature Derivative,3.44127,0.211021,16.3077
-\end_layout
-
-\begin_layout Plain Layout
-gri30,Temperature Equation,6.44075,0.67665,9.51859
-\end_layout
-
-\begin_layout Plain Layout
-gri30,Internal Energy,4.09753,0.39925,10.2631
-\end_layout
-
-\begin_layout Plain Layout
-sandiego,Ignoring Temperature Derivative,2.97944,0.142997,20.8357
-\end_layout
-
-\begin_layout Plain Layout
-sandiego,Temperature Equation,5.23343,0.544645,9.60888
-\end_layout
-
-\begin_layout Plain Layout
-sandiego,Internal Energy,3.68026,0.323064,11.3917
-\end_layout
-
-\begin_layout Plain Layout
-FFCM2_model,Ignoring Temperature Derivative,37.2292,0.8931,41.6853
-\end_layout
-
-\begin_layout Plain Layout
-FFCM2_model,Temperature Equation,63.6802,3.30268,19.2814
-\end_layout
-
-\begin_layout Plain Layout
-FFCM2_model,Internal Energy,38.9055,1.84851,21.047
-\end_layout
-
-\begin_layout Plain Layout
-ffcm2_h2 ratio with temp to no tem:
- 3.484856771503577
-\end_layout
-
-\begin_layout Plain Layout
-OConnaire ratio with temp to no tem:
- 2.321674502969135
-\end_layout
-
-\begin_layout Plain Layout
-burke ratio with temp to no tem:
- 2.503628538296486
-\end_layout
-
-\begin_layout Plain Layout
-gri30 ratio with temp to no tem:
- 1.8919917922860758
-\end_layout
-
-\begin_layout Plain Layout
-sandiego ratio with temp to no tem:
- 2.2592362077526102
-\end_layout
-
-\begin_layout Plain Layout
-FFCM2_model ratio with temp to no tem:
- 2.0697682230433325
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="6">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Model
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Formula $\mathcal{J}_{ij}/\hat{\mathcal{J}_{ij,1}}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\nospellcheck off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\begin_inset Formula $\mathcal{J}_{ij,\delta T=0}/\hat{\mathcal{J}_{ij,\delta T=0,1}}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\nospellcheck off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\begin_inset Formula $\mathcal{J}_{ij,T}/\hat{\mathcal{J}_{ij,T,1}}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\nospellcheck off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\begin_inset Formula $\mathcal{J}_{ij,\delta T=0}$
-\end_inset
-
-/
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\nospellcheck default
-\bar default
-\strikeout default
-\xout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-
-\begin_inset Formula $\mathcal{J}_{ij}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\nospellcheck off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
-average 
-\begin_inset Formula $||\mathcal{J}_{ij,\delta T=0}-\mathcal{J}_{ij}||_{F}/||\mathcal{J}_{ij}||_{F}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-FFCM-2 (H2 submodel)
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.99
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-7.80
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2.84
+\backslash
+begin{table}[htbp]
 \end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
 \begin_layout Plain Layout
-3.48
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 
+\backslash
+centering
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-Ó Connaire 
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-3.76
+\backslash
+caption{Comparison of Jacobian Timings.
+ All Jacobians are normalized by their respective finite difference Jacobian with the exception of $
+\backslash
+mathcal{J}_{ij,
+\backslash
+delta T=0}/
+\backslash
+mathcal{J}_{ij}$ which compares the timing of the estimated Jacobian where $
+\backslash
+frac{
+\backslash
+partial T}{
+\backslash
+partial C_i}$ is ignored.
+ 
+\backslash
+label{tab:test}}
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-6.50
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-3.23
+\backslash
+begin{tabular}{lcccccc}
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-2.32
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
 
+\backslash
+toprule
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-Burke
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-5.07
-\end_layout
+ & FFCM-2 (H2) & Ó Connaire & Burke & GRI-Mech 3.0 & UCSD & FFCM-2 (Full) 
+\backslash
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+\backslash
 
-\begin_layout Plain Layout
-9.91
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-3.03
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-2.50
+\backslash
+midrule
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-
-\end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+$
+\backslash
+mathcal{J}_{ij}/
+\backslash
+hat{
+\backslash
+mathcal{J}_{ij,1}}$                         & 2.99 & 3.76 & 5.07 & 10.26 & 11.39 & 21.05 
+\backslash
 
-\begin_layout Plain Layout
-GRI-Mech 3.0
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+\backslash
 
-\begin_layout Plain Layout
-10.26
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-16.30
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+$
+\backslash
+mathcal{J}_{ij,
+\backslash
+delta T=0}/
+\backslash
+hat{
+\backslash
+mathcal{J}_{ij,
+\backslash
+delta T=0,1}}$  & 7.80 & 6.50 & 9.91 & 16.30 & 20.84 & 41.69 
+\backslash
 
-\begin_layout Plain Layout
-9.52
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+\backslash
 
-\begin_layout Plain Layout
-1.89
 \end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+$
+\backslash
+mathcal{J}_{ij,T}/
+\backslash
+hat{
+\backslash
+mathcal{J}_{ij,T,1}}$                     & 2.84 & 3.23 & 3.03 & 9.52  & 9.61  & 19.28 
+\backslash
 
-\begin_layout Plain Layout
-UCSD
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+\backslash
 
-\begin_layout Plain Layout
-11.39
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-20.84
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+$
+\backslash
+mathcal{J}_{ij,
+\backslash
+delta T=0}/
+\backslash
+mathcal{J}_{ij}$                     & 3.48 & 2.32 & 2.50 & 1.89  & 2.25  & 2.07  
+\backslash
 
-\begin_layout Plain Layout
-9.61
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
+\backslash
 
-\begin_layout Plain Layout
-2.25
 \end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-FFCM-2 (full model)
+\backslash
+bottomrule
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-21.05
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-41.69
+\backslash
+end{tabular}
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-19.28
-\end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
 
-\begin_layout Plain Layout
-2.07
+\backslash
+end{table}
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
 
 \end_layout
 
@@ -8877,7 +8495,7 @@ s was was the approximate location of maximum
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-L_{2,h}(C)=\sum_{i=1}^{n_{s}}\left(C_{h,i}-C_{\frac{\Delta t}{16},i}\right)^{2},\label{eq:L2_species}
+L_{2,h}(C)=\sum_{i=1}^{n_{s}}\left(C_{h,i}-C_{\frac{\Delta t}{16},i}\right)^{2}.\label{eq:L2_species}
 \end{equation}
 
 \end_inset
@@ -9133,7 +8751,7 @@ nolink "false"
 
  are the predicted concentrations from solving the species evolution ODEs,
  
-\begin_inset Formula $\frac{\partial y_{c}}{\partial t}=S(y_{c})$
+\begin_inset Formula $\frac{\partial y_{}}{\partial t}=S(y)$
 \end_inset
 
 .
@@ -9167,7 +8785,7 @@ literal "false"
 
 \end_inset
 
- suppled by OpenFOAM was used to solve for 
+ supplied by OpenFOAM was used to solve for 
 \begin_inset Formula $C_{i}^{n+1}$
 \end_inset
 
@@ -9178,7 +8796,12 @@ literal "false"
 \begin_inset Formula $\Delta t=1\times10^{-9}$
 \end_inset
 
- s we replaced the seulex solver with ChemGen's YASS solver using Jacobi preconditioned GMRES for the linear solve.
+ s we replaced the seulex solver with ChemGen's YASS solver using Jacobi preconditioned GMRES for the linear solve and approximate Jacobian,
+ 
+\begin_inset Formula $\mathcal{J}_{ij,\delta T=0}$
+\end_inset
+
+.
  
 \end_layout
 
@@ -9500,7 +9123,7 @@ literal "false"
 \end_inset
 
  which resulted in a possible three refinements,
- generating smalles mesh size of 
+ generating smallest mesh size of 
 \begin_inset Formula $31\times10^{-6}$
 \end_inset
 
@@ -9556,12 +9179,7 @@ literal "false"
 
 \end_inset
 
- a several period sinusoidal wave was specified to perturb the front location which eventually gave rase to instabilities and the expected established two detonation cells in the vertical direction,
- with each cell to be 
-\begin_inset Formula $\left(0.055\right)\mathrm{m}\times\left(0.03\right)\mathrm{m}$
-\end_inset
-
-.
+ several period sinusoidal waves were specified to perturb the front location which eventually gave rase to instabilities and then transitioned to an expected established solution.
  These results and the results of the aforementioned works are said to be consistent with experiments performed by Lefebvre et al.
 \begin_inset space ~
 \end_inset
@@ -9575,13 +9193,19 @@ literal "false"
 \end_inset
 
 .
- In our initialization we perturbed the front with additional sinusoidal to introduce more irregularity as we noticed some slapping-like wave features with a single wave.
+ 
 \end_layout
 
 \begin_layout Standard
 For this cases,
  the initial front progresses into the unreacted domain and the irregular structures from the initialization cause the development of pressure waves that move normal to the direction of the detonation.
- Eventually these transverse waves become regular and give rise to the expected cellular structures.
+ Eventually these transverse waves become regular and give rise to an expected cellular structure,
+ which is visualized using a pressure max history,
+ 
+\begin_inset Formula $p_{max}=max(p(t),p_{max})$
+\end_inset
+
+.
  Figure
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -9598,7 +9222,8 @@ nolink "false"
 \end_inset
 
 s predicted by detonationEulerFoam using ChemGen for the chemistry source terms,
- and demonstrates that ChemGen yields the expected cellular detonation structures consistent with those produced by OpenFOAM’s native ODE solver as reported in 
+ and demonstrates that ChemGen yields the expected cellular detonation structures consistent with those by Sun et al.
+ 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -9668,7 +9293,7 @@ nolink "false"
 
  show the production term form O-atoms,
  
-\begin_inset Formula $\mathcal{R}=\left(\frac{C_{O}^{n+1}-C_{O}^{n}}{\Delta t}\right)W_{i}$
+\begin_inset Formula $\mathcal{R}=\left(\frac{C_{O}^{n+1}-C_{O}^{n}}{\Delta t}\right)W_{O}$
 \end_inset
 
  at 
@@ -9685,7 +9310,7 @@ s for detonationEulerFOAM using OpenFOAM seulex ODE solver (subscript
 
 ).
  These results demonstrate that a consistent CFD solution can be obtained using ChemGen in the detonationEulerFoam solver.
- The YASS solver was on average 8 times faster than the seulex solver and 4 times faster than OpenFOAM's backward Euler solver.
+ The YASS solver was on average 8 times faster than the seulex solver.
 \end_layout
 
 \begin_layout Standard
@@ -10702,12 +10327,12 @@ Conclusion
 \begin_layout Standard
 In this work,
  we introduced ChemGen,
- a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based software,
+ a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based computational physics software,
  with an emphasis on CFD applications.
  ChemGen employs a decorator-based approach to enable flexible and modular C++ code generation tailored to existing simulation ecosystems.
  It generates both thermodynamic property approximations and source term expressions,
  along with their analytical derivatives,
- facilitating Jacobian assembly for a variety of time integration strategies relevant to computational physics.
+ facilitating different Jacobian assemblies for a variety of time integration strategies and chemical states relevant to computational physics.
  Additionally,
  ChemGen includes compact linear solvers to support implicit methods.
 \end_layout
