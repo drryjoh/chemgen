@@ -76,27 +76,27 @@ def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configura
         Species dspecies_internal_energy_mole_source_sum_dspecies_ = {{{scalar_cast}(0)}};
         Species species_internal_energy_mole_ = molecular_weights() * species_internal_energy_mass_specific(temperature);
 
-        for ({index} i = 0; i < n_species; ++i)
+        for ({index} j = 0; j < n_species; ++j) // column index
         {{
-            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
+            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, j+1); it; ++it) // skip first column (temperature)
             {{
-                {index} j = it.row();
+                {index} i = it.row();
 
                 // skip first row (energy source)
-                if (j == 0) continue;
+                if (i == 0) continue;
 
                 {scalar} value = it.value();
 
                 // Undo diagonal_add
-                if (i+1 == j)
+                if (j+1 == i)
                 {{
                     value -= diagonal_add_;
                 }}
 
-                dspecies_internal_energy_mole_source_sum_dspecies_[i] += species_internal_energy_mole_[j-1] * value;
+                dspecies_internal_energy_mole_source_sum_dspecies_[j] += species_internal_energy_mole_[i-1] * value;
                 // it.value(); // value
                 // it.row();   // row index
-                // it.col();   // col index - here, it is equal to i+1
+                // it.col();   // col index - here, it is equal to j+1
                 // it.index(); // inner index - here, it is equal to it.row()
             }}
         }}

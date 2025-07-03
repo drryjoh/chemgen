@@ -1,3 +1,56 @@
+#ifdef CHEMGEN_EIGEN
+
+{device_option}
+{chemical_state_function}
+direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linear_solver_direct_eigen}& lu, bool compute)
+{{
+    {chemical_state_eigen} b(n_variables);
+
+    for ({index} i = 0; i < n_variables; ++i)
+    {{
+        b(i) = b_[i];
+    }}
+
+    {chemical_state_eigen} x;
+
+#ifdef CHEMGEN_EIGEN_SPARSE
+
+    if (compute) lu.compute(A);
+    if (lu.info() != Success) std::cerr << "lu factorization failed!" << std::endl;
+    x = lu.solve(b);
+
+#else
+
+    lu = {linear_solver_direct_eigen}(A);
+
+    x = lu.permutationP() * b;
+    lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
+    lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
+
+#endif
+
+    // Convert back to chemical_state
+    {chemical_state} result = {{}};
+    for ({index} i = 0; i < n_variables; ++i)
+    {{
+        result[i] = x(i);
+    }}
+
+    return result;
+}}
+
+{device_option}
+{chemical_state_function}
+direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_)
+{{
+    {declare_linear_solver_direct_eigen}
+
+    return
+    direct_solve(A, b_, solver, true);
+}}
+
+#else
+
 template<typename T>
 void swap_gen(T& a, T& b)
 {{
@@ -58,3 +111,9 @@ void swap_gen(T& a, T& b)
 
     return inv;
 }}
+
+{chemical_state_function} direct_solve({jacobian_parameter} J, {chemical_state_parameter} rhs)
+{{
+    return invert_jacobian(J) * rhs;
+}}
+#endif

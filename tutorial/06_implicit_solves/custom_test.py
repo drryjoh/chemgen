@@ -13,6 +13,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <array>\n#include <chrono>\n")
         file.write("""
 {eigen}
+{eigen_sparse_directive}
 #ifdef CHEMGEN_EIGEN
 #include <Eigen/Core>
 #include <Eigen/SparseCore>

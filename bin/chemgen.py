@@ -169,16 +169,23 @@ def main():
         print("Not generating with a chemgen chemistry solver.")
 
     eigen = ""
-    eigen_sparse = False
+    eigen_sparse = False # TODO: replace eigen_sparse with eigen_sparse_directive since non-empty strings evaluate to True in a boolean context while an empty string evaluates to False
+    fixed_jacobian = False
     if chemistry_solver_eigen and chemistry_solver:
         if chemistry_solver_eigen:
             eigen = "#define CHEMGEN_EIGEN"
             print("Running with eigen!")
             eigen_sparse = configuration_file.get('solver', {}).get('eigen_sparse', False)
 
+        fixed_jacobian = configuration_file.get('solver', {}).get('fixed_jacobian', False)
+        if fixed_jacobian:
+            print("Using fixed Jacobian for Newton solve")
+
+    eigen_sparse_directive = ""
     if eigen_sparse:
         print("Running with sparse data structures!")
         args.get_sparsity = True
+        eigen_sparse_directive = "#define CHEMGEN_EIGEN_SPARSE"
 
     preconditioner = ""
     if chemistry_solver_preconditioner and chemistry_solver:
@@ -192,9 +199,6 @@ def main():
         elif chemistry_solver_preconditioner.lower() == "jacobi":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_JACOBI"
 
-        elif chemistry_solver_preconditioner.lower() == "neural_net":
-            preconditioner = "#define CHEMGEN_PRECONDITIONER_NN"
-
         elif chemistry_solver_preconditioner.lower() == "custom":
             preconditioner = "#define CHEMGEN_PRECONDITIONER_CUSTOM"
             if not eigen:
@@ -204,14 +208,22 @@ def main():
             preconditioner = "#define CHEMGEN_PRECONDITIONER_ILU"
             if not eigen_sparse:
                 raise NotImplementedError("ilu preconditioner requires sparse eigen")
+
+        elif chemistry_solver_preconditioner.lower() == "neural_net":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_NN"
+
         else:
             print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
             exit()
 
+    assert(not preconditioner or not direct_solver) # only one should be set
+
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
+    setattr(configuration, "fixed_jacobian",  fixed_jacobian)
     setattr(configuration, "eigen",  eigen)
     setattr(configuration, "eigen_sparse",  eigen_sparse)
+    setattr(configuration, "eigen_sparse_directive",  eigen_sparse_directive)
 
     update_configuration_eigen(configuration)
 

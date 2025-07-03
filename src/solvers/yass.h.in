@@ -23,7 +23,7 @@ yass({chemical_state} y,
         {chemical_state} rhs1 = scale_gen(dt_, source(y_n, temperature_));
 
         #ifdef CHEMGEN_DIRECT_SOLVER
-        {chemical_state} dy = invert_jacobian(G) * rhs1;
+        {chemical_state} dy = direct_solve(G, rhs1);
         #else
         {chemical_state} dy = gmres_solve(G, rhs1, n_gmres_iter_total);
         #endif
@@ -34,6 +34,7 @@ yass({chemical_state} y,
         {{
             std::cout << "refining YASS; dy: " <<dy_norm<<std::endl;
             dt_ *= {scalar_cast}(0.5);
+            // TODO: don't recompute entire Jacobian; just modify the diagonal
             if (dt_ < min_dt)
             {{
                     return scale_gen({scalar_cast}(0.0), y_n); //return garbage

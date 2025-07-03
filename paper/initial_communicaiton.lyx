@@ -185,15 +185,15 @@ Chemistry,
 
 \begin_layout Abstract
 We introduce ChemGen,
- a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based computational physics codes.
+ a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into C++ based computational physics codes.
  Designed to bridge the gap between combustion modeling and computational physics,
- ChemGen aims to make chemical kinetics more accessible and performant in existing simulation frameworks.
- The package employs decorators to enable flexible C++ code generation that integrates easily with established software ecosystems.
+ ChemGen aims to make chemical kinetics more accessible in existing simulation frameworks.
+ The package employs decorators to enable flexible C++ code generation to target stablished software ecosystems.
  ChemGen currently focuses on generating thermodynamic property evaluations,
  chemical source terms,
- and their analytical derivatives to support Jacobian assembly for various time integration strategies used in computational physics.
+ and their analytical derivatives to support Jacobian assembly for various time integration strategies.
  It also includes compact implicit solvers tailored for problem-specific customization.
- We verify that ChemGen generated source terms agree with Cantera,
+ We verify that the ChemGen generated source terms agree with Cantera,
  and that its Jacobians are correct for use in implicit integration schemes.
  We further confirm that the chemical source terms can be reliably integrated in time.
  Finally,
@@ -1681,32 +1681,10 @@ name "sec:Introduction"
 \end_layout
 
 \begin_layout Standard
-Chemical reactions are at the heart of many engineering applications,
- including propulsion,
- energy conversion,
- materials processing,
- and environmental control.
- These reactions govern how energy is released,
- how materials are transformed,
- and ultimately how the performance and efficiency of a system are determined.
- In many of these environments,
- the underlying physics are too complex for simplified analytical approaches,
- as chemical time scales are often orders of magnitude shorter than those of the overall system which can also be geometrically complex.
- These complexities necessitate the use of computational physics,
- leveraging advanced software and high-performance computing to achieve predictive capabilities.
- One of the most prominent areas where chemistry and computation intersect is in the modeling of chemically reacting fluid flows.
- In such systems,
- from ground-based power-generating combustors to high-speed propulsion devices,
- the interaction between fluid dynamics and chemical kinetics is tightly coupled and highly nonlinear.
- Accurately capturing this behavior requires computational frameworks capable of resolving not only the conservation of mass,
- momentum,
- and energy,
- but also the detailed evolution of reacting species.
-\end_layout
-
-\begin_layout Standard
-Computational Fluid Dynamics (CFD) is a widely recognized scientific and engineering tool for understanding or predicting fluid behavior in situations where experimental data is limited or unavailable,
- and analytical solutions do not exist
+Chemistry frequently appears in computational physics,
+ where rapid kinetic time scales and nonlinear coupling with other physical phenomena require detailed modeling for predictive accuracy.
+ One of the most common approaches in this field is Computational Fluid Dynamics (CFD),
+ which is widely used to simulate fluid behavior when experiments are impractical and analytical solutions are unavailable
 \begin_inset CommandInset citation
 LatexCommand citep
 key "And95,Fer02,Hir07"
@@ -1756,8 +1734,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-Developing robust CFD software is an accomplishment in itself,
- given the multitude of challenging computational and numerical issues.
+Developing robust CFD software is challenging due to the wide range of complex computational and numerical issues involved.
  The computational issues include efficient DoF communication in parallel,
  adaptive physical modeling,
  parallel computation,
@@ -1816,7 +1793,7 @@ CFD focuses on the conservation variables related to mass,
 
  chemical reactions.
  This increases the state size to 
-\begin_inset Formula $n_{y}=n_{s}+n_{c}$
+\begin_inset Formula $n_{y}=n_{s}+n_{c}-1$
 \end_inset
 
  ,
@@ -1825,6 +1802,13 @@ CFD focuses on the conservation variables related to mass,
 \end_inset
 
  represents the number of chemical species.
+ Since the modeled chemical species collectively determine the total density,
+ the conserved density can either be removed from the state or retained and one species removed to avoid overprescription,
+ hence reduction of 
+\begin_inset Formula $n_{c}-1$
+\end_inset
+
+.
  Detailed chemical models may involve hundreds of species and thousands of reactions,
  typically with 
 \begin_inset Formula $n_{r}\approx5n_{s}$
@@ -4974,31 +4958,7 @@ nolink "false"
 \end_inset
 
 .
- ChemGen provides faster Jacobians by utilizing two methods.
- The first is to simply assume 
-\begin_inset Formula $\frac{\partial T}{\partial C_{j}}=0$
-\end_inset
-
-,
- 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\mathcal{J}_{ij,\partial T=0}=\frac{\partial\omega_{i}}{\partial C_{j}},\label{eq:derivativee_matrix_const_dT}
-\end{equation}
-
-\end_inset
-
-Which keeps the state size the same but has the benefit of introducing sparseness and reducing computational cost,
- however,
- it can introduce error by removing 
-\begin_inset Formula $\frac{\partial T}{\partial C_{j}}$
-\end_inset
-
-.
- The second is by utilizing a nonconservative formulation based on temperature evolution by extracting a source term on temperature,
+ ChemGen provides a more sparse Jacobian by utilizing a nonconservative formulation based on temperature evolution by extracting a source term on temperature,
 \end_layout
 
 \begin_layout Standard
@@ -5201,6 +5161,31 @@ Thus
 
 ,
  provided other derivatives are available beyond the source terms.
+ Jacobians by utilizing two methods.
+ The first is to simply assume 
+\begin_inset Formula $\frac{\partial T}{\partial C_{j}}=0$
+\end_inset
+
+,
+ 
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{equation}
+\mathcal{J}_{ij,\partial T=0}=\frac{\partial\omega_{i}}{\partial C_{j}},\label{eq:derivativee_matrix_const_dT}
+\end{equation}
+
+\end_inset
+
+Which keeps the state size the same but has the benefit of introducing sparseness and reducing computational cost,
+ however,
+ it can introduce error by removing 
+\begin_inset Formula $\frac{\partial T}{\partial C_{j}}$
+\end_inset
+
+.
+ The second is 
 \end_layout
 
 \end_inset
@@ -7738,14 +7723,27 @@ name "subsec:Jacobian-Verification"
 
 \begin_layout Standard
 We performed Jacobian calculation confirmation in order to build confidence in their use for implicit time integration strategies.
- Recall ChemGen supplies three Jacobians,
+ Recall ChemGen supplies two Jacobians,
  
+\begin_inset Note Comment
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\quad\mathcal{J}_{ij,\delta T=0}=\frac{\partial\omega_{i}}{\partial C_{j}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{J}_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}+\frac{\partial\omega_{i}}{\partial T}\frac{\partial T}{\partial C_{j}},\quad\mathcal{J}_{ij,\delta T=0}=\frac{\partial\omega_{i}}{\partial C_{j}},\quad\mathcal{J}_{ij,T}=\begin{cases}
+\mathcal{J}_{ij}=\frac{\partial\omega_{i}}{\partial C_{j}}+\frac{\partial\omega_{i}}{\partial T}\frac{\partial T}{\partial C_{j}}\quad\mathcal{J}_{ij,T}=\begin{cases}
 \frac{\partial\omega_{T}}{\partial T} & j=1\\
 \frac{\partial\omega_{T}}{\partial C_{j-1}} & i=1;\quad j>1\\
 \frac{\partial\omega_{i-1}}{\partial T} & i>1;\quad j=1\\
@@ -7756,7 +7754,8 @@ We performed Jacobian calculation confirmation in order to build confidence in t
 \end_inset
 
 In this section we present verification of the Jacobians using the finite difference method.
- To calculate the finite difference approximation of the Jacobians we utilized the second order finite difference approximation for each element by perturbing each species 
+ To calculate the finite difference approximation of the Jacobians we utilized the second order finite difference approximation for each element by perturbing each species,
+ 
 \end_layout
 
 \begin_layout Standard
@@ -7785,14 +7784,40 @@ In this section we present verification of the Jacobians using the finite differ
 \begin_inset Formula 
 \begin{eqnarray}
 \hat{\mathcal{J}_{ij}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},(\rho u,\hat{C_{j}}^{+})\rightarrow T\right)-\omega_{i}\left(\hat{C_{j}}^{-},(\rho u,\hat{C_{j}}^{-})\rightarrow T\right)}{2\delta C}\label{eq:finite_difference_rho}\\
+\hat{\mathcal{J}_{ij,T}} & = & \begin{cases}
+\frac{\omega_{T}(C,T+\delta T)-\omega_{T}(C,T-\delta T)}{2\delta T} & j=1\\
+\frac{\omega_{T}(\hat{C_{j-1}}^{+},T)-\omega_{T}(\hat{C_{j-1}}^{-},T)}{2\delta C} & i=1;\quad j>1\\
+\frac{\omega_{i-1}(C,T+\delta T)-\omega_{i-1}(C,T-\delta T)}{2\delta T} & i>1;\quad j=1\\
+\frac{\omega_{i-1}\left(\hat{C_{j-1}}^{+},T\right)-\omega_{i-1}\left(\hat{C_{j-1}}^{-},T\right)}{2\delta C} & i>1;j>1,
+\end{cases}\label{eq:finite_difference_Tevolve}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{eqnarray}
+\hat{\mathcal{J}_{ij}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},(\rho u,\hat{C_{j}}^{+})\rightarrow T\right)-\omega_{i}\left(\hat{C_{j}}^{-},(\rho u,\hat{C_{j}}^{-})\rightarrow T\right)}{2\delta C}\label{eq:finite_difference_rho}\\
 \hat{\mathcal{J}_{ij,\delta T=0}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},T\right)-\omega_{i}\left(\hat{C_{j}}^{-},T\right)}{2\delta C}\label{eq:finite_difference_rho_T}\\
 \hat{\mathcal{J}_{ij,T}} & = & \begin{cases}
 \frac{\omega_{T}(C,T+\delta T)-\omega_{T}(C,T-\delta T)}{2\delta T} & j=1\\
 \frac{\omega_{T}(\hat{C_{j-1}}^{+},T)-\omega_{T}(\hat{C_{j-1}}^{-},T)}{2\delta C} & i=1;\quad j>1\\
 \frac{\omega_{i-1}(C,T+\delta T)-\omega_{i-1}(C,T-\delta T)}{2\delta T} & i>1;\quad j=1\\
-\frac{\omega_{i-1}\left(\hat{C_{j-1}}^{+},T\right)-\omega_{i-1}\left(\hat{C_{j-1}}^{-},T\right)}{2\delta C} & i>1;j>1
+\frac{\omega_{i-1}\left(\hat{C_{j-1}}^{+},T\right)-\omega_{i-1}\left(\hat{C_{j-1}}^{-},T\right)}{2\delta C} & i>1;j>1,
 \end{cases}\label{eq:finite_difference_Tevolve}
 \end{eqnarray}
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -7816,7 +7841,7 @@ nolink "false"
 \end_inset
 
 ,
- and 
+ 
 \begin_inset Formula $\delta T$
 \end_inset
 
@@ -7941,7 +7966,7 @@ literal "false"
 
 .
  The refinement results agree well with the expected second-order accuracy.
- We performed this refinement study across all previously mentioned chemical models and observed consistent order of accuracy with little to no variation.
+ We performed this refinement study across all previously mentioned chemical models and observed consistent order of accuracy with little to no variation for both Jacobians.
  In some cases,
  when the initial 
 \begin_inset Formula $\delta C$
@@ -7963,7 +7988,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-We evaluated the computational cost of the three analytical Jacobians relative to their corresponding finite difference approximations.
+We evaluated the computational cost of the two analytical Jacobians relative to their corresponding finite difference approximations.
  Using the same approach to generate random chemical states as described in Equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
@@ -8008,7 +8033,6 @@ nolink "false"
 \begin_inset Formula 
 \begin{eqnarray}
 \hat{\mathcal{J}_{ij,1}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},(\rho u,\hat{C_{j}}^{+})\rightarrow T\right)-\omega_{i}\left(C,T\right)}{\delta C}\label{eq:finite_difference_rho-1}\\
-\hat{\mathcal{J}_{ij,\delta T=0,1}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},T\right)-\omega_{i}\left(C,T\right)}{\delta C}\label{eq:finite_difference_rho_T-1}\\
 \hat{\mathcal{J}_{ij,T,1}} & = & \begin{cases}
 \frac{\omega_{T}(C,T+\delta T)-\omega_{T}(C,T)}{\delta T} & j=1\\
 \frac{\omega_{T}(\hat{C_{j-1}}^{+},T)-\omega_{T}(C,T)}{\delta C} & i=1;\quad j>1\\
@@ -8036,7 +8060,12 @@ for a variety of chemical models ranging in size and complexity.
  Despite using the fastest discrete Jacobian optimization,
  the analytical Jacobians were consistently faster across all cases.
  Notably the analytical Jacobian was seen to increase in speed relative to the discrete as the mechanism increased in complexity.
- In addition the results also summarize the relative speedup by using that approximate Jacobian 
+ .
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+In addition the results also summarize the relative speedup by using that approximate Jacobian 
 \begin_inset Formula $\mathcal{J}_{ij,\delta T=0}$
 \end_inset
 
@@ -8044,7 +8073,40 @@ for a variety of chemical models ranging in size and complexity.
 \begin_inset Formula $\mathcal{J}_{ij}$
 \end_inset
 
- which gives on average about a factor of two speed up.
+ which gives on average about a factor of two speed up$
+\backslash
+mathcal{J}_{ij,
+\backslash
+delta T=0}/
+\backslash
+hat{
+\backslash
+mathcal{J}_{ij,
+\backslash
+delta T=0,1}}$  & 7.80 & 6.50 & 9.91 & 16.30 & 20.84 & 41.69 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+$
+\backslash
+mathcal{J}_{ij,
+\backslash
+delta T=0}/
+\backslash
+mathcal{J}_{ij}$                     & 3.48 & 2.32 & 2.50 & 1.89  & 2.25  & 2.07  
+\backslash
+
+\backslash
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8053,7 +8115,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -8078,15 +8140,15 @@ name "fig:OOA"
 \end_inset
 
 Order of accuracy convergence for 
-\begin_inset Formula $\hat{\mathcal{J}_{b}}$
+\begin_inset Formula $\hat{\mathcal{J}_{ij}}$
 \end_inset
 
  when compared to 
-\begin_inset Formula $\mathcal{J}_{b}$
+\begin_inset Formula $\mathcal{J}_{ij}$
 \end_inset
 
-,
- demonstrating 
+.
+ 
 \end_layout
 
 \end_inset
@@ -8189,45 +8251,11 @@ mathcal{J}_{ij,1}}$                         & 2.99 & 3.76 & 5.07 & 10.26 & 11.39
 
 $
 \backslash
-mathcal{J}_{ij,
-\backslash
-delta T=0}/
-\backslash
-hat{
-\backslash
-mathcal{J}_{ij,
-\backslash
-delta T=0,1}}$  & 7.80 & 6.50 & 9.91 & 16.30 & 20.84 & 41.69 
-\backslash
-
-\backslash
-
-\end_layout
-
-\begin_layout Plain Layout
-
-$
-\backslash
 mathcal{J}_{ij,T}/
 \backslash
 hat{
 \backslash
 mathcal{J}_{ij,T,1}}$                     & 2.84 & 3.23 & 3.03 & 9.52  & 9.61  & 19.28 
-\backslash
-
-\backslash
-
-\end_layout
-
-\begin_layout Plain Layout
-
-$
-\backslash
-mathcal{J}_{ij,
-\backslash
-delta T=0}/
-\backslash
-mathcal{J}_{ij}$                     & 3.48 & 2.32 & 2.50 & 1.89  & 2.25  & 2.07  
 \backslash
 
 \backslash
@@ -8418,7 +8446,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center

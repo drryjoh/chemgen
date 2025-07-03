@@ -9,20 +9,31 @@ backwards_euler({chemical_state} y,
 {{
         {chemical_state} y_init = y;
         {chemical_state} y_guess = y;
+
+        {jacobian_eigen} A;
+        {declare_linear_solver_eigen}
+        {declare_compute_flag}
+        {initialize_compute_flag}
+
         for ({index} iter = 0; iter < max_iter; ++iter)
         {{
+            {update_compute_flag}
             {scalar} temperature_ = temperature(y[0], y_guess);
             {chemical_state} f = source(y_guess, temperature_);
-            {jacobian_eigen} A = source_jacobian(y_guess, temperature_, -1, 1/dt);
             {chemical_state} res = {{}};
+
+            {if_compute_flag}
+            {{
+                A = source_jacobian(y_guess, temperature_, -1, 1/dt);
+            }}
 
             //RHS
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
             //Solve
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {chemical_state} dy = invert_jacobian(A) * res;
+            {chemical_state} dy = direct_solve(A, res{solver_and_compute_flag_arguments});
             #else
-            {chemical_state} dy = gmres_solve(A, res, n_gmres_iter_total);
+            {chemical_state} dy = gmres_solve(A, res{solver_and_compute_flag_arguments}, n_gmres_iter_total);
             #endif
 
             //Increment
