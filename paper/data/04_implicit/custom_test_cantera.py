@@ -208,7 +208,8 @@ void run_cantera_reactornet(double T0,
     {{
         double tm = i*dt;
         sim.advance(tm);
-        //std::cout << "time = " << tm << " s" << std::endl;
+        double T = r->temperature();
+        std::cout << "time = " << tm << " s " << T << " K"<<std::endl;
     }}
     auto cantera_end = std::chrono::high_resolution_clock::now();
 

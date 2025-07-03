@@ -9,7 +9,7 @@ sum_gen({species_parameter} a_s) {const_option} {{return {device_sum_inl};}}
 {species_function}
 fill_gen({scalar_parameter} a) {const_option}
 {{
-    Species b_s{{}};  // Create an empty array
+    {species} b_s{{}};  // Create an empty array
     {device_fill_inl};  // Fill it with 'value'
     return b_s;  // Return the filled array
 }}
