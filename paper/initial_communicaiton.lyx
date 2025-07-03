@@ -158,7 +158,7 @@ address{Laboratories for Computational Physics and Fluid Dynamics,
 
 
 \backslash
-author{Joshua Ethan Lipman,
+author{Joshua Lipman,
  Ethan Genter,
  Hai Wang}
 \end_layout
@@ -1802,13 +1802,16 @@ CFD focuses on the conservation variables related to mass,
 \end_inset
 
  represents the number of chemical species.
- Since the modeled chemical species collectively determine the total density,
- the conserved density can either be removed from the state or retained and one species removed to avoid overprescription,
- hence reduction of 
+ The reduction of 
+\begin_inset Formula $n_{c}$
+\end_inset
+
+ to 
 \begin_inset Formula $n_{c}-1$
 \end_inset
 
 .
+ is due to the modeled chemical species collectively determine the total density.
  Detailed chemical models may involve hundreds of species and thousands of reactions,
  typically with 
 \begin_inset Formula $n_{r}\approx5n_{s}$
@@ -8301,28 +8304,11 @@ ReactorNet
 
 \end_inset
 
- class.
- All integrators demonstrate agreement with Cantera.
- The time steps used in this example were all 
-\begin_inset Formula $\Delta t=\left(1\times10^{-7}\right)$
+ class to a maximum time of 
+\begin_inset Formula $2\times10^{-5}$
 \end_inset
 
- seconds with the exception of 
-\begin_inset Formula $\Delta t=\left(5\times10^{-7}\right)$
-\end_inset
-
- for SDIRK-4.
- The homogeneous reactor was run for a physical time of 20 
-\begin_inset Formula $\mu$
-\end_inset
-
-s.
- As a reference,
- the Cantera results were generated using 
-\begin_inset Formula $\Delta t=1\times10^{-7}$
-\end_inset
-
- with default settings.
+ seconds.
  Line markers are shown at every ten time steps,
  except for SDIRK-4,
  where markers are placed every five steps to accommodate its larger time step.
@@ -8333,6 +8319,303 @@ s.
  The Rosenbroc method shows improved agreement,
  while SDIRK-2 and SDIRK-4 integrators match Cantera most closely.
  
+\end_layout
+
+\begin_layout Standard
+All integrators demonstrate agreement with Cantera.
+ We iterated through various time steps to arrive on the fastest time to solution while maintaining reasonable accuracy.
+ The utilized time steps are summarized in Table 
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "tab:time_step_and_timings"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ with the simulation time,
+ 
+\begin_inset Formula $\tau_{cg}$
+\end_inset
+
+,
+ of the ChemGen simulation normalized by the Cantera simulation time,
+ 
+\begin_inset Formula $\tau_{ct}$
+\end_inset
+
+.
+ The Cantera 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+ReactorNet
+\end_layout
+
+\end_inset
+
+ time step was iterated on to find the fastest time to solution,
+ while utilizing both GMRES and default adaptive preconditioner.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Integrator
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\Delta t$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau_{cg}/\tau_{cg}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Backward Euler
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1e-7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1.26
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SDIRK-2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7e-7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3.19
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SDIRK-4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1e-6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3.51
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Rosenbroc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1e-7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.26
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+YASS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1e-7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3.22
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cantera
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1e-6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Implicit time integrator optimal time step and simulation time,
+ normalized by the Cantera simulation time.
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:time_step_and_timings"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8392,39 +8675,6 @@ ChemGen integrators were tested on a homogeneous reactor simulation run to
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-The results shown in Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:implicit_homogeneous_reactor"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- were produced on several machines with reproducible timings.
- YASS was the fastest integrator,
- with the others slower by average factors of 3.80 (Backward Euler),
- 1.55 (Rosenbroc),
- 6.58 (SDIRK-2),
- and 4.46 (SDIRK-4).
- Backward Euler was slower due to the need for multiple linear solves per step,
- in contrast to YASS,
- which requires only a single solve.
- A similar pattern holds for Rosenbroc,
- which performs two linear solves but offers higher accuracy.
- While SDIRK-2 and SDIRK-4 were initially slower,
- both retained stability across all test cases and approached the speed of YASS when the time step was increased to 
-\begin_inset Formula $\Delta t=1\times10^{-6}$
-\end_inset
-
-,
- achieving comparable error levels.
- 
 \end_layout
 
 \begin_layout Standard
@@ -8517,7 +8767,7 @@ s was was the approximate location of maximum
 \begin_inset Formula $h=\Delta t/16$
 \end_inset
 
- was used at the converged solution for a norm calculation,
+ was used as the converged solution for a norm calculation,
 \end_layout
 
 \begin_layout Standard
@@ -8561,7 +8811,11 @@ Resulting in four
 \end_inset
 
  for YASS.
- The results for the convergence study are summarized in Figure 
+ 
+\end_layout
+
+\begin_layout Standard
+The results for the convergence study are summarized in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:convergence_study"
