@@ -242,6 +242,7 @@ def main():
                 raise NotImplementedError
 
             sparsity_pattern = np.zeros([gas.n_species+1, gas.n_species+1], dtype=int)
+            np.fill_diagonal(sparsity_pattern, 1)
             if args.temperature_equation: sparsity_pattern[0] += 1 # temperature source is dependent on entire state
         else:
             sparsity_pattern = None
