@@ -3,15 +3,6 @@ import cantera as ct
 import numpy as np
 import sys
 import chemgen as cg
-def get_random_TPX(gas):
-    species_array = np.random.uniform(0, 1, len(gas.species_names))
-    species_array /= species_array.sum()
-
-    T = 1000 + 1500 * np.random.random()
-    p = 10132.5 + 101325.0 * 10.9 * np.random.random()
-
-    C = species_array * p / (ct.gas_constant * T)
-    return np.hstack((C, T))  # return a flat array with species and temperature
 
 def main():
     if len(sys.argv) != 3:
@@ -25,14 +16,19 @@ def main():
 
     random_states = np.load(f"{mech_name}_random_states.npy")
     J = []
+    dTdc = []
     for y in random_states:
         J.append(cg.source_jacobian(y[:-1],y[-1]))
+        dTdc.append(cg.dtemperature_dspecies(y[:-1],y[-1]))
     
     J = np.array(J)
+    dTdc = np.array(dTdc)
     if cg.ignore_temp_dependence():
         np.save(f"J_{mech_name}_itd.npy", J)
     else:
         np.save(f"J_{mech_name}_wtd.npy", J)
+        np.save(f"dTdc_{mech_name}.npy", dTdc)
+
 
 if __name__ == "__main__":
     main()
