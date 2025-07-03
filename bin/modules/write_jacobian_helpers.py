@@ -13,7 +13,7 @@ def jacobian_initialize_text(configuration, sparsity_pattern):
         return "{jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};".format(**vars(configuration))
     elif configuration.eigen_sparse:
         return """std::vector<Triplet_> jacobian_triplets;
-        jacobian_triplets.reserve({nonzeros});""".format(**vars(configuration), nonzeros=np.sum(sparsity_pattern)+sparsity_pattern.shape[0]) # potentially over-allocate for diagonal fill
+        jacobian_triplets.reserve({nonzeros});""".format(**vars(configuration), nonzeros=np.sum(sparsity_pattern))
     else:
         return "{jacobian_eigen} jacobian_net_production_rates = {jacobian_eigen}::Zero();".format(**vars(configuration))
 
