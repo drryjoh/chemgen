@@ -1,3 +1,13 @@
 #!/bin/bash
 
-rm -rf src/ *.txt bin/ __pycache__
+#user error
+read -p "you sure you want to clean jay??: " choice
+
+if ["$choice" == "yes"]; then
+    rm -rf src/ *.txt bin/ __pycache__
+else
+    echo "abort cleanup"
+fi
+
+# rm -rf src/ *.txt bin/ __pycache__
+

@@ -3,7 +3,7 @@
 #JAYS VERSION
 python3 /Users/jsampa/Code/chemgen/bin/chemgen.py FFCM2_model.yaml bin/ --custom-test custom_test.py --temperature-equation --ignore-other-species \
     --compile \
-    # --skip \
+    --skip \
     # --get-sparsity \
 
 # #PURE COMPILING
