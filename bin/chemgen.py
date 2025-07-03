@@ -168,12 +168,17 @@ def main():
         print("Not generating with a chemgen chemistry solver.")
 
     eigen = ""
-    eigen_sparse = False
+    eigen_sparse = False # TODO: replace eigen_sparse with eigen_sparse_directive since non-empty strings evaluate to True in a boolean context while an empty string evaluates to False
+    fixed_jacobian = False
     if chemistry_solver_eigen and chemistry_solver:
         if chemistry_solver_eigen:
             eigen = "#define CHEMGEN_EIGEN"
             print("Running with eigen!")
             eigen_sparse = configuration_file.get('solver', {}).get('eigen_sparse', False)
+
+        fixed_jacobian = configuration_file.get('solver', {}).get('fixed_jacobian', False)
+        if fixed_jacobian:
+            print("Using fixed Jacobian for Newton solve")
 
     eigen_sparse_directive = ""
     if eigen_sparse:
@@ -210,6 +215,7 @@ def main():
 
     setattr(configuration, "preconditioner",  preconditioner)
     setattr(configuration, "direct_solver",  direct_solver)
+    setattr(configuration, "fixed_jacobian",  fixed_jacobian)
     setattr(configuration, "eigen",  eigen)
     setattr(configuration, "eigen_sparse",  eigen_sparse)
     setattr(configuration, "eigen_sparse_directive",  eigen_sparse_directive)
