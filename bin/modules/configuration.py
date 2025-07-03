@@ -84,8 +84,27 @@ def update_configuration_eigen(configuration):
         left = "["
         mid = "]["
         right = "]"
+
+        if configuration.fixed_jacobian:
+            raise NotImplementedError
+
+        linear_solver_direct_eigen = ""
+        linear_solver_iterative_eigen = ""
+        linear_solver_eigen = ""
+
+        declare_linear_solver_direct_eigen = ""
+        declare_linear_solver_iterative_eigen = ""
+        declare_linear_solver_eigen = ""
+
+        declare_compute_flag = ""
+        initialize_compute_flag = ""
+        update_compute_flag = ""
+        if_compute_flag = ""
+        solver_and_compute_flag_arguments = ""
     else:
         scalar = configuration.scalar
+        index = configuration.index
+
         species_eigen = f"Matrix<{scalar}, n_species, 1>"
         species_function_eigen = f"Matrix<{scalar}, n_species, 1>"
         species_parameter_eigen = f"const Matrix<{scalar}, n_species, 1>&"
@@ -104,11 +123,46 @@ def update_configuration_eigen(configuration):
         mid = ","
         right = ")"
 
+        linear_solver_direct_eigen = f"PartialPivLU<{jacobian_eigen}>"
+
         if configuration.eigen_sparse:
             jacobian_eigen = f"SparseMatrix<{scalar}>"
             jacobian_function_eigen = f"SparseMatrix<{scalar}>"
             jacobian_parameter_eigen = f"const SparseMatrix<{scalar}>&"
             jacobian_eigen_dynamic = f"SparseMatrix<{scalar}>"
+
+            linear_solver_direct_eigen = f"SparseLU<SparseMatrix<{scalar}>, COLAMDOrdering<{index}>>"
+
+        declare_linear_solver_direct_eigen = f"{linear_solver_direct_eigen} solver;"
+
+        linear_solver_iterative_eigen = f"GMRES<{jacobian_eigen_dynamic}, Preconditioner>"
+        declare_linear_solver_iterative_eigen = f"{linear_solver_iterative_eigen} solver;"
+
+        if not configuration.direct_solver:
+            linear_solver_eigen = linear_solver_iterative_eigen
+            declare_linear_solver_eigen = declare_linear_solver_iterative_eigen
+        else:
+            linear_solver_eigen = linear_solver_direct_eigen
+            declare_linear_solver_eigen = declare_linear_solver_direct_eigen
+
+        if configuration.fixed_jacobian:
+            declare_compute_flag = "bool compute_jacobian;"
+            initialize_compute_flag = "compute_jacobian = true;"
+            update_compute_flag = """
+            if (iter > 0) compute_jacobian = false;"""
+
+            if_compute_flag = "if (compute_jacobian)"
+
+            solver_and_compute_flag_arguments = ", solver, compute_jacobian"
+        else:
+            declare_compute_flag = ""
+            initialize_compute_flag = ""
+            update_compute_flag = ""
+
+            if_compute_flag = ""
+
+            solver_and_compute_flag_arguments = ", solver, true"
+
 
     setattr(configuration, "species_eigen", species_eigen)
     setattr(configuration, "species_function_eigen", species_function_eigen)
@@ -127,4 +181,18 @@ def update_configuration_eigen(configuration):
     setattr(configuration, "left", left)
     setattr(configuration, "mid", mid)
     setattr(configuration, "right", right)
+
+    setattr(configuration, "linear_solver_direct_eigen", linear_solver_direct_eigen)
+    setattr(configuration, "linear_solver_iterative_eigen", linear_solver_iterative_eigen)
+    setattr(configuration, "linear_solver_eigen", linear_solver_eigen)
+
+    setattr(configuration, "declare_linear_solver_direct_eigen", declare_linear_solver_direct_eigen)
+    setattr(configuration, "declare_linear_solver_iterative_eigen", declare_linear_solver_iterative_eigen)
+    setattr(configuration, "declare_linear_solver_eigen", declare_linear_solver_eigen)
+
+    setattr(configuration, "declare_compute_flag", declare_compute_flag)
+    setattr(configuration, "initialize_compute_flag", initialize_compute_flag)
+    setattr(configuration, "update_compute_flag", update_compute_flag)
+    setattr(configuration, "if_compute_flag", if_compute_flag)
+    setattr(configuration, "solver_and_compute_flag_arguments", solver_and_compute_flag_arguments)
 

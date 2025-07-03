@@ -2,10 +2,8 @@
 
 {device_option}
 {chemical_state_function}
-direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_)
+direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linear_solver_direct_eigen}& lu, bool compute)
 {{
-    using namespace Eigen;
-
     {chemical_state_eigen} b(n_variables);
 
     for ({index} i = 0; i < n_variables; ++i)
@@ -17,17 +15,13 @@ direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_)
 
 #ifdef CHEMGEN_EIGEN_SPARSE
 
-    SparseLU<SparseMatrix<{scalar}>, COLAMDOrdering<{index}>> lu;
-
-    lu.compute(A);
+    if (compute) lu.compute(A);
     if (lu.info() != Success) std::cerr << "lu factorization failed!" << std::endl;
     x = lu.solve(b);
 
 #else
 
-    typedef PartialPivLU<{jacobian_eigen}> LU;
-
-    LU lu = LU(A);
+    lu = {linear_solver_direct_eigen}(A);
 
     x = lu.permutationP() * b;
     lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
@@ -43,6 +37,16 @@ direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_)
     }}
 
     return result;
+}}
+
+{device_option}
+{chemical_state_function}
+direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_)
+{{
+    {declare_linear_solver_direct_eigen}
+
+    return
+    direct_solve(A, b_, solver, true);
 }}
 
 #else

@@ -38,51 +38,54 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 #ifdef CHEMGEN_EIGEN
 #include "./custom_preconditioners_eigen.h"
 
+using Preconditioner =
+
+#ifdef CHEMGEN_PRECONDITIONER_JACOBI
+DiagonalPreconditioner<{scalar}>;
+
+#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
+GaussSeidelPreconditioner<{scalar}, {jacobian_eigen}>;
+
+#elif defined(CHEMGEN_PRECONDITIONER_ILU)
+IncompleteLUT<{scalar}>;
+
+#elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
+JacobiPreconditioner<{scalar}>;
+
+#else
+IdentityPreconditioner;
+
+#endif
+
 {device_option}
 {chemical_state_function}
-gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
+gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linear_solver_iterative_eigen}& gmres, bool compute, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
 {{
-    using namespace Eigen;
-
     {chemical_state_eigen} b(n_variables);
 
     for ({index} i = 0; i < n_variables; ++i)
     {{
         b(i) = b_[i];
     }}
-
-#ifdef CHEMGEN_PRECONDITIONER_JACOBI
-
-    GMRES<{jacobian_eigen_dynamic}, DiagonalPreconditioner<{scalar}>> gmres;
-
-#elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
-
-    GMRES<{jacobian_eigen_dynamic}, GaussSeidelPreconditioner<{scalar}, {jacobian_eigen}>> gmres;
-
-#elif defined(CHEMGEN_PRECONDITIONER_ILU)
-
-    GMRES<{jacobian_eigen_dynamic}, IncompleteLUT<{scalar}>> gmres;
-
-    // gmres.preconditioner().setFillfactor(10); // default value
-    gmres.preconditioner().setFillfactor(n_variables * n_variables); // allow for maximum fill-in, such that only droptol controls ilu sparsity
-
-    gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
-    //gmres.preconditioner().setDroptol(0.001);
-
-#elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
-
-    GMRES<{jacobian_eigen_dynamic}, JacobiPreconditioner<{scalar}>> gmres;
-
-#else
-
-    GMRES<{jacobian_eigen_dynamic}, IdentityPreconditioner> gmres;
-#endif
-
     gmres.setMaxIterations(n_variables); // total number of iterations including restarts
     gmres.set_restart(n_variables); // # iterations before restart (Full-size Krylov subspace)
 
-    gmres.compute(A); // preconditioner initialized here
-    if (gmres.preconditioner().info() != Success) std::cerr << "Preconditioner failed!" << std::endl;
+    if (compute)
+    {{
+#if defined(CHEMGEN_PRECONDITIONER_ILU)
+
+        //gmres.preconditioner().setFillfactor(10); // default value
+        gmres.preconditioner().setFillfactor(n_variables * n_variables); // allow for maximum fill-in, such that only droptol controls ilu sparsity
+
+        gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
+        //gmres.preconditioner().setDroptol(0.001);
+
+#endif
+
+        gmres.compute(A); // preconditioner initialized here
+
+        if (gmres.preconditioner().info() != Success) std::cerr << "Preconditioner failed!" << std::endl;
+    }}
 
     // eigen uses relative tolerance - https://eigen.tuxfamily.org/dox/unsupported/GMRES_8h_source.html
     {scalar} tol = std::max(rel_tol, divide(abs_tol, gmres.preconditioner().solve(b).norm()));
@@ -103,6 +106,16 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index}
     }}
 
     return result;
+}}
+
+{device_option}
+{chemical_state_function}
+gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {index} &n_gmres_iter_total, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
+{{
+    {declare_linear_solver_iterative_eigen}
+
+    return
+    gmres_solve(A, b_, solver, true, n_gmres_iter_total, abs_tol, rel_tol);
 }}
 
 #else
