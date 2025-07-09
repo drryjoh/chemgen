@@ -11,6 +11,7 @@ from modules.configuration import *
 from modules.headers import *
 from modules.compile_and_run import *
 from modules.create_pybind import *
+from modules.splu_helpers import *
  
 def find_chemical_mechanism(file_name):
     # Get the path to the current script (chemgen.py)
