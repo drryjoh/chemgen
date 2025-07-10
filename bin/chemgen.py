@@ -71,6 +71,7 @@ def main():
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
     parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
     parser.add_argument("--save-sparsity", action="store_true", help="Save Jacobian sparsity pattern as a numpy array (int)")
+    parser.add_argument("--permute-jacobian", action="store_true", help="Permute columns/rows of Jacobian - need to load a sparsity_pattern.npy file")
     parser.add_argument("--temperature-equation", action="store_true", help="Solve temperature equation instead of assuming constant internal energy")
     parser.add_argument("--ignore-other-species", action="store_true", help="Ignore third-body and pressure dependence when calculating derivatives with respect to species")
 
@@ -223,6 +224,21 @@ def main():
     setattr(configuration, "eigen_sparse_directive",  eigen_sparse_directive)
 
     update_configuration_eigen(configuration)
+
+    if args.permute_jacobian:
+        if not eigen_sparse:
+            raise NotImplementedError("permute-jacobian requires sparse eigen")
+        print("Permuting rows/columns of Jacobian!")
+        sp = np.load("sparsity_pattern.npy")
+        lu_sp = get_splu(sp)
+        perm = invert_permutation(lu_sp.perm_c)
+        assert(perm.shape[0] == gas.n_species+1)
+    else:
+        # identity
+        perm = np.arange(gas.n_species+1)
+
+    setattr(configuration, "perm",  perm)
+    setattr(configuration, "perm_inv",  invert_permutation(perm))
 
     third_parties = [use_third_parties, third_party_path, libraries]
 
