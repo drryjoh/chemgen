@@ -3,6 +3,17 @@ from scipy.linalg import lu
 from scipy import sparse
 from scipy.sparse.linalg import splu, spilu
 
+def invert_permutation(p):
+    """Return an array s with which np.array_equal(arr[p][s], arr) is True.
+    The array_like argument p must be some permutation of 0, 1, ..., len(p)-1.
+
+    # https://stackoverflow.com/questions/11649577/how-to-invert-a-permutation-array-in-numpy
+    """
+    p = np.asanyarray(p) # in case p is a tuple, etc.
+    s = np.empty_like(p)
+    s[p] = np.arange(p.size)
+    return s
+
 def get_splu(sparsity_pattern):
     n = sparsity_pattern.shape[0]
 

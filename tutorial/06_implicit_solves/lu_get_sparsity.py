@@ -14,17 +14,6 @@ from splu_helpers import *
 
 eps = np.finfo(float).eps
 
-def invert_permutation(p):
-    """Return an array s with which np.array_equal(arr[p][s], arr) is True.
-    The array_like argument p must be some permutation of 0, 1, ..., len(p)-1.
-
-    # https://stackoverflow.com/questions/11649577/how-to-invert-a-permutation-array-in-numpy
-    """
-    p = np.asanyarray(p) # in case p is a tuple, etc.
-    s = np.empty_like(p)
-    s[p] = np.arange(p.size)
-    return s
-
 def assert_close(A, B, tol=1e-10):
     # absolute tolerance
     try:
