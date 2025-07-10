@@ -44,8 +44,8 @@ def write_permutation_indices(file, configuration):
         content =  "\nstatic const {indices_type} perm_indices = ({indices_type}() << {perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", perm_text=array1d_int_text(configuration.perm, configuration))
         content += "\nstatic const {indices_type} inv_perm_indices = ({indices_type}() << {inv_perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", inv_perm_text=array1d_int_text(configuration.inv_perm, configuration))
     else:
-        content =  "\n{device_option} {constexpr} {scalar_list}<{index}, {n_variables}> perm_indices() {const_option} {{return {perm_text};}}".format(**vars(configuration), perm_text=array1d_int_text(configuration.perm, configuration))
-        content += "\n{device_option} {constexpr} {scalar_list}<{index}, {n_variables}> inv_perm_indices() {const_option} {{return {inv_perm_text};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm, configuration))
+        content =  "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> perm_indices() {const_option} {{return {{{perm_text}}};}}".format(**vars(configuration), perm_text=array1d_int_text(configuration.perm, configuration))
+        content += "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> inv_perm_indices() {const_option} {{return {{{inv_perm_text}}};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm, configuration))
     file.write(content)
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
