@@ -179,7 +179,7 @@ print("M_sparse_lu.L.nnz + M_sparse_lu.U.nnz - n = {}".format(M_sparse_lu.L.nnz 
 
 # Reconstruct M
 # Construct sparse (inverse) permutation matrices
-# Note: Pr is equal to np.eye(n)[invert_permutation(perm_r), :] and similarly for Pc
+# Note: Pr is equal to np.eye(n)[invert_permutation(perm_r), :] and Pc is equal to np.eye(n)[:, invert_permutation(perm_c)]
 Pr = sparse.csc_array((np.ones(n), (M_sparse_lu.perm_r, np.arange(n))))
 Pc = sparse.csc_array((np.ones(n), (np.arange(n), M_sparse_lu.perm_c)))
 M = (Pr.T @ (M_sparse_lu.L @ M_sparse_lu.U) @ Pc.T).toarray()
@@ -187,6 +187,15 @@ M = (Pr.T @ (M_sparse_lu.L @ M_sparse_lu.U) @ Pc.T).toarray()
 # Permute columns (and rows)
 M_p = M[:, invert_permutation(M_sparse_lu.perm_c)][invert_permutation(M_sparse_lu.perm_r), :]
 # sm_p = Pr @ sm @ Pc
+
+# checks
+pc = np.eye(n)[:, invert_permutation(M_sparse_lu.perm_c)]
+pr = np.eye(n)[invert_permutation(M_sparse_lu.perm_r), :]
+assert_close(M @ pc, M[:, invert_permutation(M_sparse_lu.perm_c)])
+assert_close(pr @ M @ pc, M[:, invert_permutation(M_sparse_lu.perm_c)][invert_permutation(M_sparse_lu.perm_r), :])
+
+# if applying same permutation matrix to columns and rows, need to transpose when applying to rows
+assert_close(pc.T @ M @ pc, M[:, invert_permutation(M_sparse_lu.perm_c)][invert_permutation(M_sparse_lu.perm_r), :])
 
 M_lu, M_sp = lu_and_sparsity(M_p)
 M_l = np.tril(M_lu, -1)
