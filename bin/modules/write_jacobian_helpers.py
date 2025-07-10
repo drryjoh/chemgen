@@ -26,7 +26,6 @@ def update_jacobian_input(configuration):
         return "{jacobian_eigen}& jacobian_net_production_rates".format(**vars(configuration))
 
 def modify_jacobian_text_eigen(configuration, formatted_text):
-    perm = configuration.perm
     if not configuration.eigen:
         return formatted_text
     elif configuration.eigen_sparse:
@@ -38,7 +37,7 @@ def modify_jacobian_text_eigen(configuration, formatted_text):
         ij_split = ij_text.strip('][').split('][')
         i_string = ij_split[0]
         j_string = ij_split[1]
-        return "        jacobian_triplets.push_back(Triplet_({i}, {j}, {value}));\n".format(i=perm[i_string], j=perm[j_string], value=rhs_text.replace(';', ''))
+        return "        jacobian_triplets.push_back(Triplet_({i}, {j}, {value}));\n".format(i=i_string, j=j_string, value=rhs_text.replace(';', ''))
     else:
         # only modify LHS
         text_split = formatted_text.split('=')
@@ -49,112 +48,73 @@ def modify_jacobian_text_eigen(configuration, formatted_text):
         return lhs_text + "=" + rhs_text
 
 def jacobian_all_text_eigen(configuration, row_index, species_row_to_be_added_text):
-    perm = configuration.perm
     if not configuration.eigen:
         # TODO: modify jacobian_net_production_rates[{row_index}] in place?
         return f"        jacobian_net_production_rates[{row_index}] = add_species_to_chemical_state(jacobian_net_production_rates[{row_index}], {species_row_to_be_added_text});\n"
     elif configuration.eigen_sparse:
-        return f"        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, {perm[row_index]}, {species_row_to_be_added_text});\n"
+        return f"        add_species_to_jacobian_row_eigen_sparse(jacobian_triplets, {row_index}, {species_row_to_be_added_text});\n"
     else:
         return f"        add_species_to_jacobian_row_eigen(jacobian_net_production_rates, {row_index}, {species_row_to_be_added_text});\n"
 
-def array1d_text(arr):
-    return str(arr).replace('[','').replace(']','').replace(' ',',')
-
 def dtemperature_source_dspecies_and_dsource_species_dtemperature_text(configuration):
-    perm = configuration.perm
-    perm_inv = configuration.perm_inv
     if configuration.eigen_sparse:
-
-        if configuration.permute_jacobian:
-            # Can't easily access temperature row post-permutation
-            # Rely on pre-computed temp_row_indices
-            temp_row_indices = configuration.temp_row_indices
-
-            dtemperature_source_dspecies2_text = """
-        std::array<{index}, n_variables> temp_row_indices = {{{temp_row_indices_text}}};
-
-        // Derivative of temperature source term with respect to concentrations
-        // Second part
-        for ({index} j = 0; j < n_species; j++) // column index (unpermuted)
-        {{
-            // Permuted column index
-            {index} col = perm[j+1]; // skip temperature column
-
-            jacobian_net_production_rates.valuePtr()[temp_row_indices[col]] = jacobian_net_production_rates.valuePtr()[temp_row_indices[col]] - divide(dspecies_internal_energy_mole_source_sum_dspecies_[j], specific_heat_constant_volume_volume_specific_);
-        }}""".format(**vars(configuration), temp_row_indices_text=array1d_text(temp_row_indices))
-
-        else:
-            dtemperature_source_dspecies2_text = """
-        // Derivative of temperature source term with respect to concentrations
-        // Second part
-        for ({index} j = 0; j < n_species; j++)
-        {{
-            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, j+1); it; ++it) // skip first column (temperature)
-            {{
-                if (it.row() != 0) std::cerr << "it.row() != 0" << std::endl; // first row is dense
-
-                it.valueRef() = it.value() - divide(dspecies_internal_energy_mole_source_sum_dspecies_[j], specific_heat_constant_volume_volume_specific_);
-
-                break; // only first row
-            }}
-        }}""".format(**vars(configuration))
-
         return """
         {scalar} specific_heat_constant_volume_volume_specific_ = specific_heat_constant_volume_volume_specific(species, temperature);
         Species dtemperature_source_dspecies_1 = scale_gen(divide(species_internal_energy_mole_source_sum(species, temperature), pow2(specific_heat_constant_volume_volume_specific_)), dspecific_heat_constant_volume_volume_specific_dspecies(species, temperature));
 
-        std::array<{index}, n_variables> perm = {{{perm_text}}};
-        std::array<{index}, n_variables> perm_inv = {{{perm_inv_text}}};
-
         for ({index} i = 0; i < n_species; i++)
         {{
             // Derivative of species source terms with respect to temperature
-            jacobian_triplets.push_back(Triplet_(perm[i+1], {zero}, dsource_species_dtemperature_[i]));
+            jacobian_triplets.push_back(Triplet_(i+1, 0, dsource_species_dtemperature_[i]));
 
             // Only one term (out of two terms) of dtemperature_source_dspecies so the first row is fully allocated after compression
             // Will update with second term below
-            jacobian_triplets.push_back(Triplet_({zero}, perm[i+1], dtemperature_source_dspecies_1[i]));
+            jacobian_triplets.push_back(Triplet_(0, i+1, dtemperature_source_dspecies_1[i]));
         }}
         {diagonal_add}
         {set_jacobian_from_triplets}
         Species dspecies_internal_energy_mole_source_sum_dspecies_ = {{{scalar_cast}(0)}};
         Species species_internal_energy_mole_ = molecular_weights() * species_internal_energy_mass_specific(temperature);
 
-        for ({index} j = 0; j < n_species; ++j) // column index (unpermuted)
+        for ({index} j = 0; j < n_species; ++j) // column index
         {{
-            // Permuted column index
-            {index} col = perm[j+1]; // skip temperature column
-
-            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, col); it; ++it)
+            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, j+1); it; ++it) // skip first column (temperature)
             {{
-                {index} row = it.row(); // permuted row index
+                {index} i = it.row();
 
-                // skip temperature row
-                if (row == {zero}) continue;
+                // skip first row (energy source)
+                if (i == 0) continue;
 
                 {scalar} value = it.value();
 
                 // Undo diagonal_add
-                if (col == row)
+                if (j+1 == i)
                 {{
                     value -= diagonal_add_;
                 }}
 
-                dspecies_internal_energy_mole_source_sum_dspecies_[j] += species_internal_energy_mole_[perm_inv[row]-1] * value; // unpermuted indices
+                dspecies_internal_energy_mole_source_sum_dspecies_[j] += species_internal_energy_mole_[i-1] * value;
                 // it.value(); // value
                 // it.row();   // row index
-                // it.col();   // col index - here, it is equal to col
+                // it.col();   // col index - here, it is equal to j+1
                 // it.index(); // inner index - here, it is equal to it.row()
             }}
         }}
-        {dtemperature_source_dspecies2_text}
-""".format(**vars(configuration),
-           perm_text=array1d_text(perm),
-           perm_inv_text=array1d_text(perm_inv),
-           zero=perm[0],
-           diagonal_add=add_diagonal_text(configuration), set_jacobian_from_triplets=set_jacobian_from_triplets_text(configuration),
-           dtemperature_source_dspecies2_text=dtemperature_source_dspecies2_text)
+
+        for ({index} i = 0; i < n_species; i++)
+        {{
+            // Derivative of temperature source term with respect to concentrations
+            // Second part
+            for (SparseMatrix<{scalar}>::InnerIterator it(jacobian_net_production_rates, i+1); it; ++it) // skip first column (temperature)
+            {{
+                if (it.row() != 0) std::cerr << "it.row() != 0" << std::endl; // first row is dense
+
+                it.valueRef() = it.value() - divide(dspecies_internal_energy_mole_source_sum_dspecies_[i], specific_heat_constant_volume_volume_specific_);
+
+                break; // only first row
+            }}
+        }}
+""".format(**vars(configuration), diagonal_add=add_diagonal_text(configuration), set_jacobian_from_triplets=set_jacobian_from_triplets_text(configuration))
 
     else:
         return """

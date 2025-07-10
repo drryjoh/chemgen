@@ -233,14 +233,6 @@ def main():
         lu_sp = get_splu(sp)
         perm = invert_permutation(lu_sp.perm_c)
         assert(perm.shape[0] == gas.n_species+1)
-
-        if args.temperature_equation:
-            # Need (permuted) indices of each temperature row entry corresponding to sparse matrix
-            sp_T = sp[:, perm][perm, :]
-            sp_T[0,:] = -1 # flag temperature row
-            sp_T_sparse=sparse.csc_array(sp_T)
-            temp_row_indices = np.where(sp_T_sparse.data == -1)
-            setattr(configuration, "temp_row_indices",  temp_row_indices)
     else:
         # identity
         perm = np.arange(gas.n_species+1)

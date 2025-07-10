@@ -284,8 +284,7 @@ void update_jacobian_reaction_{reaction_index}({jacobian_input},
 
         if temperature_equation:
             file.write("\n")
-            perm = configuration.perm
-            formatted_text = "        jacobian_net_production_rates[{row}][{col}] = dtemperature_source_dtemperature(temperature, species, dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature, dsource_species_dtemperature_));\n".format(**vars(configuration), row=perm[0], col=perm[0])
+            formatted_text = "        jacobian_net_production_rates[0][0] = dtemperature_source_dtemperature(temperature, species, dspecies_internal_energy_mole_source_sum_dtemperature(species, temperature, dsource_species_dtemperature_));\n".format(**vars(configuration))
 
             file.write(modify_jacobian_text_eigen(configuration, formatted_text))
 
