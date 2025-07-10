@@ -29,7 +29,7 @@ def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_b
     return (forward_rate, backward_rate)
 
 def get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration):
-    
+
     forward_rate_array = []
     dforward_rate_array = []
     forward_indices = []
@@ -47,7 +47,7 @@ def get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoi
         backward_indices.append(species_index)
         species_element_i  = configuration.species_element.format(i = species_index)
         backward_rate_array.append(raise_to_power(species_element_i, coeff))
-    
+
     for species, coeff in reaction.reactants.items():
         species_index = species_names.index(species)
         species_element_i  = configuration.species_element.format(i = species_index)
@@ -57,7 +57,7 @@ def get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoi
         species_index = species_names.index(species)
         species_element_i  = configuration.species_element.format(i = species_index)
         dbackward_rate_array.append(draise_to_power(species_element_i, coeff))
-    
+
     dforward_rates = ['0']*len(species_names)
     dbackward_rates = ['0']*len(species_names)
 
