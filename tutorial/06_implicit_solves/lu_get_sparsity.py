@@ -203,6 +203,9 @@ print("np.count_nonzero(M_u) = {}".format(np.count_nonzero(M_u)))
 M_sp2 = get_lu_sparsity(M_p)
 assert_close((M_lu != 0).astype(int), (M_sp2 != 0).astype(int))
 
+sp_permuted = get_lu_sparsity(sparsity_pattern[:, invert_permutation(M_sparse_lu.perm_c)][invert_permutation(M_sparse_lu.perm_r), :])
+assert_close((sp_permuted != 0).astype(int), (M_sp2 != 0).astype(int))
+
 # #
 # # A = sparse.csc_array(sparsity_pattern, dtype=float)
 

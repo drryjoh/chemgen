@@ -229,10 +229,14 @@ def main():
         print("Generating permutation indices for Jacobian!")
         sp = np.load("sparsity_pattern.npy")
         lu_sp = get_splu(sp)
+        assert(np.all(lu_sp.perm_c == lu_sp.perm_r))
         perm = invert_permutation(lu_sp.perm_c)
         assert(perm.shape[0] == gas.n_species+1)
         setattr(configuration, "perm", perm)
         setattr(configuration, "inv_perm", invert_permutation(perm))
+
+        # Sparsity pattern of permuted Jacobian
+        sp_perm = get_lu_sparsity(sp[:, perm][perm, :])
 
     third_parties = [use_third_parties, third_party_path, libraries]
 
