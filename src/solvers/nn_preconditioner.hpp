@@ -6,7 +6,7 @@
 #include <array>
 #include <algorithm> 
 #include <cassert>
-#include "MLP_BE.hpp" //CODEJENN
+#include "MLP_LU.hpp" //CODEJENN
 
 namespace Eigen
 {
@@ -41,26 +41,31 @@ namespace Eigen
             std::copy_n(A_.valuePtr(), INPUT_DIM, input_arr.begin());
 
             //NN
-            auto P = MLP_BE<Scalar>(input_arr);
+            auto P = MLP_LU<Scalar>(input_arr);
 
-            //copy into A_inv
+            //copy into P_eig
             for (int i = 0, k = 0; i < M; ++i)
                 for (int j = 0; j < M; ++j, ++k)
-                    A_inv(i, j) = P[k];
+                    P_eig(i, j) = P[k];
         }
 
         //apply preconditioner
         template <typename Rhs>
         Rhs solve(const Rhs &b) const
-        {
-            return A_inv * b;
+        // { //INV_A
+        //     return P_eig * b;
+        // }
+        { //LU
+            Rhs y = P_eig.template triangularView<UnitLower>().solve(b);
+            Rhs x = P_eig.template triangularView<Upper>().solve(y);
+            return x;
         }
 
         //eigen stuff
         ComputationInfo info() const { return Success; }
 
     private:
-        Matrix_ A_inv;
+        Matrix_ P_eig;
     };
 
 }
