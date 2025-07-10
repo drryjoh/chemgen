@@ -2,6 +2,7 @@
 {chemical_state} 
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt,
+                // int & csv_iter, 
                 {index}  &n_gmres_iter_total,
                 {scalar} abs_newton_tol = newton_abs_tol_default,
                 {scalar} rel_newton_tol = newton_rel_tol_default,
@@ -26,6 +27,27 @@ backwards_euler({chemical_state} y,
             {{
                 A = source_jacobian(y_guess, temperature_, -1, 1/dt);
             }}
+
+            //................................................................
+            // static void write(const std::string &filename, const Eigen::MatrixXd &m)
+            // {{
+            //     std::ofstream out(filename);
+            //     for (int i = 0; i < m.rows(); ++i) 
+            //     {{
+            //         for (int j = 0; j < m.cols(); ++j) 
+            //         {{
+            //         out << m(i,j) << (j+1<m.cols() ? "," : "");
+            //         }}
+            //         out << "\n";
+            //     }}
+            // }}
+            // {{
+            // Eigen::MatrixXd denseA = Eigen::MatrixXd(A);
+            // std::ostringstream ss;
+            // ss << "jacobian_" << csv_iter << ".csv"; //change path
+            // write(ss.str(), denseA);
+            // }}
+            //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             //RHS
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;

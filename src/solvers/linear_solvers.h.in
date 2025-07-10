@@ -37,27 +37,26 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 
 #ifdef CHEMGEN_PRECONDITIONER_NN
 {device_option}
-{jacobian_function} flatten_jacobian({jacobian_parameter} A)
+std::array<double, (n_species + 1)*(n_species + 1)> flatten_jacobian({jacobian_parameter} A)
 {{
-    {jacobian} flat_A:
-    for (int i = 0; i < n_variables; i++)
+    std::array<double, (n_species + 1)*(n_species + 1)> flat_A;
+    for (int i = 0; i < (n_species + 1); i++)
     {{
-        for (int j = 0; j < n_variables; i++)
+        for (int j = 0; j < (n_species + 1); i++)
         {{
-            flat_A[(i*96)+j] = A[i][j];
+            flat_A[(i*(n_species + 1))+j] = A[i][j];
         }}
     }}
     return flat_A;
 }}
 
-{jacobian_function} unflatten_jacobian({jacobian_parameter} flat_A)
+{device_option}
+{jacobian_parameter} unflatten_jacobian(const std::array<{scalar}, (n_species + 1)*(n_species + 1)>& flat_A)
 {{
     {jacobian} Q;
-    for (int i = 0; i < n_variables; i++)
-    {{
-        for (int j = 0; j < n_variables; j++)
-        {{
-            Q[i][j] = A[(i*96)+j];
+    for (int i = 0; i < (n_species + 1); ++i) {{
+        for (int j = 0; j < (n_species + 1); ++j) {{
+            Q[i][j] = flat_A[i*(n_species + 1) + j];
         }}
     }}
     return Q;
@@ -65,6 +64,7 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 #endif
 
 #ifdef CHEMGEN_EIGEN
+#include "./nn_preconditioner.hpp"
 #include "./custom_preconditioners_eigen.h"
 
 using Preconditioner =
@@ -78,8 +78,8 @@ GaussSeidelPreconditioner<{scalar}, {jacobian_eigen}>;
 #elif defined(CHEMGEN_PRECONDITIONER_ILU)
 IncompleteLUT<{scalar}>;
 
-#elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
-JacobiPreconditioner<{scalar}>;
+#elif defined(CHEMGEN_PRECONDITIONER_NN)
+NNPreconditioner<{scalar}>;
 
 #else
 IdentityPreconditioner;
@@ -103,11 +103,11 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linear
     {{
 #if defined(CHEMGEN_PRECONDITIONER_ILU)
 
+        // gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
+        gmres.preconditioner().setDroptol(0.0001); //0.0001 is most optimal
+
         //gmres.preconditioner().setFillfactor(10); // default value
         gmres.preconditioner().setFillfactor(n_variables * n_variables); // allow for maximum fill-in, such that only droptol controls ilu sparsity
-
-        gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
-        //gmres.preconditioner().setDroptol(0.001);
 
 #endif
 
