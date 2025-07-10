@@ -39,7 +39,8 @@ def array1d_int_text(arr, configuration):
 
 def write_permutation_indices(file, configuration):
     if configuration.eigen:
-        # https://stackoverflow.com/questions/31549398/c-eigen-initialize-static-matrix
+        # how to initialize static matrix - https://stackoverflow.com/questions/31549398/c-eigen-initialize-static-matrix
+        # how to initialize and apply permutation matrix - https://stackoverflow.com/questions/57858014/permute-columns-of-matrix-in-eigen
         content =  "\nstatic const {indices_type} perm_indices = ({indices_type}() << {perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", perm_text=array1d_int_text(configuration.perm, configuration))
         content += "\nstatic const {indices_type} inv_perm_indices = ({indices_type}() << {inv_perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", inv_perm_text=array1d_int_text(configuration.inv_perm, configuration))
     else:
