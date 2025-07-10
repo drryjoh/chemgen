@@ -71,7 +71,7 @@ def main():
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
     parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
     parser.add_argument("--save-sparsity", action="store_true", help="Save Jacobian sparsity pattern as a numpy array (int)")
-    parser.add_argument("--permute-jacobian", action="store_true", help="Permute columns/rows of Jacobian - need to load a sparsity_pattern.npy file")
+    parser.add_argument("--generate-permutation", action="store_true", help="Generate permutation indices for Jacobian rows/columns - need to load a sparsity_pattern.npy file")
     parser.add_argument("--temperature-equation", action="store_true", help="Solve temperature equation instead of assuming constant internal energy")
     parser.add_argument("--ignore-other-species", action="store_true", help="Ignore third-body and pressure dependence when calculating derivatives with respect to species")
 
@@ -225,20 +225,14 @@ def main():
 
     update_configuration_eigen(configuration)
 
-    if args.permute_jacobian:
-        if not eigen_sparse:
-            raise NotImplementedError("permute-jacobian requires sparse eigen")
-        print("Permuting rows/columns of Jacobian!")
+    if args.generate_permutation:
+        print("Generating permutation indices for Jacobian!")
         sp = np.load("sparsity_pattern.npy")
         lu_sp = get_splu(sp)
         perm = invert_permutation(lu_sp.perm_c)
         assert(perm.shape[0] == gas.n_species+1)
-    else:
-        # identity
-        perm = np.arange(gas.n_species+1)
-
-    setattr(configuration, "perm",  perm)
-    setattr(configuration, "perm_inv",  invert_permutation(perm))
+        setattr(configuration, "perm", perm)
+        setattr(configuration, "inv_perm", invert_permutation(perm))
 
     third_parties = [use_third_parties, third_party_path, libraries]
 
@@ -265,6 +259,7 @@ def main():
         headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian, remove_reactions = args.remove_reactions, sparsity_pattern=sparsity_pattern)
 
         if args.get_sparsity:
+
             n_nonzeros = np.count_nonzero(sparsity_pattern)
             n_entries = sparsity_pattern.size
             n_zeros = n_entries - n_nonzeros
@@ -274,9 +269,15 @@ def main():
             if args.save_sparsity:
                 np.save('sparsity_pattern.npy', sparsity_pattern)
             if args.plot_sparsity:
+                if args.generate_permutation:
+                    print("Applying permutation to sparsity plot!")
+                    sp_plot = sparsity_pattern[:, perm][perm, :]
+                else:
+                    sp_plot = sparsity_pattern
+
                 import matplotlib.pyplot as plt
                 plt.figure()
-                plt.spy(sparsity_pattern)
+                plt.spy(sp_plot)
                 plt.show()
 
         if "types_inl.h" in headers:

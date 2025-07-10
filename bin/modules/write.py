@@ -34,6 +34,18 @@ chemical_state_tyedef = "{species_typedef}".format(**vars(configuration)).replac
 using namespace Eigen;
 using Triplet_ = Eigen::Triplet<{scalar}>;""".format(**vars(configuration)))
 
+def array1d_int_text(arr, configuration):
+    return ','.join(["{e}".format(**vars(configuration), e=e) for e in arr])
+
+def write_permutation_indices(file, configuration):
+    if configuration.eigen:
+        content =  "\nstatic const {indices_type} perm_indices = ({indices_type}() << {perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", perm_text=array1d_int_text(configuration.perm, configuration))
+        content += "\nstatic const {indices_type} inv_perm_indices = ({indices_type}() << {inv_perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", inv_perm_text=array1d_int_text(configuration.inv_perm, configuration))
+    else:
+        content =  "\n{device_option} {constexpr} {scalar_list}<{index}, {n_variables}> perm_indices() {const_option} {{return {perm_text};}}".format(**vars(configuration), perm_text=array1d_int_text(configuration.perm, configuration))
+        content += "\n{device_option} {constexpr} {scalar_list}<{index}, {n_variables}> inv_perm_indices() {const_option} {{return {inv_perm_text};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm, configuration))
+    file.write(content)
+
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
     content += "\n"+"{device_option} {constexpr} {species_function} inv_molecular_weights() {const_option} {{return {inv_molecular_weights};}}".format(**vars(configuration), inv_molecular_weights = inv_molecular_weights)
