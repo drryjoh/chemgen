@@ -392,7 +392,7 @@ svthefootnote
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -2178,7 +2178,7 @@ In this work,
  we focus on a compressible CFD formulation without viscous terms for simplicity,
  as we only seek to contextualize chemistry in the environment of fluid dynamics.
  
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -2771,7 +2771,7 @@ s_{\mathrm{ref},i}^{o} & k=0.
 \end_inset
 
 Finally the Gibbs free energy per species is
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -2865,7 +2865,7 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -3420,7 +3420,7 @@ Starting with a guess value,
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -4152,7 +4152,7 @@ An additional complexity is that multiple rate expressions may be given at the s
 
  are calculated during code generation.
  
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -4352,7 +4352,7 @@ which requires seven boolean conditionals be checked,
 
  values.
  
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -4396,7 +4396,7 @@ We found that,
 
  calls used both in the boolean check and in the rate expression was most useful and optimal for differentiation.
  
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -4432,7 +4432,7 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Subsubsection*
@@ -4774,7 +4774,7 @@ The Newton's method can be used to iteratively find
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -5092,7 +5092,7 @@ Which keeps the state size the same but has the benefit of introducing sparsenes
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -5130,7 +5130,7 @@ For instance,
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -5710,7 +5710,7 @@ literal "false"
 
 .
  
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -7696,7 +7696,7 @@ In this section we present verification of the Jacobians using the finite differ
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -7959,7 +7959,7 @@ for a variety of chemical models ranging in size and complexity.
  the analytical Jacobians were consistently faster across all cases.
  Notably the analytical Jacobian was seen to increase in speed relative to the discrete as the mechanism increased in complexity.
  .
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -9088,7 +9088,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
@@ -9941,7 +9941,7 @@ s for a detonationEulerFOAM simulation of a two dimensional detonation wave usin
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Comment
+\begin_inset Note Note
 status collapsed
 
 \begin_layout Plain Layout
