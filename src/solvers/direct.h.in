@@ -21,7 +21,7 @@ direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linea
 
 #else
 
-    lu = {linear_solver_direct_eigen}(A);
+    if (compute) lu = {linear_solver_direct_eigen}(A);
 
     x = lu.permutationP() * b;
     lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
