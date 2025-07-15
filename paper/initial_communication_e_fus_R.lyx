@@ -1768,7 +1768,7 @@ name "sec:Introduction"
 
 \change_inserted -88974637 1752247524
 \begin_inset Flex PDF-Markup
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -1913,7 +1913,7 @@ literal "false"
 \change_inserted -88974637 1752258900
 
 \begin_inset Flex TODO Note (inline)
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -1946,11 +1946,7 @@ literal "false"
 
  as well as choice of formulation and time integration strategy.
  There is no single CFD software that simultaneously addresses all the above difficulties for all fluid dynamics application,
- necessitating continued research into
-\change_deleted 2012671230 1752336091
- 
-\change_unchanged
- accelerating simulations while achieving stable and accurate fluid modeling.
+ necessitating continued research into accelerating simulations while achieving stable and accurate fluid modeling.
  As a result,
  a broad family of CFD codes has emerged,
  ranging from experimental in-house tools used for demonstrating new technologies to established commercial software suites employed in production-level engineering simulations.
@@ -1958,7 +1954,11 @@ literal "false"
 
 \begin_layout Standard
 A typical three-dimensional simulation of compressible,
- non-reacting flow involves five conservedvariables:
+ non-reacting flow involves five conserved
+\change_inserted -88974637 1752586697
+ 
+\change_unchanged
+variables:
  energy,
  mass,
  and three momentum components,
@@ -1991,10 +1991,20 @@ A typical three-dimensional simulation of compressible,
 
  represents the number of chemical species
 \begin_inset Foot
-status collapsed
+status open
 
 \begin_layout Plain Layout
-The five state variables are reduced by one due to modeled species determining the total density.
+The 
+\change_inserted -88974637 1752586748
+original 
+\change_unchanged
+five state variables are reduced by one 
+\change_deleted -88974637 1752586763
+due to modeled species determining the total density
+\change_inserted -88974637 1752586796
+since total density can be determined from the species concentrations (or partial densities)
+\change_unchanged
+.
 
 \change_deleted 2012671230 1752336427
  
@@ -2006,6 +2016,8 @@ The five state variables are reduced by one due to modeled species determining t
 
 .
  
+\change_deleted -88974637 1752587093
+
 \begin_inset Flex PDF-Markup
 status collapsed
 
@@ -2119,6 +2131,8 @@ name "enu:thermo"
 \end_inset
 
 
+\change_deleted -88974637 1752587109
+
 \begin_inset Flex PDF-Annotation
 status collapsed
 
@@ -2131,12 +2145,23 @@ This reads as only updating calorically perfect thermo to thermally perfect ther
 \end_inset
 
 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Enumerate
 
+\change_inserted -88974637 1752586853
+
 \series bold
-Nonlinear chemical source terms:
+Stiff,
+ 
+\change_deleted -88974637 1752586853
+N
+\change_inserted -88974637 1752586853
+n
+\change_unchanged
+onlinear chemical source terms:
  
 \series default
 Other than external forcing or simple bouyancy forces,
@@ -2147,6 +2172,13 @@ Other than external forcing or simple bouyancy forces,
  and mass have no sources or sinks to add or remove them from the domain;
  instead,
  the conserved variables are transported and diffused.
+
+\change_inserted -88974637 1752586887
+ Furthermore,
+ chemical source terms can be extremely stiff,
+ introducing additional numerical challenges.
+\change_unchanged
+
 \begin_inset CommandInset label
 LatexCommand label
 name "enu:source"
@@ -2154,8 +2186,10 @@ name "enu:source"
 \end_inset
 
 
+\change_deleted -88974637 1752587102
+
 \begin_inset Flex PDF-Annotation
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Quotes eld
@@ -2181,6 +2215,8 @@ easy,
 \end_inset
 
 
+\change_unchanged
+
 \end_layout
 
 \begin_layout Enumerate
@@ -2194,33 +2230,21 @@ Transport quantities,
  would need to be adapted to multicomponent mixture models.
  In addition,
  the diffusion of each species needs to be considered with a transport 
+\change_deleted -88974637 1752587131
+
 \begin_inset Flex PDF-Markup
 status open
 
 \begin_layout Plain Layout
 method
-\begin_inset Argument post:1
-status open
+\end_layout
 
-\begin_layout Plain Layout
-different word from 
-\begin_inset Quotes eld
 \end_inset
 
+
+\change_inserted -88974637 1752587131
 method
-\begin_inset Quotes erd
-\end_inset
-
-?
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
+\change_unchanged
  as well.
 
 \change_deleted 2012671230 1752337014
@@ -2353,8 +2377,10 @@ nolink "false"
 \end_inset
 
  are reasonable choices 
+\change_deleted -88974637 1752587012
+
 \begin_inset Flex PDF-Markup
-status collapsed
+status open
 
 \begin_layout Plain Layout
 for demonstration cases
@@ -2373,7 +2399,13 @@ other wording?
 
 \end_inset
 
- but they present certain challenges.
+
+\change_unchanged
+ but
+\change_deleted -88974637 1752586938
+ they
+\change_unchanged
+ present certain challenges.
  With 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2387,12 +2419,30 @@ nolink "false"
 
 ,
  the existing legacy routines may not easily adapt to the specific requirements of the targeted CFD software,
- which
+ 
+\change_deleted -88974637 1752586927
+which
 \change_deleted 2012671230 1752352794
  
+\change_deleted -88974637 1752586927
+ limit
+\change_inserted -88974637 1752586928
+limiting
 \change_unchanged
- limit scalability and complicate code maintenance.
- For 
+ scalability and 
+\change_deleted -88974637 1752586929
+complicate
+\change_inserted -88974637 1752586930
+complicating
+\change_unchanged
+ code maintenance.
+ 
+\change_deleted -88974637 1752586960
+For
+\change_inserted -88974637 1752586961
+Regarding
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:cantera"
@@ -2409,8 +2459,10 @@ nolink "false"
  
 \change_unchanged
  
+\change_deleted -88974637 1752587025
+
 \begin_inset Flex PDF-Markup
-status collapsed
+status open
 
 \begin_layout Plain Layout
 other critical combustion scenarios
@@ -2428,10 +2480,14 @@ sounds too vague
 
 \end_inset
 
+
+\change_unchanged
 ,
  it can only act as a third-party library,
  which may lead to limited control over software functionality.
  
+\change_deleted -88974637 1752587144
+
 \begin_inset Flex PDF-Markup
 status collapsed
 
@@ -2457,7 +2513,11 @@ Embedding is the preferred spelling according to google
 
 \end_inset
 
+
+\change_unchanged
  
+\change_deleted -88974637 1752587159
+
 \begin_inset Flex PDF-Markup
 status collapsed
 
@@ -2480,9 +2540,17 @@ other wording?
 
 \end_inset
 
+
+\change_unchanged
  Additionally,
  relying on a third-party library like Cantera may hinder compatibility with targeted architectures that Cantera developers cannot directly access.
- Another third-party chemistry based package is Mutation++
+ Another third-party chemistry
+\change_inserted -88974637 1752586997
+-
+\change_deleted -88974637 1752586997
+ 
+\change_unchanged
+based package is Mutation++
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sco20"
@@ -2601,46 +2669,6 @@ I know what you mean here,
  
 \change_deleted -88974637 1752259683
 .
-\change_inserted -88974637 1752259725
-
-\begin_inset Flex PDF-Markup
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752259689
-Another chemistry based package is Mutation++
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Sco20"
-literal "false"
-
-\end_inset
-
-,
- which focus on the thermodynamic and transport properties with emphasis on ionized gases.
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752259713
-Mutation++ doesn't do code generation right?
- So I would move it to the previous paragraph.
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
 \change_inserted 2012671230 1752353610
 Additionally,
  KinetiX 
@@ -2651,13 +2679,19 @@ literal "false"
 
 \end_inset
 
- is a software toolkit that generates chemical source term,
+ is a software toolkit that generates chemical source term
+\change_inserted -88974637 1752587226
+s and
+\change_deleted -88974637 1752587225
+,
+
+\change_inserted 2012671230 1752353610
  thermodynamic and mixture-averaged transport properties tailored to specific hardware targets,
  such as CPU or GPU architectures.
 \change_inserted -88974637 1752259725
 
 \begin_inset Flex TODO Note (inline)
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -2667,6 +2701,10 @@ May want to consider citing https://arxiv.org/html/2411.02640v1,
 
 \change_inserted 2012671230 1752353545
  Check.
+
+\change_inserted -88974637 1752587351
+ Take a look at the fourth paragraph in the intro if you haven't already.
+ A few other chemistry tools are also discussed that you may want to cite here.
 \change_unchanged
 
 \end_layout
@@ -2703,8 +2741,22 @@ nolink "false"
  a
 \change_deleted 2012671230 1752353696
  
+\change_inserted -88974637 1752587429
+ number of time integrators,
+
 \change_unchanged
- linear solver is also supplied by ChemGen for convenience.
+ linear solver
+\change_inserted -88974637 1752587432
+s,
+ and preconditioners
+\change_unchanged
+ is 
+\change_deleted -88974637 1752587444
+also supplied by ChemGen
+\change_inserted -88974637 1752587445
+provided
+\change_unchanged
+ for convenience.
 \end_layout
 
 \begin_layout Standard
@@ -2969,6 +3021,13 @@ status open
 \change_inserted 2012671230 1752354342
 updated labels,
  should we denote both?
+
+\change_inserted -88974637 1752587582
+ Still TBD,
+ but if you do,
+ you may want to add a superscript/subscript to distinguish the two.
+\change_inserted 2012671230 1752354342
+
 \end_layout
 
 \end_inset
@@ -3078,7 +3137,7 @@ is utilized in various reactions,
 
 \change_inserted -88974637 1752262729
 \begin_inset Flex TODO Note (inline)
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -3191,8 +3250,10 @@ literal "false"
 
 .
  
+\change_deleted -88974637 1752587553
+
 \begin_inset Flex PDF-Markup
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -3215,7 +3276,13 @@ you can also mention differentiability
 
 \end_inset
 
-For differentiability and computational efficiency purposes,
+
+\change_unchanged
+For differentiability and computational efficiency
+\change_deleted -88974637 1752587547
+ purposes
+\change_unchanged
+,
  ChemGen fits the polynomial for 
 \begin_inset Formula $c_{p,i}$
 \end_inset
@@ -3311,7 +3378,13 @@ vectors
  sequences
 \change_unchanged
  for temperature:
- one to the power 
+ 
+\change_deleted -88974637 1752587710
+one to the power
+\change_inserted -88974637 1752588055
+a monomial basis for polynomials of degree
+\change_unchanged
+ 
 \begin_inset Formula $n_{p}$
 \end_inset
 
@@ -3320,7 +3393,13 @@ vectors
 \begin_inset Formula $T_{n_{p}}=\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
 \end_inset
 
- and one to the power 
+ and 
+\change_deleted -88974637 1752588064
+one to the power
+\change_inserted -88974637 1752588069
+a monomial basis for polynomials of degree
+\change_unchanged
+ 
 \begin_inset Formula $n_{p}+1$
 \end_inset
 
@@ -3329,7 +3408,50 @@ vectors
 \begin_inset Formula $T_{n_{p}+1}=\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$
 \end_inset
 
- which can then be simply contracted with the respective array of coefficients;
+
+\change_inserted -88974637 1752588085
+.
+ These vectors
+\change_unchanged
+ 
+\change_deleted -88974637 1752588087
+which
+\change_unchanged
+ can then be simply contracted with the respective 
+\change_deleted -88974637 1752588116
+array
+\change_inserted -88974637 1752588116
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752588122
+array
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752588125
+array or vector?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ of coefficients;
  for example,
  
 \begin_inset Formula $u_{i}=\left<A_{i},T_{n_{p}+1}\right>$
@@ -3386,16 +3508,26 @@ where
 \begin_inset Formula $R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}}$
 \end_inset
 
- term accounts for when the gas is not at atmospheric pressure;
+ term accounts for 
+\change_inserted -88974637 1752588574
+the case of 
+\begin_inset Formula $P_{i}\neq P_{\mathrm{ref}}$
+\end_inset
+
+ 
+\change_deleted -88974637 1752588570
+when the gas is not at atmospheric pressure;
  
 \change_deleted 2012671230 1752354614
 however,
 
-\change_unchanged
- the term depends on concentration as well as temperature and 
+\change_deleted -88974637 1752588458
+ the term depends on concentration as well as temperature and not on directly
+\change_inserted -88974637 1752588460
+ and does not depend
 \change_inserted 2012671230 1752354636
-not on directly on thermodynamic polynomial fits
-\change_unchanged
+ on thermodynamic polynomial fits
+\change_deleted -88974637 1752588535
 
 \begin_inset Flex PDF-Markup
 status collapsed
@@ -3423,11 +3555,9 @@ what do you mean by this?
 
 \end_inset
 
-.
 
-\change_deleted 2012671230 1752354557
- 
 \change_unchanged
+.
  Using Equation
 \begin_inset space ~
 \end_inset
@@ -3473,7 +3603,22 @@ s_{\mathrm{ref},i}^{o} & k=0.
 
 \end_inset
 
-Finally the Gibbs free energy per species is
+Finally
+\change_inserted -88974637 1752588586
+,
+
+\change_unchanged
+ the Gibbs free energy 
+\change_deleted -88974637 1752588597
+per
+\change_inserted -88974637 1752589270
+of the 
+\begin_inset Formula $i$
+\end_inset
+
+-th
+\change_unchanged
+ species is
 \begin_inset Note Note
 status collapsed
 
@@ -3517,8 +3662,13 @@ This gives two new temperature
 monomials
 \change_inserted 2012671230 1752354820
 vectors
+\change_inserted -88974637 1752588780
+:
+
 \change_unchanged
- with additional elements.
+ 
+\change_deleted -88974637 1752588783
+with additional elements.
  The first is to the power 
 \begin_inset Formula $n_{p}$
 \end_inset
@@ -3528,16 +3678,24 @@ vectors
 \end_inset
 
 ,
+
+\change_unchanged
  
 \begin_inset Formula $T_{n_{p},\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}},\ln T\right)$
 \end_inset
 
+
+\change_inserted -88974637 1752588791
+ and 
+\change_deleted -88974637 1752588789
 .
  The second is to the power 
 \begin_inset Formula $n_{p}+1$
 \end_inset
 
 ,
+
+\change_unchanged
  
 \begin_inset Formula $T_{n_{p}+1,T\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}+1},-T\ln T\right)$
 \end_inset
@@ -3549,7 +3707,41 @@ monomials
 \change_inserted 2012671230 1752354825
 vectors
 \change_unchanged
- can then be contracted with the respective array of coefficients,
+ can then be contracted with the respective 
+\change_deleted -88974637 1752588718
+array
+\change_inserted -88974637 1752588718
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752588726
+array
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752588729
+array or vector?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ of coefficients,
  
 \begin_inset Formula $s_{i}=\left<A_{i},T_{n_{p},\ln T}\right>$
 \end_inset
@@ -3567,40 +3759,35 @@ vectors
 \end_inset
 
 .
-\end_layout
 
-\begin_layout Standard
-
-\change_deleted -88974637 1752263328
-.
-\change_inserted -88974637 1752263328
-
-\begin_inset Flex PDF-Markup
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted 2012671230 1752354767
-Gave it a try.
-\change_unchanged
-.
-\begin_inset Argument post:1
+\change_inserted -88974637 1752588902
+ 
+\begin_inset Flex TODO Note (inline)
 status open
 
 \begin_layout Plain Layout
-I think this sentence should be split up
-\end_layout
 
+\change_inserted -88974637 1752588902
+\begin_inset Formula $s_{i}$
 \end_inset
 
+ is used for both the actual entropy and the coefficient vector.
+ same thing for 
+\begin_inset Formula $g_{i}$
+\end_inset
 
+.
 \end_layout
 
 \end_inset
 
 
 \change_unchanged
- The thermodynamic relationships used by ChemGen are summarized in Table 
+
+\end_layout
+
+\begin_layout Standard
+The thermodynamic relationships used by ChemGen are summarized in Table 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "tab:Summary-of-polynomial"
@@ -3613,30 +3800,6 @@ nolink "false"
 
 .
 \change_inserted -88974637 1752263348
-
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted -88974637 1752263352
-\begin_inset Flex TODO Note (inline)
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752263423
-I think you should explicitly mention that these are technically not monomials anymore (or refer to them as something else).
-
-\change_inserted 2012671230 1752354834
- I am calling them vectors now.
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
 
 \end_layout
 
@@ -3780,7 +3943,7 @@ Coefficient Description
 
 \change_inserted -88974637 1752263595
 \begin_inset Flex PDF-Markup
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -4057,9 +4220,12 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -88974637 1752263639
-Instead of explicitly using 298 in h_ref,
- I would just use T_ref
+\change_inserted -88974637 1752588953
+Should be consistent about using 
+\backslash
+mathrm or not for the ref subscript.
+ Also,
+ still a 298 in h_ref
 \change_unchanged
 
 \end_layout
@@ -4076,7 +4242,7 @@ name "tab:Summary-of-polynomial"
 \end_inset
 
 
-\change_inserted 2012671230 1752354923
+\change_deleted -88974637 1752588708
 done
 \change_unchanged
 
@@ -4132,10 +4298,40 @@ where the term
 
 \end_inset
 
+
+\change_inserted -88974637 1752589018
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752589167
+Still TBD,
+ but if only temperature formulation is discussed,
+ then no need to talk about Newton's method (or can considerably condense).
+ If internal energy formulation is discussed,
+ I think you can still condense the above (remove the first equation for total energy?
+ since e_t is already explicitly defined in previous section).
+ 
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\change_deleted -88974637 1752589026
 Newton's method is accurate once converged and can be quite efficient when using exact derivatives,
  especially for scalar functions such as energy as a function of temperature,
  which does not require a linear solve.
- The temperature at the 
+ 
+\change_unchanged
+The temperature at the 
 \begin_inset Formula $\left(k+1\right)$
 \end_inset
 
@@ -4154,12 +4350,22 @@ where
 \begin_inset Formula $T_{k}$
 \end_inset
 
- is the the temperature at the 
+ is the 
+\change_deleted -88974637 1752589173
+the
+\change_unchanged
+ temperature at the 
 \begin_inset Formula $k$
 \end_inset
 
 th iteration.
- The terms in the fraction are
+ The
+\change_deleted -88974637 1752589199
+ terms in the fraction are
+\change_inserted -88974637 1752589204
+ numerator and denominator are given by
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -4181,6 +4387,11 @@ th iteration.
 
 \end_inset
 
+
+\change_inserted -88974637 1752589208
+respectively,
+ 
+\change_unchanged
 with 
 \end_layout
 
@@ -4198,11 +4409,29 @@ and
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial T_{k,n_{p}+1}}{\partial T}=\left(0,1,2T_{k},\dots,\left(n_{p}+1\right)T_{k}^{n_{p}}\right)
+\frac{\partial T_{k,n_{p}+1}}{\partial T}=\left(0,1,2T_{k},\dots,\left(n_{p}+1\right)T_{k}^{n_{p}}\right).
 \end{equation}
 
 \end_inset
 
+
+\change_inserted -88974637 1752589221
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752589227
+A_i already defined above?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
 
 \begin_inset Formula $c_{v}$
 \end_inset
@@ -4250,41 +4479,6 @@ c_{v}=c_{p}-R.\label{eq:cv_equation}
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted -88974637 1752264505
-\begin_inset Flex TODO Note (inline)
-status collapsed
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752264646
-I would use,
- for example,
- 
-\begin_inset Formula $5\times10^{-3}$
-\end_inset
-
- instead of 
-\begin_inset Formula $5e-3$
-\end_inset
-
-,
- which reads as 5*exp - 3.
- I also think this section on Newton's method can be condensed.
-\change_inserted 2012671230 1752355279
-Done
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Note Note
 status collapsed
 
@@ -4327,7 +4521,13 @@ T_{n+1}=T_{n}-\frac{\sum_{i=1}^{n_{s}}\left<C_{i}^{\dagger},T_{n_{p}+1}\right>}{
 \end_layout
 
 \begin_layout Subsection
-Chemical reaction rates and their ChemGen Representations
+Chemical reaction rates and their ChemGen 
+\change_inserted -88974637 1752589243
+r
+\change_deleted -88974637 1752589243
+R
+\change_unchanged
+epresentations
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:chemical-reaction-rates"
@@ -4488,14 +4688,18 @@ with
 
 \end_inset
 
-For this the term 
-\begin_inset Formula 
-\begin{align*}
-\left(\frac{p_{ref}}{RT}\right)^{\sum_{i}\nu_{ij}}
-\end{align*}
+For
+\change_deleted -88974637 1752589291
+ this
+\change_unchanged
+ the term 
+\change_inserted -88974637 1752589311
 
+\begin_inset Formula $\left(\frac{p_{ref}}{RT}\right)^{\sum_{i}\nu_{ij}}$
 \end_inset
 
+
+\change_unchanged
 in
 \begin_inset space ~
 \end_inset
@@ -4511,6 +4715,11 @@ nolink "false"
 
 \end_inset
 
+
+\change_inserted -88974637 1752589318
+,
+
+\change_unchanged
  ChemGen inspects 
 \begin_inset Formula $\sum_{i}\nu_{ij}$
 \end_inset
@@ -4535,21 +4744,93 @@ nolink "false"
 \end_inset
 
  precomputed.
+\change_inserted -88974637 1752589667
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752589692
+Above sentence can be cleaned up.
+ Also,
+ 
+\begin_inset Quotes eld
+\end_inset
+
+i.e.,
+\begin_inset Quotes erd
+\end_inset
+
+ should be 
+\begin_inset Quotes eld
+\end_inset
+
+e.g.,
+\begin_inset Quotes erd
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
  Similarly,
  if 
 \begin_inset Formula $\sum_{i}\nu_{ij}$
 \end_inset
 
- is a negative integer ChemGen utilizes a precomputed 
+ is a negative integer
+\change_inserted -88974637 1752589337
+,
+
+\change_unchanged
+ ChemGen 
+\change_deleted -88974637 1752589358
+utilizes a precomputed
+\change_inserted -88974637 1752589359
+precomputes
+\change_unchanged
+ 
 \begin_inset Formula $1/p_{ref}$
 \end_inset
 
- and computes the products of 
+ and
+\change_inserted -88974637 1752589360
+ then
+\change_unchanged
+ 
+\change_deleted -88974637 1752589362
+computes
+\change_inserted -88974637 1752589364
+calculates
+\change_unchanged
+ the 
+\change_deleted -88974637 1752589464
+products
+\change_inserted -88974637 1752589466
+corresponding power
+\change_unchanged
+ of 
 \begin_inset Formula $RT$
 \end_inset
 
- according to the power,
- ie.
+
+\change_deleted -88974637 1752589469
+ according to the power
+\change_unchanged
+,
+ 
+\change_inserted -88974637 1752589474
+e.g.,
+\change_deleted -88974637 1752589473
+ie.
+
+\change_unchanged
  
 \begin_inset Formula $\sum_{i}\nu_{ij}=-3$
 \end_inset
@@ -4560,6 +4841,8 @@ nolink "false"
 
  .
  
+\change_deleted -88974637 1752589485
+
 \begin_inset Flex PDF-Markup
 status collapsed
 
@@ -4580,16 +4863,97 @@ grammar for this sentence
 \end_inset
 
 .
- This removes the need to use the power function.
- Without code generation these types of expressions are bound to utilizing power functions or possibly if-statements that default to multiplication after inspecting the value of 
+ 
+\change_unchanged
+This 
+\change_deleted -88974637 1752589523
+removes the need to
+\change_inserted -88974637 1752589527
+circumvents
+\change_unchanged
+ use 
+\change_inserted -88974637 1752589530
+of 
+\change_unchanged
+the 
+\change_deleted -88974637 1752589540
+power function
+\change_inserted -88974637 1752589540
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752589544
+power function
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752589550
+more sophisticated way to refer to 
+\begin_inset Quotes eld
+\end_inset
+
+power function
+\begin_inset Quotes erd
+\end_inset
+
+?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+.
+ Without code generation
+\change_inserted -88974637 1752589558
+,
+
+\change_unchanged
+ these types of expressions 
+\change_deleted -88974637 1752589614
+are bound to utilizing
+\change_inserted -88974637 1752589616
+require expensive
+\change_unchanged
+ power functions 
+\change_deleted -88974637 1752589582
+or
+\change_inserted -88974637 1752589582
+and
+\change_unchanged
+ possibly if-statements 
+\change_deleted -88974637 1752589597
+that default to multiplication after inspecting the value of 
 \begin_inset Formula $\sum_{i}\nu_{ij}$
 \end_inset
 
+
+\change_unchanged
 .
 \end_layout
 
 \begin_layout Standard
-There exist various models for approximating the forward rate functions,
+There exist various models for approximating the forward rate 
+\change_deleted -88974637 1752589640
+functions
+\change_inserted -88974637 1752589641
+expressions
+\change_unchanged
+,
  
 \begin_inset Formula $k_{j}^{f}$
 \end_inset
@@ -4611,7 +4975,13 @@ nolink "false"
 \end_inset
 
 .
- The functions currently supported by ChemGen are discussed below.
+ The 
+\change_deleted -88974637 1752589642
+functions
+\change_inserted -88974637 1752589649
+reaction models
+\change_unchanged
+ currently supported by ChemGen are discussed below.
  
 \end_layout
 
@@ -4638,7 +5008,11 @@ k_{j}^{f}=k_{A,j}^{f}=A_{j}T^{b_{j}}\exp\left(-\frac{E_{j}}{R^{}T}\right),
 \begin_inset Formula $b_{j}$
 \end_inset
 
- is the temperature exponnent,
+ is the temperature expon
+\change_deleted -88974637 1752589702
+n
+\change_unchanged
+ent,
  and 
 \begin_inset Formula $E_{j}$
 \end_inset
@@ -4656,7 +5030,12 @@ literal "false"
 \end_inset
 
 .
- In ChemGen an optimization is made to again avoid the power function.
+ In ChemGen
+\change_inserted -88974637 1752589712
+,
+
+\change_unchanged
+ an optimization is made to again avoid the power function.
  Generally,
  
 \begin_inset Formula $b_{j}$
@@ -4679,11 +5058,15 @@ however,
 \begin_inset Formula $\ln T$
 \end_inset
 
- in 
+ 
+\change_deleted -88974637 1752589722
+in 
 \begin_inset Formula $y_{c}$
 \end_inset
 
- and insert an additional term in the exponent
+ 
+\change_unchanged
+and insert an additional term in the exponent
 \end_layout
 
 \begin_layout Standard
@@ -4702,7 +5085,13 @@ Three-body reactions
 \end_layout
 
 \begin_layout Standard
-Third-body reactions require the participation of the mixture concentration,
+Third-body reactions require the 
+\change_deleted -88974637 1752589743
+participation
+\change_inserted -88974637 1752589744
+inclusion
+\change_unchanged
+ of the mixture concentration,
  which represents the collective effect of all species acting as a third body.
  Dissociation and recombination reactions are often of this type.
  The rate of progress is scaled by a prefactor as
@@ -4748,7 +5137,13 @@ nolink "false"
 
 ;
  therefore,
- the prefactor for third-body reactions is incorporated with the Arrenhius expression as
+ the prefactor for third-body reactions is incorporated 
+\change_deleted -88974637 1752589765
+with
+\change_inserted -88974637 1752589765
+into
+\change_unchanged
+ the Arrenhius expression as
 \end_layout
 
 \begin_layout Standard
@@ -4759,7 +5154,17 @@ k_{j}^{f}=k_{TB,j}^{f}=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f
 
 \end_inset
 
-which will still be attributed to the second term in 
+which 
+\change_deleted -88974637 1752589782
+will
+\change_inserted -88974637 1752589782
+is
+\change_unchanged
+ still 
+\change_deleted -88974637 1752589783
+be
+\change_unchanged
+ attributed to the second term in 
 \begin_inset space ~
 \end_inset
 
@@ -4802,18 +5207,50 @@ nolink "false"
 \end_inset
 
 .
+\change_inserted -88974637 1752589806
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752589810
+Wording of above sentence.
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
  An additional optimization is made during the code generation process for the 
 \begin_inset Formula $\alpha_{ij}$
 \end_inset
 
  terms.
- The efficiencies always default to one,
+ The efficiencies always default 
+\change_deleted -88974637 1752589827
+to one,
+
+\change_unchanged
  
 \begin_inset Formula $\alpha_{ij}=1$
 \end_inset
 
 ,
- so for any species without a specific efficiency the 
+ so for any species without a
+\change_inserted -88974637 1752589845
+n explicitly prescribed
+\change_deleted -88974637 1752589842
+ specific
+\change_unchanged
+ efficiency
+\change_inserted -88974637 1752589847
+,
+
+\change_unchanged
+ the 
 \begin_inset Formula $\left(\alpha_{ij}-1\right)C_{i}$
 \end_inset
 
@@ -4837,7 +5274,7 @@ nolink "false"
 \change_inserted -88974637 1752265174
 
 \begin_inset Flex PDF-Markup
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
@@ -4946,15 +5383,23 @@ P_{r}=\frac{k_{A,0,j}}{k_{A,\infty,j}}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha
 \end_inset
 
 The same optimization for efficiencies can be made as in the third-body prefactor.
- Different falloff reactions exist where the only difference is in the function 
+ 
+\change_deleted -88974637 1752592589
+Different
+\change_inserted -88974637 1752592589
+Various
+\change_unchanged
+ falloff reactions exist where the only difference is in the function 
 \begin_inset Formula $F$
 \end_inset
 
 ,
  known as the broadening term,
  
+\change_deleted -88974637 1752592658
+
 \begin_inset Flex PDF-Markup
-status open
+status collapsed
 
 \begin_layout Plain Layout
 There is a family different falloff functions which all revolve in a different way to approximate 
@@ -4977,6 +5422,8 @@ confusing wording
 
 \end_inset
 
+
+\change_unchanged
 ,
  which we outline below,
  the simplest being 
@@ -5101,10 +5548,6 @@ where coefficients
 
 \begin_layout Subsubsection
 Pressure-Dependent Arrhenius Rate Expressions
-\change_deleted 2012671230 1752356782
- 
-\change_unchanged
-
 \end_layout
 
 \begin_layout Standard
@@ -5149,7 +5592,12 @@ An additional complexity is that multiple rate expressions may be given at the s
  in which case the rate used in the interpolation formula is the sum of all the rates given at that pressure.
  For pressures outside the given range,
  the rate expression at the nearest bounded pressure is used.
- In ChemGen the 
+ In ChemGen
+\change_inserted -88974637 1752592716
+,
+
+\change_unchanged
+ the 
 \begin_inset Formula $\log p_{i}$
 \end_inset
 
@@ -5196,7 +5644,12 @@ with precomputed
 
 \begin_layout Standard
 To further elaborate on this rate,
- consider for example,
+ consider
+\change_inserted -88974637 1752592722
+,
+
+\change_unchanged
+ for example,
  the 81st reaction in FFCM2 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -5397,6 +5850,8 @@ This can be coordinated with the pre-calculated
 \end_inset
 
 
+\change_deleted -88974637 1752592745
+
 \begin_inset Flex PDF-Markup
 status collapsed
 
@@ -5431,6 +5886,8 @@ BSW
 
 \end_inset
 
+
+\change_unchanged
 
 \begin_inset Note Note
 status collapsed
@@ -5593,9 +6050,9 @@ status open
 
 \begin_layout Plain Layout
 
-\change_inserted -88974637 1752268721
+\change_inserted -88974637 1752592815
 The above can use some additional,
- slightly more technical explanation.
+ slightly more technical explanation and more sophisticated wording.
  Maybe a separate (brief) subsection on operator splitting
 \change_unchanged
 
@@ -5990,6 +6447,33 @@ nolink "false"
 \end_inset
 
  matrices that are generated to include optimizations to only compute necessary components for efficient Jacobian assimilation.
+\change_inserted -88974637 1752592867
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752592881
+Wording of above sentence.
+ Also,
+ wouldn't use 
+\begin_inset Quotes eld
+\end_inset
+
+singular
+\begin_inset Quotes erd
+\end_inset
+
+ here
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
  For the
 \change_inserted -88974637 1752269438
 
@@ -6046,6 +6530,8 @@ where
 
 \end_inset
 
+
+\change_deleted -88974637 1752593114
 The Jacobian in Equation 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6088,7 +6574,43 @@ nolink "false"
 \end_inset
 
 .
- ChemGen provides a more sparse Jacobian by utilizing a nonconservative formulation based on temperature evolution by extracting a source term on temperature,
+
+\change_unchanged
+ ChemGen provides a 
+\change_deleted -88974637 1752602974
+more sparse
+\change_inserted -88974637 1752602974
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752602981
+more sparse
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752602999
+I think we should only mention sparsity at the end of this subsection in a separate sentence or two
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ Jacobian by utilizing a nonconservative formulation based on temperature evolution by extracting a source term on temperature,
 \end_layout
 
 \begin_layout Standard
@@ -6099,7 +6621,32 @@ nolink "false"
 
 \end_inset
 
-The state is now
+
+\change_inserted -88974637 1752593156
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752593182
+Wording of above sentence.
+ Also wouldn't use right arrow for math
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+The 
+\change_deleted -88974637 1752593230
+state
+\change_inserted -88974637 1752593230
+system
+\change_unchanged
+ is now
 \end_layout
 
 \begin_layout Standard
@@ -6154,7 +6701,7 @@ and
 \end_inset
 
 
-\change_inserted -88974637 1752269599
+\change_inserted -88974637 1752593255
 
 \begin_inset Flex TODO Note (inline)
 status open
@@ -6172,8 +6719,6 @@ Do you want to mention that we can ignore third-body and pressure dependence?
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
@@ -6932,10 +7477,6 @@ literal "false"
 ,
  which is implemented as a standalone function.
  GMRES is an iterative Krylov subspace method that builds an orthonormal basis of the Krylov subspace and minimizes the residual over this subspace at each iteration.
-
-\change_deleted 2012671230 1752361285
- 
-\change_unchanged
  
 \begin_inset Note Note
 status collapsed
@@ -6963,26 +7504,106 @@ The order of operations needed for GMRES is
 \end_layout
 
 \begin_layout Standard
-The number of GMRES iterations can be reduced by applying a preconditioner to improve the conditioning of the linear system.
- ChemGen provides two standard preconditioners:
- the Jacobi preconditioner and the Gauss-Seidel preconditioner.
- The former simply consists of the diagonal of 
+The number of GMRES iterations can be reduced by applying a preconditioner
+\change_inserted -88974637 1752603032
+,
+ 
+\begin_inset Formula $M$
+\end_inset
+
+,
+ as
+\change_unchanged
+ 
+\begin_inset Formula 
+\begin{equation}
+M^{-1}Ax=M^{-1}b.\label{eq:matrix_example_preconditioner}
+\end{equation}
+
+\end_inset
+
+
+\change_deleted -88974637 1752603114
+to improve the conditioning of the linear system.
+ 
+\change_unchanged
+ChemGen provides two standard 
+\change_deleted -88974637 1752603173
+preconditioners
+\change_inserted -88974637 1752603173
+options
+\change_unchanged
+:
+ 
+\change_deleted -88974637 1752603175
+the
+\change_unchanged
+ Jacobi precondition
+\change_inserted -88974637 1752603177
+ing
+\change_deleted -88974637 1752603177
+er
+\change_unchanged
+ and 
+\change_deleted -88974637 1752603178
+the
+\change_unchanged
+ Gauss-Seidel precondition
+\change_inserted -88974637 1752603180
+ing
+\change_deleted -88974637 1752603180
+er
+\change_unchanged
+.
+ 
+\change_inserted -88974637 1752603185
+In t
+\change_deleted -88974637 1752603182
+T
+\change_unchanged
+he former
+\change_inserted -88974637 1752603188
+,
+ 
+\begin_inset Formula $M$
+\end_inset
+
+
+\change_unchanged
+ simply consists of the diagonal of 
 \begin_inset Formula $A$
 \end_inset
 
 ,
  which can be efficiently inverted by computing the reciprocal of each diagonal entry.
- The latter consists of the lower triangular portion of 
+ 
+\change_inserted -88974637 1752603212
+In t
+\change_deleted -88974637 1752603211
+T
+\change_unchanged
+he latter
+\change_inserted -88974637 1752603218
+,
+ 
+\begin_inset Formula $M$
+\end_inset
+
+
+\change_unchanged
+ consists of the lower triangular portion of 
 \begin_inset Formula $A$
 \end_inset
 
  (including the diagonal),
  which can be easily applied with forward substitution.
- For more advanced
-\change_deleted 2012671230 1752361285
- 
+ For more advanced precondition
+\change_inserted -88974637 1752603243
+ing techniques
+\change_deleted -88974637 1752603242
+ers
 \change_unchanged
- preconditioners used in chemical kinetics,
+ used in chemical kinetics,
  see,
  for example,
  
@@ -7083,12 +7704,41 @@ texttt{using scalar = float;}
  variables may appear to be simple scalars while in fact representing complex types with custom behavior.
  This flexibility enables expressive,
  domain-specific syntax,
- but means that there is not one set of generated code that would work for imbedding existing C++ software.
+ but 
+\change_inserted -88974637 1752603321
+this 
+\change_unchanged
+means that there is no
+\change_deleted -88974637 1752603292
+t
+\change_unchanged
+ 
+\change_deleted -88974637 1752603296
+one
+\change_inserted -88974637 1752603296
+single
+\change_unchanged
+ set of generated code that 
+\change_deleted -88974637 1752603331
+would work for imbedding existing
+\change_inserted -88974637 1752603336
+can be embedded into all
+\change_unchanged
+ C++ software.
  
 \end_layout
 
 \begin_layout Standard
-For instance the function
+For instance
+\change_inserted -88974637 1752603340
+,
+
+\change_unchanged
+ 
+\change_inserted -88974637 1752603568
+it may be more suitable for 
+\change_unchanged
+the function
 \end_layout
 
 \begin_layout Standard
@@ -7107,7 +7757,17 @@ example function 1
 
 \end_inset
 
-may be more suitable for the developer to have the function as a 
+
+\change_deleted -88974637 1752603574
+may be more suitable for the developer
+\change_unchanged
+ to
+\change_inserted -88974637 1752603577
+ be declared
+\change_deleted -88974637 1752603578
+ have the function
+\change_unchanged
+ as a 
 \begin_inset ERT
 status open
 
@@ -7174,7 +7834,20 @@ texttt{double}
 
 \end_inset
 
- and the parameters of the function may be desired to pass in by
+
+\change_inserted -88974637 1752603605
+,
+
+\change_unchanged
+ and the
+\change_inserted -88974637 1752603663
+ user may wish to pass the function
+\change_unchanged
+ parameters 
+\change_deleted -88974637 1752603642
+of the function may be desired to pass in 
+\change_unchanged
+by
 \begin_inset ERT
 status open
 
@@ -7187,7 +7860,13 @@ texttt{const}
 
 \end_inset
 
- reference 
+ reference
+\change_inserted -88974637 1752603653
+,
+ i.e.,
+
+\change_unchanged
+ 
 \begin_inset ERT
 status open
 
@@ -7220,7 +7899,13 @@ texttt{const float
 \end_inset
 
 .
- a function annotation may also be desirable,
+ 
+\change_inserted -88974637 1752603659
+A
+\change_deleted -88974637 1752603659
+a
+\change_unchanged
+ function annotation may also be desirable,
  such as the preprocessor macro used in the Kokkos library 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -7230,8 +7915,43 @@ literal "false"
 \end_inset
 
 .
- Thus,
- the operations necessary to compute the math in this function may look totally different based on the developers desire,
+ 
+\change_deleted -88974637 1752603841
+Thus,
+ the operations necessary to compute the math in this function may look totally different based on the developers desire
+\change_inserted -88974637 1752603841
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752603847
+Thus,
+ the operations necessary to compute the math in this function may look totally different based on the developers desire
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752603849
+a little too wordy
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+,
  turning the above example to
 \end_layout
 
@@ -7273,8 +7993,46 @@ emph{decorators}
 
 \end_inset
 
- To assist in the flexibility of generating desirable C++ code.
+ 
+\change_inserted -88974637 1752603886
+t
+\change_deleted -88974637 1752603886
+T
+\change_unchanged
+o assist in the flexibility of generating desirable C++ code.
  The above example can be changed to a python formattable python string
+\change_inserted -88974637 1752603940
+ as
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -88974637 1752603808
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752603932
+too much 
+\begin_inset Quotes eld
+\end_inset
+
+desire
+\begin_inset Quotes erd
+\end_inset
+
+ above.
+ Also python should be capitalized.
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -7397,6 +8155,29 @@ decorators:
 \end_inset
 
 
+\change_inserted -88974637 1752603977
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -88974637 1752603982
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752603987
+Wording for above sentence (not a complete sentence).
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -7452,11 +8233,49 @@ texttt{std::tuple}
 
 \end_inset
 
- derived types for the arrays of data concerning species or temperature 
+
+\change_inserted -88974637 1752603997
+-
+\change_deleted -88974637 1752603997
+ 
+\change_unchanged
+derived types 
+\change_deleted -88974637 1752604016
+for the arrays of data concerning species or temperature 
 \change_deleted 2012671230 1752354838
 monomials
-\change_inserted 2012671230 1752354839
+\change_deleted -88974637 1752604016
 vectors
+\change_inserted -88974637 1752604016
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604022
+for the arrays of data concerning species or temperature vectors
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604027
+a little too wordy
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
 \change_unchanged
 .
  
@@ -7468,13 +8287,105 @@ Derivatives
 
 \begin_layout Standard
 ChemGen employs a mechanical differentiation approach,
- wherein the underlying mathematics for key operations provide their derivatives and chain rules as needed.
+ wherein 
+\change_deleted -88974637 1752604233
+the underlying mathematics for key operations provide their derivatives and chain rules as needed
+\change_inserted -88974637 1752604233
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604236
+the underlying mathematics for key operations provide their derivatives and chain rules as needed
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604238
+condense?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+.
  As a result,
  once a function’s derivative is incorporated into the static code base,
  it becomes immediately accessible,
  granting access to the underlying derivative structure supplied by ChemGen.
  For instance,
- the Arrhenius function as generated using a default configuration in ChemGen is
+ the Arrhenius function as generated using 
+\change_deleted -88974637 1752604275
+a default
+\change_inserted -88974637 1752604275
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604279
+a default
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604292
+I'd say 
+\begin_inset Quotes eld
+\end_inset
+
+the default
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+a sample
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+a standard
+\begin_inset Quotes erd
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ configuration in ChemGen is
 \end_layout
 
 \begin_layout Standard
@@ -7543,11 +8454,23 @@ arrhenius(const double& A,
 \end_inset
 
 
+\change_deleted -88974637 1752604305
+
 \end_layout
 
 \begin_layout Standard
 ChemGen supplies the derivatives for the mathematical operations in that function.
- For instances,
+ For 
+\change_deleted -88974637 1752604312
+instances
+\change_inserted -88974637 1752604313
+example
+\change_unchanged
+,
+
+\change_inserted -88974637 1752604332
+ the derivatives of
+\change_unchanged
  
 \begin_inset ERT
 status open
@@ -7563,7 +8486,19 @@ _gen}
 
 \end_inset
 
-'s derivatives given that it has two parameters would yield two derivatives and one chain rule:
+
+\change_deleted -88974637 1752604328
+'s derivatives
+\change_inserted -88974637 1752604334
+,
+
+\change_unchanged
+ given that it has two parameters
+\change_inserted -88974637 1752604337
+,
+
+\change_unchanged
+ would yield two derivatives and one chain rule:
 \end_layout
 
 \begin_layout Standard
@@ -7645,9 +8580,21 @@ pow_gen_chain(const double& a,
 \end_inset
 
 The partial derivative with respect to each parameter,
- along with the corresponding chain rule that contracts these partials with a given perturbation,
+ along with the corresponding chain rule that contracts these partial
+\change_inserted -88974637 1752604360
+ derivatives
+\change_deleted -88974637 1752604357
+s
+\change_unchanged
+ with a given perturbation,
  can be assumed to be accessible when developing higher-level functions.
- Assuming this capability,
+ 
+\change_deleted -88974637 1752604368
+Assuming 
+\change_inserted -88974637 1752604369
+With 
+\change_unchanged
+this capability,
  the derivative of the Arrhenius function with respect to temperature is immediately known,
 \end_layout
 
@@ -7783,13 +8730,164 @@ darrhenius_dtemperature(const double& A,
 \end_layout
 
 \begin_layout Standard
-We found that this mechanical differentiation approach is both efficient and more readable compared to symbolic differentiation,
- where derivatives are discovered through symbolic manipulation using tools like SymPy.
+We f
+\change_inserted -88974637 1752604380
+ind
+\change_deleted -88974637 1752604379
+ound
+\change_unchanged
+ that this mechanical differentiation approach is both efficient and more readable 
+\change_deleted -88974637 1752604461
+compared to
+\change_inserted -88974637 1752604467
+ than
+\change_unchanged
+ symbolic differentiation
+\change_deleted -88974637 1752604474
+,
+ where derivatives are discovered through symbolic manipulation
+\change_unchanged
+ using tools 
+\change_deleted -88974637 1752604480
+like
+\change_inserted -88974637 1752604480
+such as
+\change_unchanged
+ 
+\change_deleted -88974637 1752604485
+SymPy
+\change_inserted -88974637 1752604485
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604490
+SymPy
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604491
+cite?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+.
  While symbolic differentiation can be valuable,
- especially for higher-level expressions,
- we found the mechanical approach better suited for organizing and maintaining ChemGen’s code generation process.
+ especially for 
+\change_deleted -88974637 1752604529
+higher-level expressions
+\change_inserted -88974637 1752604529
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604533
+higher-level expressions
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604535
+what do you mean by this?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+,
+ we 
+\change_deleted -88974637 1752604517
+found
+\change_inserted -88974637 1752604519
+believe
+\change_unchanged
+ the mechanical approach
+\change_inserted -88974637 1752604538
+ is
+\change_unchanged
+ better suited for organizing and maintaining ChemGen’s code generation process.
  Regardless,
- since the functions are available in C++ once generated packages like autodiff 
+ since the functions are available in C++
+\change_inserted -88974637 1752604554
+,
+
+\change_unchanged
+ once generated
+\change_inserted -88974637 1752604557
+,
+
+\change_unchanged
+ packages 
+\change_deleted -88974637 1752604558
+like
+\change_inserted -88974637 1752604559
+such as
+\change_unchanged
+ 
+\change_deleted -88974637 1752604574
+autodiff
+\change_inserted -88974637 1752604574
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604578
+autodiff
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604595
+some other font for specific software packages (also for SymPy above)?
+ Not sure.
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lea18"
@@ -7815,11 +8913,84 @@ Generation Process
 \end_layout
 
 \begin_layout Standard
-In the ChemGen software there are three main file types.
- The first file types are python files that manipulate chemistry data and existing static code to create compilation ready source code.
- The second file types are static code files that are ingested by python code and reformatted to the desired target software.
- The remaining file types are a mixture of python code used to exercise tutorials,
- most of which covered in the results in Section
+In the ChemGen software
+\change_inserted -88974637 1752604623
+,
+
+\change_unchanged
+ there are three main file types.
+ The first 
+\change_deleted -88974637 1752604634
+file types
+\change_inserted -88974637 1752604638
+type consists of
+\change_deleted -88974637 1752604642
+ are
+\change_inserted -88974637 1752604643
+ 
+\change_deleted -88974637 1752604642
+ 
+\change_unchanged
+python files that manipulate chemistry data and existing static code to create compilation
+\change_inserted -88974637 1752604652
+-
+\change_deleted -88974637 1752604652
+ 
+\change_unchanged
+ready source code.
+ The second file type
+\change_deleted -88974637 1752604655
+s
+\change_unchanged
+ 
+\change_deleted -88974637 1752604681
+are
+\change_inserted -88974637 1752604682
+comprises
+\change_unchanged
+ static code files that are ingested by
+\change_inserted -88974637 1752604828
+ the aforementioned
+\change_unchanged
+ 
+\change_inserted -88974637 1752604831
+P
+\change_deleted -88974637 1752604831
+p
+\change_unchanged
+ython code and reformatted to the desired target software.
+ The 
+\change_deleted -88974637 1752604839
+remaining file
+\change_inserted -88974637 1752604839
+final
+\change_unchanged
+ type
+\change_deleted -88974637 1752604841
+s
+\change_unchanged
+ 
+\change_inserted -88974637 1752604843
+is
+\change_deleted -88974637 1752604843
+are
+\change_unchanged
+ a mixture of python code used 
+\change_deleted -88974637 1752604847
+to exercise
+\change_inserted -88974637 1752604848
+in
+\change_unchanged
+ tutorials,
+ most of which
+\change_inserted -88974637 1752604849
+ are
+\change_unchanged
+ covered
+\change_deleted -88974637 1752604855
+ in the results 
+\change_unchanged
+in Section
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "sec:Results-and-Demonstration"
@@ -7831,29 +9002,99 @@ nolink "false"
 \end_inset
 
 ,
- and yaml files that contain kinetic data.
+ and 
+\change_deleted -88974637 1752604865
+yaml
+\change_inserted -88974637 1752604865
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604869
+yaml
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752604873
+different font?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ files that contain 
+\change_deleted -88974637 1752604904
+kinetic data
+\change_inserted -88974637 1752604906
+data on the chemical models
+\change_unchanged
+.
  
 \end_layout
 
 \begin_layout Standard
-The code generation process in ChemGen is designed to be as minimal and streamlined as possible.
+The code generation process in ChemGen is designed to be as 
+\change_deleted -88974637 1752604916
+minimal
+\change_inserted -88974637 1752604917
+simple
+\change_unchanged
+ and streamlined as possible.
  ChemGen relies on Cantera to interpret chemical model files.
  Cantera performs several key tasks:
  parsing the chemistry data,
  converting units to the International System of Units (SI),
  and providing thermodynamic relationships that can be refit into the desired polynomial form.
- As a well-maintained and widely used tool in the combustion community,
- with over 750 references in Combustion and Flame at the time of writing,
+ As a well-maintained and widely used tool in the combustion community
+\change_deleted -88974637 1752604947
+,
+ with over 750 references in Combustion and Flame at the time of writing
+\change_unchanged
+,
  Cantera provides a dependable foundation for ChemGen.
  Nevertheless,
- should Cantera become unavailable,
- ChemGen could be extended to handle data parsing,
+ 
+\change_deleted -88974637 1752605260
+should Cantera become unavailable,
+ 
+\change_unchanged
+ChemGen could
+\change_inserted -88974637 1752605262
+ also
+\change_unchanged
+ be extended to handle data parsing,
  unit conversion,
- and polynomial interfacing for re-fitting internally.
+ and 
+\change_inserted -88974637 1752605207
+thermodynamic relationships
+\change_deleted -88974637 1752605202
+polynomial interfacing
+\change_unchanged
+ for re-fitting internally.
 \end_layout
 
 \begin_layout Standard
-Once past the Cantera step,
+
+\change_deleted -88974637 1752605226
+Once past 
+\change_inserted -88974637 1752605227
+After 
+\change_unchanged
+the Cantera step,
  ChemGen begins to generate source code.
  The state size is hardcoded with several automatically generated variables,
  
@@ -7898,7 +9139,45 @@ texttt{Jacobian}
 \end_inset
 
  .
- The stoichemetric coefficients 
+ The 
+\change_deleted -88974637 1752605320
+stoichemetric
+\change_inserted -88974637 1752605320
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752605324
+stoichemetric
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752605327
+should be stoichiometric
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ coefficients 
+\change_inserted -88974637 1752605279
+(
+\change_unchanged
+
 \begin_inset Formula $\nu_{ij}$
 \end_inset
 
@@ -7908,11 +9187,27 @@ texttt{Jacobian}
 \end_inset
 
 ,
+
+\change_inserted -88974637 1752605283
+ and
+\change_unchanged
  
 \begin_inset Formula $\nu_{ij}^{r}$
 \end_inset
 
-and reaction types and their coefficients for each reaction are then accrued.
+
+\change_inserted -88974637 1752605288
+) 
+\change_unchanged
+and 
+\change_deleted -88974637 1752605335
+reaction types and their coefficients for each reaction
+\change_inserted -88974637 1752605339
+reaction coefficients,
+ which depend on the reaction type,
+
+\change_unchanged
+ are then accrued.
  Each reaction rate is generated into a
 \begin_inset ERT
 status open
@@ -7926,8 +9221,33 @@ texttt{reactions.h}
 
 \end_inset
 
- header file,
- for example a reaction if the first reaction a Cantera based yaml file is
+ header file
+\change_inserted -88974637 1752605345
+;
+\change_deleted -88974637 1752605345
+,
+
+\change_unchanged
+ for example
+\change_inserted -88974637 1752605352
+,
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752605351
+a reaction
+\change_unchanged
+ if the first reaction 
+\change_inserted -88974637 1752605359
+of 
+\change_unchanged
+a Cantera
+\change_inserted -88974637 1752605361
+-
+\change_deleted -88974637 1752605360
+ 
+\change_unchanged
+based yaml file is
 \end_layout
 
 \begin_layout Standard
@@ -7990,8 +9310,31 @@ double call_forward_reaction_0(const double& temperature,
 
 \end_inset
 
-Once all reactions are generated a source term file is then created.
- The source file begins by generating the code that calculates 
+Once all reactions are generated
+\change_inserted -88974637 1752605374
+,
+
+\change_unchanged
+ a
+\change_inserted -88974637 1752605385
+ chemical
+\change_unchanged
+ source term file is
+\change_deleted -88974637 1752605377
+ then
+\change_unchanged
+ created.
+ The source
+\change_inserted -88974637 1752605382
+ term
+\change_unchanged
+ file begins 
+\change_deleted -88974637 1752605397
+by generating the
+\change_inserted -88974637 1752605398
+with generated
+\change_unchanged
+ code that calculates 
 \begin_inset Formula $M_{c}$
 \end_inset
 
@@ -8001,10 +9344,19 @@ Once all reactions are generated a source term file is then created.
 \end_inset
 
 ,
+
+\change_inserted -88974637 1752605406
+ and 
+\change_unchanged
+
 \begin_inset Formula $p$
 \end_inset
 
+
+\change_deleted -88974637 1752605409
 ,
+
+\change_unchanged
  from 
 \begin_inset Formula $C$
 \end_inset
@@ -8014,7 +9366,11 @@ Once all reactions are generated a source term file is then created.
 \end_inset
 
 ,
- as well as the 
+ as well as 
+\change_deleted -88974637 1752605420
+the
+\change_unchanged
+ 
 \begin_inset Formula $\Delta G_{j}'$
 \end_inset
 
@@ -8035,8 +9391,46 @@ _reactions}
 \end_inset
 
 .
- and then looping through all reactions and generating the necessary code if a reverse reaction rate is needed.
- In the above example a reverse reaction is necessary and so ChemGen would generate
+ 
+\change_deleted -88974637 1752605440
+and then
+\change_inserted -88974637 1752605441
+ChemGen then
+\change_unchanged
+ loop
+\change_inserted -88974637 1752605442
+s
+\change_deleted -88974637 1752605442
+ing
+\change_unchanged
+ through all reactions and generat
+\change_deleted -88974637 1752605447
+ing
+\change_inserted -88974637 1752605448
+es
+\change_unchanged
+ the necessary code if a reverse reaction rate is needed.
+ In the above example
+\change_inserted -88974637 1752605454
+,
+
+\change_unchanged
+ a reverse reaction is necessary
+\change_inserted -88974637 1752605456
+,
+
+\change_deleted -88974637 1752605456
+ and
+\change_unchanged
+ so ChemGen 
+\change_deleted -88974637 1752605465
+would
+\change_unchanged
+ generate
+\change_inserted -88974637 1752605467
+s
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -8072,7 +9466,13 @@ species[0] * species[3] * forward_reaction_0
 
 \end_inset
 
-Where the rates of progress for each reaction,
+
+\change_inserted -88974637 1752605485
+w
+\change_deleted -88974637 1752605485
+W
+\change_unchanged
+here the rates of progress for each reaction,
  
 \begin_inset Formula $q_{i}$
 \end_inset
@@ -8183,8 +9583,24 @@ name "sec:Results-and-Demonstration"
 \end_layout
 
 \begin_layout Standard
-In this section we present stand alone test cases to confirm that the generated source code is behaving as intended.
- We then demonstrate the generated code in CFD detonation simulation using detonationEulerFoam
+
+\change_deleted -88974637 1752606677
+In this section we 
+\change_inserted -88974637 1752606679
+This section 
+\change_unchanged
+present
+\change_inserted -88974637 1752606679
+s
+\change_unchanged
+ stand
+\change_deleted -88974637 1752606681
+ 
+\change_unchanged
+alone test cases to confirm that the generated source code is behaving as intended.
+ We then 
+\change_inserted -88974637 1752606774
+embed the generated code in detonationEulerFoam
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -8200,6 +9616,44 @@ literal "false"
 
 \end_inset
 
+ to 
+\change_unchanged
+demonstrate 
+\change_deleted -88974637 1752606780
+the generated code in
+\change_inserted -88974637 1752606782
+its performance in
+\change_unchanged
+ 
+\change_inserted -88974637 1752606770
+a 
+\change_unchanged
+CFD
+\change_inserted -88974637 1752606770
+ simulation of a moving detonation wave
+\change_deleted -88974637 1752606752
+ detonation simulation 
+\change_unchanged
+using 
+\change_deleted -88974637 1752606769
+detonationEulerFoam
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Sun23"
+literal "false"
+
+\end_inset
+
+ based on the OpenFOAM package
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Ope25"
+literal "false"
+
+\end_inset
+
+
+\change_unchanged
 .
  
 \end_layout
@@ -8216,13 +9670,32 @@ name "subsec:Source-Term-Accuracy"
 \end_layout
 
 \begin_layout Standard
-To test the source term accuracy we randomly generated a chemical state,
+To test the source term accuracy
+\change_inserted -88974637 1752606792
+,
+
+\change_unchanged
+ we randomly generate
+\change_deleted -88974637 1752606798
+d
+\change_unchanged
+ a chemical state
+\change_deleted -88974637 1752607049
+,
  
 \begin_inset Formula $y_{c}$
 \end_inset
 
 ,
- using
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752606803
+using
+\change_inserted -88974637 1752606803
+as
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -8230,21 +9703,36 @@ To test the source term accuracy we randomly generated a chemical state,
 \begin{eqnarray}
 T & = & 1000+r_{T}1500\text{ K}\nonumber \\
 p & = & 0.1+9.9r_{p}\text{ atm}\nonumber \\
-X_{i} & = & r_{i}\quad\text{for }i=1,\dots,n_{s}\label{eq:chemical_state_01}
+X_{i} & = & r_{i},\quad\text{for }i=1,\dots,n_{s},\label{eq:chemical_state_01}
 \end{eqnarray}
 
 \end_inset
 
-Where 
+
+\change_inserted -88974637 1752606878
+w
+\change_deleted -88974637 1752606878
+W
+\change_unchanged
+here 
 \begin_inset Formula $r_{T},r_{p},r_{1},\dots,r_{n_{s}}\sim\mathcal{U}(0,1)$
 \end_inset
 
+
+\change_inserted -88974637 1752606916
+,
+ which denotes
+\change_deleted -88974637 1752606914
  and 
 \begin_inset Formula $\mathcal{U}(0,1)$
 \end_inset
 
- is a uniform distribution.
+ is
+\change_unchanged
+ a uniform distribution.
  
+\change_deleted -88974637 1752607002
+
 \begin_inset Formula $X_{i}$
 \end_inset
 
@@ -8258,37 +9746,117 @@ Where
 \end_inset
 
 .
- Here 
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752607005
+Here
+\change_unchanged
+ 
 \begin_inset Formula $X_{i}$
 \end_inset
 
- can be viewed as the mole fraction,
+ 
+\change_deleted -88974637 1752607009
+can be viewed a
+\change_inserted -88974637 1752607010
+is 
+\change_deleted -88974637 1752607012
+s 
+\change_unchanged
+the mole fraction
+\change_inserted -88974637 1752607018
+ of the 
+\begin_inset Formula $i$
+\end_inset
+
+-th species
+\change_unchanged
+,
  defined as
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-X_{i}=\frac{C_{i}}{\sum_{i=1}^{n_{s}}C_{i}}.\label{eq:mole_fraction}
+X_{i}=\frac{C_{i}}{\sum_{i=1}^{n_{s}}C_{i}},\label{eq:mole_fraction}
 \end{equation}
 
 \end_inset
 
+
+\change_inserted -88974637 1752607032
+which is renormalized after all 
+\begin_inset Formula $n_{s}$
+\end_inset
+
+ species are randomly generated.
+ 
+\change_deleted -88974637 1752607401
 Using equation of state,
  
 \begin_inset Formula $p=RT\sum_{i=1}^{n_{s}}C_{i}$
 \end_inset
 
 ,
- the concentrations were calculated,
+ t
+\change_inserted -88974637 1752607401
+T
+\change_unchanged
+he concentrations 
+\change_deleted -88974637 1752607402
+were
+\change_inserted -88974637 1752607403
+are then
+\change_unchanged
+ calculated
+\change_inserted -88974637 1752607406
+ as
+\change_deleted -88974637 1752607405
+,
+
+\change_unchanged
  
 \begin_inset Formula $C_{i}=X_{i}p/\left(RT\right)$
 \end_inset
 
 ,
  forming the complete state for ChemGen.
- We tested five different chemical models with increasing size that are common to computational simulations of chemically reacting flows by generating 10,000 random chemical states for each individual model;
- the 10-species Ó Connaire model 
+ We 
+\change_deleted -88974637 1752607416
+tested
+\change_inserted -88974637 1752607417
+consider
+\change_unchanged
+ five different chemical models with increasing size that are common to computational simulations of chemically reacting flows
+\change_inserted -88974637 1752607427
+,
+ with
+\change_deleted -88974637 1752607427
+ by generating
+\change_unchanged
+ 10,000 random chemical states
+\change_inserted -88974637 1752607432
+ generated
+\change_unchanged
+ for each 
+\change_deleted -88974637 1752607439
+individual
+\change_unchanged
+ model
+\change_inserted -88974637 1752607454
+.
+\change_deleted -88974637 1752607436
+;
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752607457
+t
+\change_inserted -88974637 1752607457
+T
+\change_unchanged
+he 10-species Ó Connaire model 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Oco04"
@@ -8332,11 +9900,19 @@ literal "false"
 
 \end_inset
 
- are applied for larger hydrocarbon combustion simulations.
+ are 
+\change_deleted -88974637 1752607472
+applied
+\change_inserted -88974637 1752607473
+employed
+\change_unchanged
+ for larger hydrocarbon combustion simulations.
  
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -88974637 1752607562
 For each chemical state,
  
 \begin_inset Formula $n_{s}$
@@ -8344,7 +9920,13 @@ For each chemical state,
 
  of source term elements,
  were generated.
- We used Cantera's source term prediction,
+ 
+\change_unchanged
+We use
+\change_deleted -88974637 1752607567
+d
+\change_unchanged
+ Cantera's source term prediction,
  
 \begin_inset ERT
 status open
@@ -8363,8 +9945,16 @@ _rates}
 \end_inset
 
  ,
- to evaluate the error for each state for each particular chemical model.
- The average error per random chemical state is 
+ to evaluate the error for each state for each 
+\change_deleted -88974637 1752607592
+particular
+\change_unchanged
+ chemical model.
+ The average error per 
+\change_deleted -88974637 1752607599
+random
+\change_unchanged
+ chemical state is 
 \end_layout
 
 \begin_layout Standard
@@ -8373,34 +9963,73 @@ _rates}
 \epsilon=\frac{1}{n_{s}}\sum_{i=1}^{n_{s}}\left(\begin{cases}
 \left|\frac{S_{cg,i}-S_{ct,i}}{S_{ct,i}}\right| & \text{if }\left|S_{ct,i}\right|>10^{-10}\\
 0 & \text{otherwise}
-\end{cases}\right).\label{eq:source_error}
+\end{cases}\right),\label{eq:source_error}
 \end{equation}
 
 \end_inset
 
+
+\change_deleted -88974637 1752607612
 Here,
+\change_inserted -88974637 1752607613
+where
+\change_unchanged
  
 \begin_inset Formula $S_{\mathrm{ct},i}$
 \end_inset
 
- denotes the Cantera predicted source term for species 
+ denotes the Cantera
+\change_inserted -88974637 1752607616
+-
+\change_deleted -88974637 1752607615
+ 
+\change_unchanged
+predicted source term for
+\change_inserted -88974637 1752607626
+ the 
 \begin_inset Formula $i$
 \end_inset
 
- and 
+-th
+\change_unchanged
+ species 
+\change_deleted -88974637 1752607628
+
+\begin_inset Formula $i$
+\end_inset
+
+ 
+\change_unchanged
+and 
 \begin_inset Formula $S_{\mathrm{cg},i}$
 \end_inset
 
- denotes the corresponding ChemGen predicted source term.
+ denotes the corresponding ChemGen
+\change_inserted -88974637 1752607630
+-
+\change_deleted -88974637 1752607630
+ 
+\change_unchanged
+predicted source term.
  If the magnitude of the Cantera source term is less than 
 \begin_inset Formula $10^{-10}$
 \end_inset
 
 ,
- the error is defined to be zero.
- In cases where the Cantera source term falls below a specified threshold but the corresponding ChemGen source term is significantly larger,
+ the error is 
+\change_deleted -88974637 1752607640
+defined to be
+\change_inserted -88974637 1752607642
+considered to be
+\change_unchanged
+ zero.
+ 
+\change_deleted -88974637 1752607668
+In cases where the Cantera source term falls below a specified threshold but the corresponding ChemGen source term is significantly larger,
  the test program flags this as an error.
  No such discrepancies were observed.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -8426,7 +10055,13 @@ nolink "false"
  While the ChemGen implementation is designed to be consistent with Cantera’s formulation,
  differences arise primarily due to the thermodynamic polynomial representations.
  Cantera supports multiple polynomial formats for thermodynamic property calculations,
- whereas ChemGen re-fits all species thermodynamics to a user-specified polynomial order during code generation.
+ whereas ChemGen re-fits all species thermodynamic
+\change_inserted -88974637 1752607708
+ properties
+\change_deleted -88974637 1752607705
+s
+\change_unchanged
+ to a user-specified polynomial order during code generation.
  The ChemGen refits for the data in Figure
 \begin_inset space ~
 \end_inset
@@ -8442,17 +10077,48 @@ nolink "false"
 
 \end_inset
 
- utilized 
+ 
+\change_deleted -88974637 1752607867
+utilized
+\change_inserted -88974637 1752607869
+are based on
+\change_unchanged
+ 
 \begin_inset Formula $n_{p}=7$
 \end_inset
 
 .
- To investigate the effect of polynomial choice,
- we repeated the error analysis while varying 
+ To investigate the effect of polynomial 
+\change_deleted -88974637 1752607897
+choice
+\change_inserted -88974637 1752607898
+degree
+\change_unchanged
+,
+ we repeat
+\change_deleted -88974637 1752607935
+ed
+\change_unchanged
+ the error analysis 
+\change_deleted -88974637 1752607936
+while
+\change_inserted -88974637 1752607938
+with different choices of
+\change_deleted -88974637 1752607940
+ varying
+\change_unchanged
+ 
 \begin_inset Formula $n_{p}$
 \end_inset
 
- which reduced the error distributions mean and increased precision by an order of magnitude for all chemical models which is detailed in Appendix
+
+\change_inserted -88974637 1752607947
+,
+ the results of which are
+\change_deleted -88974637 1752607946
+ which reduced the error distributions mean and increased precision by an order of magnitude for all chemical models which is 
+\change_unchanged
+detailed in Appendix
 \begin_inset space ~
 \end_inset
 
@@ -8500,12 +10166,29 @@ name "fig:source_term_accuracy"
 
 \end_inset
 
-Error distributions,
+
+\change_inserted -88974637 1752607966
+Distribution of error
+\change_deleted -88974637 1752607958
+Error distributions
+\change_unchanged
+,
  
 \begin_inset Formula $\epsilon$
 \end_inset
 
- from Equation
+
+\change_inserted -88974637 1752607971
+,
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752607973
+from
+\change_inserted -88974637 1752607974
+as defined in
+\change_unchanged
+ Equation
 \begin_inset space ~
 \end_inset
 
@@ -8567,14 +10250,34 @@ literal "false"
 \end_inset
 
 .
- The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
+ The vertical dash line represents the mean of the
+\change_deleted -88974637 1752608049
+ 
+\change_inserted -88974637 1752608051
+ 
+\change_unchanged
+distribution
+\change_deleted -88974637 1752608031
+s
+\change_unchanged
+ and 
+\change_inserted -88974637 1752608034
+is
+\change_deleted -88974637 1752608033
+are
+\change_unchanged
+ colored according to the corresponding model.
  The distribution mean,
  
 \begin_inset Formula $\mu$
 \end_inset
 
 ,
- and corresponding standard deviations,
+ and corresponding standard deviation
+\change_deleted -88974637 1752608060
+s
+\change_unchanged
+,
  
 \begin_inset Formula $\sigma$
 \end_inset
@@ -8583,8 +10286,18 @@ literal "false"
  are also reported.
  Overall mean agreement for all cases is,
  on average,
- less that a percent.
+ less tha
+\change_inserted -88974637 1752608081
+n
+\change_deleted -88974637 1752608080
+t
+\change_unchanged
+ a percent.
+
+\change_deleted -88974637 1752608075
  
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -8609,8 +10322,47 @@ name "subsec:Explicit-Time-Integration"
 \end_layout
 
 \begin_layout Standard
-With confidence in the source term calculation we applied explicit time integration strategies to integrate a chemical state in time.
+With confidence in the source term calculation
+\change_inserted -88974637 1752608133
+,
+
+\change_unchanged
+ we 
+\change_inserted -88974637 1752608138
+proceed to apply
+\change_deleted -88974637 1752608136
+applied 
+\change_inserted -88974637 1752608304
+ ChemGen's 
+\change_unchanged
+explicit 
+\change_inserted -88974637 1752608266
+RK4 
+\change_unchanged
+time integrat
+\change_inserted -88974637 1752608306
+or
+\change_deleted -88974637 1752608306
+ion
+\change_unchanged
+ 
+\change_deleted -88974637 1752608140
+strategies
+\change_unchanged
+ to 
+\change_deleted -88974637 1752608142
+integrate
+\change_inserted -88974637 1752608320
+ temporally evolve
+\change_unchanged
+ 
+\change_deleted -88974637 1752608322
+a chemical state in time.
  Using ChemGen's RK4 solver we integrated the following initial chemical state
+\change_inserted -88974637 1752608369
+the following initial chemical state:
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -8618,12 +10370,18 @@ With confidence in the source term calculation we applied explicit time integrat
 \begin{eqnarray}
 T & = & 1800\nonumber \\
 p & = & 101325.0\nonumber \\
-\left(X_{H_{2}},X_{O_{2}},X_{N_{2}}\right) & = & \left(0.2,0.2,0.6\right)\label{eq:chemical_state_02}
+\left(X_{H_{2}},X_{O_{2}},X_{N_{2}}\right) & = & \left(0.2,0.2,0.6\right).\label{eq:chemical_state_02}
 \end{eqnarray}
 
 \end_inset
 
-using the hydrogen submodel extracted from FFCM-2 
+
+\change_deleted -88974637 1752608384
+using the
+\change_inserted -88974637 1752608386
+We use a
+\change_unchanged
+ hydrogen submodel extracted from FFCM-2 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -8631,6 +10389,11 @@ literal "false"
 
 \end_inset
 
+
+\change_inserted -88974637 1752608394
+,
+ which is
+\change_deleted -88974637 1752608398
  and integrate in time under a constant internal energy assumption,
  i.e.,
  
@@ -8638,21 +10401,45 @@ literal "false"
 \end_inset
 
  is constant.
- A submodel extraction for hydrogen is created by removing any species or reactions without carbon atoms.
- We also removed any electronically excited states,
+ A submodel extraction for hydrogen is 
+\change_unchanged
+created by removing any species or reactions 
+\change_deleted -88974637 1752608193
+without
+\change_inserted -88974637 1752608193
+with
+\change_unchanged
+ carbon atoms.
+ We also remov
+\change_inserted -88974637 1752608201
+e
+\change_deleted -88974637 1752608200
+ed
+\change_unchanged
+ any electronically excited states,
  such as 
 \begin_inset Formula $OH^{*}$
 \end_inset
 
 .
- The resulting submodel is 9 species and 25 reactions.
+ The resulting submodel 
+\change_deleted -88974637 1752608407
+is
+\change_inserted -88974637 1752608409
+consists of
+\change_unchanged
+ 9 species and 25 reactions.
  The concentrations,
  
 \begin_inset Formula $C_{i}$
 \end_inset
 
 ,
- are calculated in the same manner as Section
+ are calculated in the same manner as 
+\change_inserted -88974637 1752608424
+in 
+\change_unchanged
+Section
 \begin_inset space ~
 \end_inset
 
@@ -8668,13 +10455,33 @@ nolink "false"
 \end_inset
 
 .
- The RK4 integration became unstable for any time step larger than 
+ 
+\change_inserted -88974637 1752608488
+We employ a time-step size of 
+\change_deleted -88974637 1752608490
+The RK4 integration became unstable for any time step larger than
+\change_unchanged
+ 
 \begin_inset Formula $\Delta t=1e-8$
 \end_inset
 
- seconds,
- which is the time step used in for the results reported here.
- The resulting temperature and species concentration evolutions are shown in Figure
+ seconds
+\change_inserted -88974637 1752608528
+.
+ With larger time-step sizes,
+ the RK4 time integrator becomes unstable
+\change_deleted -88974637 1752608530
+,
+ which is the time step used in for the results reported here
+\change_unchanged
+.
+ The resulting temperature and species concentration 
+\change_deleted -88974637 1752608538
+evolutions
+\change_inserted -88974637 1752608539
+profiles
+\change_unchanged
+ are shown in Figure
 \begin_inset space ~
 \end_inset
 
@@ -8691,7 +10498,13 @@ nolink "false"
 
  ,
  where the ChemGen results are represented by dashed black lines and Cantera results are represented by solid colored lines.
- The Cantera results were produced using the 
+ The Cantera results 
+\change_deleted -88974637 1752608557
+were
+\change_inserted -88974637 1752608558
+are
+\change_unchanged
+ produced using the 
 \begin_inset ERT
 status open
 
@@ -8735,7 +10548,17 @@ name "fig:RK4_T_C"
 
 \end_inset
 
-Temperature (left) and species (right) evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions from Equation Section
+Temperature (left) and species (right) evolution for a constant volume reactor using an explicit RK4 scheme and initial conditions 
+\change_deleted -88974637 1752608642
+from
+\change_inserted -88974637 1752608643
+given in
+\change_unchanged
+ Equation
+\change_deleted -88974637 1752608641
+ Section
+\change_unchanged
+
 \begin_inset space ~
 \end_inset
 
@@ -8751,7 +10574,21 @@ nolink "false"
 \end_inset
 
 .
- These results were produced using hydrogen submodel from FFCM2 
+ These results 
+\change_deleted -88974637 1752608654
+were
+\change_inserted -88974637 1752608654
+are
+\change_unchanged
+ produced using 
+\change_inserted -88974637 1752608657
+a 
+\change_unchanged
+hydrogen submodel
+\change_inserted -88974637 1752608659
+ extracted
+\change_unchanged
+ from FFCM2 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -8760,7 +10597,34 @@ literal "false"
 \end_inset
 
 .
- The solid lines are from the Cantera solution and the dashed black lines are the corresponding ChemGen results.
+ The solid lines 
+\change_deleted -88974637 1752608666
+are from
+\change_inserted -88974637 1752608667
+represent
+\change_unchanged
+ the Cantera solution
+\change_inserted -88974637 1752608668
+,
+
+\change_unchanged
+ and the dashed black lines 
+\change_deleted -88974637 1752608670
+are
+\change_inserted -88974637 1752608671
+represent
+\change_unchanged
+ the 
+\change_deleted -88974637 1752608672
+corresponding
+\change_unchanged
+ ChemGen 
+\change_deleted -88974637 1752608676
+results
+\change_inserted -88974637 1752608676
+solution
+\change_unchanged
+.
 \end_layout
 
 \end_inset
@@ -8776,7 +10640,11 @@ literal "false"
 \begin_layout Standard
 Following a brief induction period,
  the chemical state undergoes a sudden temperature rise accompanied by rapid species changes,
- where reactants,
+ where
+\change_inserted -88974637 1752608692
+ the
+\change_unchanged
+ reactants,
 \begin_inset Formula $H_{2}$
 \end_inset
 
@@ -8791,7 +10659,13 @@ Following a brief induction period,
 \end_inset
 
 ,
- along with intermediates,
+ along with intermediate
+\change_inserted -88974637 1752608701
+ species
+\change_deleted -88974637 1752608700
+s
+\change_unchanged
+,
 \begin_inset Formula $H_{2}O_{2}$
 \end_inset
 
@@ -8814,7 +10688,15 @@ Following a brief induction period,
  are created.
  This is followed by a more gradual evolution toward a steady state.
  The main reactants and products are referred to as major species,
- for this model they are 
+
+\change_inserted -88974637 1752608713
+ which
+\change_unchanged
+ for this model
+\change_deleted -88974637 1752608715
+ they
+\change_unchanged
+ are 
 \begin_inset Formula $H_{2}$
 \end_inset
 
@@ -8834,8 +10716,27 @@ Following a brief induction period,
 \end_inset
 
 ).
- The minor species span a wide range of values,
- and therefore individual scaling multipliers are applied to each in order to display them on the same graph.
+ The minor species span a wide range of values
+\change_inserted -88974637 1752608737
+;
+\change_deleted -88974637 1752608737
+,
+ and
+\change_unchanged
+ therefore
+\change_inserted -88974637 1752608739
+,
+
+\change_unchanged
+ individual scaling multipliers are applied to each in order to
+\change_inserted -88974637 1752608753
+ easily
+\change_deleted -88974637 1752608763
+ display them
+\change_inserted -88974637 1752608765
+ visualize their profiles
+\change_unchanged
+ on the same graph.
 \end_layout
 
 \begin_layout Subsection
@@ -8850,7 +10751,38 @@ name "subsec:Jacobian-Verification"
 \end_layout
 
 \begin_layout Standard
-We performed Jacobian calculation confirmation in order to build confidence in their use for implicit time integration strategies.
+
+\change_inserted -88974637 1752608781
+Next,
+ 
+\change_deleted -88974637 1752608779
+W
+\change_inserted -88974637 1752608782
+w
+\change_unchanged
+e 
+\change_deleted -88974637 1752608795
+perfor
+\change_inserted -88974637 1752608796
+verify
+\change_deleted -88974637 1752608795
+med
+\change_unchanged
+ 
+\change_inserted -88974637 1752608798
+the 
+\change_unchanged
+Jacobian calculation
+\change_inserted -88974637 1752608803
+s
+\change_deleted -88974637 1752608802
+ confirmation 
+\change_unchanged
+in order to build confidence in their use for implicit time integration
+\change_deleted -88974637 1752608812
+ strategies
+\change_unchanged
+.
  Recall ChemGen supplies two Jacobians,
  
 \begin_inset Note Note
@@ -8881,9 +10813,45 @@ status open
 
 \end_inset
 
+
+\change_deleted -88974637 1752609695
 In this section we present verification of the Jacobians using the finite difference method.
  To calculate the finite difference approximation of the Jacobians we utilized the second order finite difference approximation for each element by perturbing each species,
  
+\change_inserted -88974637 1752609695
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752609700
+In this section we present verification of the Jacobians using the finite difference method.
+ To calculate the finite difference approximation of the Jacobians we utilized the second order finite difference approximation for each element by perturbing each species,
+ 
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752609702
+wordy
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -8922,6 +10890,51 @@ In this section we present verification of the Jacobians using the finite differ
 
 \end_inset
 
+
+\change_inserted -88974637 1752608833
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -88974637 1752608836
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752610198
+temperature only.
+ in general,
+ shouldn't use arrows for math (but okay for algorithms).
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+hats
+\begin_inset Quotes erd
+\end_inset
+
+ in the above equation are off (should just be over J or C,
+ not J_ij or C_j).
+ Also,
+ I would replace 
+\begin_inset Formula $\frac{\omega_{T}(\hat{C_{j-1}}^{+},T)-\omega_{T}(\hat{C_{j-1}}^{-},T)}{2\delta C}$
+\end_inset
+
+ with 
+\begin_inset Formula $\frac{\omega_{T}(C_{j-1}+\delta C,T)-\omega_{T}(C_{j-1}-\delta C,T)}{2\delta C}$
+\end_inset
+
+ 
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_deleted -88974637 1752608828
 
 \end_layout
 
@@ -8988,9 +11001,21 @@ nolink "false"
 \end_inset
 
 .
- This finite difference approximation is second order accurate.
- An initial test to verify the Jacobian is to check the order of convergence of the finite difference errors when compared to the analytical Jacobian provided by ChemGen.
- The order of accuracy describes how quickly the numerical error decreases as the step size is reduced.
+ 
+\change_deleted -88974637 1752609978
+This finite difference approximation is second order accurate.
+ 
+\change_unchanged
+An initial test to verify the Jacobian is to check the order of convergence of the finite difference errors 
+\change_deleted -88974637 1752609760
+when
+\change_inserted -88974637 1752609760
+as
+\change_unchanged
+ compared to the analytical Jacobian provided by ChemGen.
+ 
+\change_deleted -88974637 1752608989
+The order of accuracy describes how quickly the numerical error decreases as the step size is reduced.
  In this context,
  it measures how closely the finite difference Jacobian approximates the reference Jacobian as smaller perturbations are used.
  For Equation
@@ -9009,10 +11034,18 @@ nolink "false"
 \end_inset
 
  a refinement will exhibit a decrease in error by a factor of four each time the perturbation is halved.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-We utilized the 
+We 
+\change_deleted -88974637 1752609765
+utilized
+\change_inserted -88974637 1752609766
+use
+\change_unchanged
+ the 
 \begin_inset Formula $L_{2}$
 \end_inset
 
@@ -9036,20 +11069,76 @@ for four refinement levels using smaller values of
 \begin_inset Formula $\delta T$
 \end_inset
 
+
+\change_deleted -88974637 1752609787
 ,
- halving each refinement.
+ halving each refinement
+\change_unchanged
+.
  The initial 
 \begin_inset Formula $\delta C$
 \end_inset
 
- was chosen as a fraction,
+ 
+\change_inserted -88974637 1752609801
+is
+\change_deleted -88974637 1752609799
+was
+\change_unchanged
+ chosen as 
+\change_deleted -88974637 1752609805
+a fraction,
  in this case 
 \begin_inset Formula $1/4$
 \end_inset
 
 ,
- of the smallest non-zero concentration,
- and the initial temperature perturbation was chosen as 
+ 
+\change_inserted -88974637 1752609807
+a quarter 
+\change_unchanged
+of
+\change_deleted -88974637 1752610280
+ the smallest non-zero concentration
+\change_inserted -88974637 1752610280
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752610285
+the smallest non-zero concentration
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752610295
+why not different perturbation for each species?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+,
+ and the initial temperature perturbation 
+\change_deleted -88974637 1752609932
+was
+\change_inserted -88974637 1752609932
+is
+\change_unchanged
+ chosen as 
 \begin_inset Formula $\delta T=100$
 \end_inset
 
@@ -9069,7 +11158,9 @@ nolink "false"
 
 \end_inset
 
- shows the order of convergence for a single random chemical state determined using Equation
+ shows the order of convergence for a single random chemical state determined using 
+\change_deleted -88974637 1752609964
+Equation
 \begin_inset space ~
 \end_inset
 
@@ -9084,7 +11175,9 @@ nolink "false"
 
 \end_inset
 
- and using the UCSD chemical model
+ and using 
+\change_unchanged
+the UCSD chemical model
 \begin_inset CommandInset citation
 LatexCommand citep
 key "SanDiegoMech"
@@ -9094,14 +11187,52 @@ literal "false"
 
 .
  The refinement results agree well with the expected second-order accuracy.
- We performed this refinement study across all previously mentioned chemical models and observed consistent order of accuracy with little to no variation for both Jacobians.
+ We 
+\change_deleted -88974637 1752609908
+performed
+\change_inserted -88974637 1752609908
+repeat
+\change_unchanged
+ this refinement study across all previously mentioned chemical models and observed consistent order of accuracy 
+\change_deleted -88974637 1752609920
+with little to no variation 
+\change_unchanged
+for both Jacobians
+\change_inserted -88974637 1752609906
+ (not shown for brevity)
+\change_unchanged
+.
  In some cases,
- when the initial 
+ 
+\change_deleted -88974637 1752610003
+when 
+\change_unchanged
+the initial 
 \begin_inset Formula $\delta C$
 \end_inset
 
- was too small,
- the perturbations led to convergence within machine precision,
+ 
+\change_deleted -88974637 1752610005
+was
+\change_inserted -88974637 1752610005
+is
+\change_unchanged
+ too small,
+ 
+\change_deleted -88974637 1752610013
+the perturbations led 
+\change_inserted -88974637 1752610016
+leading to errors approaching 
+\change_deleted -88974637 1752610018
+to convergence within
+\change_unchanged
+ machine precision
+\change_inserted -88974637 1752610023
+ and
+\change_deleted -88974637 1752610022
+,
+
+\change_unchanged
  preventing further reduction in the 
 \begin_inset Formula $L_{2}$
 \end_inset
@@ -9112,11 +11243,30 @@ literal "false"
 \end_inset
 
 ,
- the expected order of accuracy was recovered.
+ the expected order of accuracy 
+\change_deleted -88974637 1752610039
+was
+\change_inserted -88974637 1752610039
+can be
+\change_unchanged
+ recovered.
 \end_layout
 
 \begin_layout Standard
-We evaluated the computational cost of the two analytical Jacobians relative to their corresponding finite difference approximations.
+
+\change_inserted -88974637 1752610052
+Additionally,
+ 
+\change_deleted -88974637 1752610053
+W
+\change_inserted -88974637 1752610053
+w
+\change_unchanged
+e evaluate
+\change_deleted -88974637 1752610054
+d
+\change_unchanged
+ the computational cost of the two analytical Jacobians relative to their corresponding finite difference approximations.
  Using the same approach to generate random chemical states as described in Equation 
 \begin_inset CommandInset ref
 LatexCommand eqref
@@ -9129,7 +11279,11 @@ nolink "false"
 \end_inset
 
 ,
- we computed 1,000 Jacobians for each method and compared the total execution time.
+ we compute
+\change_deleted -88974637 1752610062
+d
+\change_unchanged
+ 1,000 Jacobians for each method and compared the total execution time.
  For the discrete Jacobians,
  we used first-order finite difference schemes,
  rather than the second-order methods described in Equations 
@@ -9186,9 +11340,38 @@ ref{tab:test}
 
 for a variety of chemical models ranging in size and complexity.
  Despite using the fastest discrete Jacobian optimization,
- the analytical Jacobians were consistently faster across all cases.
- Notably the analytical Jacobian was seen to increase in speed relative to the discrete as the mechanism increased in complexity.
+ the analytical Jacobians 
+\change_deleted -88974637 1752610349
+were
+\change_inserted -88974637 1752610349
+are
+\change_unchanged
+ consistently faster across all cases.
+ Notably
+\change_inserted -88974637 1752610423
+,
+ as the chemical mechanism increases in complexity,
+
+\change_unchanged
+ the
+\change_inserted -88974637 1752610470
+ reduction in cost of computing the
+\change_unchanged
+ analytical Jacobian 
+\change_deleted -88974637 1752610474
+was seen to increase in speed 
+\change_unchanged
+relative to 
+\change_deleted -88974637 1752610483
+the discrete
+\change_inserted -88974637 1752610517
+the finite different approximation becomes greater.
+
+\change_deleted -88974637 1752610516
+ as the mechanism increased in complexity.
  .
+\change_unchanged
+
 \begin_inset Note Note
 status collapsed
 
@@ -9421,6 +11604,11 @@ end{table}
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted -88974637 1752610531
+Finally,
+ 
+\change_unchanged
 Niemeyer et al. 
 \begin_inset CommandInset citation
 LatexCommand citet
@@ -9445,7 +11633,13 @@ nolink "false"
 
 \end_inset
 
- to provide additional confidence in the correctness of ChemGen's Jacobians.
+ to provide additional confidence in the correctness of ChemGen's Jacobian
+\change_deleted -88974637 1752610536
+s
+\change_inserted -88974637 1752608923
+ computations
+\change_unchanged
+.
  
 \end_layout
 
@@ -9454,8 +11648,28 @@ Implicit Time Integration
 \end_layout
 
 \begin_layout Standard
-In this section we present a demonstration test case for the implicit time integration methods provided by ChemGen,
- motivated by the validated accuracy of the source term from Section
+
+\change_deleted -88974637 1752610592
+In this section we present
+\change_inserted -88974637 1752610597
+This section presents results obtained with 
+\change_deleted -88974637 1752610600
+ a demonstration test case for
+\change_unchanged
+ the implicit time integrat
+\change_inserted -88974637 1752610603
+ors
+\change_deleted -88974637 1752610602
+ion methods
+\change_unchanged
+ provided by ChemGen,
+ motivated by the 
+\change_deleted -88974637 1752610618
+validated
+\change_inserted -88974637 1752610621
+confirmed
+\change_unchanged
+ accuracy of the source term from Section
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Source-Term-Accuracy"
@@ -9499,7 +11713,11 @@ literal "false"
 
 \end_inset
 
- to integrate a chemical state with initial conditions:
+ to integrate a chemical state with initial conditions
+\change_deleted -88974637 1752610630
+:
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -9523,7 +11741,23 @@ nolink "false"
 
 \end_inset
 
- compares the performance of implicit time integration methods against Cantera results using the 
+ compares the performance of 
+\change_inserted -88974637 1752610646
+ChemGen's 
+\change_unchanged
+implicit time 
+\change_deleted -88974637 1752610651
+integration methods
+\change_inserted -88974637 1752610653
+integrators
+\change_unchanged
+ against Cantera
+\change_inserted -88974637 1752610661
+'s 
+\change_deleted -88974637 1752610689
+ results using the
+\change_unchanged
+ 
 \begin_inset ERT
 status open
 
@@ -9534,18 +11768,32 @@ ReactorNet
 
 \end_inset
 
- class to a maximum time of 
+ class
+\change_deleted -88974637 1752610695
+ to a maximum time of 
 \begin_inset Formula $2\times10^{-5}$
 \end_inset
 
- seconds.
+ seconds
+\change_unchanged
+.
  Line markers are shown at every ten time steps,
  except for SDIRK-4,
  where markers are placed every five steps to accommodate its larger time step.
  Among the integrators,
  the first-order methods,
  YASS and Backward Euler,
- exhibit the largest discrepancies from Cantera.
+ exhibit the largest discrepancies 
+\change_deleted -88974637 1752610709
+from
+\change_inserted -88974637 1752610710
+with
+\change_unchanged
+ Cantera
+\change_inserted -88974637 1752610714
+'s results
+\change_unchanged
+.
  The 
 \change_inserted 2012671230 1752361136
 Rosenbrock 
@@ -9558,9 +11806,30 @@ method shows improved agreement,
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -88974637 1752610856
 All integrators demonstrate agreement with Cantera.
  We iterated through various time steps to arrive on the fastest time to solution while maintaining reasonable accuracy.
- The utilized time steps are summarized in Table 
+ 
+\change_unchanged
+The utilized time
+\change_deleted -88974637 1752610754
+ 
+\change_unchanged
+step
+\change_inserted -88974637 1752610781
+ size
+\change_unchanged
+s
+\change_inserted -88974637 1752610981
+ are chosen (via trial and error)
+\change_unchanged
+ 
+\change_inserted -88974637 1752610997
+to yield the fastest time-to-solution while maintaining reasonable accuracy.
+ Thes
+\change_unchanged
+are summarized in Table 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "tab:time_step_and_timings"
@@ -9816,7 +12085,13 @@ Cantera
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\change_inserted -88974637 1752611011
+n/a
+\change_deleted -88974637 1752611010
 x
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -9884,7 +12159,26 @@ name "fig:implicit_homogeneous_reactor"
 
 \end_inset
 
-ChemGen integrators were tested on a homogeneous reactor simulation run to 
+
+\change_inserted -88974637 1752611225
+Homogeneous reactor results up to 
+\begin_inset Formula $\ensuremath{20\,\mu\text{s}}$
+\end_inset
+
+ obtained with 
+\change_unchanged
+ChemGen
+\change_inserted -88974637 1752611220
+-provided implicit time
+\change_deleted -88974637 1752611201
+ 
+\change_unchanged
+integrators
+\change_inserted -88974637 1752611235
+.
+
+\change_deleted -88974637 1752611231
+ were tested on a homogeneous reactor simulation run to 
 \begin_inset Formula $\ensuremath{20\,\mu\text{s}}$
 \end_inset
 
@@ -9901,6 +12195,8 @@ ChemGen integrators were tested on a homogeneous reactor simulation run to
  While all integrators showed agreement with Cantera,
  the higher-order SDIRK-2 and SDIRK-4 matched most closely,
  whereas YASS and Backward Euler exhibited the largest discrepancies.
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -9940,15 +12236,61 @@ In computational physics,
 \end_layout
 
 \begin_layout Standard
-To assure the correct implementation of these implicit methods beyond comparisons to Cantera we performed an order of accuracy test for YASS,
+To assure the correct implementation of these implicit methods beyond comparisons to Cantera
+\change_inserted -88974637 1752611024
+,
+
+\change_unchanged
+ we 
+\change_deleted -88974637 1752611028
+performed an order of accuracy test
+\change_inserted -88974637 1752611034
+assess order of convergence
+\change_unchanged
+ 
+\change_deleted -88974637 1752611119
+for
+\change_inserted -88974637 1752611119
+of the
+\change_unchanged
+ YASS,
  SDIRK-4,
- and Rosenbroc.
- Because the implementation of SDIRK-2 is similar to SDIRK-4 and backward Euler is YASS with more linear solver iterations we omitted them from the discussion here.
- For this test case we used the extracted hydrogen submodel from FFCM-2 with a state taken at time 
+ and Rosenbroc
+\change_inserted -88974637 1752611042
+k methods
+\change_unchanged
+.
+ Because the implementation of SDIRK-2 is similar to SDIRK-4 and 
+\change_inserted -88974637 1752611052
+B
+\change_deleted -88974637 1752611051
+b
+\change_unchanged
+ackward Euler is YASS with more linear solver iterations
+\change_inserted -88974637 1752611058
+,
+
+\change_unchanged
+ we omit
+\change_deleted -88974637 1752611059
+ted
+\change_unchanged
+ them from the discussion here.
+ 
+\change_deleted -88974637 1752611129
+For this test case we used
+\change_inserted -88974637 1752611130
+We employ
+\change_unchanged
+ the extracted hydrogen submodel from FFCM-2 
+\change_deleted -88974637 1752611135
+with a state taken at time 
 \begin_inset Formula $t=4\mu$
 \end_inset
 
-s with initial conditions
+s 
+\change_unchanged
+with initial conditions
 \end_layout
 
 \begin_layout Standard
@@ -9961,21 +12303,54 @@ p & = & 101325.0\text{ Pa}\nonumber \\
 
 \end_inset
 
-The state at 
-\begin_inset Formula $t=4\mu$
+The
+\change_inserted -88974637 1752611140
+ final time
+\change_deleted -88974637 1752611142
+ state at
+\change_inserted -88974637 1752611143
+is
+\change_unchanged
+ 
+\begin_inset Formula $t=4\;\mu$
 \end_inset
 
-s was was the approximate location of maximum 
+s
+\change_deleted -88974637 1752611151
+ 
+\change_inserted -88974637 1752611147
+,
+ which 
+\change_deleted -88974637 1752611145
+was
+\change_unchanged
+ 
+\change_inserted -88974637 1752611148
+is
+\change_deleted -88974637 1752611148
+was
+\change_unchanged
+ the approximate location of maximum 
 \begin_inset Formula $\frac{\partial T}{\partial t}$
 \end_inset
 
 .
- This was to introduce enough variability and thus sensitivity to time step as opposed to other states with smaller 
+ 
+\change_deleted -88974637 1752609085
+This was to introduce enough variability and thus sensitivity to time step as opposed to other states with smaller 
 \begin_inset Formula $\frac{\partial T}{\partial t}$
 \end_inset
 
  or randomly generated ones like in the previous sections .
- We targeted a time evolution of 
+ 
+\change_unchanged
+We 
+\change_deleted -88974637 1752611255
+targeted a time evolution of
+\change_inserted -88974637 1752611257
+select
+\change_unchanged
+ 
 \begin_inset Formula $\Delta t=2\times10^{-6}$
 \end_inset
 
@@ -9984,7 +12359,11 @@ s was was the approximate location of maximum
 \end_inset
 
  for YASS and Rosenbroc.
- We performed five refinements that change the time step by a factor of 
+ We perform
+\change_deleted -88974637 1752611303
+ed
+\change_unchanged
+ five refinements that change the time step by a factor of 
 \begin_inset Formula $2$
 \end_inset
 
@@ -9997,13 +12376,49 @@ s was was the approximate location of maximum
 \begin_inset Formula $r=0\dots4$
 \end_inset
 
+
+\change_inserted -88974637 1752611365
+.
+\change_deleted -88974637 1752611364
 ,
- for each integrator resulting in five solutions,
- the most refined solution 
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752611323
+for each integrator resulting in five solutions,
+
+\change_unchanged
+ 
+\change_inserted -88974637 1752611366
+T
+\change_deleted -88974637 1752611366
+t
+\change_unchanged
+he 
+\change_deleted -88974637 1752611370
+most refined solution
+\change_inserted -88974637 1752611374
+finest solution,
+ corresponding to
+\change_unchanged
+ 
 \begin_inset Formula $h=\Delta t/16$
 \end_inset
 
- was used as the converged solution for a norm calculation,
+
+\change_inserted -88974637 1752611376
+,
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752611381
+was used as the converged solution
+\change_inserted -88974637 1752611393
+is used as the reference solution when computing the error as
+\change_deleted -88974637 1752611395
+ for a norm calculation,
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -10014,6 +12429,8 @@ L_{2,h}(C)=\sum_{i=1}^{n_{s}}\left(C_{h,i}-C_{\frac{\Delta t}{16},i}\right)^{2}.
 
 \end_inset
 
+
+\change_deleted -88974637 1752611563
 Resulting in four 
 \begin_inset Formula $L_{2,h}$
 \end_inset
@@ -10048,10 +12465,53 @@ Resulting in four
 
  for YASS.
  
+\change_inserted -88974637 1752611416
+
 \end_layout
 
 \begin_layout Standard
-The results for the convergence study are summarized in Figure 
+
+\change_inserted -88974637 1752611422
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752611550
+\begin_inset Formula $L_{2}$
+\end_inset
+
+ should be 
+\begin_inset Formula $L^{2}$
+\end_inset
+
+.
+ Also,
+ 
+\begin_inset Formula $L_{2,h}(C)$
+\end_inset
+
+ already has its own definition - it is the L2 norm of C.
+ So should denote the error with a different variable.
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\begin_layout Standard
+The results 
+\change_deleted -88974637 1752611112
+for
+\change_inserted -88974637 1752611112
+of
+\change_unchanged
+ the convergence study are summarized in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:convergence_study"
@@ -10063,20 +12523,46 @@ nolink "false"
 \end_inset
 
 .
- Each 
+ 
+\change_deleted -88974637 1752611579
+Each 
 \begin_inset Formula $L_{2,h}$
 \end_inset
 
- is plotted against its corresponding refinement with a neighboring dashed reference line for the theoretical order of convergence calculated from 
+ is plotted against its corresponding refinement with a neighboring dashed reference line
+\change_inserted -88974637 1752611582
+The dashed lines represent
+\change_deleted -88974637 1752611584
+ for
+\change_unchanged
+ the theoretical
+\change_inserted -88974637 1752611590
+ convergence rates.
+
+\change_deleted -88974637 1752611592
+ order of convergence calculated from 
 \begin_inset Formula $L_{2,\Delta t}$
 \end_inset
 
 .
- For all three tested implicit methods,
+
+\change_unchanged
+ 
+\change_inserted -88974637 1752611609
+In all three cases,
+ the expected convergence rates are recovered.
+\change_deleted -88974637 1752611611
+For all three tested implicit methods,
  the refinement errors decrease as expected.
- In some cases,
+
+\change_unchanged
+ 
+\change_deleted -88974637 1752611464
+In some cases,
  super-convergence is observed during the first refinement,
  likely due to the difficulty in selecting initial states that both lie within the asymptotic convergence regime and avoid reaching machine precision in the early refinement levels.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -10109,13 +12595,29 @@ name "fig:convergence_study"
 
 \end_inset
 
-Order-of-accuracy study for YASS,
+
+\change_deleted -88974637 1752611616
+Order-of-accuracy
+\change_inserted -88974637 1752611617
+Convergence
+\change_unchanged
+ study for YASS,
  Rosenbroc,
- and SDIRK-4 using a hydrogen submodel from FFCM-2 at a chemically active state near 
+ and SDIRK-4 using a hydrogen submodel 
+\change_inserted -88974637 1752611626
+extracted 
+\change_unchanged
+from FFCM-2 
+\change_deleted -88974637 1752611630
+at a chemically active state near 
 \begin_inset Formula $t=4\,\mu\text{s}$
 \end_inset
 
- for initial conditions 
+ for
+\change_inserted -88974637 1752611631
+with
+\change_unchanged
+ initial conditions 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:chemical_state_04"
@@ -10127,7 +12629,15 @@ nolink "false"
 \end_inset
 
 .
- Each integrator was tested across five successive time-step refinements,
+ 
+\change_inserted -88974637 1752611645
+The error is evaluated at 
+\begin_inset Formula $t=4\,\mu\text{s}$
+\end_inset
+
+.
+\change_deleted -88974637 1752611651
+Each integrator was tested across five successive time-step refinements,
  with the most refined solution used as reference.
  The observed 
 \begin_inset Formula $L_{2}$
@@ -10149,6 +12659,8 @@ nolink "false"
 
  for SDIRK-4.
  
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -10167,7 +12679,23 @@ ChemGen in a Detonation Simulation
 
 \begin_layout Standard
 To demonstrate the usage of ChemGen in an existing computational framework,
- we targeted the chemistry solve used by detonationFoam 
+ we target
+\change_deleted -88974637 1752611660
+ed
+\change_unchanged
+ the chemistry 
+\change_deleted -88974637 1752611662
+solve
+\change_inserted -88974637 1752611662
+step
+\change_unchanged
+ 
+\change_deleted -88974637 1752611667
+used by
+\change_inserted -88974637 1752611667
+in
+\change_unchanged
+ detonationFoam 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -10184,9 +12712,28 @@ literal "false"
 \end_inset
 
 .
- For this demonstration we focused on the detonationEulerFoam solver,
+ 
+\change_deleted -88974637 1752611678
+For this demonstration we focused
+\change_inserted -88974637 1752611680
+In particular,
+ we focus
+\change_unchanged
+ on the detonationEulerFoam solver,
  which does not include viscous effects.
- The solver approaches each individual conservation equation in a segregated approach by solving 
+ The solver 
+\change_deleted -88974637 1752611690
+approaches
+\change_inserted -88974637 1752611690
+treats
+\change_unchanged
+ each individual conservation equation 
+\change_deleted -88974637 1752611692
+in
+\change_inserted -88974637 1752611692
+via
+\change_unchanged
+ a segregated approach by solving 
 \end_layout
 
 \begin_layout Standard
@@ -10206,13 +12753,67 @@ where
 \begin_inset Formula $\mathcal{F}_{\text{FVM}}$
 \end_inset
 
- is the fluxes according to the finite volume discretization,
+ 
+\change_deleted -88974637 1752611704
+is
+\change_inserted -88974637 1752611704
+denotes
+\change_unchanged
+ the 
+\change_deleted -88974637 1752611841
+fluxes
+\change_inserted -88974637 1752611841
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752611847
+finite volume discretization of the flux
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752612267
+Would use different variable since it should represent a discretization of the divergence of the flux.
+ F normally just denotes flux
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_deleted -88974637 1752611841
+ according to the finite volume discretization
+\change_unchanged
+,
  and 
 \begin_inset Formula $\mathcal{R}$
 \end_inset
 
  is an applied source term.
- For the complete set of conservation equations and computational approach see 
+ For the complete set of conservation equations and 
+\change_inserted -88974637 1752611740
+additional details on the 
+\change_unchanged
+computational 
+\change_deleted -88974637 1752611747
+approach
+\change_inserted -88974637 1752611748
+strategy,
+
+\change_unchanged
+ see 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -10221,12 +12822,61 @@ literal "false"
 \end_inset
 
  .
- In this approach,
- the species conserved quantity is 
+ 
+\change_deleted -88974637 1752611757
+In this approach
+\change_inserted -88974637 1752611757
+Here
+\change_unchanged
+,
+ the 
+\change_deleted -88974637 1752611895
+species conserved quantity is
+\change_unchanged
+ 
 \begin_inset Formula $\phi=\rho Y_{i}$
 \end_inset
 
- and the source term is held constant during each solve and calculated as 
+
+\change_inserted -88974637 1752611898
+,
+
+\change_unchanged
+ and the source term is held constant during each 
+\change_deleted -88974637 1752611918
+solve
+\change_inserted -88974637 1752611918
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752611926
+solve
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752611935
+which solve?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ and calculated as 
 \end_layout
 
 \begin_layout Standard
@@ -10237,6 +12887,10 @@ literal "false"
 
 \end_inset
 
+
+\change_inserted -88974637 1752611949
+w
+\change_unchanged
 here 
 \begin_inset Formula $W_{i}$
 \end_inset
@@ -10251,7 +12905,11 @@ here
 \begin_inset Formula $\Delta t$
 \end_inset
 
- is the desired fluid dynamic time step for integrating
+ is the desired fluid 
+\change_deleted -88974637 1752611953
+dynamic
+\change_unchanged
+ time step for integrating
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:openfom_fvm"
@@ -10279,15 +12937,56 @@ nolink "false"
 
  is a linearized production term estimated from solving the detailed kinetics.
  
+\change_inserted -88974637 1752612021
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752612047
+why not just get rid of 
+\begin_inset Formula $\phi?$
+\end_inset
+
+ just replace with 
+\begin_inset Formula $\rho Y_{i}$
+\end_inset
+
+,
+ unless it's used elsewhere
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -88974637 1752612169
 To implement a chemistry solver into detonationEulerFoam we only needed to replace the prediction of 
 \begin_inset Formula $C_{i}^{n+1}$
 \end_inset
 
  with a ChemGen implicit solver.
- In 
+ 
+\change_unchanged
+In
+\change_inserted -88974637 1752612188
+ detonationFoam
+\begin_inset space ~
+\end_inset
+
+
+\change_deleted -88974637 1752612187
+ 
+\change_unchanged
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -10295,7 +12994,14 @@ literal "false"
 
 \end_inset
 
- the seulex ODE solver
+
+\change_inserted -88974637 1752612184
+,
+ 
+\change_deleted -88974637 1752612184
+ 
+\change_unchanged
+the seulex ODE solver
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Hai96"
@@ -10303,22 +13009,58 @@ literal "false"
 
 \end_inset
 
- supplied by OpenFOAM was used to solve for 
+ supplied by OpenFOAM 
+\change_deleted -88974637 1752612191
+was
+\change_inserted -88974637 1752612191
+is
+\change_unchanged
+ used to solve for 
 \begin_inset Formula $C_{i}^{n+1}$
 \end_inset
 
 .
- The seulex solver utilizes an extrapolation algorithm,
+ The seulex solver utilizes an extrapolation algorithm
+\change_deleted -88974637 1752612078
+,
+
+\change_unchanged
  based on the implicit Euler method with step size control and order selection.
  Due to the small time step size 
 \begin_inset Formula $\Delta t=1\times10^{-9}$
 \end_inset
 
- s we replaced the seulex solver with ChemGen's YASS solver using Jacobi preconditioned GMRES for the linear solve and approximate Jacobian,
+ s we replace
+\change_deleted -88974637 1752612195
+d
+\change_unchanged
+ the seulex solver with ChemGen's YASS 
+\change_deleted -88974637 1752612239
+solver
+\change_inserted -88974637 1752612240
+integrator
+\change_unchanged
+ 
+\change_deleted -88974637 1752612230
+using
+\change_inserted -88974637 1752612231
+combined with
+\change_unchanged
+ Jacobi
+\change_inserted -88974637 1752612103
+-
+\change_deleted -88974637 1752612103
+ 
+\change_unchanged
+preconditioned GMRES
+\change_deleted -88974637 1752612235
+ for the linear solve and approximate Jacobian,
  
 \begin_inset Formula $\mathcal{J}_{ij,\delta T=0}$
 \end_inset
 
+
+\change_unchanged
 .
  
 \end_layout
@@ -10513,7 +13255,27 @@ Analysis of time scales
 \end_layout
 
 \begin_layout Standard
-To demonstrate the use of ChemGen we targeted a two-dimensional test detonation and assessed its consistency with Sun et al.
+
+\change_deleted -88974637 1752612526
+To demonstrate the use of ChemGen w
+\change_inserted -88974637 1752612526
+W
+\change_unchanged
+e 
+\change_deleted -88974637 1752612554
+targeted
+\change_inserted -88974637 1752612555
+consider
+\change_unchanged
+ a two-dimensional
+\change_deleted -88974637 1752612531
+ test
+\change_unchanged
+ detonation 
+\change_inserted -88974637 1752612639
+test that has been simulated in many previous studies
+\change_deleted -88974637 1752612641
+and assessed its consistency with Sun et al.
  
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -10525,7 +13287,11 @@ literal "false"
 .
  Beyond the detonationFoam work,
  this configuration has been shown to be a reproducible test case for detonations,
- see Oran et al.
+ 
+\change_inserted -88974637 1752612641
+(
+\change_unchanged
+see Oran et al.
 \begin_inset space ~
 \end_inset
 
@@ -10589,9 +13355,27 @@ literal "false"
 
 \end_inset
 
+
+\change_inserted -88974637 1752612645
+)
+\change_unchanged
 .
- Each one of those previous works slightly differs in domain size.
- The domain considered here is 
+ 
+\change_deleted -88974637 1752612656
+Each one of those previous works slightly differs in domain size.
+ 
+\change_unchanged
+The domain
+\change_deleted -88974637 1752612662
+ considered
+\change_unchanged
+ here
+\change_inserted -88974637 1752612678
+,
+ which differs slightly from those in the aforementioned works,
+
+\change_unchanged
+ is 
 \begin_inset Formula $0.5$
 \end_inset
 
@@ -10599,7 +13383,11 @@ literal "false"
 \begin_inset space ~
 \end_inset
 
-m long domain (
+m long
+\change_deleted -88974637 1752612683
+ domain
+\change_unchanged
+ (
 \begin_inset Formula $x_{1}$
 \end_inset
 
@@ -10616,11 +13404,21 @@ m (
 \end_inset
 
 -direction).
- The case is initially runs with a uniform quadrilateral mesh with 
+ 
+\change_deleted -88974637 1752612706
+The case is initially runs with a
+\change_inserted -88974637 1752612709
+The initial mesh is a
+\change_unchanged
+ uniform quadrilateral mesh with 
 \begin_inset Formula $2000$
 \end_inset
 
- grid cells in the 
+
+\change_deleted -88974637 1752612716
+ grid
+\change_unchanged
+ cells in the 
 \begin_inset Formula $x_{1}$
 \end_inset
 
@@ -10632,7 +13430,18 @@ m (
 \begin_inset Formula $x_{2}$
 \end_inset
 
--direction and uses the AMR default settings from 
+-direction
+\change_inserted -88974637 1752612733
+.
+ We 
+\change_deleted -88974637 1752612731
+ and
+\change_unchanged
+ use
+\change_deleted -88974637 1752612736
+s
+\change_unchanged
+ the AMR default settings from 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -10640,13 +13449,52 @@ literal "false"
 
 \end_inset
 
- which resulted in a possible three refinements,
- generating smallest mesh size of 
+
+\change_inserted -88974637 1752612740
+,
+ resulting
+\change_deleted -88974637 1752612739
+ which resulted
+\change_unchanged
+ in 
+\change_deleted -88974637 1752612745
+a possible three
+\change_inserted -88974637 1752612746
+three possible
+\change_unchanged
+ refinements,
+ 
+\change_deleted -88974637 1752612753
+generating
+\change_inserted -88974637 1752612754
+with a
+\change_unchanged
+ 
+\change_deleted -88974637 1752612756
+smallest
+\change_inserted -88974637 1752612757
+minimum
+\change_unchanged
+ mesh size of 
 \begin_inset Formula $31\times10^{-6}$
 \end_inset
 
  m.
- In this work we utilized the hydrogen extracted submodel from FFCM-2 
+ I
+\change_deleted -88974637 1752612767
+n this work we utilized
+\change_inserted -88974637 1752612770
+We again utilize
+\change_unchanged
+ the hydrogen
+\change_deleted -88974637 1752612774
+ extracted
+\change_unchanged
+ submodel 
+\change_inserted -88974637 1752612777
+extracted 
+\change_unchanged
+from FFCM-2 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -10655,7 +13503,28 @@ literal "false"
 \end_inset
 
 .
- The initial conditions are
+ The initial conditions
+\change_inserted -88974637 1752612993
+ are based on a steady detonation solution from the shock detonation toolbox
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citep
+key "sdtoolbox"
+literal "false"
+
+\end_inset
+
+,
+ where the pre-shock state is given by
+\change_unchanged
+ 
+\change_deleted -88974637 1752612995
+are
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -10671,7 +13540,20 @@ literal "false"
 
 \end_inset
 
-In addition the initialization interpolated a steady detonation solution from the shock detonation toolbox
+In addition
+\change_inserted -88974637 1752613047
+,
+ the detonation front is perturbed
+\change_unchanged
+ 
+\change_inserted -88974637 1752613251
+such that it varies in the 
+\begin_inset Formula $x_{2}$
+\end_inset
+
+-direction.
+\change_deleted -88974637 1752613253
+the initialization interpolated a steady detonation solution from the shock detonation toolbox
 \begin_inset space ~
 \end_inset
 
@@ -10688,7 +13570,9 @@ literal "false"
 \end_inset
 
 -direction.
- In Sun et al.
+ 
+\change_unchanged
+In Sun et al.
  
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -10697,8 +13581,33 @@ literal "false"
 
 \end_inset
 
- several period sinusoidal waves were specified to perturb the front location which eventually gave rase to instabilities and then transitioned to an expected established solution.
- These results and the results of the aforementioned works are said to be consistent with experiments performed by Lefebvre et al.
+ 
+\change_deleted -88974637 1752613269
+several period sinusoidal waves were specified
+\change_inserted -88974637 1752613275
+a sinusoidal profile is specific
+\change_unchanged
+ to perturb the front location
+\change_inserted -88974637 1752613285
+,
+ giving rise
+\change_deleted -88974637 1752613287
+ which eventually gave rase
+\change_unchanged
+ to instabilities 
+\change_deleted -88974637 1752613299
+and
+\change_inserted -88974637 1752613299
+that
+\change_unchanged
+ then transition
+\change_deleted -88974637 1752613303
+ed
+\change_unchanged
+ to an expected established solution.
+ 
+\change_deleted -88974637 1752612330
+These results and the results of the aforementioned works are said to be consistent with experiments performed by Lefebvre et al.
 \begin_inset space ~
 \end_inset
 
@@ -10712,15 +13621,41 @@ literal "false"
 
 .
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted -88974637 1752613315
 For this cases,
- the initial front progresses into the unreacted domain and the irregular structures from the initialization cause the development of pressure waves that move normal to the direction of the detonation.
- Eventually these transverse waves become regular and give rise to an expected cellular structure,
- which is visualized using a pressure max history,
+ t
+\change_inserted -88974637 1752613315
+T
+\change_unchanged
+he initial front progresses into the unreacted 
+\change_deleted -88974637 1752613321
+domain
+\change_inserted -88974637 1752613327
+flow region,
+
+\change_unchanged
+ and the irregular structures from the initialization cause the development of pressure waves that move normal to the direction of the detonation.
+ Eventually
+\change_inserted -88974637 1752613333
+,
+
+\change_unchanged
+ these transverse waves become regular and give rise to an expected cellular structure,
+ which is visualized using a 
+\change_deleted -88974637 1752613215
+pressure max
+\change_inserted -88974637 1752613217
+maximum-pressure
+\change_unchanged
+ history,
  
-\begin_inset Formula $p_{max}=max(p(t),p_{max})$
+\begin_inset Formula $p^{*,n+1}(x)=\max\left\{ p^{n+1}(x),p^{*,n}(x)\right\} $
 \end_inset
 
 .
@@ -10739,8 +13674,21 @@ nolink "false"
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
-s predicted by detonationEulerFoam using ChemGen for the chemistry source terms,
- and demonstrates that ChemGen yields the expected cellular detonation structures consistent with those by Sun et al.
+s predicted by detonationEulerFoam using ChemGen for the chemistry
+\change_deleted -88974637 1752613355
+ source terms
+\change_inserted -88974637 1752613356
+ step
+\change_deleted -88974637 1752613357
+,
+
+\change_unchanged
+ and demonstrates that ChemGen yields the expected cellular detonation structures
+\change_inserted -88974637 1752613363
+,
+
+\change_unchanged
+ consistent with those by Sun et al.
  
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -10781,12 +13729,27 @@ nolink "false"
 \end_inset
 
 ,
- after the detonation the simulation has progressed to a physical time of 
+ 
+\change_deleted -88974637 1752613377
+after the detonation the simulation has progressed to a physical time of 
+\change_inserted -88974637 1752613377
+at 
+\change_unchanged
+
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
 s.
- These results are consistent with those produced using the existing seulex ODE integrator which are not reported here.
+ These results are consistent with those produced using the existing seulex ODE integrator
+\change_inserted -88974637 1752613385
+,
+
+\change_unchanged
+ which are not reported here
+\change_inserted -88974637 1752613388
+ for brevity
+\change_unchanged
+.
  Figures 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10827,8 +13790,48 @@ s for detonationEulerFOAM using OpenFOAM seulex ODE solver (subscript
 \end_inset
 
 ).
- These results demonstrate that a consistent CFD solution can be obtained using ChemGen in the detonationEulerFoam solver.
- The YASS solver was on average 8 times faster than the seulex solver.
+\change_inserted -88974637 1752613412
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752613417
+above sentence can be cleaned up
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ These results demonstrate that a
+\change_inserted -88974637 1752613427
+n accurate
+\change_deleted -88974637 1752613426
+ consistent
+\change_unchanged
+ CFD solution can be obtained using ChemGen in the detonationEulerFoam solver.
+ 
+\change_inserted -88974637 1752613434
+Furthermore,
+ 
+\change_deleted -88974637 1752613434
+T
+\change_inserted -88974637 1752613434
+t
+\change_unchanged
+he YASS solver 
+\change_inserted -88974637 1752613441
+provided by ChemGen 
+\change_deleted -88974637 1752613441
+was
+\change_inserted -88974637 1752613457
+is found to be
+\change_unchanged
+ on average 8 times faster than the seulex solver.
 \end_layout
 
 \begin_layout Standard
@@ -10837,7 +13840,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -11850,17 +14853,90 @@ In this work,
  ChemGen employs a decorator-based approach to enable flexible and modular C++ code generation tailored to existing simulation ecosystems.
  It generates both thermodynamic property approximations and source term expressions,
  along with their analytical derivatives,
- facilitating different Jacobian assemblies for a variety of time integration strategies and chemical states relevant to computational physics.
+ facilitating 
+\change_deleted -88974637 1752613484
+different Jacobian assemblies
+\change_inserted -88974637 1752613485
+Jacobian assembly
+\change_unchanged
+ for 
+\change_inserted -88974637 1752613520
+implicit time integration
+\change_deleted -88974637 1752613522
+a variety of time integration strategies and chemical states relevant to computational physics
+\change_unchanged
+.
  Additionally,
- ChemGen includes compact linear solvers to support implicit methods.
+ ChemGen includes 
+\change_deleted -88974637 1752613539
+compact
+\change_inserted -88974637 1752613548
+a variety of time integrators,
+
+\change_unchanged
+ linear solvers
+\change_inserted -88974637 1752613551
+,
+ and preconditioners.
+
+\change_deleted -88974637 1752613553
+ to support implicit methods.
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
-We validated the correctness of the generated code by comparing its results against established Cantera source terms,
+We validated the correctness of the generated code by comparing its results against established Cantera source terms
+\change_deleted -88974637 1752613638
+,
+
+\change_unchanged
  and showed consistency across a range of reaction mechanisms commonly used in CFD.
- We further verified the accuracy of the source term Jacobians and demonstrated optimal order of accuracy across several supplied implicit integration methods.
+ We further verified the accuracy of the 
+\change_deleted -88974637 1752613645
+source term
+\change_unchanged
+ Jacobian
+\change_inserted -88974637 1752613650
+ computations
+\change_deleted -88974637 1752613647
+s
+\change_unchanged
+ and demonstrated optimal 
+\change_deleted -88974637 1752613660
+order of accuracy
+\change_inserted -88974637 1752613661
+convergence
+\change_unchanged
+ across several supplied implicit integration methods.
  Finally,
- we applied ChemGen within an established detonation CFD simulation and reproduced results consistent with prior literature,
+ we 
+\change_deleted -88974637 1752613672
+applied
+\change_inserted -88974637 1752613675
+embedded
+\change_unchanged
+ ChemGen 
+\change_deleted -88974637 1752613676
+within
+\change_inserted -88974637 1752613677
+into
+\change_unchanged
+ an established
+\change_inserted -88974637 1752613705
+ CFD code to perform a
+\change_unchanged
+ detonation 
+\change_deleted -88974637 1752613708
+CFD
+\change_unchanged
+ simulation and reproduced results consistent with 
+\change_deleted -88974637 1752613716
+prior
+\change_inserted -88974637 1752613717
+those in the
+\change_unchanged
+ literature,
  illustrating its ability to integrate seamlessly into mature computational frameworks.
  All data,
  source code,
@@ -11889,7 +14965,11 @@ encoding "default"
 
 \begin_layout Section
 \start_of_appendix
-Algorithms of Implicit Time Integrators
+
+\change_deleted -88974637 1752613746
+Algorithms of 
+\change_unchanged
+Implicit Time Integrators
 \begin_inset CommandInset label
 LatexCommand label
 name "sec:Algorithms-of-Implicit"
@@ -11911,7 +14991,11 @@ name "subsec:SDIRK-2"
 \end_layout
 
 \begin_layout Standard
-The two stage Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method belongs to a class of implicit Runge-Kutta schemes where staging is utilized like that of RK4 but implicit strategies are used at each stage
+The two stage Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method belongs to a class of implicit Runge-Kutta schemes
+\change_deleted -88974637 1752613764
+ where staging is utilized like that of RK4 but implicit strategies are used at each stage
+\change_unchanged
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Hai96,Fran97"
@@ -11920,10 +15004,37 @@ literal "false"
 \end_inset
 
 .
- These methods are both stable and have higher order of accuracy than backward Euler.
- However,
+ These methods are
+\change_deleted -88974637 1752613775
+ both
+\change_unchanged
+ stable and 
+\change_deleted -88974637 1752613778
+have
+\change_inserted -88974637 1752613778
+exhibit
+\change_unchanged
+ higher order of accuracy than backward Euler
+\change_inserted -88974637 1752613812
+,
+ but are more expensive
+\change_unchanged
+.
+ 
+\change_deleted -88974637 1752613815
+However,
  the Jacobian inversion approaches increase inherent cost of the method.
- The staged SDIRK-2 method is as follows
+
+\change_unchanged
+ The 
+\change_deleted -88974637 1752613816
+staged
+\change_unchanged
+ SDIRK-2 method is as follows
+\change_inserted -88974637 1752613819
+:
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -11936,7 +15047,12 @@ y_{n+1} & = & y_{n}+\Delta t\left[(1-\gamma)\Gamma_{1}+\gamma\Gamma_{2}\right]\n
 
 \end_inset
 
-For the first stage 
+For the first stage
+\change_inserted -88974637 1752613845
+,
+
+\change_unchanged
+ 
 \end_layout
 
 \begin_layout Standard
@@ -11969,7 +15085,13 @@ f\left(\Gamma_{1}\right)=\Gamma_{1}-S\left(y_{n}+\gamma\Delta t\Gamma_{1}\right)
 
 \end_inset
 
-Where
+
+\change_inserted -88974637 1752613863
+w
+\change_deleted -88974637 1752613863
+W
+\change_unchanged
+here
 \end_layout
 
 \begin_layout Standard
@@ -12087,6 +15209,8 @@ literal "false"
 \end_inset
 
 .
+\change_inserted -88974637 1752613907
+
 \end_layout
 
 \begin_layout Subsection
@@ -12101,7 +15225,49 @@ name "subsec:SDIRK-4"
 \end_layout
 
 \begin_layout Standard
-The four stage Singly Diagonally Implicit Runge-Kutta (SDIRK-4) follows the same structure as SDIRK-2 with additional stages which requires a set of coefficients.
+The 
+\change_deleted -88974637 1752613990
+four
+\change_inserted -88974637 1752613990
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752613993
+four
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752613995
+five stages?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ stage Singly Diagonally Implicit Runge-Kutta (SDIRK-4) follows the same structure as SDIRK-2 with additional stages 
+\change_deleted -88974637 1752613951
+which require
+\change_inserted -88974637 1752613953
+requiring
+\change_deleted -88974637 1752613953
+s
+\change_unchanged
+ a set of coefficients.
  We utilize the coefficients implemented by FATODE 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -12112,6 +15278,10 @@ literal "false"
 
  which have shown stability for stiff problems and achieve 4th order accuracy.
  The SDIRK-4 method is
+\change_inserted -88974637 1752613942
+ written as
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -12205,6 +15375,8 @@ Like SDIRK-2,
 
 ,
  the next stage can be solved for in a similar manner.
+\change_inserted -88974637 1752614006
+
 \end_layout
 
 \begin_layout Subsection
@@ -12333,6 +15505,27 @@ where
  to where a possible higher order method can be utilized.
  This is especially useful when stability is desired for time-split chemistry solves of very small times steps where the chemical state is not expected to evolve much,
  but the stiffness of the problem necessitates stability.
+\change_inserted -88974637 1752614137
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -88974637 1752614138
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752614141
+Appendix A - Wording can be cleaned up
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -12592,6 +15785,29 @@ literal "false"
  under these assumptions,
  along with the thermodynamics and chemical source terms provided by ChemGen,
  it is possible to approximate the solution of the chemically reacting Navier–Stokes equations starting from a single component formulation.
+\change_inserted -88974637 1752614176
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -88974637 1752614180
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752614191
+I think this subsection can be removed.
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -12606,7 +15822,11 @@ name "subsec:Constant-Pressure-Strategy"
 \end_layout
 
 \begin_layout Standard
-In CFD,
+In 
+\change_inserted -88974637 1752614204
+compressible 
+\change_unchanged
+CFD,
  it is typically assumed that the volume of a cell remains constant over time.
  This assumption influences the allowable time integration strategies and,
  in compressible flows,
@@ -12654,6 +15874,30 @@ and applying a time derivative
 Therefore,
  the constant pressure assumption can be enforced by treating enthalpy as a globally constant,
  while leaving the rest of the system formulation unchanged.
+\change_inserted -88974637 1752614224
+
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted -88974637 1752614228
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752614243
+If we only mention the temperature equation,
+ what do we do here?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
 \end_layout
 
 \begin_layout Section
@@ -12673,7 +15917,11 @@ name "subsec:sourcetermpoly"
 
 \begin_layout Standard
 To investigate the effect of polynomial order on source term accuracy,
- we performed the same error analysis of Section
+ we perform
+\change_deleted -88974637 1752614275
+ed
+\change_unchanged
+ the same error analysis of Section
 \begin_inset space ~
 \end_inset
 
@@ -12688,7 +15936,11 @@ nolink "false"
 
 \end_inset
 
- while varying the polynomial degree 
+ while varying 
+\change_deleted -88974637 1752614288
+the polynomial degree 
+\change_unchanged
+
 \begin_inset Formula $n_{p}$
 \end_inset
 
@@ -12713,6 +15965,10 @@ nolink "false"
 \begin_inset Formula $n_{p}=4$
 \end_inset
 
+
+\change_inserted -88974637 1752614292
+ 
+\change_unchanged
 (left) and 
 \begin_inset Formula $n_{p}=15$
 \end_inset
@@ -12732,6 +15988,8 @@ nolink "false"
 \begin_inset Formula $n_{p}=7$
 \end_inset
 
+
+\change_deleted -88974637 1752614327
  presented in Figure 
 \begin_inset space ~
 \end_inset
@@ -12747,6 +16005,8 @@ nolink "false"
 
 \end_inset
 
+
+\change_unchanged
 ,
  while the 
 \begin_inset Formula $n_{p}=15$
@@ -12791,7 +16051,28 @@ name "fig:source_term_accuracy_np"
 
 \end_inset
 
-Error distributions for ChemGen source calculations,
+Error distributions
+\change_inserted -88974637 1752614366
+ (Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:source_error"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+)
+\change_unchanged
+ for ChemGen source calculations
+\change_deleted -88974637 1752614373
+,
  
 \begin_inset Formula $\epsilon$
 \end_inset
@@ -12812,7 +16093,15 @@ nolink "false"
 \end_inset
 
 ,
- in comparison to Cantera source calculations for five tested chemical models,
+
+\change_unchanged
+ in comparison to Cantera source calculations for five tested chemical models
+\change_inserted -88974637 1752614365
+:
+\change_deleted -88974637 1752614347
+,
+
+\change_unchanged
  Ó Conaire 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -12858,21 +16147,33 @@ literal "false"
 \end_inset
 
 .
- The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
+ The vertical dash line represents the mean of the distributions and 
+\change_deleted -88974637 1752614389
+are
+\change_inserted -88974637 1752614389
+is
+\change_unchanged
+ colored according to the corresponding model.
  The distribution mean,
  
 \begin_inset Formula $\mu$
 \end_inset
 
 ,
- and corresponding standard deviations,
+ and corresponding standard deviation
+\change_deleted -88974637 1752614395
+s
+\change_unchanged
+,
  
 \begin_inset Formula $\sigma$
 \end_inset
 
 ,
  are also reported.
- These distributions were created using 
+ 
+\change_deleted -88974637 1752614401
+These distributions were created using 
 \begin_inset Formula $n_{p}=4$
 \end_inset
 
@@ -12882,6 +16183,8 @@ literal "false"
 
 .
  Increasing the polynomial degree for the thermodynamic fits decreases the error and increases the precision for the comparisons.
+\change_unchanged
+
 \end_layout
 
 \end_inset
@@ -12895,14 +16198,34 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-The reduction in error with increasing polynomial fit degree provides additional confidence in the correctness of the ChemGen implementation.
- During this investigation,
- we discovered that several parameters in the UCSD model,
+The reduction in error with increasing polynomial 
+\change_deleted -88974637 1752614404
+fit
+\change_unchanged
+ degree provides additional confidence in the correctness of the ChemGen implementation.
+ 
+\change_deleted -88974637 1752614422
+During this investigation,
+ we discovered
+\change_inserted -88974637 1752614425
+We have also found
+\change_unchanged
+ that several parameters in the UCSD model,
  particularly those used in Troe fall-off reactions,
- contained extremely large or small values.
+ contain
+\change_deleted -88974637 1752614428
+ed
+\change_unchanged
+ extremely large or small values.
  For instance,
  in reaction 9,
- the parameters were specified as 
+ the parameters 
+\change_deleted -88974637 1752614432
+were
+\change_inserted -88974637 1752614432
+are
+\change_unchanged
+ specified as 
 \begin_inset ERT
 status open
 
@@ -12920,7 +16243,11 @@ texttt{T3:
 
  .
  The interpretation and handling of such extreme values can vary between software implementations.
- Examining the form of 
+ Examining 
+\change_deleted -88974637 1752614439
+the form of 
+\change_unchanged
+
 \begin_inset Formula $F_{\mathrm{cent}}$
 \end_inset
 
@@ -12940,12 +16267,26 @@ we note that the very small value of
 \begin_inset Formula $T_{3}$
 \end_inset
 
- effectively drives the first exponential term to zero,
+ effectively drives the first
+\change_deleted -88974637 1752614558
+ exponential
+\change_unchanged
+ term to zero,
  while the extremely large value of 
 \begin_inset Formula $\ensuremath{T_{1}}$
 \end_inset
 
-drives the second term's exponential to one.
+
+\change_inserted -88974637 1752614452
+ 
+\change_unchanged
+drives the second 
+\change_deleted -88974637 1752614455
+term's exponential
+\change_inserted -88974637 1752614458
+expontential term
+\change_unchanged
+ to one.
  It is assumed,
  based on the specification,
  that omitting 
@@ -12966,7 +16307,17 @@ literal "false"
 \end_inset
 
 .
- Updating ChemGen to address these edge cases and avoid numerical instabilities led to reduced error and unlocked the expected trend that higher-order polynomial fits improved accuracy relative to Cantera.
+ Updating ChemGen to address these edge cases and avoid numerical instabilities led to reduced error and 
+\change_deleted -88974637 1752614762
+unlocked
+\change_inserted -88974637 1752614763
+recovered
+\change_unchanged
+ the expected trend that higher-order polynomial fits improved accuracy
+\change_deleted -88974637 1752614479
+ relative to Cantera
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Subsection
@@ -12982,7 +16333,41 @@ name "subsec:jacobianErel"
 
 \begin_layout Standard
 Niemeyer et al.
- verified the PyJac-generated Jacobian by comparing their analytical Jacobian to an automatically differentiated Jacobian across a wide range of thermochemical states,
+ verified the PyJac-generated Jacobian by comparing their analytical Jacobian to an 
+\change_deleted -88974637 1752614795
+automatically
+\change_inserted -88974637 1752614795
+
+\begin_inset Flex PDF-Markup
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752614798
+automatically
+\begin_inset Argument post:1
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752614800
+what do you mean?
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ differentiated Jacobian across a wide range of thermochemical states,
  evaluating between 100,000 and 1 million samples depending on the chemical model
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -13014,20 +16399,74 @@ E_{norm}=\frac{||\mathcal{J}_{b}-\hat{\mathcal{J}_{b}}||_{F}}{\hat{||\mathcal{J}
 
 \end_inset
 
-In these error metrics only matrix elements where 
+
+\change_inserted -88974637 1752614825
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted -88974637 1752615017
+use bigger || above.
+ also some hats are off.
+ and if you have 
+\begin_inset Formula $1\times10^{-6}$
+\end_inset
+
+,
+ can just condense to 
+\begin_inset Formula $10^{-6}$
+\end_inset
+
+
+\change_unchanged
+
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+In these error metrics
+\change_inserted -88974637 1752614888
+,
+
+\change_unchanged
+ only matrix elements where 
 \begin_inset Formula $|\mathcal{J}_{ij}|>\hat{||\mathcal{J}_{b}}||_{F}/10^{20}$
 \end_inset
 
- were considered where the subscript 
+ 
+\change_deleted -88974637 1752614890
+were
+\change_inserted -88974637 1752614890
+are
+\change_unchanged
+ considered
+\change_inserted -88974637 1752614892
+,
+
+\change_unchanged
+ where the subscript 
 \begin_inset Formula $F$
 \end_inset
 
  denotes the Frobenius norm,
+
+\change_inserted -88974637 1752614905
+ i.e.,
+
+\change_unchanged
  
 \begin_inset Formula $||A||_{F}=\sum_{j=1}^{m}\sum_{i=1}^{n}\left(A_{ij}\right)^{2}$
 \end_inset
 
- for matrix 
+ for matrix
+\change_deleted -88974637 1752614902
+ 
+\change_unchanged
+
 \begin_inset Formula $A$
 \end_inset
 
@@ -13037,6 +16476,10 @@ In these error metrics only matrix elements where
 
 .
  In Niemeyer et al.
+\change_inserted -88974637 1752614910
+,
+
+\change_unchanged
  it was reported that 
 \begin_inset Formula $E_{rel}$
 \end_inset
@@ -13061,14 +16504,26 @@ nolink "false"
 \begin_inset Formula $E_{norm}$
 \end_inset
 
- using ChemGen for five chemical models using 10,000 randomly generated chemical states.
+ using ChemGen for five chemical models 
+\change_deleted -88974637 1752614881
+using
+\change_inserted -88974637 1752614881
+with
+\change_unchanged
+ 10,000 randomly generated chemical states.
  Each analytical Jacobian,
  
 \begin_inset Formula $\mathcal{J}_{b}$
 \end_inset
 
 ,
- was compared to the second order finite difference Jacobian,
+ 
+\change_deleted -88974637 1752614922
+was
+\change_inserted -88974637 1752614922
+is
+\change_unchanged
+ compared to the second order finite difference Jacobian,
  
 \begin_inset Formula $\hat{\mathcal{J}_{b}}$
 \end_inset
@@ -13094,43 +16549,117 @@ and
 \begin_inset Formula $E_{rel}$
 \end_inset
 
- errors were generally higher,
+ errors 
+\change_deleted -88974637 1752614934
+were
+\change_inserted -88974637 1752614934
+are
+\change_unchanged
+ generally higher,
  but never exceeding 
 \begin_inset Formula $3\times10^{-3}$
 \end_inset
 
 .
- Only one specialized case for the chemical model FFCM-2 gave a 
+ Only one specialized case for the chemical model FFCM-2 
+\change_deleted -88974637 1752614939
+gave
+\change_inserted -88974637 1752614939
+gives
+\change_unchanged
+ 
+\change_deleted -88974637 1752614941
+a
+\change_unchanged
+ 
 \begin_inset Formula $E_{rel}>0.01$
 \end_inset
 
- which was due to sensitivity of 
+
+\change_inserted -88974637 1752614944
+,
+
+\change_unchanged
+ which 
+\change_deleted -88974637 1752614945
+was
+\change_inserted -88974637 1752614945
+is
+\change_unchanged
+ due to sensitivity of 
 \begin_inset Formula $\delta C$
 \end_inset
 
 ;
- when 
+ 
+\change_deleted -88974637 1752614955
+when
+\change_inserted -88974637 1752614958
+increasing
+\change_unchanged
+ 
 \begin_inset Formula $\delta C$
 \end_inset
 
- was slightly increased to 
+ 
+\change_deleted -88974637 1752614961
+was slightly increased
+\change_unchanged
+ to 
 \begin_inset Formula $\delta C=4\times10^{-6}$
 \end_inset
 
+
+\change_inserted -88974637 1752614968
+ leads to the
+\change_deleted -88974637 1752614965
 ,
- the 
+ the
+\change_unchanged
+ 
 \begin_inset Formula $E_{rel}$
 \end_inset
 
- norm dropped to the order of 
-\begin_inset Formula $1\times10^{-4}$
+ norm dropp
+\change_inserted -88974637 1752614973
+ing
+\change_deleted -88974637 1752614971
+ed
+\change_unchanged
+ to 
+\change_deleted -88974637 1752614987
+the order of 
+\change_unchanged
+
+\begin_inset Formula $\mathcal{O}\left(10^{-4}\right)$
 \end_inset
 
- indicating an sensitivity in 
+
+\change_inserted -88974637 1752614984
+,
+
+\change_unchanged
+ indicating 
+\change_deleted -88974637 1752615032
+an
+\change_unchanged
+ sensitivity 
+\change_deleted -88974637 1752615034
+in
+\change_inserted -88974637 1752615034
+of
+\change_unchanged
+ 
 \begin_inset Formula $\hat{\mathcal{J}_{b}}$
 \end_inset
 
- to the concentration decrement.
+ to the concentration 
+\change_deleted -88974637 1752615037
+decrement
+\change_inserted -88974637 1752615039
+perturbation
+\change_unchanged
+.
  Figure
 \begin_inset CommandInset ref
 LatexCommand eqref
@@ -13142,7 +16671,11 @@ nolink "false"
 
 \end_inset
 
- shows the distributions of these norms for both 
+ shows the distributions of 
+\change_deleted -88974637 1752615047
+these norms for both
+\change_unchanged
+ 
 \begin_inset Formula $E_{norm}$
 \end_inset
 
@@ -13155,13 +16688,27 @@ nolink "false"
 \begin_inset Formula $E_{norm}$
 \end_inset
 
- distributions are orders of magnitude less than the 
+ distributions are orders of magnitude 
+\change_deleted -88974637 1752615056
+less
+\change_inserted -88974637 1752615056
+smaller
+\change_unchanged
+ than the 
 \begin_inset Formula $E_{rel}$
 \end_inset
 
- distributions which indicates a sensitivity of the chosen norm for evaluating these Jacobians.
+ distributions
+\change_deleted -88974637 1752615064
+ which indicates a sensitivity of the chosen norm for evaluating these Jacobians
+\change_unchanged
+.
  Regardless,
- these results give confidence in the ability to accurately calculate the analytical Jacobians for implicit time integration approaches.
+ these results give confidence in the ability to accurately calculate the analytical Jacobians
+\change_deleted -88974637 1752615071
+ for implicit time integration approaches
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Standard
@@ -13170,7 +16717,7 @@ placement document
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Caption Standard
@@ -13590,7 +17137,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -13614,7 +17161,31 @@ name "fig:jacobian_error_distribution"
 
 \end_inset
 
-Error distributions for ChemGen source term Jacobian calculations,
+
+\change_deleted -88974637 1752615095
+Error
+\change_unchanged
+ 
+\change_inserted -88974637 1752615098
+D
+\change_deleted -88974637 1752615097
+d
+\change_unchanged
+istributions 
+\change_inserted -88974637 1752615105
+of 
+\begin_inset Formula $E_{nom}$
+\end_inset
+
+ and 
+\begin_inset Formula $E_{rel}$
+\end_inset
+
+ 
+\change_unchanged
+for ChemGen source term Jacobian calculations
+\change_deleted -88974637 1752615109
+,
  both 
 \begin_inset Formula $E_{nom}$
 \end_inset
@@ -13654,7 +17225,15 @@ nolink "false"
 \end_inset
 
 ,
- in comparison to Cantera source calculations for five tested chemical models,
+
+\change_unchanged
+ in comparison to Cantera source calculations for five tested chemical models
+\change_inserted -88974637 1752615112
+:
+\change_deleted -88974637 1752615112
+,
+
+\change_unchanged
  Ó Conaire 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -13700,8 +17279,22 @@ literal "false"
 \end_inset
 
 .
- The vertical dash line represents the mean of the distributions and are colored according to the corresponding model.
- These distributions demonstrate the sensitivity of the choice of norm in assessing the error of the Jacobians but still gives confidence that the source term Jacobian calculations are correct.
+ The vertical dash
+\change_inserted -88974637 1752615103
+ed
+\change_unchanged
+ line represents the mean of the distributions and 
+\change_deleted -88974637 1752615083
+are
+\change_inserted -88974637 1752615103
+is
+\change_unchanged
+ colored according to the corresponding model.
+ 
+\change_deleted -88974637 1752615090
+These distributions demonstrate the sensitivity of the choice of norm in assessing the error of the Jacobians but still gives confidence that the source term Jacobian calculations are correct.
+\change_unchanged
+
 \end_layout
 
 \end_inset
