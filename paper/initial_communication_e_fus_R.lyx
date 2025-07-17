@@ -197,7 +197,23 @@ Chemistry,
 This paper introduces ChemGen,
  a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based computational physics codes.
  ChemGen aims to make chemical kinetics more accessible in existing simulation frameworks and help bridge the gap between combustion modeling and computational physics.
- The package employs decorators to enable flexible C++ code generation to target established software ecosystems.
+ The package employs decorators
+\change_inserted 2012671230 1752777168
+
+\begin_inset Flex TODO Note (inline)
+status collapsed
+
+\begin_layout Plain Layout
+
+\change_inserted 2012671230 1752777182
+possible emphasis or say what it is that is being introduced
+\end_layout
+
+\end_inset
+
+
+\change_unchanged
+ to enable flexible C++ code generation to target established software ecosystems.
  ChemGen
 \change_deleted 2012671230 1752335631
  
@@ -1877,7 +1893,11 @@ literal "false"
 \change_deleted 2012671230 1752335860
  
 \change_unchanged
- used to simulate fluid behavior in a wide variety of applications..
+ used to simulate fluid behavior in a wide variety of applications.
+\change_deleted 2012671230 1752777396
+.
+
+\change_unchanged
  The governing equations,
  typically the Navier-Stokes equations,
  are discretized in space using approaches such as finite volume
@@ -1944,12 +1964,38 @@ literal "false"
 
 \end_inset
 
- as well as choice of formulation and time integration strategy.
- There is no single CFD software that simultaneously addresses all the above difficulties for all fluid dynamics application,
+ 
+\change_deleted 2012671230 1752777556
+as well as
+\change_inserted 2012671230 1752777560
+which is coupled with the
+\change_unchanged
+ choice of 
+\change_inserted 2012671230 1752777618
+formulation of the conservation laws 
+\change_deleted 2012671230 1752777606
+formulation 
+\change_unchanged
+and time integration strategy.
+ There is no single CFD software that simultaneously addresses all the above difficulties for all fluid dynamic
+\change_inserted 2012671230 1752777643
+s
+\change_deleted 2012671230 1752777454
+s
+\change_unchanged
+ application
+\change_inserted 2012671230 1752777453
+s
+\change_unchanged
+,
  necessitating continued research into accelerating simulations while achieving stable and accurate fluid modeling.
  As a result,
  a broad family of CFD codes has emerged,
- ranging from experimental in-house tools used for demonstrating new technologies to established commercial software suites employed in production-level engineering simulations.
+ ranging from experimental in-house tools used for demonstrating new technologies to established commercial software suites employed in production-level engineering
+\change_deleted 2012671230 1752777695
+ simulations
+\change_unchanged
+.
 \end_layout
 
 \begin_layout Standard
@@ -1973,9 +2019,15 @@ variables:
 
  is the total state size.
  In many cases,
- existing non-reacting CFD software built around these five variables can be extended to chemically reacting flows by expanding the state to include multiple chemical species,
+ existing non-reacting CFD software built around these five variables can be extended to chemically reacting flows by expanding the state to include multiple chemical species
+\change_inserted 2012671230 1752777775
+ and
+\change_deleted 2012671230 1752777773
+,
  modifying the original system of governing equations,
- and incorporating 
+ and
+\change_unchanged
+ incorporating 
 \begin_inset Formula $n_{r}$
 \end_inset
 
@@ -2244,8 +2296,10 @@ method
 
 \change_inserted -88974637 1752587131
 method
+\change_deleted 2012671230 1752777953
+ as well
 \change_unchanged
- as well.
+.
 
 \change_deleted 2012671230 1752337014
  
@@ -2257,7 +2311,7 @@ method
 
 \change_inserted -88974637 1752258958
 \begin_inset Flex TODO Note (inline)
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -2280,7 +2334,25 @@ There are several approaches to integrate these features.
 \end_layout
 
 \begin_layout Enumerate
-Locate and adapt existing Fortran code from early versions of legacy codes,
+
+\change_deleted 2012671230 1752778073
+Locate and 
+\change_inserted 2012671230 1752778073
+A
+\change_deleted 2012671230 1752778073
+a
+\change_unchanged
+dapt existing 
+\change_deleted 2012671230 1752778106
+Fortran code from early versions of
+\change_unchanged
+ legacy 
+\change_deleted 2012671230 1752778011
+codes
+\change_inserted 2012671230 1752778020
+software
+\change_unchanged
+,
  such as Chemkin
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -2312,7 +2384,11 @@ literal "false"
 \end_inset
 
 ,
- which can serve as a third-party library for codes written inC,
+ which can serve as a third-party library for codes written in
+\change_inserted 2012671230 1752778124
+ 
+\change_unchanged
+C,
  C++,
  and Fortran,
  as well as in interpreted languages such as Python and MATLAB.
@@ -2355,6 +2431,11 @@ name "enu:software"
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted 2012671230 1752778176
+Approaches 
+\change_unchanged
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:chemkin"
@@ -2406,7 +2487,11 @@ other wording?
  they
 \change_unchanged
  present certain challenges.
- With 
+ With
+\change_inserted 2012671230 1752778189
+ approach
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:chemkin"
@@ -2441,6 +2526,8 @@ complicating
 For
 \change_inserted -88974637 1752586961
 Regarding
+\change_inserted 2012671230 1752778214
+ approach
 \change_unchanged
  
 \begin_inset CommandInset ref
@@ -2543,13 +2630,40 @@ other wording?
 
 \change_unchanged
  Additionally,
- relying on a third-party library like Cantera may hinder compatibility with targeted architectures that Cantera developers cannot directly access.
- Another third-party chemistry
-\change_inserted -88974637 1752586997
--
-\change_deleted -88974637 1752586997
+ relying on a third-party library
+\change_deleted 2012671230 1752778361
+ like 
+\change_inserted 2012671230 1752778391
+(e.g.
  
 \change_unchanged
+Cantera
+\change_inserted 2012671230 1752778356
+ and Mutation++
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Sco20"
+literal "false"
+
+\end_inset
+
+)
+\change_unchanged
+ may hinder compatibility with targeted architectures that
+\change_deleted 2012671230 1752778257
+ Cantera
+\change_unchanged
+ developers cannot directly access.
+
+\change_deleted 2012671230 1752778376
+ Another third-party chemistry-
+\change_deleted -88974637 1752586997
+ 
+\change_deleted 2012671230 1752778375
 based package is Mutation++
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -2560,7 +2674,13 @@ literal "false"
 
 ,
  which focuses on the thermodynamic and transport properties of ionized gases but could have similar issues as Cantera.
- Using 
+
+\change_unchanged
+ Using
+\change_inserted 2012671230 1752778388
+ approach
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:manual"
@@ -2585,7 +2705,11 @@ nolink "false"
 \end_inset
 
 ).
- This work belongs to 
+ This work belongs to
+\change_inserted 2012671230 1752778415
+ approach
+\change_unchanged
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:software"
@@ -2663,7 +2787,13 @@ I know what you mean here,
 \end_inset
 
 ,
- which can be used to speed up the computation of chemical species evolution.
+ which can be used to 
+\change_deleted 2012671230 1752778454
+speed up
+\change_inserted 2012671230 1752778456
+accelerate
+\change_unchanged
+ the computation of chemical species evolution.
  Pyrometheus generates either C++ header files or Python files for gas-phase combustion calculations,
  incorporating several on-the-fly optimizations to enhance scalability for high-performance computing in CFD.
  
@@ -2720,7 +2850,13 @@ May want to consider citing https://arxiv.org/html/2411.02640v1,
 In this work,
  we introduce ChemGen,
  a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++ based codes.
- ChemGen utilizes decorators,
+ ChemGen 
+\change_deleted 2012671230 1752778860
+utilizes
+\change_inserted 2012671230 1752778861
+introduces
+\change_unchanged
+ decorators,
  discussed in detail in Section 
 \begin_inset CommandInset ref
 LatexCommand eqref
@@ -2774,7 +2910,13 @@ This paper is organized as follows.
  we present results verifying the source term evaluation,
  Jacobian computation,
  and time integration.
- We demonstrate ChemGen’s performance by replacing OpenFOAM’s existing ODE-based chemical integrator in a detonation simulation and achieving faster time-to-solution due to ChemGen’s specialized,
+ We demonstrate ChemGen’s performance by replacing OpenFOAM’s existing ODE-based chemical integrator in a detonation simulation and achiev
+\change_inserted 2012671230 1752778959
+e
+\change_deleted 2012671230 1752778959
+ing
+\change_unchanged
+ faster time-to-solution due to ChemGen’s specialized,
  generated source code.
 \end_layout
 
