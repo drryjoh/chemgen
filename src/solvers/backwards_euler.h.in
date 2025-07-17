@@ -27,26 +27,22 @@ backwards_euler({chemical_state} y,
             {{
                 A = source_jacobian(y_guess, temperature_, -1, 1/dt);
             }}
-
             //................................................................
-            // static void write(const std::string &filename, const Eigen::MatrixXd &m)
-            // {{
-            //     std::ofstream out(filename);
-            //     for (int i = 0; i < m.rows(); ++i) 
-            //     {{
-            //         for (int j = 0; j < m.cols(); ++j) 
-            //         {{
-            //         out << m(i,j) << (j+1<m.cols() ? "," : "");
-            //         }}
-            //         out << "\n";
-            //     }}
-            // }}
-            // {{
             // Eigen::MatrixXd denseA = Eigen::MatrixXd(A);
             // std::ostringstream ss;
-            // ss << "jacobian_" << csv_iter << ".csv"; //change path
-            // write(ss.str(), denseA);
+            // ss << "BE_DATA/jacobian_" << csv_iter << ".csv"; //change path
+            // std::ofstream out(ss.str());
+            // for (int i = 0; i < denseA.rows(); ++i) 
+            // {{
+            //     for (int j = 0; j < denseA.cols(); ++j) 
+            //     {{
+            //         out << denseA(i, j);
+            //         if (j + 1 < denseA.cols())
+            //             out << ",";
+            //     }}
+            //     out << "\n";
             // }}
+            // csv_iter += 1;
             //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             //RHS

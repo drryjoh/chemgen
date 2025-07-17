@@ -1,3 +1,7 @@
+export PATH="/Users/jsampa/homebrew/opt/binutils/bin:$PATH"
+export CPPFLAGS="-I$(brew --prefix gperftools)/include"
+export LDFLAGS="-L$(brew --prefix gperftools)/lib"
+
 g++ $CPPFLAGS -O2 -g -fno-omit-frame-pointer \
   -I/Users/jsampa/homebrew/opt/yaml-cpp/include \
   -L/Users/jsampa/homebrew/opt/yaml-cpp/lib -lyaml-cpp \
