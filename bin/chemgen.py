@@ -235,9 +235,12 @@ def main():
         setattr(configuration, "perm", perm)
         setattr(configuration, "inv_perm", invert_permutation(perm))
 
-        # Sparsity pattern of permuted Jacobian
-        sp_perm = get_lu_sparsity(sp[:, perm][perm, :]).astype(int)
-        setattr(configuration, "sp_perm", sp_perm)
+        # Sparsity pattern of permuted Jacobian (P^T * A * P)
+        sp_perm = sp[:, perm][perm, :]
+
+        # Sparsity pattern of LU decomposition of permuted Jacobian
+        sp_lu_perm = get_lu_sparsity(sp_perm).astype(int)
+        setattr(configuration, "sp_lu_perm", sp_lu_perm)
 
     third_parties = [use_third_parties, third_party_path, libraries]
 
