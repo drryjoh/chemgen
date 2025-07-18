@@ -236,9 +236,11 @@ def main():
         setattr(configuration, "inv_perm", invert_permutation(perm))
 
         # Sparsity pattern of permuted Jacobian (P^T * A * P)
+        # forJay: This is the sparsity pattern of the input to the NN preconditioner
         sp_perm = sp[:, perm][perm, :]
 
         # Sparsity pattern of LU decomposition of permuted Jacobian
+        # forJay: This is the sparsity pattern of the output of the NN preconditioner
         sp_lu_perm = get_lu_sparsity(sp_perm).astype(int)
         setattr(configuration, "sp_lu_perm", sp_lu_perm)
 
