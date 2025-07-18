@@ -5792,7 +5792,7 @@ texttt{using scalar = float;}
  variables may appear to be simple scalars while in fact representing complex types with custom behavior.
  This flexibility enables expressive,
  domain-specific syntax,
- but this means that there is no single set of generated code that can be embedded into all C++ software.
+ but this means that there is no single set of generated code that can be embedded into all existing C++ software.
 \end_layout
 
 \begin_layout Standard
@@ -5807,7 +5807,7 @@ status open
 
 \begin_layout Plain Layout
 
-float sqr (float a){return a*a;} 
+float sqr (float a){return a * a;} 
 \backslash
 
 \backslash
@@ -5933,7 +5933,7 @@ texttt{const float
 
 .
  A function annotation may also be desirable,
- such as the preprocessor macro used in the Kokkos library 
+ such as a preprocessor macro provided the Kokkos library 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Tro22"
@@ -5942,7 +5942,7 @@ literal "false"
 \end_inset
 
 .
- Turning the above example to
+ This can turn the above example to
 \end_layout
 
 \begin_layout Standard
@@ -5957,7 +5957,7 @@ KOKKOS_INLINE_FUNCTION
 
 \begin_layout Plain Layout
 
-float sqr (const float& a) const {return a*a;}
+float sqr (const float& a) const {return a * a;} 
 \backslash
 
 \backslash
@@ -5999,7 +5999,7 @@ status open
 
 \begin_layout Plain Layout
 
-{scalar_function} sqr ({scalar_parameter} a) {const_option} {{return a*a;}} 
+{scalar_function} sqr ({scalar_parameter} a) {const_option} {{return a * a;}} 
 \backslash
 
 \backslash
@@ -6136,7 +6136,7 @@ texttt{std::vector}
 
 \end_inset
 
- and allow other data types such as 
+ and allows other data types such as 
 \begin_inset ERT
 status open
 
@@ -6170,12 +6170,8 @@ Derivatives
 \end_layout
 
 \begin_layout Standard
-ChemGen employs a mechanical differentiation approach,
- by supplying a differential codebase that contains derivatives of commond functions and their chain rules.
- As a result,
- once a function’s derivative is incorporated into the static code base,
- it becomes immediately accessible,
- granting access to the underlying derivative structure supplied by ChemGen.
+ChemGen employs a mechanical differentiation approach.
+ It supplies a differential codebase that contains derivatives of common functions and their chain rules.
  For instance,
  the Arrhenius function as generated using the standard configuration in ChemGen is
 \end_layout
@@ -6245,7 +6241,20 @@ arrhenius(const double& A,
 
 \end_inset
 
-ChemGen supplies the derivatives for the mathematical operations in that function.
+ChemGen supplies the derivatives for the mathematical operations contained in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{arrhenius}
+\end_layout
+
+\end_inset
+
+ function.
  For example,
  the derivatives of 
 \begin_inset ERT
@@ -6264,7 +6273,7 @@ _gen}
 
 ,
  given that it has two parameters,
- would yield two derivatives and one chain rule:
+ would yield two derivatives and one chain rule,
 \end_layout
 
 \begin_layout Standard
@@ -6345,11 +6354,12 @@ pow_gen_chain(const double& a,
 
 \end_inset
 
-The partial derivative with respect to each parameter,
- along with the corresponding chain rule that contracts these partial derivatives with a given perturbation,
- can be assumed to be accessible when developing higher-level functions.
+For all existing lower-level functions,
+ the partial derivatives with respect to each parameter,
+ as well as the associated chain rule contractions with perturbations,
+ can be assumed accessible when developing higher-level functions in ChemGen.
  With this capability,
- the derivative of the Arrhenius function with respect to temperature is immediately known,
+ the derivative of the Arrhenius function with respect to temperature is immediately available,
 \end_layout
 
 \begin_layout Standard
@@ -6484,7 +6494,7 @@ darrhenius_dtemperature(const double& A,
 \end_layout
 
 \begin_layout Standard
-We find that this mechanical differentiation approach is both efficient and more readable than symbolic differentiation using tools such as SymPy
+The mechanical differentiation approach is both efficient and more readable than symbolic differentiation using tools such as SymPy
 \begin_inset CommandInset citation
 LatexCommand citet
 key "sympy"
@@ -6494,10 +6504,9 @@ literal "false"
 
 .
  While symbolic differentiation can be valuable,
- we believe the mechanical approach is better suited for organizing and maintaining ChemGen’s code generation process.
+ the mechanical approach is better suited for organizing and maintaining ChemGen’s code generation process.
  Regardless,
  since the functions are available in C++,
- once generated,
  packages such as autodiff 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -6526,8 +6535,8 @@ Generation process
 \begin_layout Standard
 In the ChemGen software,
  there are three main file types.
- The first type consists of Python files that manipulate chemistry data and existing static code to create compilation-ready source code.
- The second file type comprises static code files that are ingested by the aforementioned Python code and reformatted to the desired target software.
+ The file type consists of Python files that manipulate chemistry data and existing static code to create compilation-ready source code.
+ The second file type comprises static code files that are ingested by the aforementioned Python code and reformatted to the desired target software using decorators.
  The final type is a mixture of Python code used in tutorials,
  most of which are covered in Section
 \begin_inset CommandInset ref
@@ -6554,22 +6563,33 @@ texttt{yaml}
 
 \end_inset
 
- files that contain data on the chemical models.
+ files that contain the chemical model data.
 \end_layout
 
 \begin_layout Standard
-The code generation process in ChemGen is designed to be as simple and streamlined as possible.
+The code generation process in ChemGen is designed to be as streamlined as possible and is depicted in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:flowchart"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
  ChemGen relies on Cantera to interpret chemical model files.
  Cantera performs several key tasks:
  parsing the chemistry data,
  converting units to the International System of Units (SI),
- and providing thermodynamic relationships that can be refit into the desired polynomial form.
+ and providing thermodynamic relationships that are refit into the desired polynomial form.
  As a well-maintained and widely used tool in the combustion community,
  Cantera provides a dependable foundation for ChemGen.
  Nevertheless,
  ChemGen could also be extended to handle data parsing,
  unit conversion,
- and thermodynamic relationships for re-fitting internally.
+ and thermodynamic relationships for refitting internally.
 \end_layout
 
 \begin_layout Standard
@@ -6677,7 +6697,7 @@ rate-constant:
 
 \end_inset
 
-then the following code is generated with default configuration settings,
+then the following code is generated with standard configuration settings,
 \begin_inset listings
 inline false
 status open
@@ -6713,8 +6733,7 @@ double call_forward_reaction_0(const double& temperature,
 
 \end_inset
 
-,
- the units here are in SI.
+the units here are in SI.
  Once all reactions are generated,
  a chemical source term file is created.
  The source term file begins with generated code that calculates 
@@ -6729,14 +6748,6 @@ double call_forward_reaction_0(const double& temperature,
 ,
  and 
 \begin_inset Formula $p$
-\end_inset
-
- from 
-\begin_inset Formula $C$
-\end_inset
-
- and 
-\begin_inset Formula $T$
 \end_inset
 
 ,
@@ -6761,7 +6772,8 @@ _reactions}
 \end_inset
 
 .
- ChemGen then loops through all reactions and generates the necessary code if a reverse reaction rate is needed.
+ ChemGen then loops through all reactions,
+ and generates the forward rates and the corresponding equilibrium constants for reversible reactions.
  In the above example,
  a reverse reaction is necessary,
  so ChemGen generates
@@ -6800,13 +6812,7 @@ species[0] * species[3] * forward_reaction_0
 
 \end_inset
 
-where the rates of progress for each reaction,
- 
-\begin_inset Formula $q_{i}$
-\end_inset
 
-,
- rely on the stoichiometric coefficients and are generated.
 \end_layout
 
 \begin_layout Standard
@@ -6854,7 +6860,7 @@ texttt{src}
 
 \end_inset
 
- folder using default settings.
+ folder using the standard settings.
 \end_layout
 
 \begin_layout Standard
@@ -6868,7 +6874,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename chemgen_flowchart.pdf
+	filename flowchizzle.png
 
 \end_inset
 
@@ -6992,10 +6998,103 @@ which is renormalized after all
 \end_inset
 
 ,
- forming the complete state for ChemGen.
- We consider five different chemical models with increasing size that are common to computational simulations of chemically reacting flows,
- with 10,000 random chemical states generated for each model.
- The 10-species Ó Connaire model 
+ forming the complete chemical state for ChemGen,
+ 
+\begin_inset Formula $y_{c}$
+\end_inset
+
+.
+ We consider five different chemical models with increasing size that are common to simulations of chemically reacting flows and summarize in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:chemical models"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+Hai- How shold we label the right column?
+\end_layout
+
+\end_inset
+
+.
+ For this analysis we generated 10,000 random chemical states generated for each model.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Model
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $n_{s}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $n_{r}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fuel
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ó Connaire 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Oco04"
@@ -7003,7 +7102,45 @@ literal "false"
 
 \end_inset
 
- and the 13-species Burke model 
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+hydrogen 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Burke
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Bur12"
@@ -7011,9 +7148,45 @@ literal "false"
 
 \end_inset
 
- are utilized for hydrogen and hydrogen–carbon monoxide oxidation simulations,
- respectively.
- The 53-species GRI-Mech 3.0 model 
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+hydrogen-carbon monoxide 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+GRI-Mech 3.0 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Smi00"
@@ -7021,9 +7194,45 @@ literal "false"
 
 \end_inset
 
- is used for natural gas combustion simulations.
- Finally,
- the 63-species UCSD model 
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+53
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+hydrogen to methane
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UCSD 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "SanDiegoMech"
@@ -7031,7 +7240,45 @@ literal "false"
 
 \end_inset
 
- and the 93-species FFCM-2 model 
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+63
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+hydrogen to hydrocarbon 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FFCM-2 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -7039,7 +7286,68 @@ literal "false"
 
 \end_inset
 
- are employed for larger hydrocarbon combustion simulations.
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+96
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+hydrogen to hydrocarbon
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Summary of chemical models analyzed 
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:chemical models"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7062,8 +7370,8 @@ _rates}
 \end_inset
 
  ,
- to evaluate the error for each state for each chemical model.
- The average error per chemical state is
+ for comparison in this analysis.
+ The average relative error per chemical state is
 \end_layout
 
 \begin_layout Standard
@@ -7099,7 +7407,7 @@ th specie and
 \end_layout
 
 \begin_layout Standard
-The distribution of errors for the randomly generated states and five chemical models are shown in Figure
+The distribution of errors for the randomly generated states and the chemical models analyzed are shown in Figure
 \begin_inset space ~
 \end_inset
 
@@ -7121,7 +7429,7 @@ nolink "false"
  While the ChemGen implementation is designed to be consistent with Cantera’s formulation,
  differences arise primarily due to the thermodynamic polynomial representations.
  Cantera supports multiple polynomial formats for thermodynamic property calculations,
- whereas ChemGen re-fits all species thermodynamic properties to a user-specified polynomial order during code generation.
+ whereas ChemGen refits all species thermodynamic properties to a user-specified polynomial order during code generation.
  The ChemGen refits for the data in Figure
 \begin_inset space ~
 \end_inset
@@ -7143,12 +7451,12 @@ nolink "false"
 
 .
  To investigate the effect of polynomial degree,
- we repeat the error analysis with different choices of 
+ we repeated the error analysis with different choices of 
 \begin_inset Formula $n_{p}$
 \end_inset
 
-,
- the results of which are detailed in Appendix
+ which confirmed an inverse relationship between the mean relative error and the polynomial degree.
+ The results of this further analysis are detailed in Appendix
 \begin_inset space ~
 \end_inset
 
@@ -7179,7 +7487,7 @@ status open
 \begin_inset Graphics
 	filename data/01_error/hist.png
 	lyxscale 30
-	scale 40
+	scale 80
 
 \end_inset
 
@@ -7218,48 +7526,14 @@ nolink "false"
 \end_inset
 
 ,
- for ChemGen source calculations in comparison to Cantera source calculations for five tested chemical models,
- Ó Conaire 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Oco04"
-literal "false"
-
-\end_inset
-
-,
- Burke 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Bur12"
-literal "false"
-
-\end_inset
-
-,
- GRI-Mech 3.0 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Smi00"
-literal "false"
-
-\end_inset
-
-,
- UCSD 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "SanDiegoMech"
-literal "false"
-
-\end_inset
-
-,
- and FFCM2 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Zha23"
-literal "false"
+ for ChemGen source calculations in comparison to Cantera source calculations for five tested chemical models from Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:chemical models"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
 
 \end_inset
 
@@ -7277,10 +7551,8 @@ literal "false"
 \end_inset
 
 ,
- are also reported.
- Overall mean agreement for all cases is,
- on average,
- less than a percent.
+ are also reported as text.
+ 
 \end_layout
 
 \end_inset
@@ -7306,7 +7578,7 @@ name "subsec:Explicit-Time-Integration"
 
 \begin_layout Standard
 With confidence in the source term calculation,
- we proceed to apply ChemGen's explicit RK4 time integrator to temporally evolve the following initial chemical state:
+ we proceeded to apply ChemGen's explicit RK4 time integrator to temporally evolve the following initial chemical state:
 \end_layout
 
 \begin_layout Standard
@@ -7319,7 +7591,7 @@ p & = & 101325.0\nonumber \\
 
 \end_inset
 
-We use a hydrogen submodel extracted from FFCM-2 
+We used a hydrogen submodel extracted from FFCM-2 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -7328,10 +7600,19 @@ literal "false"
 \end_inset
 
 ,
- which is created by removing any species or reactions with carbon atoms.
- We also remove any electronically excited states,
+ which is created by removing carbon containing species,
+ electronically excited states,
  such as 
 \begin_inset Formula $OH^{*}$
+\end_inset
+
+,
+ and inert species 
+\begin_inset Formula $Ar$
+\end_inset
+
+ and 
+\begin_inset Formula $He$
 \end_inset
 
 .
@@ -7409,7 +7690,7 @@ status open
 \begin_inset Graphics
 	filename data/02_explicit_time_integration/rk4.png
 	lyxscale 20
-	scale 40
+	scale 60
 
 \end_inset
 
@@ -7526,9 +7807,23 @@ Following a brief induction period,
 \end_inset
 
 ).
- The minor species span a wide range of values;
- therefore,
- individual scaling multipliers are applied to each in order to easily visualize their profiles on the same graph.
+ Therefore,
+ scaling multipliers are applied to minor species in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "fig:RK4_T_C"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ in order to easily visualize their profiles on the same graph.
 \end_layout
 
 \begin_layout Subsection
@@ -7544,9 +7839,8 @@ name "subsec:Jacobian-Verification"
 
 \begin_layout Standard
 Next,
- we verify the Jacobian calculationsin order to build confidence in their use for implicit time integration.
- Recall the Jacobian supplied by ChemGen,
- 
+ we verify the Jacobian calculations.
+ Recall the Jacobian supplied by ChemGen is
 \end_layout
 
 \begin_layout Standard
@@ -7563,7 +7857,8 @@ Next,
 \end_inset
 
 In this section we present verification of the Jacobians using the finite difference method.
- To calculate the finite difference approximation of the Jacobians we utilized the second order finite difference approximation for each element by perturbing each species forward,
+ To calculate the finite difference approximation of the Jacobians,
+ we utilized the second order finite difference approximation for each element by perturbing each species forward,
 \end_layout
 
 \begin_layout Standard
@@ -7592,7 +7887,7 @@ These perturbations are utilized in the finite difference Jacobian,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
-\hat{\mathcal{J}_{ij,T}} & = & \begin{cases}
+\hat{\mathcal{J}_{ij}} & = & \begin{cases}
 \frac{\omega_{T}(C,T+\delta T)-\omega_{T}(C,T-\delta T)}{2\delta T} & j=1\\
 \frac{\omega_{T}(C_{j-1}^{+},T)-\omega_{T}(C_{j-1}^{-},T)}{2\delta C} & i=1;\quad j>1\\
 \frac{\omega_{i-1}(C,T+\delta T)-\omega_{i-1}(C,T-\delta T)}{2\delta T} & i>1;\quad j=1\\
@@ -7663,11 +7958,7 @@ nolink "false"
 \begin_inset Formula $\left(\rho u,C\right)\rightarrow T$
 \end_inset
 
- is the Newton solve for the temperature given concentration 
-\begin_inset Formula $C$
-\end_inset
-
-.
+ is the Newton solve for the temperature.
  An initial test to verify the Jacobian is to check the order of convergence of the finite difference errors as compared to the analytical Jacobian provided by ChemGen.
 \end_layout
 
@@ -7682,12 +7973,12 @@ We use the
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-L_{2}=||\mathcal{J}-\hat{\mathcal{J}}||=\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\mathcal{J}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}}\left(C_{i},T\right)_{ij}\right)^{2}},\label{eq:L2_fd}
+L_{2}=||\mathcal{J}_{ij}-\hat{\mathcal{J}_{ij}}||=\sqrt{\sum_{i=1}^{n_{s}}\sum_{j=1}^{n_{s}}\left(\mathcal{J}\left(C_{i},T\right)_{ij}-\hat{\mathcal{J}}\left(C_{i},T\right)_{ij}\right)^{2}},\label{eq:L2_fd}
 \end{equation}
 
 \end_inset
 
-for four refinement levels using smaller values of 
+for four refinement levels using consecutively halved values of 
 \begin_inset Formula $\delta C$
 \end_inset
 
@@ -7731,7 +8022,7 @@ literal "false"
 
 .
  The refinement results agree well with the expected second-order accuracy.
- We repeat this refinement study across all previously mentioned chemical models and observed consistent order of accuracy for both Jacobians (not shown for brevity).
+ We repeated this refinement study across all previously mentioned chemical models and observed consistent order of accuracy for both Jacobians (not shown for brevity).
  In some cases,
  the initial 
 \begin_inset Formula $\delta C$
@@ -7748,7 +8039,7 @@ literal "false"
 \end_inset
 
 ,
- the expected order of accuracy can be recovered.
+ the expected order of accuracy was recovered.
 \end_layout
 
 \begin_layout Standard
@@ -7768,19 +8059,7 @@ nolink "false"
 ,
  we compute 1,000 Jacobians for each method and compared the total execution time.
  For the discrete Jacobians,
- we used first-order finite difference schemes,
- rather than the second-order methods described in Equations 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:finite_difference_Tevolve"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- in order to utilize the most minimal computational cost for finite difference approximations,
+ we used first-order finite difference schemes to minimize computational cost,
 \end_layout
 
 \begin_layout Standard
@@ -7809,11 +8088,10 @@ ref{tab:test}
 
 \end_inset
 
-for a variety of chemical models ranging in size and complexity.
+ for a variety of chemical models ranging in size and complexity.
  Despite using the fastest discrete Jacobian optimization,
  the analytical Jacobians are consistently faster across all cases.
- Notably,
- as the chemical mechanism increases in complexity,
+ As the chemical mechanism increases in complexity,
  the reduction in cost of computing the analytical Jacobian relative to the finite different approximation becomes greater.
 \begin_inset Note Note
 status collapsed
@@ -7869,7 +8147,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -8103,7 +8381,7 @@ literal "false"
 \begin_inset Formula 
 \begin{eqnarray}
 T & = & 1800\text{ K}\nonumber \\
-p & = & 101325.0\text{ Pa}\nonumber \\
+p & = & 101325\text{ Pa}\nonumber \\
 \left(X_{O_{2}},X_{N_{2}},X_{H_{2}},X_{C_{2}H_{4}}\right) & = & \left(0.2,0.4,0.2,0.2\right)\label{eq:chemical_state_03}
 \end{eqnarray}
 
@@ -8132,9 +8410,6 @@ ReactorNet
 \end_inset
 
  class.
- Line markers are shown at every ten time steps,
- except for SDIRK-4,
- where markers are placed every five steps to accommodate its larger time step.
  Among the integrators,
  the first-order methods,
  YASS and Backward Euler,
@@ -8180,7 +8455,7 @@ ReactorNet
 \end_inset
 
  time step was iterated on to find the fastest time to solution,
- while utilizing both GMRES and default adaptive preconditioner.
+ while utilizing both GMRES and the default adaptive preconditioner.
 \end_layout
 
 \begin_layout Standard
@@ -8247,7 +8522,10 @@ Backward Euler
 \begin_inset Text
 
 \begin_layout Plain Layout
-1e-7
+\begin_inset Formula $10^{-7}$
+\end_inset
+
+ s
 \end_layout
 
 \end_inset
@@ -8256,7 +8534,10 @@ Backward Euler
 \begin_inset Text
 
 \begin_layout Plain Layout
-1.26
+\begin_inset Formula $1.26$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -8276,7 +8557,10 @@ SDIRK-2
 \begin_inset Text
 
 \begin_layout Plain Layout
-7e-7
+\begin_inset Formula $7\times10^{-7}$
+\end_inset
+
+ s
 \end_layout
 
 \end_inset
@@ -8285,7 +8569,10 @@ SDIRK-2
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.19
+\begin_inset Formula $3.19$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -8305,7 +8592,10 @@ SDIRK-4
 \begin_inset Text
 
 \begin_layout Plain Layout
-1e-6
+\begin_inset Formula $10^{-6}$
+\end_inset
+
+ s
 \end_layout
 
 \end_inset
@@ -8314,7 +8604,10 @@ SDIRK-4
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.51
+\begin_inset Formula $3.51$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -8334,7 +8627,10 @@ Rosenbroc
 \begin_inset Text
 
 \begin_layout Plain Layout
-1e-7
+\begin_inset Formula $10^{-7}$
+\end_inset
+
+ s
 \end_layout
 
 \end_inset
@@ -8343,7 +8639,10 @@ Rosenbroc
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.26
+\begin_inset Formula $2.26$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -8363,7 +8662,10 @@ YASS
 \begin_inset Text
 
 \begin_layout Plain Layout
-1e-7
+\begin_inset Formula $10^{-7}$
+\end_inset
+
+ s
 \end_layout
 
 \end_inset
@@ -8372,7 +8674,10 @@ YASS
 \begin_inset Text
 
 \begin_layout Plain Layout
-3.22
+\begin_inset Formula $3.22$
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -8392,7 +8697,10 @@ Cantera
 \begin_inset Text
 
 \begin_layout Plain Layout
-1e-6
+\begin_inset Formula $10^{-6}$
+\end_inset
+
+ s
 \end_layout
 
 \end_inset
@@ -8419,7 +8727,7 @@ n/a
 
 \begin_layout Plain Layout
 Implicit time integrator optimal time step and simulation time,
- normalized by the Cantera simulation time.
+ normalized by the Cantera simulation time
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:time_step_and_timings"
@@ -8452,7 +8760,7 @@ status open
 \begin_inset Graphics
 	filename data/04_implicit/implicit_time.png
 	lyxscale 30
-	scale 40
+	scale 65
 
 \end_inset
 
@@ -8469,11 +8777,7 @@ name "fig:implicit_homogeneous_reactor"
 
 \end_inset
 
-Homogeneous reactor results up to 
-\begin_inset Formula $\ensuremath{20\,\mu\text{s}}$
-\end_inset
-
- obtained with ChemGen provided implicit time integrators.
+Homogeneous reactor results obtained with ChemGen's implicit time integrators
 \end_layout
 
 \end_inset
@@ -8517,22 +8821,23 @@ To assure the correct implementation of these implicit methods beyond comparison
  we assess order of convergence of the YASS,
  SDIRK-4,
  and Rosenbrock methods.
- The implementation of SDIRK-2 is similar to SDIRK-4 and Backward Euler is YASS with more linear solver iterations,
- we therefore omit them from the discussion here.
- We employ the extracted hydrogen submodel from FFCM-2 with initial conditions
+ The implementation of SDIRK-2 is similar to SDIRK-4 and Backward Euler is YASS with more linear solver iterations.
+ Therefore,
+ we omit them from the discussion here.
+ We employ the extracted hydrogen submodel from FFCM-2 in a homogeneous reactor simulation with initial conditions
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{eqnarray}
 T & = & 1800\text{ K}\nonumber \\
-p & = & 101325.0\text{ Pa}\nonumber \\
+p & = & 101325 Pa\nonumber \\
 \left(X_{O_{2}},X_{H_{2}},X_{N_{2}}\right) & = & \left(0.2,0.2,0.6\right).\label{eq:chemical_state_04}
 \end{eqnarray}
 
 \end_inset
 
-The final time is 
+We utilized the state at time 
 \begin_inset Formula $t=4\;\mu$
 \end_inset
 
@@ -8542,7 +8847,8 @@ s,
 \end_inset
 
 .
- We select 
+ This location in time represents the approximate location in the solution where the chemical state changes the most.
+ We selected 
 \begin_inset Formula $\Delta t=2\times10^{-6}$
 \end_inset
 
@@ -8551,7 +8857,13 @@ s,
 \end_inset
 
  for YASS and Rosenbroc.
- We perform five refinements that change the time step by a factor of 
+ We performed five refinements that change the integration time step,
+ 
+\begin_inset Formula $h$
+\end_inset
+
+,
+ by a factor of 
 \begin_inset Formula $2$
 \end_inset
 
@@ -8571,41 +8883,14 @@ s,
 \end_inset
 
 ,
- is used as the reference solution when computing the error as
+ is used as the reference solution when computing the error,
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-L_{2,h}(C)=\sum_{i=1}^{n_{s}}\left(C_{h,i}-C_{\frac{\Delta t}{16},i}\right)^{2}.\label{eq:L2_species}
+\epsilon_{h}=\sum_{i=1}^{n_{s}}\left(C_{h,i}-C_{\frac{\Delta t}{16},i}\right)^{2}.\label{eq:L2_species}
 \end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-\begin_inset Formula $L_{2}$
-\end_inset
-
- should be 
-\begin_inset Formula $L^{2}$
-\end_inset
-
-.
- Also,
- 
-\begin_inset Formula $L_{2,h}(C)$
-\end_inset
-
- already has its own definition - it is the L2 norm of C.
- So should denote the error with a different variable.
-\end_layout
 
 \end_inset
 
@@ -8662,7 +8947,7 @@ name "fig:convergence_study"
 
 Convergence study for YASS,
  Rosenbroc,
- and SDIRK-4 using a hydrogen submodel extracted from FFCM-2 with initial conditions 
+ and SDIRK-4 using a hydrogen submodel extracted from FFCM-2 with initial conditions from Equation 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:chemical_state_04"
@@ -8679,6 +8964,17 @@ nolink "false"
 \end_inset
 
 .
+ 
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+post_convergence_H2.py
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -8697,7 +8993,7 @@ ChemGen in a detonation simulation
 
 \begin_layout Standard
 To demonstrate the usage of ChemGen in an existing computational framework,
- we target the chemistry step in detonationFoam 
+ we targeted the chemistry evaluation in detonationFoam 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -8715,7 +9011,18 @@ literal "false"
 
 .
  In particular,
- we focus on the detonationEulerFoam solver,
+ we focused on the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+detonationEulerFoam
+\end_layout
+
+\end_inset
+
+ solver,
  which does not include viscous effects.
  The solver treats each individual species conservation equation via a segregated approach by solving
 \end_layout
@@ -8784,7 +9091,7 @@ nolink "false"
 \begin_inset Formula $\Delta t$
 \end_inset
 
- is the desired fluid time step for integrating
+ is the desired fluid time step for integrating Equation 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:openfom_fvm"
@@ -8802,11 +9109,12 @@ nolink "false"
 
  are the predicted concentrations from solving the species evolution ODEs,
  
-\begin_inset Formula $\frac{\partial y_{}}{\partial t}=S(y)$
+\begin_inset Formula $\frac{\partial y_{c}}{\partial t}=S(y_{c})$
 \end_inset
 
 .
- Therefore 
+ Therefore,
+ 
 \begin_inset Formula $\mathcal{R}$
 \end_inset
 
@@ -8845,7 +9153,7 @@ literal "false"
 \begin_inset Formula $\Delta t=1\times10^{-9}$
 \end_inset
 
- s we replace the seulex solver with ChemGen's YASS integrator combined with Jacobi-preconditioned GMRES.
+ s we replaced the seulex solver with ChemGen's YASS integrator combined with Jacobi-preconditioned GMRES.
 \end_layout
 
 \begin_layout Standard
@@ -9038,7 +9346,7 @@ Analysis of time scales
 \end_layout
 
 \begin_layout Standard
-We consider a two-dimensional detonation test that has been simulated in many previous studies(see Oran et al.
+We considered a two-dimensional detonation test that has been simulated in many previous studies (see Oran et al.
 \begin_inset space ~
 \end_inset
 
@@ -9162,6 +9470,7 @@ literal "false"
 \end_inset
 
  m.
+ We used the slip wall condition for all boundaries.
  We again utilize the hydrogen submodel extracted from FFCM-2 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -9171,7 +9480,7 @@ literal "false"
 \end_inset
 
 .
- The initial conditions are based on a steady detonation solution from the shock detonation toolbox
+ The initial conditions are based on a steady detonation solution from the Shock & Detonation Toolbox
 \begin_inset space ~
 \end_inset
 
@@ -9193,8 +9502,8 @@ literal "false"
 \begin{array}{ccc}
 \qquad\qquad\qquad\qquad v_{1} & = & 0\text{ m/s},\\
 \quad\quad\quad\;X_{Ar}:X_{O_{2}}:X_{H_{2}} & = & 7:1:2\\
-\qquad\qquad\qquad\qquad p & = & \expnumber{5.50}5\text{ Pa}\\
-\qquad\qquad\qquad\qquad T & = & 300\text{ K}
+\qquad\qquad\qquad\qquad p & = & 6670\text{ Pa}\\
+\qquad\qquad\qquad\qquad T & = & 298\text{ K.}
 \end{array}\label{eq:detonation-1d-initialization}
 \end{equation}
 
@@ -9215,22 +9524,20 @@ literal "false"
 
 \end_inset
 
- and in this work a sinusoidal profile is specific to perturb the front location,
- giving rise to instabilities that then transition to an expected established solution.
+ and in this work a sinusoidal profile is specified to perturb the front location,
+ giving rise to instabilities that then transition to the expected solution.
+ 
 \end_layout
 
 \begin_layout Standard
 The initial front progresses into the unreacted flow region,
- and the irregular structures from the initialization cause the development of pressure waves that move normal to the direction of the detonation.
- Eventually,
- these transverse waves become regular and give rise to an expected cellular structure,
- which is visualized using a maximum-pressure history,
+ and the irregular structures from the initialization cause the development of two-dimensional fluid dynamic features eventually leading to an established two-dimensional cellular structure.
+ These structures were visualized using a maximum-pressure history,
  
 \begin_inset Formula $p^{*,n+1}(x)=\max\left\{ p^{n+1}(x),p^{*,n}(x)\right\} $
 \end_inset
 
-.
- Figure
+ shown in Figure
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:pressure-max-value"
@@ -9241,21 +9548,23 @@ nolink "false"
 
 \end_inset
 
- shows the maximum pressure at 
+ at 
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
-s predicted by detonationEulerFoam using ChemGen for the chemistry step and demonstrates that ChemGen yields the expected cellular detonation structures,
- consistent with those by Sun et al.
- 
-\begin_inset CommandInset citation
-LatexCommand citep
-key "Sun23"
-literal "false"
+s.
+ These results were calculated by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+detonationEulerFoam
+\end_layout
 
 \end_inset
 
-.
+ using ChemGen for the chemistry and demonstrate that ChemGen yields the expected cellular detonation structures.
 \end_layout
 
 \begin_layout Standard
@@ -9281,7 +9590,7 @@ nolink "false"
 
 \end_inset
 
- show the distribution of temperature and hydroxyl radical,
+ show the distribution of temperature and hydroxyl radical mass fraction,
  
 \begin_inset Formula $Y_{OH}$
 \end_inset
@@ -9316,17 +9625,29 @@ nolink "false"
 
 \end_inset
 
- show the production term form O-atoms,
+ show the production term for O-atoms,
  
 \begin_inset Formula $\mathcal{R}=\left(\frac{C_{O}^{n+1}-C_{O}^{n}}{\Delta t}\right)W_{O}$
 \end_inset
 
+,
  at 
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
-s for detonationEulerFOAM.
- The OpenFOAM results using the seulex ODE solver is denoted using subscript 
+s for 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+detonationEulerFoam
+\end_layout
+
+\end_inset
+
+.
+ The OpenFOAM result using the seulex ODE solver is denoted using subscript 
 \begin_inset Formula $of$
 \end_inset
 
@@ -9335,7 +9656,18 @@ s for detonationEulerFOAM.
 \end_inset
 
 .
- These results demonstrate that an accurate CFD solution can be obtained using ChemGen in the detonationEulerFoam solver.
+ These results demonstrate that an accurate CFD solution can be obtained using ChemGen in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+detonationEulerFoam
+\end_layout
+
+\end_inset
+
+ solver.
  Furthermore,
  the YASS solver provided by ChemGen is found to be on average 8 times faster than the seulex solver.
 \end_layout
@@ -9346,7 +9678,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -9370,7 +9702,17 @@ name "fig:pressure-max-value"
 
 \end_inset
 
-Pressure value
+Maximum pressure,
+ 
+\begin_inset Formula $p^{*,n+1}(x)=\max\left\{ p^{n+1}(x),p^{*,n}(x)\right\} $
+\end_inset
+
+,
+ at 
+\begin_inset Formula $t=200\text{ }\mu$
+\end_inset
+
+s.
 \end_layout
 
 \end_inset
@@ -9389,7 +9731,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -9416,7 +9758,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Temperature distribution of detonation front solution at 
+Temperature distribution of detonation front at 
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
@@ -9466,13 +9808,13 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Hydroxyl mass fraction,
+Hydroxyl radical mass fraction,
  
 \begin_inset Formula $Y_{OH}$
 \end_inset
 
 ,
- distribution of detonation front solution at 
+ distribution of detonation front at 
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
@@ -9507,11 +9849,22 @@ name "fig:detonation_T_OH"
 
 \end_inset
 
- Temperature and Hydroxyl mass fraction distribution for two dimensional 
-\begin_inset Formula $AR/H_{2}/O_{2}$
+ Temperature (left) and hydroxyl radical mass fraction (right) distribution for two dimensional 
+\begin_inset Formula $Ar/H_{2}/O_{2}$
 \end_inset
 
- detonation using ChemGen to fully replace the chemistry solve in detonationEulerFoam.
+ detonation using ChemGen to fully replace the chemistry solve in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+detonationEulerFoam
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \end_inset
@@ -9530,7 +9883,7 @@ placement H
 alignment document
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align center
@@ -9544,7 +9897,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename data/05_cfd/RRCGO_cropped.png
+	filename data/05_cfd/RROFO_cropped.png
 	lyxscale 20
 	width 45line%
 
@@ -9557,25 +9910,31 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-ChemGen Reaction Rate,
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+detonationEulerFoam
+\end_layout
+
+\end_inset
+
+ reaction rate,
  
-\begin_inset Formula $R_{cg}$
+\begin_inset Formula $R_{of}$
 \end_inset
 
 ,
- for O-atom production at 
+ for 
+\begin_inset Formula $O$
+\end_inset
+
+-atom production at 
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
 s.
- 
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:RRCGO"
-
-\end_inset
-
-
 \end_layout
 
 \end_inset
@@ -9600,7 +9959,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Graphics
-	filename data/05_cfd/RROFO_cropped.png
+	filename data/05_cfd/RRCGO_cropped.png
 	lyxscale 20
 	width 45line%
 
@@ -9613,13 +9972,23 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-detonationEulerFoam Reaction Rate,
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:RROFO"
+
+\end_inset
+
+ChemGen reaction rate,
  
-\begin_inset Formula $R_{of}$
+\begin_inset Formula $R_{cg}$
 \end_inset
 
 ,
- for O-atom production at 
+ for 
+\begin_inset Formula $O$
+\end_inset
+
+-atom production at 
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
@@ -9627,7 +9996,7 @@ s.
  
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:RROFO"
+name "fig:RRCGO"
 
 \end_inset
 
@@ -9654,20 +10023,36 @@ name "fig:reaction_rate_compare_OF_CG"
 
 \end_inset
 
-The production term form O-atoms,
+The production term for 
+\begin_inset Formula $O$
+\end_inset
+
+-atoms,
  
 \begin_inset Formula $\mathcal{R}=\left(\frac{C_{O}^{n+1}-C_{O}^{n}}{\Delta t}\right)W_{i}$
 \end_inset
 
+,
  at 
 \begin_inset Formula $t=200\text{ }\mu$
 \end_inset
 
-s for a detonationEulerFOAM simulation of a two dimensional detonation wave using OpenFOAM seulex ODE solver (subscript 
+s for a 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+detonationEulerFoam
+\end_layout
+
+\end_inset
+
+ simulation of a two dimensional detonation wave using OpenFOAM seulex ODE solver (left with subscript 
 \begin_inset Formula $of$
 \end_inset
 
-) and for ChemGen using the YASS ODE solver (subscript 
+) and for ChemGen using the YASS ODE solver (right with subscript 
 \begin_inset Formula $cg$
 \end_inset
 
@@ -10352,7 +10737,7 @@ Conclusion
 
 \begin_layout Standard
 In this work,
- we introduced ChemGen,
+ we introduce ChemGen,
  a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based computational physics software,
  with an emphasis on CFD applications.
  ChemGen employs a decorator-based approach to enable flexible and modular C++ code generation tailored to existing simulation ecosystems.
@@ -10378,9 +10763,9 @@ We validated the correctness of the generated code by comparing its results agai
 
 \begin_layout Standard
 ChemGen lays the groundwork for the consistent inclusion of chemical source terms in diverse computational environments.
- Its flexibility also opens the door for scalable reactive solvers,
+ Its flexibility also opens the door for scalable solvers,
  reduced-order modeling strategies,
- and accelerator-aware chemistry integration methods that can advance the frontier of high-fidelity reactive flow simulation.
+ and accelerator-aware chemistry integration methods that can advance the frontier of high-fidelity chemical reacting flow simulation.
 \end_layout
 
 \begin_layout Standard
@@ -11522,27 +11907,6 @@ E_{norm}=\frac{\|\mathcal{J}_{ij}-\hat{\mathcal{J}_{ij}}\|{}_{F}}{\hat{\|\mathca
 
 \end_inset
 
-
-\begin_inset Flex TODO Note (inline)
-status collapsed
-
-\begin_layout Plain Layout
-use bigger || above.
- also some hats are off.
- and if you have 
-\begin_inset Formula $1\times10^{-6}$
-\end_inset
-
-,
- can just condense to 
-\begin_inset Formula $10^{-6}$
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
 In these error metrics,
  only matrix elements where 
 \begin_inset Formula $|\mathcal{J}_{ij}|>\hat{||\mathcal{J}_{b}}||_{F}/10^{20}$
@@ -11568,7 +11932,10 @@ In these error metrics,
 \end_inset
 
 .
- In Niemeyer et al.,
+\end_layout
+
+\begin_layout Standard
+In Niemeyer et al.,
  it was reported that 
 \begin_inset Formula $E_{rel}$
 \end_inset
@@ -11585,7 +11952,7 @@ nolink "false"
 
 \end_inset
 
- reports the mean and max error norms for both 
+ reports the mean and maximum error norms for both 
 \begin_inset Formula $E_{rel}$
 \end_inset
 
@@ -11632,7 +11999,11 @@ and
 \end_inset
 
 .
- Only one specialized case for the chemical model FFCM-2 gives 
+\begin_inset Note Comment
+status collapsed
+
+\begin_layout Plain Layout
+Only one specialized case for the chemical model FFCM-2 gives 
 \begin_inset Formula $E_{rel}>0.01$
 \end_inset
 
@@ -11660,10 +12031,14 @@ and
 
 ,
  indicating sensitivity of 
-\begin_inset Formula $\hat{\mathcal{J}_{b}}$
+\begin_inset Formula $\hat{\mathcal{J}_{ij}}$
 \end_inset
 
  to the concentration perturbation.
+\end_layout
+
+\end_inset
+
  Figure
 \begin_inset CommandInset ref
 LatexCommand eqref
