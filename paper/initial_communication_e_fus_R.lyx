@@ -3027,7 +3027,11 @@ where
 \begin_inset Formula $C=\left(C_{1},\ldots,C_{n_{s}}\right)$
 \end_inset
 
- is the vector of species concentrations.
+ is the vector of
+\change_inserted 2012671230 1752779193
+ molar
+\change_unchanged
+ species concentrations.
  The density is computed from the species concentrations as
 \end_layout
 
@@ -3096,7 +3100,11 @@ where
 \end_inset
 
  is the Kronecker delta.
- The mass-specific total energy is the sum of the specific internal and kinetic energies,
+ The mass-specific total energy is the sum of the
+\change_deleted 2012671230 1752779317
+ specific
+\change_unchanged
+ internal and kinetic energies,
  given by
 \end_layout
 
@@ -3114,7 +3122,11 @@ where the (mixture-averaged) mass-specific internal energy,
 \end_inset
 
 ,
- is the mass-weighted sum of the mass-specific internal energies of each species:
+ is
+\change_deleted 2012671230 1752779365
+ the mass-weighted sum of the mass-specific internal energies of each species
+\change_unchanged
+:
 \begin_inset Formula 
 \[
 u=\sum_{i=1}^{n_{s}}Y_{i}u_{i}.
@@ -3132,57 +3144,12 @@ The chemical state is
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-y_{c}=\left(\rho u,C_{1},\ldots,C_{n_{s}}\right)\label{eq:reacting-navier-stokes-state-1}
-\end{equation}
-
-\end_inset
-
-
-\change_inserted 2012671230 1752354354
-or
-\change_unchanged
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
 y_{c}=\left(T,C_{1},\ldots,C_{n_{s}}\right)\label{eq:reacting-navier-stokes-state-1-1}
 \end{equation}
 
 \end_inset
 
-
-\change_inserted 2012671230 1752354276
-
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted 2012671230 1752354342
-updated labels,
- should we denote both?
-
-\change_inserted -88974637 1752587582
- Still TBD,
- but if you do,
- you may want to add a superscript/subscript to distinguish the two.
-\change_inserted 2012671230 1752354342
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-which 
-\change_deleted 2012671230 1752354293
-is
-\change_inserted 2012671230 1752354293
-are
-\change_unchanged
- the complete derived state needed to calculate the components of 
+which is the complete derived state needed to calculate the components of 
 \begin_inset Formula $\mathcal{S}\left(y_{f}\right)$
 \end_inset
 
@@ -3227,7 +3194,7 @@ p=RT\sum_{i=1}^{n_{s}}C_{i},
 \end_inset
 
 with 
-\begin_inset Formula $R=8314.4621\,\mathrm{J\cdot Kmol}^{-1}\mathrm{K}^{-1}$
+\begin_inset Formula $R=8314.4626\,\mathrm{J\cdot kmol}^{-1}\mathrm{K}^{-1}$
 \end_inset
 
  denoting the universal gas constant.
@@ -3235,19 +3202,44 @@ with
 \begin_inset Formula $\ln T$
 \end_inset
 
- in the chemical state as a precomputed value to avoid over computing logarithms and incorporate it into optimizations.
+ in the chemical state as a precomputed value to avoid 
+\change_deleted 2012671230 1752779704
+over
+\change_inserted 2012671230 1752779706
+repeatedly
+\change_unchanged
+ computing logarithms
+\change_inserted 2012671230 1752779717
+.
+
+\change_deleted 2012671230 1752779716
+ and incorporate it into optimizations
+\change_unchanged
+.
  Finally the mixture concentration,
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-M_{c}=\sum_{i=1}^{n_{s}}C_{i}=\frac{p}{R^{o}T},
+M_{c}=\sum_{i=1}^{n_{s}}C_{i}=\frac{p}{R^{}T},
 \]
 
 \end_inset
 
-is utilized in various reactions,
+is utilized in 
+\change_deleted 2012671230 1752779758
+various
+\change_inserted 2012671230 1752779807
+the evaluation of many
+\change_unchanged
+ reaction
+\change_inserted 2012671230 1752779753
+ rates
+\change_deleted 2012671230 1752779751
+s
+\change_unchanged
+,
  such as third body reactions with no specified efficiencies.
  In the following sections,
  we assume that the elements of 
@@ -3279,7 +3271,7 @@ is utilized in various reactions,
 
 \change_inserted -88974637 1752262729
 \begin_inset Flex TODO Note (inline)
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -3337,7 +3329,11 @@ where
 \begin_inset Formula $i$
 \end_inset
 
-th species,
+th specie
+\change_deleted 2012671230 1752780011
+s
+\change_unchanged
+,
  
 \begin_inset Formula $R_{i}=R/W_{i}$
 \end_inset
@@ -3347,12 +3343,38 @@ th species,
 \begin_inset Formula $T_{\mathrm{ref}}$
 \end_inset
 
- is the reference temperature (298.15 K),
+ is the reference temperature (29
+\change_deleted 2012671230 1752780942
+8.15
+\change_inserted 2012671230 1752780942
+8
+\change_unchanged
+ K),
  
 \begin_inset Formula $h_{\mathrm{ref},i}$
 \end_inset
 
- is the reference-state species formation enthalpy,
+ is the reference-state 
+\change_inserted 2012671230 1752780010
+enthalpy of formation of 
+\change_unchanged
+specie
+\change_inserted 2012671230 1752780026
+ 
+\begin_inset Formula $i$
+\end_inset
+
+
+\change_deleted 2012671230 1752780043
+s formation enthalpy
+\change_inserted 2012671230 1752780031
+ evaluated as 
+\begin_inset Formula $h_{ref,i}=h_{i}\left(T_{ref}\right)$
+\end_inset
+
+
+\change_unchanged
+,
  and 
 \begin_inset Formula $c_{p,i}$
 \end_inset
@@ -3361,7 +3383,11 @@ th species,
 \begin_inset Formula $i$
 \end_inset
 
-th species.
+th specie
+\change_deleted 2012671230 1752780052
+s
+\change_unchanged
+.
  
 \begin_inset Formula $c_{p,i}$
 \end_inset
@@ -3378,7 +3404,17 @@ c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k},\label{eq:specific_heat_polynomial}
 
 \end_inset
 
-which is based on but not equivalent to the NASA coefficients
+which is based on but not equivalent to the NASA 
+\change_inserted 2012671230 1752780079
+n-
+\change_unchanged
+coefficient
+\change_inserted 2012671230 1752780101
+ polynomial parametrization
+\change_deleted 2012671230 1752780086
+s
+\change_unchanged
+
 \begin_inset space ~
 \end_inset
 
@@ -3391,36 +3427,7 @@ literal "false"
 \end_inset
 
 .
- 
-\change_deleted -88974637 1752587553
-
-\begin_inset Flex PDF-Markup
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted 2012671230 1752354431
-I added some stuff.
- 
-\change_unchanged
-For efficiency purposes
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-you can also mention differentiability
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-For differentiability and computational efficiency
+ For differentiability and computational efficiency
 \change_deleted -88974637 1752587547
  purposes
 \change_unchanged
@@ -3445,7 +3452,15 @@ nolink "false"
 
 \end_inset
 
- then yields the following relationships:
+ 
+\change_deleted 2012671230 1752780408
+then
+\change_unchanged
+ yields 
+\change_deleted 2012671230 1752780144
+the following relationships:
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -3457,27 +3472,46 @@ h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n
 \end_inset
 
 
+\change_inserted 2012671230 1752780135
+and
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-RT=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k},\label{eq:internal-energy-polynomial}
+u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-RT=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
 \end{equation}
 
 \end_inset
 
-Here we target 
-\begin_inset Formula $h_{i}(T=298.15\text{K})$
+Here
+\change_inserted 2012671230 1752780451
+,
+
+\change_unchanged
+ we 
+\change_deleted 2012671230 1752780430
+target
+\change_inserted 2012671230 1752780431
+use
+\change_unchanged
+ 
+\begin_inset Formula $h_{i}(T=298\text{ K})$
 \end_inset
 
- as a standard enthalpy that can be obtained from the existing NASA coefficients,
+ 
+\change_deleted 2012671230 1752780437
+as a standard enthalpy that can be obtained 
+\change_unchanged
+from the existing NASA coefficients,
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-h_{\text{ref},i}=h_{i}(T=298.15)-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298.15\right)^{k+1},\label{eq:enthalpy-adjustment}
+h_{\text{ref},i}=h_{i}(T=298\text{ K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\text{ K}\right)^{k+1},\label{eq:enthalpy-adjustment}
 \end{equation}
 
 \end_inset
@@ -3559,41 +3593,11 @@ a monomial basis for polynomials of degree
 \change_deleted -88974637 1752588087
 which
 \change_unchanged
- can then be simply contracted with the respective 
-\change_deleted -88974637 1752588116
-array
-\change_inserted -88974637 1752588116
-
-\begin_inset Flex PDF-Markup
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752588122
-array
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752588125
-array or vector?
+ can then be
+\change_deleted 2012671230 1752780532
+ simply
 \change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
- of coefficients;
+ contracted with a vector of coefficients;
  for example,
  
 \begin_inset Formula $u_{i}=\left<A_{i},T_{n_{p}+1}\right>$
@@ -3622,7 +3626,7 @@ with
  given by
 \begin_inset Formula 
 \begin{equation}
-s_{i}=s_{i}^{o}-R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}},\quad s_{i}^{o}=s_{\mathrm{ref},i}^{o}+\int_{T_{\mathrm{ref}}}^{T}\frac{c_{p,i}(\tau)}{\tau}d\tau,\label{eq:species-entropy-definition}
+s_{i}=s_{i}^{o}-R\log\frac{p_{i}}{p_{\mathrm{ref}}},\quad s_{i}^{o}=s_{\mathrm{ref},i}^{o}+\int_{T_{\mathrm{ref}}}^{T}\frac{c_{p,i}(\tau)}{\tau}d\tau,\label{eq:species-entropy-definition}
 \end{equation}
 
 \end_inset
@@ -3631,8 +3635,37 @@ where
 \begin_inset Formula $s_{\mathrm{ref},i}^{o}$
 \end_inset
 
- is the species formation entropy at the reference temperature and reference pressure (usually 
-\begin_inset Formula $P_{\mathrm{ref}}=1\text{ atm}$
+ is the species
+\change_deleted 2012671230 1752780877
+ formation
+\change_unchanged
+ entropy
+\change_inserted 2012671230 1752780880
+ of formation
+\change_deleted 2012671230 1752780900
+ at
+\change_unchanged
+ 
+\change_deleted 2012671230 1752780836
+the reference temperature
+\change_inserted 2012671230 1752780863
+from the NASA n-coefficient polynomial parametrization evaluated at 
+\begin_inset Formula $T=298$
+\end_inset
+
+ K,
+
+\change_unchanged
+ and 
+\change_inserted 2012671230 1752781038
+
+\begin_inset Formula $p_{ref}$
+\end_inset
+
+ is the 
+\change_unchanged
+reference pressure (usually 
+\begin_inset Formula $p_{\mathrm{ref}}=1\text{ atm}$
 \end_inset
 
 ),
@@ -3640,19 +3673,35 @@ where
 \begin_inset Formula $s_{i}^{o}$
 \end_inset
 
- denotes the species entropy at atmospheric pressure,
+ denotes the species entropy at 
+\change_deleted 2012671230 1752781076
+atmospheric
+\change_inserted 2012671230 1752781077
+the reference
+\change_unchanged
+ pressure,
  and 
-\begin_inset Formula $P_{i}=C_{i}R^{0}T$
+\begin_inset Formula $p_{i}=C_{i}R^{}T$
 \end_inset
 
  is the partial pressure.
  The 
-\begin_inset Formula $R_{i}\log\frac{P_{i}}{P_{\mathrm{ref}}}$
+\begin_inset Formula $R\log\frac{p_{i}}{p_{\mathrm{ref}}}$
 \end_inset
 
  term accounts for 
 \change_inserted -88974637 1752588574
-the case of 
+the 
+\change_deleted 2012671230 1752781106
+case
+\change_inserted 2012671230 1752781107
+effect
+\change_inserted -88974637 1752588574
+ of
+\change_inserted 2012671230 1752781116
+ pressure on entropy
+\change_deleted 2012671230 1752781119
+ 
 \begin_inset Formula $P_{i}\neq P_{\mathrm{ref}}$
 \end_inset
 
@@ -3726,7 +3775,7 @@ nolink "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-s_{i}^{o}=s_{\mathrm{ref},i}^{o}+a_{o}\ln T+\sum_{k=1}^{n_{p}}\frac{a_{ik}}{k}T^{k}=a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k},\label{eq:entropy_polynomial}
+s_{i}^{o}=s_{\mathrm{ref},i}^{o}+a_{i,0}\ln T+\sum_{k=1}^{n_{p}}\frac{a_{ik}}{k}T^{k}=a_{i,o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k},\label{eq:entropy_polynomial}
 \end{equation}
 
 \end_inset
@@ -3783,7 +3832,7 @@ g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-g_{i}=h_{i}-Ts_{i}^{o}=b_{i0}-a_{io}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}}T^{n_{p}+1},\label{eq:gibbs-reformatted}
+g_{i}^{o}=h_{i}-Ts_{i}^{o}=b_{i0}-a_{i,0}T\ln T+\sum_{k=1}^{n_{p}}\left(b_{ik}-d_{i,k-1}\right)T^{k}+b_{i,n_{p}+1}T^{n_{p}+1},\label{eq:gibbs-reformatted}
 \end{equation}
 
 \end_inset
@@ -3794,11 +3843,20 @@ which can be represented as
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-g_{i}=-a_{o}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}.\label{eq:gibbs-polynomial}
+g_{i}^{o}=-a_{i,0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}.\label{eq:gibbs-polynomial}
 \end{equation}
 
 \end_inset
 
+
+\change_inserted 2012671230 1752782643
+Note,
+ the Gibbs free energy,
+ like entropy,
+ has a pressure dependency that is calculated indepent of these thermodynamic fits.
+\end_layout
+
+\begin_layout Standard
 This gives two new temperature 
 \change_deleted 2012671230 1752354819
 monomials
@@ -3849,81 +3907,39 @@ monomials
 \change_inserted 2012671230 1752354825
 vectors
 \change_unchanged
- can then be contracted with the respective 
-\change_deleted -88974637 1752588718
-array
-\change_inserted -88974637 1752588718
-
-\begin_inset Flex PDF-Markup
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752588726
-array
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752588729
-array or vector?
+ can then be contracted with 
+\change_inserted 2012671230 1752782158
+a
+\change_deleted 2012671230 1752782157
+the respective
 \change_unchanged
-
-\end_layout
-
-\end_inset
-
-
+ 
+\change_deleted 2012671230 1752782129
+ 
+\change_inserted 2012671230 1752782131
+vector 
 \change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
- of coefficients,
+of coefficients,
  
 \begin_inset Formula $s_{i}=\left<A_{i},T_{n_{p},\ln T}\right>$
 \end_inset
 
  where 
-\begin_inset Formula $A_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{0})$
+\begin_inset Formula $A_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{i,0})$
 \end_inset
 
  and 
-\begin_inset Formula $g_{i}=\left<A,T_{n_{p}+1,T\ln T}\right>$
+\begin_inset Formula $g_{i}=\left<A_{i},T_{n_{p}+1,T\ln T}\right>$
 \end_inset
 
  where 
-\begin_inset Formula $A_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{0})$
+\begin_inset Formula $A_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{i,0})$
 \end_inset
 
 .
 
-\change_inserted -88974637 1752588902
+\change_deleted 2012671230 1752782272
  
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752588902
-\begin_inset Formula $s_{i}$
-\end_inset
-
- is used for both the actual entropy and the coefficient vector.
- same thing for 
-\begin_inset Formula $g_{i}$
-\end_inset
-
-.
-\end_layout
-
-\end_inset
-
-
 \change_unchanged
 
 \end_layout
@@ -4083,9 +4099,9 @@ Coefficient Description
 
 \begin_layout Plain Layout
 
-\change_inserted -88974637 1752263595
+\change_deleted 2012671230 1752782745
 \begin_inset Flex PDF-Markup
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -4195,7 +4211,7 @@ h_{\text{ref},i}, & k=0
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Formula $h_{\text{ref},i}=h_{i}(T_{ref})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1}$
+\begin_inset Formula $h_{\text{ref},i}=h_{i}(T_{\mathrm{ref}})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1}$
 \end_inset
 
 
@@ -4253,11 +4269,21 @@ h_{\text{ref},i}, & k=0.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific entropy
+Species specific 
+\change_inserted 2012671230 1752782781
+standard 
+\change_unchanged
+entropy
+\change_deleted 2012671230 1752782777
+
 \end_layout
 
 \begin_layout Plain Layout
-at reference pressure,
+
+\change_deleted 2012671230 1752782776
+at reference pressure
+\change_unchanged
+,
  
 \begin_inset Formula $s_{i}^{o}$
 \end_inset
@@ -4271,7 +4297,7 @@ at reference pressure,
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $s_{i}^{o}=a_{o}\ln T+\sum_{k=0}^{n_{p}+1}d_{ik}T^{k}$
+\begin_inset Formula $s_{i}^{o}=a_{i,0}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}$
 \end_inset
 
 
@@ -4300,13 +4326,17 @@ s_{\mathrm{ref},i}^{o} & k=0.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific Gibbs
+Species specific 
+\change_inserted 2012671230 1752782763
+standard 
+\change_unchanged
+Gibbs
 \end_layout
 
 \begin_layout Plain Layout
 free energy,
  
-\begin_inset Formula $g_{i}$
+\begin_inset Formula $g_{i}^{o}$
 \end_inset
 
 
@@ -4318,7 +4348,7 @@ free energy,
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $g_{i}=-a_{i0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}$
+\begin_inset Formula $g_{i}^{o}=-a_{i,0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}$
 \end_inset
 
 
@@ -4355,38 +4385,12 @@ h_{\text{ref},i} & k=0.
 
 \begin_layout Plain Layout
 Summary of polynomial coefficients in ChemGen for thermally perfect species specific relationships.
-\change_inserted -88974637 1752263625
-
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752588953
-Should be consistent about using 
-\backslash
-mathrm or not for the ref subscript.
- Also,
- still a 298 in h_ref
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:Summary-of-polynomial"
 
 \end_inset
 
-
-\change_deleted -88974637 1752588708
-done
-\change_unchanged
 
 \end_layout
 
@@ -4419,46 +4423,21 @@ where the term
 \begin_inset Formula $\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k}$
 \end_inset
 
- can be computed from other conserved variables,
- momentum 
-\begin_inset Formula $\rho v_{k}$
-\end_inset
+ can be computed from other conserved variables.
+ Thus one can directly compute the internal energy at any time
+\change_inserted 2012671230 1752792573
+ as
+\change_deleted 2012671230 1752792567
+ A
+\change_unchanged
 
- and species 
-\begin_inset Formula $v_{k}=\frac{\rho v_{k}}{\sum W_{i}C_{i}}$
-\end_inset
-
-.
- Thus one can directly compute the internal energy at any time:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t}
+\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t}.
 \end{equation}
-
-\end_inset
-
-
-\change_inserted -88974637 1752589018
-
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752589167
-Still TBD,
- but if only temperature formulation is discussed,
- then no need to talk about Newton's method (or can considerably condense).
- If internal energy formulation is discussed,
- I think you can still condense the above (remove the first equation for total energy?
- since e_t is already explicitly defined in previous section).
- 
-\change_unchanged
-
-\end_layout
 
 \end_inset
 
@@ -4467,10 +4446,8 @@ Still TBD,
 
 \begin_layout Standard
 
-\change_deleted -88974637 1752589026
-Newton's method is accurate once converged and can be quite efficient when using exact derivatives,
- especially for scalar functions such as energy as a function of temperature,
- which does not require a linear solve.
+\change_inserted 2012671230 1752792734
+The temperature is determined by a root finding algorithm which iterates via Netwon's method.
  
 \change_unchanged
 The temperature at the 
@@ -4524,7 +4501,7 @@ th iteration.
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{\partial\rho u(T_{k})}{\partial T}=\rho c_{v}\left(T_{k}\right)=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{k,n_{p}+1}}{\partial T}\right>,\label{eq:denominator_for_temp_solve}
+\frac{\partial\rho u(C,T_{k})}{\partial T}=\rho c_{v}\left(C,T_{k}\right)=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{k,n_{p}+1}}{\partial T}\right>,\label{eq:denominator_for_temp_solve}
 \end{equation}
 
 \end_inset
@@ -4533,8 +4510,12 @@ th iteration.
 \change_inserted -88974637 1752589208
 respectively,
  
+\change_deleted 2012671230 1752792848
+with
+\change_inserted 2012671230 1752792849
+where
 \change_unchanged
-with 
+ 
 \end_layout
 
 \begin_layout Standard
@@ -4556,24 +4537,6 @@ and
 
 \end_inset
 
-
-\change_inserted -88974637 1752589221
-
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752589227
-A_i already defined above?
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
 
 \begin_inset Formula $c_{v}$
 \end_inset
@@ -4605,7 +4568,11 @@ c_{v}=c_{p}-R.\label{eq:cv_equation}
 
 \end_inset
 
- In ChemGen,
+
+\change_deleted 2012671230 1752792886
+ 
+\change_unchanged
+In ChemGen,
  Newton's method for computing temperature terminates after five iterations,
  which in our experience is
 \change_deleted 2012671230 1752355032
@@ -4714,7 +4681,7 @@ literal "false"
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{S}\left(y_{f}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right)^{T},\label{eq:reacting-navier-stokes-source-term}
+\mathcal{S}\left(y_{f}\right)=\left(0,\ldots,0,0,\omega_{1},\ldots,\omega_{n_{s}}\right),\label{eq:reacting-navier-stokes-source-term}
 \end{equation}
 
 \end_inset
@@ -4727,7 +4694,11 @@ where
 \begin_inset Formula $i$
 \end_inset
 
-th species,
+th specie
+\change_deleted 2012671230 1752792948
+s
+\change_unchanged
+,
  which satisfies mass conservation:
 \begin_inset Formula 
 \begin{equation}
@@ -4739,11 +4710,15 @@ th species,
 The production rate is computed as
 \begin_inset Formula 
 \[
-\omega_{i}=\sum_{j=1}^{n_{r}}\nu_{ij}q_{j}.
+\omega_{i}=\sum_{j=1}^{n_{r}}\nu_{ij}q_{j},
 \]
 
 \end_inset
 
+
+\change_inserted 2012671230 1752792965
+where 
+\change_unchanged
 
 \begin_inset Formula $n_{r}$
 \end_inset
@@ -4800,7 +4775,7 @@ where
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-K_{j}^{e}=\frac{k_{j}^{f}}{k_{j}^{r}}\rightarrow k_{j}^{r}=\frac{k_{j}^{f}}{K_{j}^{e}}\label{eq:reverse_rate}
+K_{j}=\frac{k_{j}^{f}}{k_{j}^{r}}\rightarrow k_{j}^{r}=\frac{k_{j}^{f}}{K_{j}}\label{eq:reverse_rate}
 \end{equation}
 
 \end_inset
@@ -4808,7 +4783,7 @@ K_{j}^{e}=\frac{k_{j}^{f}}{k_{j}^{r}}\rightarrow k_{j}^{r}=\frac{k_{j}^{f}}{K_{j
 where
 \begin_inset Formula 
 \begin{equation}
-K_{j}^{e}=\exp\left(-\frac{\Delta G_{j}'}{RT}\right)\left(\frac{p_{\mathrm{ref}}}{R^{}T}\right)^{\sum_{i}\nu_{ij}},\label{eq:equilibrium-constant-1}
+K_{j}^{}=\exp\left(-\frac{\Delta G_{j}'}{RT}\right)\left(\frac{p_{\mathrm{ref}}}{R^{}T}\right)^{\sum_{i}\nu_{ij}},\label{eq:equilibrium-constant-1}
 \end{equation}
 
 \end_inset
@@ -4825,23 +4800,15 @@ with
  given as
 \begin_inset Formula 
 \[
-\Delta G_{j}'=\sum_{i=1}^{n_{s}}\nu_{ij}g_{i}.
+\Delta G_{j}'=\sum_{i=1}^{n_{s}}\nu_{ij}g_{i}^{o}.
 \]
 
 \end_inset
 
-For
-\change_deleted -88974637 1752589291
- this
-\change_unchanged
- the term 
-\change_inserted -88974637 1752589311
-
+For the term 
 \begin_inset Formula $\left(\frac{p_{ref}}{RT}\right)^{\sum_{i}\nu_{ij}}$
 \end_inset
 
-
-\change_unchanged
 in
 \begin_inset space ~
 \end_inset
@@ -4857,28 +4824,52 @@ nolink "false"
 
 \end_inset
 
-
-\change_inserted -88974637 1752589318
 ,
-
-\change_unchanged
  ChemGen inspects 
 \begin_inset Formula $\sum_{i}\nu_{ij}$
 \end_inset
 
- and finds the specific power,
- if it is an positive integer 
-\begin_inset Formula $\left(\frac{P_{\mathrm{ref}}}{R^{0}T}\right)$
+ and finds the specific power
+\change_inserted 2012671230 1752793259
+.
+\change_deleted 2012671230 1752793259
+,
+
+\change_unchanged
+ 
+\change_inserted 2012671230 1752793262
+I
+\change_deleted 2012671230 1752793261
+i
+\change_unchanged
+f 
+\change_deleted 2012671230 1752793264
+it
+\change_inserted 2012671230 1752793265
+the power
+\change_unchanged
+ is a
+\change_deleted 2012671230 1752793268
+n
+\change_unchanged
+ positive integer 
+\begin_inset Formula $\left(\frac{p_{\mathrm{ref}}}{R^{}T}\right)$
 \end_inset
 
  is expressed as a series of multiplications,
- ie.
+ 
+\change_deleted 2012671230 1752793367
+ie.
+\change_inserted 2012671230 1752793368
+e.g.
+
+\change_unchanged
  
 \begin_inset Formula $\sum_{i}\nu_{ij}=3$
 \end_inset
 
  gives 
-\begin_inset Formula $\left(\frac{p_{\mathrm{ref}}}{RT}\right)\cdot\left(\frac{p_{\mathrm{ref}}}{RT}\right)\cdot\left(\frac{p_{pref}}{RT}\right)$
+\begin_inset Formula $\left(\frac{p_{\mathrm{ref}}}{RT}\right)\cdot\left(\frac{p_{\mathrm{ref}}}{RT}\right)\cdot\left(\frac{p_{\mathrm{ref}}}{RT}\right)$
 \end_inset
 
  with 
@@ -4886,14 +4877,12 @@ nolink "false"
 \end_inset
 
  precomputed.
-\change_inserted -88974637 1752589667
+\change_deleted 2012671230 1752793378
 
 \begin_inset Flex TODO Note (inline)
-status open
+status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -88974637 1752589692
 Above sentence can be cleaned up.
  Also,
  
@@ -4913,128 +4902,49 @@ e.g.,
 \end_inset
 
 
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
+ 
 \change_unchanged
- Similarly,
+Similarly,
  if 
 \begin_inset Formula $\sum_{i}\nu_{ij}$
 \end_inset
 
- is a negative integer
-\change_inserted -88974637 1752589337
-,
-
-\change_unchanged
- ChemGen 
-\change_deleted -88974637 1752589358
-utilizes a precomputed
-\change_inserted -88974637 1752589359
-precomputes
-\change_unchanged
- 
-\begin_inset Formula $1/p_{ref}$
+ is a negative integer,
+ ChemGen precomputes 
+\begin_inset Formula $1/p_{\mathrm{ref}}$
 \end_inset
 
- and
-\change_inserted -88974637 1752589360
- then
-\change_unchanged
- 
-\change_deleted -88974637 1752589362
-computes
-\change_inserted -88974637 1752589364
-calculates
-\change_unchanged
- the 
-\change_deleted -88974637 1752589464
-products
-\change_inserted -88974637 1752589466
-corresponding power
-\change_unchanged
- of 
+ and then calculates the corresponding power of 
 \begin_inset Formula $RT$
 \end_inset
 
-
-\change_deleted -88974637 1752589469
- according to the power
-\change_unchanged
 ,
- 
-\change_inserted -88974637 1752589474
-e.g.,
-\change_deleted -88974637 1752589473
-ie.
-
-\change_unchanged
+ e.g.,
  
 \begin_inset Formula $\sum_{i}\nu_{ij}=-3$
 \end_inset
 
  gives 
-\begin_inset Formula $\left(1/p_{ref}\right)^{3}\left(RT\right)^{3}$
+\begin_inset Formula $\left(1/p_{\mathrm{ref}}\right)^{3}\left(RT\right)^{3}$
 \end_inset
 
  .
  
-\change_deleted -88974637 1752589485
-
-\begin_inset Flex PDF-Markup
-status collapsed
-
-\begin_layout Plain Layout
-is precomputed and a series of multiplication are carried in a similar manner
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-grammar for this sentence
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-.
- 
-\change_unchanged
-This 
-\change_deleted -88974637 1752589523
-removes the need to
-\change_inserted -88974637 1752589527
-circumvents
-\change_unchanged
- use 
-\change_inserted -88974637 1752589530
-of 
-\change_unchanged
-the 
-\change_deleted -88974637 1752589540
-power function
-\change_inserted -88974637 1752589540
-
+\change_deleted 2012671230 1752793424
+This circumvents use of the 
 \begin_inset Flex PDF-Markup
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -88974637 1752589544
 power function
 \begin_inset Argument post:1
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -88974637 1752589550
 more sophisticated way to refer to 
 \begin_inset Quotes eld
 \end_inset
@@ -5044,58 +4954,30 @@ power function
 \end_inset
 
 ?
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
 
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
 .
- Without code generation
-\change_inserted -88974637 1752589558
-,
-
+ 
 \change_unchanged
- these types of expressions 
-\change_deleted -88974637 1752589614
-are bound to utilizing
-\change_inserted -88974637 1752589616
-require expensive
+Without code generation,
+ these types of expressions require expensive 
+\change_deleted 2012671230 1752793427
+power
+\change_inserted 2012671230 1752793432
+exponentiation
 \change_unchanged
- power functions 
-\change_deleted -88974637 1752589582
-or
-\change_inserted -88974637 1752589582
-and
-\change_unchanged
- possibly if-statements 
-\change_deleted -88974637 1752589597
-that default to multiplication after inspecting the value of 
-\begin_inset Formula $\sum_{i}\nu_{ij}$
-\end_inset
-
-
-\change_unchanged
-.
+ functions and possibly if-statements .
 \end_layout
 
 \begin_layout Standard
-There exist various models for approximating the forward rate 
-\change_deleted -88974637 1752589640
-functions
-\change_inserted -88974637 1752589641
-expressions
-\change_unchanged
-,
+There exist various models for approximating the forward rate expressions,
  
 \begin_inset Formula $k_{j}^{f}$
 \end_inset
@@ -5117,14 +4999,12 @@ nolink "false"
 \end_inset
 
 .
- The 
-\change_deleted -88974637 1752589642
-functions
-\change_inserted -88974637 1752589649
-reaction models
-\change_unchanged
- currently supported by ChemGen are discussed below.
+ The reaction models currently supported by ChemGen are discussed below.
+
+\change_deleted 2012671230 1752793248
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -5150,11 +5030,7 @@ k_{j}^{f}=k_{A,j}^{f}=A_{j}T^{b_{j}}\exp\left(-\frac{E_{j}}{R^{}T}\right),
 \begin_inset Formula $b_{j}$
 \end_inset
 
- is the temperature expon
-\change_deleted -88974637 1752589702
-n
-\change_unchanged
-ent,
+ is the temperature exponent,
  and 
 \begin_inset Formula $E_{j}$
 \end_inset
@@ -5172,11 +5048,7 @@ literal "false"
 \end_inset
 
 .
- In ChemGen
-\change_inserted -88974637 1752589712
-,
-
-\change_unchanged
+ In ChemGen,
  an optimization is made to again avoid the power function.
  Generally,
  
@@ -5184,37 +5056,29 @@ literal "false"
 \end_inset
 
  is not an integer,
-\change_inserted -88974637 1752265069
-;
-
-\change_deleted -88974637 1752265068
- 
-\change_unchanged
-however,
+ however,
  since the 
+\change_deleted 2012671230 1752793748
+
 \begin_inset Formula $\exp$
 \end_inset
 
+
+\change_inserted 2012671230 1752793751
+exponential
+\change_unchanged
  function is unavoidable,
  we can utilize the precomputed 
 \begin_inset Formula $\ln T$
 \end_inset
 
- 
-\change_deleted -88974637 1752589722
-in 
-\begin_inset Formula $y_{c}$
-\end_inset
-
- 
-\change_unchanged
-and insert an additional term in the exponent
+ and insert an additional term in the exponent
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-k_{A,j}^{f}=A_{j}\exp\left(\beta_{j}\ln T-\frac{E_{j}}{R^{}T}\right).
+k_{A,j}^{f}=A_{j}\exp\left(b_{j}\ln T-\frac{E_{j}}{R^{}T}\right).
 \]
 
 \end_inset
@@ -5279,13 +5143,7 @@ nolink "false"
 
 ;
  therefore,
- the prefactor for third-body reactions is incorporated 
-\change_deleted -88974637 1752589765
-with
-\change_inserted -88974637 1752589765
-into
-\change_unchanged
- the Arrenhius expression as
+ the prefactor for third-body reactions is incorporated into the Arrenhius expression as
 \end_layout
 
 \begin_layout Standard
@@ -5296,15 +5154,25 @@ k_{j}^{f}=k_{TB,j}^{f}=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f
 
 \end_inset
 
-which 
-\change_deleted -88974637 1752589782
-will
-\change_inserted -88974637 1752589782
-is
+
+\change_inserted 2012671230 1752793846
+
+\begin_inset Flex TODO Note (inline)
+status open
+
+\begin_layout Plain Layout
+
+\change_inserted 2012671230 1752793856
+Equation number
+\end_layout
+
+\end_inset
+
+ 
 \change_unchanged
- still 
-\change_deleted -88974637 1752589783
-be
+which is still
+\change_deleted 2012671230 1752793828
+ 
 \change_unchanged
  attributed to the second term in 
 \begin_inset space ~
@@ -5330,10 +5198,6 @@ nolink "false"
 \end_inset
 
  from
-\change_deleted -88974637 1752265118
- 
-\change_unchanged
-
 \begin_inset space ~
 \end_inset
 
@@ -5349,59 +5213,59 @@ nolink "false"
 \end_inset
 
 .
-\change_inserted -88974637 1752589806
-
 \begin_inset Flex TODO Note (inline)
-status open
+status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -88974637 1752589810
 Wording of above sentence.
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
  An additional optimization is made during the code generation process for the 
 \begin_inset Formula $\alpha_{ij}$
 \end_inset
 
  terms.
- The efficiencies always default 
-\change_deleted -88974637 1752589827
-to one,
-
+ The 
+\change_inserted 2012671230 1752794056
+established convention is that the 
+\change_unchanged
+efficiencies always default
+\change_deleted 2012671230 1752793828
+ 
 \change_unchanged
  
 \begin_inset Formula $\alpha_{ij}=1$
 \end_inset
 
-,
- so for any species without a
-\change_inserted -88974637 1752589845
-n explicitly prescribed
-\change_deleted -88974637 1752589842
- specific
-\change_unchanged
- efficiency
-\change_inserted -88974637 1752589847
+
+\change_inserted 2012671230 1752794060
+.
+\change_deleted 2012671230 1752794059
 ,
 
 \change_unchanged
+ 
+\change_deleted 2012671230 1752794063
+so for
+\change_inserted 2012671230 1752794096
+Therefore,
+ for
+\change_unchanged
+ any species without an explicitly prescribed efficiency,
  the 
 \begin_inset Formula $\left(\alpha_{ij}-1\right)C_{i}$
 \end_inset
 
- term can be removed.
- This avoids possibly repetitive
-\change_deleted 2012671230 1752356481
- 
+ term 
+\change_deleted 2012671230 1752794102
+can be removed.
+\change_inserted 2012671230 1752794450
+is removed during code generation.
+
 \change_unchanged
- work to determine the efficiency from a sum of products of all species to a sum of products of all species with 
+ This avoids possibly repetitive work to determine the efficiency from a sum of products of all species to a sum of products of all species with 
 \begin_inset Formula $\alpha_{ij}\ne1$
 \end_inset
 
@@ -5410,17 +5274,12 @@ n explicitly prescribed
 \end_inset
 
 .
-
-\change_deleted -88974637 1752265174
- 
-\change_inserted -88974637 1752265174
+\change_deleted 2012671230 1752793901
 
 \begin_inset Flex PDF-Markup
-status open
+status collapsed
 
 \begin_layout Plain Layout
-
-\change_inserted -88974637 1752265179
 avoiding extra work to determine the efficiency from a sum of products of all species to a sum of products of all species with 
 \begin_inset Formula $\alpha_{ij}\ne1$
 \end_inset
@@ -5435,17 +5294,11 @@ avoiding extra work to determine the efficiency from a sum of products of all sp
 status open
 
 \begin_layout Plain Layout
-
-\change_inserted -88974637 1752265184
 wording - split up into another sentence?
-\change_unchanged
-
 \end_layout
 
 \end_inset
 
-
-\change_unchanged
 
 \end_layout
 
@@ -5525,48 +5378,13 @@ P_{r}=\frac{k_{A,0,j}}{k_{A,\infty,j}}\left(M_{c}+\sum_{i=1}^{n_{s}}\left(\alpha
 \end_inset
 
 The same optimization for efficiencies can be made as in the third-body prefactor.
- 
-\change_deleted -88974637 1752592589
-Different
-\change_inserted -88974637 1752592589
-Various
-\change_unchanged
- falloff reactions exist where the only difference is in the function 
+ Various falloff reactions exist where the only difference is in the function 
 \begin_inset Formula $F$
 \end_inset
 
 ,
  known as the broadening term,
- 
-\change_deleted -88974637 1752592658
-
-\begin_inset Flex PDF-Markup
-status collapsed
-
-\begin_layout Plain Layout
-There is a family different falloff functions which all revolve in a different way to approximate 
-\begin_inset Formula $F$
-\end_inset
-
-,
- known as the broadening term
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-confusing wording
-\end_layout
-
-\end_inset
-
- Changed.
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-,
+ ,
  which we outline below,
  the simplest being 
 \begin_inset Formula $F=1$
@@ -5666,7 +5484,17 @@ literal "false"
 \begin_inset Formula $F$
 \end_inset
 
- is replaced entirely by
+ is 
+\change_deleted 2012671230 1752794742
+replaced
+\change_inserted 2012671230 1752794744
+represented
+\change_unchanged
+ 
+\change_deleted 2012671230 1752794732
+entirely
+\change_unchanged
+ by
 \end_layout
 
 \begin_layout Standard
@@ -5740,7 +5568,7 @@ An additional complexity is that multiple rate expressions may be given at the s
 
 \change_unchanged
  the 
-\begin_inset Formula $\log p_{i}$
+\begin_inset Formula $\ln p_{i}$
 \end_inset
 
  
@@ -5903,7 +5731,11 @@ status open
 
 \end_inset
 
-which requires seven boolean conditionals be checked,
+which requires seven boolean conditionals 
+\change_inserted 2012671230 1752794893
+to 
+\change_unchanged
+be checked,
  
 \begin_inset Formula $p\leq0.1$
 \end_inset
@@ -5953,7 +5785,11 @@ which requires seven boolean conditionals be checked,
 \end_inset
 
  is pre-calculated before traversing over the booleans,
- where its value is checked against the pre-calculated 
+ where its value is checked against 
+\change_deleted 2012671230 1752794913
+the
+\change_unchanged
+ pre-calculated 
 \begin_inset Formula $\ln p_{i}$
 \end_inset
 
@@ -6184,27 +6020,7 @@ nolink "false"
 
 \end_inset
 
- reduces to an ordinary differential equation,
-\change_inserted -88974637 1752266471
-
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752592815
-The above can use some additional,
- slightly more technical explanation and more sophisticated wording.
- Maybe a separate (brief) subsection on operator splitting
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
+ reduces to an ordinary differential equation
 \end_layout
 
 \begin_layout Standard
@@ -6242,79 +6058,96 @@ and by inspecting the source term,
 
 \end_inset
 
-the state can be reduced to be purely concentration based for time-split algorithms:
+and analyzing the time rate of change of the internal energy,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\partial\rho u}{\partial t}=\frac{\partial\rho u}{\partial T}\frac{\partial T}{\partial t}+\sum_{i=1}^{n_{s}}\frac{\partial\rho u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}=0\rightarrow\frac{\partial T}{\partial t}=\omega_{T}=-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{c_{v}},\label{eq:temperature_source}
+\end{equation}
+
+\end_inset
+
+
+\change_deleted 2012671230 1752799091
+The
+\change_inserted 2012671230 1752799094
+yields the
+\change_unchanged
+ 
+\change_deleted 2012671230 1752799339
+final
+\change_unchanged
+ chemical evolution system
+\change_deleted 2012671230 1752799097
+ is now
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
 \begin{array}{ccc}
-\frac{dy}{dt}=S\left(y\right); & y=\left(C_{1},\ldots,C_{n_{s}}\right); & S\left(y\right)=\left(\omega_{1},\ldots,\omega_{n_{s}}\right)^{}.\end{array}\label{eq:extracted_problem}
+\frac{dy_{c}}{dt}=S\left(y_{c}\right); & y_{c}=\left(T,C_{1},\ldots,C_{n_{s}}\right); & S\left(y_{c}\right)=\left(\omega_{T},\omega_{1},\ldots,\omega_{n_{s}}\right).\end{array}\label{eq:extracted_problem-1}
 \end{equation}
 
 \end_inset
 
 In this section we will cover some techniques implemented in ChemGen to integrate this state in time.
- Isolating the source term as a system of ODEs allows the stiffness of the problem,
- which comes from disparate time scales between slow and fast chemical reactions,
- to be addressed more effectively but can introduce time-splitting errors.
+
+\change_inserted 2012671230 1752799385
+ 
+\change_deleted 2012671230 1752799392
+ 
+\change_unchanged
+Isolating the source term as a system of ODEs allows the stiffness of the problem,
+ which comes from disparate time scales between slow and fast chemical reactions.
+ However,
+ these approaches can introduce errors due to time-splitting.
 \end_layout
 
 \begin_layout Standard
-For the compressible time-split integration approaches provided by ChemGen the source term is
-\change_inserted 2012671230 1752360493
- either
+For the 
+\change_deleted 2012671230 1752799419
+compressible
 \change_unchanged
- calculated utilizing a global 
-\begin_inset Formula $\rho u$
-\end_inset
+ time-split integration approaches provided by ChemGen
+\change_inserted 2012671230 1752795126
+,
 
+\change_unchanged
  
-\change_inserted 2012671230 1752360526
-or an evolving 
+\change_deleted 2012671230 1752799417
+the source term is calculated utilizing a an evolving 
 \begin_inset Formula $T$
 \end_inset
 
- as part of the 
-\change_deleted 2012671230 1752360530
-and the 
-\change_unchanged
-derived chemical state,
+ as part of the derived chemical state,
  
 \begin_inset Formula $y_{c}$
 \end_inset
 
 ,
- 
-\change_deleted 2012671230 1752360532
-was
-\change_inserted 2012671230 1752360533
-which is
-\change_unchanged
- used to produce 
-\begin_inset Formula $S\left(y\right)$
+ which is used to produce 
+\begin_inset Formula $S\left(y_{c}\right)$
 \end_inset
 
 
-\change_inserted -88974637 1752266542
-
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752266560
-not necessarily true anymore with temperature evolution equation
-\change_unchanged
-
-\end_layout
-
+\change_inserted 2012671230 1752799417
+ we replace 
+\begin_inset Formula $y$
 \end_inset
 
+ with 
+\begin_inset Formula $y_{c}$
+\end_inset
 
-\change_unchanged
 .
- Appendix 
+ 
+\change_unchanged
+Appendix 
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "subsec:Constant-Pressure-Strategy"
@@ -6330,7 +6163,11 @@ nolink "false"
 \end_inset
 
 .
+
+\change_deleted 2012671230 1752799417
  
+\change_unchanged
+
 \end_layout
 
 \begin_layout Subsection
@@ -6346,7 +6183,11 @@ ChemGen provides a Runge-Kutta 4th-order method (RK4) for integrating the chemic
 \begin_inset Formula $y^{n+1}$
 \end_inset
 
- over an time interval of 
+ over a
+\change_deleted 2012671230 1752795266
+n
+\change_unchanged
+ time interval of 
 \begin_inset Formula $\Delta t$
 \end_inset
 
@@ -6375,7 +6216,11 @@ literal "false"
 \end_inset
 
 .
- Given a current state 
+ Given 
+\change_deleted 2012671230 1752795286
+a current
+\change_unchanged
+ state 
 \begin_inset Formula $y_{n}$
 \end_inset
 
@@ -6384,7 +6229,20 @@ literal "false"
 \end_inset
 
 ,
- the RK4 update to the next state 
+ the RK4
+\change_inserted 2012671230 1752795296
+ method
+\change_unchanged
+ update
+\change_inserted 2012671230 1752795293
+s
+\change_unchanged
+ to the next state
+\change_inserted 2012671230 1752795301
+,
+
+\change_unchanged
+ 
 \begin_inset Formula $y^{n+1}$
 \end_inset
 
@@ -6392,7 +6250,13 @@ literal "false"
 \begin_inset Formula $t^{n+1}$
 \end_inset
 
+
+\change_inserted 2012671230 1752795303
 .
+\change_deleted 2012671230 1752795302
+.
+
+\change_unchanged
  The algorithm is
 \end_layout
 
@@ -6452,23 +6316,29 @@ Although explicit methods like RK4 offer high accuracy,
 \begin_inset Formula $y^{n+1}$
 \end_inset
 
+
+\change_deleted 2012671230 1752795424
 ,
  the state at time step 
 \begin_inset Formula $n+1$
 \end_inset
 
 ,
+
+\change_unchanged
  that satisfies
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\frac{y^{n+1}-y^{n}}{\Delta t}=S\left(y^{n+1}\right),\label{eq:Backward_euler}
+\frac{y^{n+1}-y^{n}}{\Delta t}=S\left(y^{n+1}\right).\label{eq:Backward_euler}
 \end{equation}
 
 \end_inset
 
+
+\change_deleted 2012671230 1752795484
 where 
 \begin_inset Formula $y^{n}$
 \end_inset
@@ -6478,6 +6348,8 @@ where
 \end_inset
 
 .
+
+\change_unchanged
  Newton's method can be used to find 
 \begin_inset Formula $y^{n+1}$
 \end_inset
@@ -6542,13 +6414,17 @@ th Newton iteration.
 \begin_inset Formula $\mathcal{G}\left(y_{k}^{n+1}\right)$
 \end_inset
 
- is the Jacobian given by
+ is the Jacobian
+\change_inserted 2012671230 1752795879
+ for the time integration
+\change_unchanged
+ given by
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-\mathcal{G}\left(y_{k}^{n+1}\right)_{ij}=\mathcal{D}_{ij}-\mathcal{J}_{ij},\quad\mathcal{J}_{ij}=\frac{\partial\omega_{i}\left(y_{k}^{n+1}\right)}{\partial C_{j}},\label{eq:jacobian}
+\mathcal{G}\left(y_{k}^{n+1}\right)_{ij}=\frac{\partial f(y_{k,i}^{n+1})}{\partial y_{j}}=\mathcal{D}_{ij}-\mathcal{J}_{ij},\quad\mathcal{J}_{ij}=\frac{\partial\omega_{i}\left(y_{k}^{n+1}\right)}{\partial C_{j}},\label{eq:jacobian}
 \end{equation}
 
 \end_inset
@@ -6557,7 +6433,11 @@ where
 \begin_inset Formula $\mathcal{D}_{ij}$
 \end_inset
 
- depends onthe time integration scheme (
+ depends on
+\change_inserted 2012671230 1752795783
+ 
+\change_unchanged
+the time integration scheme (
 \begin_inset Formula $\mathcal{D}_{ij}=\delta_{ij}/\Delta t$
 \end_inset
 
@@ -6569,91 +6449,13 @@ where
 \end_layout
 
 \begin_layout Standard
-Chemgen employs analytical differentiation for Equation
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:jacobian"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- in singular 
+ChemGen employs analytical differentiation to evaluate the chemical source term Jacobian,
+ 
 \begin_inset Formula $\mathcal{J}_{ij}$
 \end_inset
 
- matrices that are generated to include optimizations to only compute necessary components for efficient Jacobian assimilation.
-\change_inserted -88974637 1752592867
-
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752592881
-Wording of above sentence.
- Also,
- wouldn't use 
-\begin_inset Quotes eld
-\end_inset
-
-singular
-\begin_inset Quotes erd
-\end_inset
-
- here
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
- For the
-\change_inserted -88974637 1752269438
-
-\begin_inset Flex PDF-Markup
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752269441
-internal energy formulation
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752269461
-I think the internal energy and temperature formulation should be described above in a separate subsection
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_inserted 2012671230 1752360943
- I'll come up with two options.
- 1) we introduce it up front,
- 2) we keep it like it is and add it here.
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-,
- the elements of the Jacobian are
+.
+ The code generation is optimized to compute only necessary components for efficient matrix assimilation.The elements of the chemical source term Jacobian are
 \end_layout
 
 \begin_layout Standard
@@ -6672,90 +6474,12 @@ where
 
 \end_inset
 
-
-\change_deleted -88974637 1752593114
-The Jacobian in Equation 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:temperature_wrt_species"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- removes any possibility of sparsity,
- which is an appealing property that can be computationally optimized by knowing where 
-\begin_inset Formula $\mathcal{J}_{ij}\equiv0$
-\end_inset
-
- for specific 
-\begin_inset Formula $i$
-\end_inset
-
- and 
-\begin_inset Formula $j$
-\end_inset
-
- elements.
- 
-\begin_inset Formula $\mathcal{J}_{ij}$
-\end_inset
-
- also requires 
-\begin_inset Formula $n_{s}$
-\end_inset
-
- of 
-\begin_inset Formula $n_{s}$
-\end_inset
-
- contractions with 
-\begin_inset Formula $\frac{\partial\omega_{i}}{\partial T}$
-\end_inset
-
-.
-
-\change_unchanged
- ChemGen provides a 
-\change_deleted -88974637 1752602974
-more sparse
-\change_inserted -88974637 1752602974
-
-\begin_inset Flex PDF-Markup
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752602981
-more sparse
-\begin_inset Argument post:1
-status open
-
-\begin_layout Plain Layout
-
-\change_inserted -88974637 1752602999
-I think we should only mention sparsity at the end of this subsection in a separate sentence or two
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
-\change_unchanged
- Jacobian by utilizing a nonconservative formulation based on temperature evolution by extracting a source term on temperature,
+ChemGen provides a Jacobian by utilizing a nonconservative formulation based on temperature evolution by extracting a source term on temperature,
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted 2012671230 1752798597
 \begin_inset Formula 
 \begin{equation}
 \frac{\partial\rho u}{\partial t}=\frac{\partial\rho u}{\partial T}\frac{\partial T}{\partial t}+\sum_{i=1}^{n_{s}}\frac{\partial\rho u}{\partial C_{i}}\frac{\partial C_{i}}{\partial t}=0\rightarrow\frac{\partial T}{\partial t}=\omega_{T}=-\frac{\sum_{i=1}^{n_{s}}W_{i}u_{i}\omega_{i}}{c_{v}}.\label{eq:temperature_source}
@@ -6763,8 +6487,6 @@ I think we should only mention sparsity at the end of this subsection in a separ
 
 \end_inset
 
-
-\change_inserted -88974637 1752593156
 
 \begin_inset Flex TODO Note (inline)
 status open
@@ -6780,18 +6502,16 @@ Wording of above sentence.
 
 \end_inset
 
-
-\change_unchanged
 The 
 \change_deleted -88974637 1752593230
 state
-\change_inserted -88974637 1752593230
-system
-\change_unchanged
- is now
+\change_deleted 2012671230 1752798597
+system is now
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted 2012671230 1752798597
 \begin_inset Formula 
 \begin{equation}
 \begin{array}{ccc}
@@ -6800,6 +6520,8 @@ system
 
 \end_inset
 
+
+\change_unchanged
 with an 
 \begin_inset Formula $n_{s}+1\times n_{s}+1$
 \end_inset
@@ -6843,10 +6565,10 @@ and
 \end_inset
 
 
-\change_inserted -88974637 1752593255
+\change_deleted 2012671230 1752796252
 
 \begin_inset Flex TODO Note (inline)
-status open
+status collapsed
 
 \begin_layout Plain Layout
 
@@ -6861,6 +6583,8 @@ Do you want to mention that we can ignore third-body and pressure dependence?
 
 \end_inset
 
+
+\change_inserted -88974637 1752593255
 
 \end_layout
 
@@ -7016,7 +6740,13 @@ nolink "false"
  chemical integration may proceed on the order of microseconds.
  In contrast,
  fully compressible solvers may require time steps as small as nanoseconds or even less,
- in which casea lower-order but computationally faster time integrator may be more suitable.
+ in which case
+\change_inserted 2012671230 1752796309
+ a
+\change_deleted 2012671230 1752796307
+a 
+\change_unchanged
+lower-order but computationally faster time integrator may be more suitable.
 
 \change_deleted 2012671230 1752361055
  
@@ -7457,14 +7187,20 @@ nolink "false"
 \end_layout
 
 \begin_layout Standard
-Other time integration strategies not yet implemented in ChemGen can certainly be added using the same framework as the existing methods.
+Other time integration strategies not yet implemented in ChemGen can
+\change_deleted 2012671230 1752796354
+ certainly
+\change_unchanged
+ be added using the same framework as the existing methods.
  These include,
  but are not limited to,
  multi-step implicit methods such as backward differentiation formulas,
  which utilize information from previous time steps,
  and higher-order Rosenbrock 
+\change_deleted 2012671230 1752796348
+
 \begin_inset Flex PDF-Markup
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Rosenbroc
@@ -7490,7 +7226,9 @@ Rosenbrock
 
 \end_inset
 
- methods 
+ 
+\change_unchanged
+methods 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha14"
@@ -7646,17 +7384,13 @@ The order of operations needed for GMRES is
 \end_layout
 
 \begin_layout Standard
-The number of GMRES iterations can be reduced by applying a preconditioner
-\change_inserted -88974637 1752603032
-,
+The number of GMRES iterations can be reduced by applying a preconditioner,
  
 \begin_inset Formula $M$
 \end_inset
 
 ,
- as
-\change_unchanged
- 
+ as 
 \begin_inset Formula 
 \begin{equation}
 M^{-1}Ax=M^{-1}b.\label{eq:matrix_example_preconditioner}
@@ -7664,88 +7398,39 @@ M^{-1}Ax=M^{-1}b.\label{eq:matrix_example_preconditioner}
 
 \end_inset
 
+ChemGen provides two standard options:
 
-\change_deleted -88974637 1752603114
-to improve the conditioning of the linear system.
+\change_deleted 2012671230 1752796428
  
 \change_unchanged
-ChemGen provides two standard 
-\change_deleted -88974637 1752603173
-preconditioners
-\change_inserted -88974637 1752603173
-options
-\change_unchanged
-:
+ Jacobi preconditioning and
+\change_deleted 2012671230 1752796428
  
-\change_deleted -88974637 1752603175
-the
 \change_unchanged
- Jacobi precondition
-\change_inserted -88974637 1752603177
-ing
-\change_deleted -88974637 1752603177
-er
-\change_unchanged
- and 
-\change_deleted -88974637 1752603178
-the
-\change_unchanged
- Gauss-Seidel precondition
-\change_inserted -88974637 1752603180
-ing
-\change_deleted -88974637 1752603180
-er
-\change_unchanged
-.
- 
-\change_inserted -88974637 1752603185
-In t
-\change_deleted -88974637 1752603182
-T
-\change_unchanged
-he former
-\change_inserted -88974637 1752603188
-,
+ Gauss-Seidel preconditioning.
+ In the former,
  
 \begin_inset Formula $M$
 \end_inset
 
-
-\change_unchanged
  simply consists of the diagonal of 
 \begin_inset Formula $A$
 \end_inset
 
 ,
  which can be efficiently inverted by computing the reciprocal of each diagonal entry.
- 
-\change_inserted -88974637 1752603212
-In t
-\change_deleted -88974637 1752603211
-T
-\change_unchanged
-he latter
-\change_inserted -88974637 1752603218
-,
+ In the latter,
  
 \begin_inset Formula $M$
 \end_inset
 
-
-\change_unchanged
  consists of the lower triangular portion of 
 \begin_inset Formula $A$
 \end_inset
 
  (including the diagonal),
  which can be easily applied with forward substitution.
- For more advanced precondition
-\change_inserted -88974637 1752603243
-ing techniques
-\change_deleted -88974637 1752603242
-ers
-\change_unchanged
- used in chemical kinetics,
+ For more advanced preconditioning techniques used in chemical kinetics,
  see,
  for example,
  
@@ -7757,22 +7442,6 @@ literal "false"
 \end_inset
 
 .
-\begin_inset Flex TODO Note (inline)
-status open
-
-\begin_layout Plain Layout
-I would write out the preconditioned linear system here and be a little more technical when it comes to the preconditioner.
-
-\change_inserted 2012671230 1752361331
- Let's keep that on backburner?
- Wait for reviewers/go for PROCI?
-\change_unchanged
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
