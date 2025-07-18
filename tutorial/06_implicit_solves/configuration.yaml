@@ -77,8 +77,8 @@ build:
 
 solver:
   chemistry_solver: all
-  linear_solver: gmres
-  preconditioner: custom
+  linear_solver: direct
+  preconditioner: none
   eigen: on
-  eigen_sparse: on
+  eigen_sparse: off
   fixed_jacobian: off
