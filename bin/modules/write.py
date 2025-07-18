@@ -37,16 +37,6 @@ using Triplet_ = Eigen::Triplet<{scalar}>;""".format(**vars(configuration)))
 def array1d_int_text(arr):
     return ','.join(["{e}".format(e=e) for e in arr])
 
-def write_permuted_sparsity_pattern(file, configuration):
-    sp_lu_perm = configuration.sp_lu_perm
-    n = sp_lu_perm.shape[0]
-    text = [None]*n
-    for i in range(n):
-        row = sp_lu_perm[i,:]
-        text[i] = "{" + array1d_int_text(row) + "}"
-    sp_lu_perm_text = ",".join(text)
-    file.write("\nstatic const {jacobian} sp_lu_perm = {{ {{ {sp_lu_perm_text} }} }};".format(**vars(configuration), sp_lu_perm_text=sp_lu_perm_text))
-
 def write_permutation_indices(file, configuration):
     if configuration.eigen:
         # how to initialize static matrix - https://stackoverflow.com/questions/31549398/c-eigen-initialize-static-matrix
