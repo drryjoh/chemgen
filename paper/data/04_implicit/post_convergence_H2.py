@@ -43,7 +43,7 @@ for k, data_name in enumerate(["sdirk4","rosenbroc","yass"]):
     shift =0.30
 
 
-    plt.semilogy(refinement_levels[::-1], CL2/scales[k], 's-', color=colors[k], label=f'$L_{{2,h}}(C)$ for {titles[k]}', mfc="white")
+    plt.semilogy(refinement_levels[::-1], CL2/scales[k], 's-', color=colors[k], label=f'$\epsilon_{{2}}$ for {titles[k]}', mfc="white")
     if data_name=="yass":
         plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift) * (0.5)**(refinement_levels - 1)/scales[k], '--', color=colors[k], label=f'1st-order reference')
     elif data_name=="sdirk4":
@@ -52,7 +52,7 @@ for k, data_name in enumerate(["sdirk4","rosenbroc","yass"]):
         plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift)  * (0.25)**(refinement_levels - 1)/scales[k], '--', color=colors[k], label=f'2nd-order reference')
     # Formatting
     plt.xlabel("$h$")
-    plt.ylabel(f"$L_{{2,h}}(C)$")
+    plt.ylabel("$\epsilon_{h}$")
     #plt.title("Convergence of Temperature and Species")
     #plt.xticks(range(1, len(CL2) + 1))  # <- only show 1, 2, 3, 4, ...
     refinement_levels = np.arange(len(CL2))  # 0, 1, 2, 3, ...
