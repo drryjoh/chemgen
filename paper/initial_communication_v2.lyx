@@ -1798,6 +1798,10 @@ literal "false"
  The governing equations,
  typically the Navier-Stokes equations,
  are discretized in space using approaches such as finite volume
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Pat80,Ver07,Mou16"
@@ -1807,6 +1811,10 @@ literal "false"
 
 ,
  finite difference
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "LeV07"
@@ -1816,6 +1824,10 @@ literal "false"
 
 ,
  and finite element schemes
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Don03,Zie05"
@@ -1835,7 +1847,11 @@ Developing robust CFD software is difficult due to computational challenges such
  and managing complex geometries.
  Additionally,
  there are significant numerical issues,
- such as preserving stability 
+ such as preserving stability
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Kar94,Abg96,Bil03,Lv15,Lv17,Joh20,Chi22,Chi22_2"
@@ -1899,6 +1915,10 @@ The original five state variables are reduced by one since total density can be 
 \end_inset
 
 
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lu09"
@@ -1923,6 +1943,10 @@ literal "false"
 
  consists of 10 chemical species and 17 reactions,
  while the FFCM-2 model for simple hydrocarbons (up to four carbons per chemical species) comprises 96 species and 1054 reactions
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -2008,6 +2032,10 @@ There are several approaches to integrate these features.
 \begin_layout Enumerate
 Adapt existing legacy software,
  such as Chemkin
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "chemkin89"
@@ -2029,7 +2057,11 @@ name "enu:chemkin"
 \begin_layout Enumerate
 Use the more widely adopted,
  open-source,
- and actively maintained Cantera 
+ and actively maintained Cantera
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "cantera"
@@ -2077,7 +2109,11 @@ name "enu:software"
 \end_layout
 
 \begin_layout Standard
-Approaches 
+Approaches
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:chemkin"
@@ -2088,7 +2124,11 @@ nolink "false"
 
 \end_inset
 
- and 
+ and
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:cantera"
@@ -2100,7 +2140,11 @@ nolink "false"
 \end_inset
 
  are reasonable choices but present certain challenges.
- With approach 
+ With approach
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:chemkin"
@@ -2114,7 +2158,11 @@ nolink "false"
 ,
  the existing legacy routines may not easily adapt to the specific requirements of the targeted CFD software,
  limiting scalability and complicating code maintenance.
- Regarding approach 
+ Regarding approach
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:cantera"
@@ -2144,7 +2192,11 @@ literal "false"
 \end_inset
 
 ) may hinder compatibility with targeted architectures that developers cannot directly access.
- Using approach 
+ Using approach
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:manual"
@@ -2157,7 +2209,11 @@ nolink "false"
 
  can also introduce challenges;
  it often requires extensive work by developers,
- as the necessary models would need to be built from scratch (further described in Section 
+ as the necessary models would need to be built from scratch (further described in Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "sec:governing_equations"
@@ -2169,7 +2225,11 @@ nolink "false"
 \end_inset
 
 ).
- This work belongs to approach 
+ This work belongs to approach
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "enu:software"
@@ -2188,7 +2248,11 @@ nolink "false"
 Code generation is a well-established concept,
  with a history in chemistry applications.
  There are two publicly available code generators focused on gas-phase combustion:
- PyJac 
+ PyJac
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Nie17"
@@ -2196,7 +2260,11 @@ literal "false"
 
 \end_inset
 
- and Pyrometheus 
+ and Pyrometheus
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Cis25"
@@ -2210,7 +2278,11 @@ literal "false"
  Pyrometheus generates either C++ header files or Python files for gas-phase combustion calculations,
  incorporating several on-the-fly optimizations to enhance scalability for high-performance computing in CFD.
  Additionally,
- KinetiX 
+ KinetiX
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Dan25"
@@ -2227,7 +2299,11 @@ In this work,
  we introduce ChemGen,
  a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++ based codes.
  ChemGen introduces decorators,
- discussed in detail in Section 
+ discussed in detail in Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "sec:Code-Generation"
@@ -2878,23 +2954,6 @@ Finally,
 \end_inset
 
 th species is
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{equation}
-g_{i}=h_{i}-Ts_{i}^{o}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}\right)T=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}-\left(a_{o}T\ln T+\sum_{k=1}^{n_{p}+1}d_{i,k-1}T^{k}\right)\label{eq:gibbs-deriviation}
-\end{equation}
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -2919,7 +2978,7 @@ g_{i}^{o}=-a_{i,0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}.\label{eq:gibbs-polynom
 Note,
  the Gibbs free energy,
  like entropy,
- has a pressure dependency that is calculated indepent of these thermodynamic fits.
+ has a pressure dependency that is calculated indepedent of these thermodynamic fits.
 \end_layout
 
 \begin_layout Standard
@@ -2954,7 +3013,11 @@ This gives two new temperature vectors:
 \end_layout
 
 \begin_layout Standard
-The thermodynamic relationships used by ChemGen are summarized in Table 
+The thermodynamic relationships used by ChemGen are summarized in Table
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "tab:Summary-of-polynomial"
@@ -3473,7 +3536,11 @@ and
 \begin_inset Formula $c_{v}$
 \end_inset
 
- in Equation 
+ in Equation
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:denominator_for_temp_solve"
@@ -3942,7 +4009,7 @@ k_{j}^{f}=k_{TB,j}^{f}=\left(\sum_{i=1}^{n_{s}}\alpha_{ij}C_{i}\right)k_{A,j}^{f
 
 \end_inset
 
-which is still attributed to the second term in 
+which is still attributed to the second term in Rquation 
 \begin_inset space ~
 \end_inset
 
@@ -3965,7 +4032,7 @@ nolink "false"
 \begin_inset Formula $k_{j}^{r}$
 \end_inset
 
- from
+ from Equation
 \begin_inset space ~
 \end_inset
 
@@ -4162,7 +4229,11 @@ SRI broadening
 \end_layout
 
 \begin_layout Standard
-In the SRI 
+In the SRI
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Ste89"
@@ -4207,7 +4278,11 @@ The previous fall-off reaction rates seek to fit between a low-pressure reaction
  some rates have several pressure dependent zones that cannot be accurately represented by a single or two Arrhenius expressions.
  The pressure-dependent Arrhenius rate expression,
  known as the P-log reaction rate,
- was introduced to utilize pressure-dependent reaction rates by logarithmically interpolating between Arrhenius rate expressions at various pressures 
+ was introduced to utilize pressure-dependent reaction rates by logarithmically interpolating between Arrhenius rate expressions at various pressures
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Gou11_b"
@@ -4289,7 +4364,11 @@ with precomputed
 To further elaborate on this rate,
  consider,
  for example,
- the 81st reaction in FFCM2 
+ the 81st reaction in FFCM2
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -4612,6 +4691,10 @@ nolink "false"
 
 .
  Different approaches can be utilized by time-splitting the evolution of the chemical state and retain the stability of the fluid dynamic algorithms
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Str68,Hou11,Lv15,Joh20"
@@ -4756,7 +4839,11 @@ nolink "false"
 .
  is derived using a constant internal energy assumption and thus allows for pressure to change.
  Some systems require a constant pressure assumption.
- Appendix 
+ Appendix
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "subsec:Constant-Pressure-Strategy"
@@ -4808,6 +4895,10 @@ nolink "false"
 
 .
  This explicit time integration scheme approximates the solution by evaluating the source term at four intermediate stages within each time step
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Hai96"
@@ -5114,7 +5205,11 @@ nolink "false"
 
 \end_inset
 
- with formulation details in Appendix 
+ with formulation details in Appendix
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "sec:Algorithms-of-Implicit"
@@ -5539,6 +5634,10 @@ Other time integration strategies not yet implemented in ChemGen can be added us
  multi-step implicit methods such as backward differentiation formulas,
  which utilize information from previous time steps,
  and higher-order Rosenbrock methods 
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha14"
@@ -5549,6 +5648,10 @@ literal "false"
 ,
  which require additional stages.
  Integration methods such as DGODE 
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Joh20"
@@ -5556,7 +5659,11 @@ literal "false"
 
 \end_inset
 
- and CHEMEQ2 
+ and CHEMEQ2
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Mot01"
@@ -5611,6 +5718,10 @@ It is well-established that employing a direct solver requires
 \end_inset
 
  square matrix
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Gol13"
@@ -5626,6 +5737,10 @@ literal "false"
 
  cost,
  its default linear solver is the Generalized Minimal Residual (GMRES) method
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Saa86"
@@ -5682,6 +5797,10 @@ ChemGen provides two standard options:
  see,
  for example,
  
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Wal23"
@@ -5695,7 +5814,11 @@ literal "false"
 \begin_layout Standard
 ChemGen is not intended to serve as a comprehensive linear-solver library.
  For more advanced or scalable linear solver capabilities,
- ChemGen can be interfaced with external libraries such as Eigen 
+ ChemGen can be interfaced with external libraries such as Eigen
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Gue10"
@@ -5703,7 +5826,11 @@ literal "false"
 
 \end_inset
 
- or PETSc 
+ or PETSc
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Bal97"
@@ -5718,6 +5845,10 @@ literal "false"
  backward Euler,
  SDIRK methods),
  offloading the integration of stiff ODE systems to established libraries like CVODES
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Ser05"
@@ -5904,7 +6035,11 @@ texttt{const float
 
 .
  A function annotation may also be desirable,
- such as a preprocessor macro provided the Kokkos library 
+ such as a preprocessor macro provided the Kokkos library
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Tro22"
@@ -6466,6 +6601,10 @@ darrhenius_dtemperature(const double& A,
 
 \begin_layout Standard
 The mechanical differentiation approach is both efficient and more readable than symbolic differentiation using tools such as SymPy
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citet
 key "sympy"
@@ -6478,7 +6617,11 @@ literal "false"
  the mechanical approach is better suited for organizing and maintaining ChemGen’s code generation process.
  Regardless,
  since the functions are available in C++,
- packages such as autodiff 
+ packages such as autodiff
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Lea18"
@@ -6488,7 +6631,11 @@ literal "false"
 
  can be implemented to use a wider variety of differentiable functionality.
  For a mathematical overview of the derivatives needed for chemically reacting flow,
- see 
+ see
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Nie17"
@@ -6510,6 +6657,10 @@ In the ChemGen software,
  The second file type comprises static code files that are ingested by the aforementioned Python code and reformatted to the desired target software using decorators.
  The final type is a mixture of Python code used in tutorials,
  most of which are covered in Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "sec:Results-and-Demonstration"
@@ -6538,7 +6689,11 @@ texttt{yaml}
 \end_layout
 
 \begin_layout Standard
-The code generation process in ChemGen is designed to be as streamlined as possible and is depicted in Figure 
+The code generation process in ChemGen is designed to be as streamlined as possible and is depicted in Figure
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:flowchart"
@@ -6889,6 +7044,10 @@ name "sec:Results-and-Demonstration"
 \begin_layout Standard
 This section presents standalone test cases to confirm that the generated source code is behaving as intended.
  We then embed the generated code in detonationEulerFoam
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -6897,6 +7056,10 @@ literal "false"
 \end_inset
 
  based on the OpenFOAM package
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Ope25"
@@ -6976,6 +7139,10 @@ which is renormalized after all
 
 .
  We consider five different chemical models with increasing size that are common to simulations of chemically reacting flows and summarized in Table 
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:chemical models"
@@ -7074,7 +7241,7 @@ Reference
 \begin_inset Text
 
 \begin_layout Plain Layout
-10
+40
 \end_layout
 
 \end_inset
@@ -7119,7 +7286,7 @@ Burke
 \begin_inset Text
 
 \begin_layout Plain Layout
-10
+27
 \end_layout
 
 \end_inset
@@ -7164,7 +7331,7 @@ GRI-Mech 3.0
 \begin_inset Text
 
 \begin_layout Plain Layout
-10
+325
 \end_layout
 
 \end_inset
@@ -7209,7 +7376,7 @@ UCSD
 \begin_inset Text
 
 \begin_layout Plain Layout
-10
+268
 \end_layout
 
 \end_inset
@@ -7254,7 +7421,7 @@ FFCM-2
 \begin_inset Text
 
 \begin_layout Plain Layout
-10
+1054
 \end_layout
 
 \end_inset
@@ -7484,7 +7651,11 @@ nolink "false"
 \end_inset
 
 ,
- for ChemGen source calculations in comparison to Cantera source calculations for five tested chemical models from Table 
+ for ChemGen source calculations in comparison to Cantera source calculations for five tested chemical models from Table
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:chemical models"
@@ -7549,7 +7720,11 @@ p & = & 101325.0\nonumber \\
 
 \end_inset
 
-We used a hydrogen submodel extracted from FFCM-2 
+We used a hydrogen submodel extracted from FFCM-2
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -7855,33 +8030,6 @@ These perturbations are utilized in the finite difference Jacobian,
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Formula 
-\begin{eqnarray}
-\hat{\mathcal{J}_{ij}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},(\rho u,\hat{C_{j}}^{+})\rightarrow T\right)-\omega_{i}\left(\hat{C_{j}}^{-},(\rho u,\hat{C_{j}}^{-})\rightarrow T\right)}{2\delta C}\label{eq:finite_difference_rho}\\
-\hat{\mathcal{J}_{ij,\delta T=0}} & = & \frac{\omega_{i}\left(\hat{C_{j}}^{+},T\right)-\omega_{i}\left(\hat{C_{j}}^{-},T\right)}{2\delta C}\label{eq:finite_difference_rho_T}\\
-\hat{\mathcal{J}_{ij,T}} & = & \begin{cases}
-\frac{\omega_{T}(C,T+\delta T)-\omega_{T}(C,T-\delta T)}{2\delta T} & j=1\\
-\frac{\omega_{T}(\hat{C_{j-1}}^{+},T)-\omega_{T}(\hat{C_{j-1}}^{-},T)}{2\delta C} & i=1;\quad j>1\\
-\frac{\omega_{i-1}(C,T+\delta T)-\omega_{i-1}(C,T-\delta T)}{2\delta T} & i>1;\quad j=1\\
-\frac{\omega_{i-1}\left(\hat{C_{j-1}}^{+},T\right)-\omega_{i-1}\left(\hat{C_{j-1}}^{-},T\right)}{2\delta C} & i>1;j>1,
-\end{cases}\label{eq:finite_difference_Tevolve}
-\end{eqnarray}
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
 where 
 \begin_inset Formula $\delta_{ij}$
 \end_inset
@@ -7971,6 +8119,10 @@ nolink "false"
 \end_inset
 
  shows the order of convergence for a single random chemical state determined using the UCSD chemical model
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "SanDiegoMech"
@@ -8003,7 +8155,11 @@ literal "false"
 \begin_layout Standard
 Additionally,
  we evaluate the computational cost of the analytical Jacobian relative to their corresponding finite difference approximations.
- Using the same approach to generate random chemical states as described in Equation 
+ Using the same approach to generate random chemical states as described in Equation
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:chemical_state_01"
@@ -8255,7 +8411,11 @@ end{table}
 
 \begin_layout Standard
 Finally,
- Niemeyer et al. 
+ Niemeyer et al.
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Nie17"
@@ -8289,6 +8449,10 @@ Implicit time integration
 \begin_layout Standard
 This section presents results obtained with the implicit time integrators provided by ChemGen,
  motivated by the confirmed accuracy of the source term from Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Source-Term-Accuracy"
@@ -8301,6 +8465,10 @@ nolink "false"
 
 ,
  successful explicit time integration from Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Explicit-Time-Integration"
@@ -8313,6 +8481,10 @@ nolink "false"
 
 ,
  and confidence in the computed source term Jacobian from Section
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Jacobian-Verification"
@@ -8324,7 +8496,11 @@ nolink "false"
 \end_inset
 
 .
- We utilize the FFCM-2 chemical model 
+ We utilize the FFCM-2 chemical model
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -8345,7 +8521,11 @@ p & = & 101325\text{ Pa}\nonumber \\
 
 \end_inset
 
-Figure 
+Figure
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:implicit_homogeneous_reactor"
@@ -8379,6 +8559,10 @@ ReactorNet
 \begin_layout Standard
 The utilized timestep sizes are chosen (via trial and error) to yield the fastest time-to-solution while maintaining reasonable accuracy.
  These are summarized in Table 
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "tab:time_step_and_timings"
@@ -8789,7 +8973,7 @@ To assure the correct implementation of these implicit methods beyond comparison
 \begin_inset Formula 
 \begin{eqnarray}
 T & = & 1800\text{ K}\nonumber \\
-p & = & 101325 Pa\nonumber \\
+p & = & 101325Pa\nonumber \\
 \left(X_{O_{2}},X_{H_{2}},X_{N_{2}}\right) & = & \left(0.2,0.2,0.6\right).\label{eq:chemical_state_04}
 \end{eqnarray}
 
@@ -8856,7 +9040,11 @@ s,
 \end_layout
 
 \begin_layout Standard
-The results of the convergence study are summarized in Figure 
+The results of the convergence study are summarized in Figure
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:convergence_study"
@@ -8905,7 +9093,11 @@ name "fig:convergence_study"
 
 Convergence study for YASS,
  Rosenbroc,
- and SDIRK-4 using a hydrogen submodel extracted from FFCM-2 with initial conditions from Equation 
+ and SDIRK-4 using a hydrogen submodel extracted from FFCM-2 with initial conditions from Equation
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:chemical_state_04"
@@ -8951,7 +9143,11 @@ ChemGen in a detonation simulation
 
 \begin_layout Standard
 To demonstrate the usage of ChemGen in an existing computational framework,
- we targeted the chemistry evaluation in detonationFoam 
+ we targeted the chemistry evaluation in detonationFoam
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -8960,6 +9156,10 @@ literal "false"
 \end_inset
 
  which is based on the OpenFOAM package
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Ope25"
@@ -9003,7 +9203,11 @@ where
 
  is an applied source term.
  For the complete set of conservation equations and additional details on the computational strategy,
- see 
+ see
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -9024,7 +9228,11 @@ literal "false"
 \end_inset
 
 and is held constant during each species equation solve.
- In Equation 
+ In Equation
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:openfom_RR"
@@ -9049,7 +9257,11 @@ nolink "false"
 \begin_inset Formula $\Delta t$
 \end_inset
 
- is the desired fluid time step for integrating Equation 
+ is the desired fluid time step for integrating Equation
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "eq:openfom_fvm"
@@ -9094,6 +9306,10 @@ literal "false"
 
 ,
  the seulex ODE solver
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Hai96"
@@ -9224,7 +9440,11 @@ m (
 \end_inset
 
 -direction.
- We use the AMR default settings from 
+ We use the AMR default settings from
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -9240,7 +9460,11 @@ literal "false"
 
  m.
  We used the slip wall condition for all boundaries.
- We again utilize the hydrogen submodel extracted from FFCM-2 
+ We again utilize the hydrogen submodel extracted from FFCM-2
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
@@ -9285,7 +9509,10 @@ In addition,
 
 -direction.
  In Sun et al.
- 
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Sun23"
@@ -9307,6 +9534,10 @@ The initial front progresses into the unreacted flow region,
 \end_inset
 
  shown in Figure
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:pressure-max-value"
@@ -9337,7 +9568,11 @@ detonationEulerFoam
 \end_layout
 
 \begin_layout Standard
-Figures 
+Figures
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:detonation_T"
@@ -9348,7 +9583,11 @@ nolink "false"
 
 \end_inset
 
- and 
+ and
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:detonation_OH"
@@ -9372,7 +9611,11 @@ nolink "false"
 s.
  These results are consistent with those produced using the existing seulex ODE integrator,
  which are not reported here for brevity.
- Figures 
+ Figures
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:RRCGO"
@@ -9383,7 +9626,11 @@ nolink "false"
 
 \end_inset
 
- and 
+ and
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:RROFO"
@@ -9913,6 +10160,10 @@ name "subsec:SDIRK-2"
 
 \begin_layout Standard
 The two stage Singly Diagonally Implicit Runge--Kutta (SDIRK-2) method belongs to a class of implicit Runge-Kutta schemes
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Hai96,Fran97"
@@ -10078,7 +10329,11 @@ Here
 \begin_inset Formula $\gamma=1-\sqrt{2}/2$
 \end_inset
 
- 
+
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha14"
@@ -10102,7 +10357,11 @@ name "subsec:SDIRK-4"
 
 \begin_layout Standard
 The five stage Singly Diagonally Implicit Runge-Kutta (SDIRK-4) follows the same structure as SDIRK-2 with additional stages requiring a set of coefficients.
- We utilize the coefficients implemented by FATODE 
+ We utilize the coefficients implemented by FATODE
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha14"
@@ -10244,6 +10503,10 @@ Here
 ,held constant for both stages,
  thus removing the need for multiple Jacobian evaluations.
  Again we utilize the coefficients from FATODE
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha14"
@@ -10667,7 +10930,11 @@ and applying a time derivative
 Therefore,
  the constant pressure assumption can be enforced by treating enthalpy as a globally constant,
  while leaving the rest of the system formulation unchanged.
- In the same manner that arrived at Equation 
+ In the same manner that arrived at Equation
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "eq:temperature_source"
@@ -10973,6 +11240,10 @@ we note that the very small value of
 \end_inset
 
 
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "cantera"
@@ -10999,6 +11270,10 @@ name "subsec:jacobianErel"
 Niemeyer et al.
  verified the PyJac-generated Jacobian by comparing their analytical Jacobian to a differentiated Jacobian across a wide range of thermochemical states,
  evaluating between 100,000 and 1 million samples depending on the chemical model
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Nie17"
@@ -11063,7 +11338,11 @@ In Niemeyer et al.,
 \end_inset
 
  may be more useful in identifying discrepancies in both larger and smaller matrix elements.
- Table 
+ Table
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "tab:jacobian_norms"
@@ -11122,6 +11401,10 @@ and
 
 .
  Figure
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand eqref
 reference "fig:jacobian_error_distribution"
@@ -11613,7 +11896,11 @@ name "fig:jacobian_error_distribution"
 \end_inset
 
  for ChemGen source term Jacobian calculations in comparison to Cantera source calculations for five tested chemical models:
- Ó Conaire 
+ Ó Conaire
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Oco04"
@@ -11622,7 +11909,11 @@ literal "false"
 \end_inset
 
 ,
- Burke 
+ Burke
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Bur12"
@@ -11631,7 +11922,11 @@ literal "false"
 \end_inset
 
 ,
- GRI-Mech 3.0 
+ GRI-Mech 3.0
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Smi00"
@@ -11649,7 +11944,11 @@ literal "false"
 \end_inset
 
 ,
- and FFCM2 
+ and FFCM2
+\begin_inset space ~
+\end_inset
+
+
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Zha23"
