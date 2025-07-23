@@ -125,7 +125,7 @@ std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar
     {chemical_state} y = set_chemical_state(temperature, sp);
 #endif
     
-    auto result = rosenbroc(y, dt);
+    auto result = rosenbroc(y, dt, linear_abs_tol, linear_rel_tol);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
@@ -144,6 +144,12 @@ std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} tem
 #endif
 
     auto result = yass(y, dt, max_norm, min_dt, max_iter);
+
+#else
+    {chemical_state} y = set_chemical_state(temperature, sp);
+#endif
+
+    auto result = yass(y, dt, max_norm, min_dt, max_iter, linear_abs_tol, linear_rel_tol);
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}

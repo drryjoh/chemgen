@@ -3,6 +3,7 @@
 {chemical_state} 
 yass({chemical_state} y,  
      {scalar_parameter} dt, 
+     //int & csv_iter,
      {index} &n_gmres_iter_total,
      {scalar} max_norm  = 0.1,
      {scalar} min_dt  = 1e-10,
@@ -21,6 +22,23 @@ yass({chemical_state} y,
         {scalar} temperature_ = temperature(y[0], y_n);
         {jacobian_eigen} G = source_jacobian(y_n, temperature_, -dt_, 1);
         {chemical_state} rhs1 = scale_gen(dt_, source(y_n, temperature_));
+        //................................................................
+        // Eigen::MatrixXd denseA = Eigen::MatrixXd(G);
+        // std::ostringstream ss;
+        // ss << "Y_DATA/jacobian_" << csv_iter << ".csv"; //change path
+        // std::ofstream out(ss.str());
+        // for (int i = 0; i < denseA.rows(); ++i) 
+        // {{
+        //     for (int j = 0; j < denseA.cols(); ++j) 
+        //     {{
+        //         out << denseA(i, j);
+        //         if (j + 1 < denseA.cols())
+        //             out << ",";
+        //     }}
+        //     out << "\n";
+        // }}
+        // csv_iter += 1;
+        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         #ifdef CHEMGEN_DIRECT_SOLVER
         {chemical_state} dy = direct_solve(G, rhs1);

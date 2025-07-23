@@ -27,9 +27,6 @@ decorators:
   species_cast: "Species"
   species_parameter: "const Species&"
   species_element: "species[{i}]"
-
-
-
   
   arbitrary_element: "{name}[{{i}}]"
 

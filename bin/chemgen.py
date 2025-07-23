@@ -69,6 +69,7 @@ def main():
     parser.add_argument("--skip", action="store_true", help="Skip code generation")
     parser.add_argument("--skip-tests", action="store_true", help="Skip running tests")
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
+    parser.add_argument("--print-sparsity", action="store_true", help="Print the sparsity structure")
     parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
     parser.add_argument("--save-sparsity", action="store_true", help="Save Jacobian sparsity pattern as a numpy array (int)")
     parser.add_argument("--generate-permutation", action="store_true", help="Generate permutation indices for Jacobian rows/columns - need to load a sparsity_pattern.npy file")
@@ -155,7 +156,7 @@ def main():
                 print("linear solver not recognized, defaulting to GMRES")
         elif chemistry_solver.lower() == "all":
             linear_solver = configuration_file.get('solver', {}).get('linear_solver', None)
-            print("All solver options will be compiled in")
+            print("All solver options will be compiled in") #TODO
             if linear_solver!=None and linear_solver.lower() == "gmres":
                 print("GMRES linear solver chosen")
             elif linear_solver!=None and linear_solver.lower() == "direct":
@@ -210,6 +211,10 @@ def main():
             preconditioner = "#define CHEMGEN_PRECONDITIONER_ILU"
             if not eigen_sparse:
                 raise NotImplementedError("ilu preconditioner requires sparse eigen")
+
+        elif chemistry_solver_preconditioner.lower() == "neural_net":
+            preconditioner = "#define CHEMGEN_PRECONDITIONER_NN"
+
         else:
             print("Chemistry solver preconditioner unsupported. Please choose from [none, gauss_seidel, jacobi].")
             exit()
@@ -278,6 +283,9 @@ def main():
             print("Sparsity percentage = %g%%" % sparsity_percent)
             if args.save_sparsity:
                 np.save('sparsity_pattern.npy', sparsity_pattern)
+            if args.print_sparsity:
+                np.set_printoptions(threshold=np.inf)
+                print(sparsity_pattern)
             if args.plot_sparsity:
                 if args.generate_permutation:
                     print("Applying permutation to sparsity plot!")
@@ -328,6 +336,9 @@ def main():
 
         if "custom_preconditioners_eigen.h" in headers:
             headers.remove("custom_preconditioners_eigen.h")
+
+        if "nn_preconditioner.hpp" in headers:
+            headers.remove("nn_preconditioner.hpp")
 
         if args.custom_test:
             try:

@@ -36,21 +36,21 @@ def compile_cpp_code(build_dir, source_files, config):
         build_option = "-O3"
 
     # Command to compile C++ code
-    compile_command = f"clang++ -std=c++17 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+    compile_command = f"g++ -std=c++23 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
     print(compile_command)
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
 
 def run_tests(build_dir):
     """Run tests on the compiled binary."""
-    test_command = f"./{build_dir}/bin/chemgen"
+    test_command = f"{build_dir}/bin/chemgen"
     print("Running tests...")
     run_command(test_command)
 
 def compile_and_run(test_file, configuration_file, destination_folder, third_parties, cmake, compile, skip_tests):
     # Define directories and C++ source files
     build_directory = destination_folder.parent
-    cpp_source_files = ['src'+'/'+test_file]
+    cpp_source_files = [f'{build_directory}/src'+'/'+test_file]
 
     # Generate cmake
     if cmake or compile:

@@ -44,12 +44,20 @@ decorators:
   chemical_state_parameter: "const ChemicalState&"
   chemical_state_element: "chemical_state[{i}]"
 
+<<<<<<<< HEAD:preconditioner/genchem/configuration.yaml
+  jacobian_typedef: "std::array<Species, n_species>"
+========
   jacobian_typedef: "std::array<ChemicalState, n_species + 1>"
+>>>>>>>> origin/develop/implicit_solves_eigen:tutorial/06_implicit_solves/ryan/h2/configuration.yaml
   jacobian: "SpeciesJacobian"
   jacobian_function: "SpeciesJacobian"
   jacobian_cast: "SpeciesJacobian"
   jacobian_parameter: "const SpeciesJacobian&"
+<<<<<<<< HEAD:preconditioner/genchem/configuration.yaml
+  jacobian_end: "n_species"
+========
   jacobian_end: "n_variables"
+>>>>>>>> origin/develop/implicit_solves_eigen:tutorial/06_implicit_solves/ryan/h2/configuration.yaml
 
   source_element: "net_production_rates[{i}]"
   const_option: ""
@@ -73,9 +81,17 @@ decorators:
 
 build:
   chemgen_smp: None 
+<<<<<<<< HEAD:preconditioner/genchem/configuration.yaml
+  chemgen_input: "-O3"
+
+solver:
+  chemistry_solver: all
+  linear_solver: gmres 
+========
   chemgen_input: "-O0 -lyaml-cpp"
 
 solver:
   chemistry_solver: all
   linear_solver: gmres
+>>>>>>>> origin/develop/implicit_solves_eigen:tutorial/06_implicit_solves/ryan/h2/configuration.yaml
   preconditioner: jacobi 
