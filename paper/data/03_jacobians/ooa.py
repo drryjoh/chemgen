@@ -147,12 +147,12 @@ plt.semilogy(refinement, L2s / L2s[0], ':ok', label='Observed $L_2$')
 
 # Custom x-axis tick labels
 tick_labels = [f"[$\\delta c/{2**r}$, $\\delta T/{2**r}$]" if r > 0 else "[$\\delta c$, $\\delta T$]" for r in refinement]
-plt.xticks(refinement, tick_labels)
+plt.xticks(refinement, tick_labels, fontsize=12)
 
 # Label the plot
-plt.xlabel('Refinement Level')
-plt.ylabel('$L_2$ normalized by\n$L_2$ for $\\delta c$ and $\\delta T$')
-plt.legend()
+plt.xlabel('Refinement Level',fontsize=16)
+plt.ylabel('$L_2$',fontsize=16)
+plt.legend(fontsize=16)
 plt.grid(True, which="both", ls="--", lw=0.5)
 plt.savefig("ooa.png",dpi=300)
 plt.show()
