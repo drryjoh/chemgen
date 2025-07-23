@@ -73,8 +73,7 @@ decorators:
 
 build:
   chemgen_smp: None
-  # chemgen_input: "-O2 -I/Users/jsampa/homebrew/opt/yaml-cpp/include -L/Users/jsampa/homebrew/opt/yaml-cpp/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3"
-  chemgen_input: "-O2 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib"
+  chemgen_input: "-O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib"
 
 solver:
   chemistry_solver: all

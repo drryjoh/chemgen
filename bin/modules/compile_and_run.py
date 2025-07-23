@@ -36,7 +36,7 @@ def compile_cpp_code(build_dir, source_files, config):
         build_option = "-O3"
 
     # Command to compile C++ code
-    compile_command = f"clang++ -std=c++23 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+    compile_command = f"g++ -std=c++23 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
     print(compile_command)
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
