@@ -37,17 +37,22 @@ def compile_cpp_code(build_dir, source_files, config):
 
     chemgen_library = config.get('build', {}).get('chemgen_library', False)
 
+    print("")
+    
     # Command to compile C++ code
     if chemgen_library:
-        compile_command = f"clang++ -std=c++17 {build_option} -c src/chemgen_library.cpp -o src/chemgen_library.o"
-        print(compile_command)
-        print(f"Compiling chemgen static library")
-        run_command(compile_command)
+        if os.path.exists(build_dir/"src/libchemgen_library.a"):
+            print("\nWARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.\n\n")
+        else:
+            compile_command = f"clang++ -std=c++17 {build_option} -c src/chemgen_library.cpp -o src/chemgen_library.o"
+            print(compile_command)
+            print(f"Compiling chemgen static library")
+            run_command(compile_command)
 
-        compile_command = "ar rcs src/libchemgen_library.a src/chemgen_library.o"
-        print(compile_command)
-        print(f"Creating chemgen static library")
-        run_command(compile_command)
+            compile_command = "ar rcs src/libchemgen_library.a src/chemgen_library.o"
+            print(compile_command)
+            print(f"Creating chemgen static library")
+            run_command(compile_command)
 
         compile_command = f"clang++ -std=c++17 {build_option} -L./src -lchemgen_library -o {build_dir}/bin/chemgen {' '.join(source_files)}"
         print(compile_command)
