@@ -66,7 +66,7 @@ def main():
     parser.add_argument("--force", action="store_true", help="Force code generation despite warnings")
     parser.add_argument("--pybind", action="store_true", help="Create pybind linker")
     parser.add_argument("--skip", action="store_true", help="Skip code generation")
-    parser.add_argument("--skip-tests", action="store_true", help="Skip running tests")
+    parser.add_argument("--run-tests", action="store_true", help="Skip running tests")
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
     parser.add_argument("--plot-sparsity", action="store_true", help="Plot Jacobian sparsity pattern")
     parser.add_argument("--temperature-equation", action="store_true", help="Solve temperature equation instead of assuming constant internal energy")
@@ -270,7 +270,7 @@ def main():
     if args.pybind:
         create_pybind(gas, headers, args, configuration, destination_folder, remove_reactions = args.remove_reactions)
     else:
-        compile_and_run(test_file, configuration_file, destination_folder, third_parties, args.cmake, args.compile, args.skip_tests)
+        compile_and_run(test_file, configuration_file, destination_folder, third_parties, args.cmake, args.compile, args.run_tests)
 
 if __name__ == "__main__":
     main()

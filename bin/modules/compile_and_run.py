@@ -41,13 +41,13 @@ def compile_cpp_code(build_dir, source_files, config):
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
 
-def run_tests(build_dir):
+def run(build_dir):
     """Run tests on the compiled binary."""
     test_command = f"./{build_dir}/bin/chemgen"
     print("Running tests...")
     run_command(test_command)
 
-def compile_and_run(test_file, configuration_file, destination_folder, third_parties, cmake, compile, skip_tests):
+def compile_and_run(test_file, configuration_file, destination_folder, third_parties, cmake, compile, run_tests):
     # Define directories and C++ source files
     build_directory = destination_folder.parent
     cpp_source_files = ['src'+'/'+test_file]
@@ -61,5 +61,5 @@ def compile_and_run(test_file, configuration_file, destination_folder, third_par
         compile_cpp_code(build_directory, cpp_source_files, configuration_file)
 
     # Run tests
-    if not skip_tests:
-        run_tests(build_directory)
+    if run_tests:
+        run(build_directory)

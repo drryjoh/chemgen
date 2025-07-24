@@ -5,24 +5,23 @@ from .headers import *
 import cantera as ct
 from .cmake import *
 
+def get_random_TPX(gas):
+    # Define species list
+    species_list = gas.species_names
+    species_array =  np.random.uniform(0, 1, len(gas.species_names))
+    species_array /= species_array.sum()
+
+    return (1000 + 1500 * np.random.random(), 10132.5 + 101325.0 * 10.9 * np.random.random(), species_array)
+
 def get_test_conditions(chemical_mechanism):
-    config_path = Path('test_configuration.yaml')
-    if "simple_tb" in chemical_mechanism:
-        print("**simple TB**")
-        test_file = 'test_tb_configuration.yaml'
-    else:
-        test_file = 'test_configuration.yaml'
+    test_file = 'test_configuration.yaml'
     config_path = Path(test_file)
 
     if config_path.exists():
         with config_path.open('r') as file:
             configuration = yaml.safe_load(file)
     else:
-        current_dir = Path(__file__).resolve().parent
-        configuration_filename = current_dir.parent.parent/ 'test/{0}'.format(test_file)
-        print("**Test file test_configuration.yaml not found using /test/test_configuration.yaml **")
-        with open(configuration_filename, 'r') as file:
-            configuration = yaml.safe_load(file)
+        return [0, 0, 0, True]
     
     # Extract values from the parsed YAML data
     test_conditions = configuration.get('test_conditions', {})
@@ -102,7 +101,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
     std::cout << "*** ChemGen ***" <<std::endl;
     {concentration_test}
     {scalar} temperature_ =  {temperature};
-    {species} result = source(species, temperature_);
+    {species} result = source_species(species, temperature_);
 
 
     {scalar} pressure_return = pressure(species, temperature_);
