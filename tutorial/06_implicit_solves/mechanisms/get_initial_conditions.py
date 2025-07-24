@@ -11,7 +11,9 @@ if flag == 0:
 elif flag == 1:
     mech_file = "../FFCM2_model.yaml"
     fuel_name = "C2H4"
+    # Jacobian: # nonzero entries = 3256, # zero entries = 6153, total # entries = 9409
     # Jacobian: sparsity percentage = 65.3948%
+    # LU decomposition of permuted Jacobian: # nonzero entries = 3965, # zero entries = 5444, total # entries = 9409
     # LU decomposition of permuted Jacobian: sparsity percentage = 57.8595%
 elif flag == 2:
     mech_file = "3-methylheptane-c8h18-3-1378-8143.yaml"

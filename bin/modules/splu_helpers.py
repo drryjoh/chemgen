@@ -14,6 +14,11 @@ def invert_permutation(p):
     s[p] = np.arange(p.size)
     return s
 
+def make_diagonally_dominant(M):
+    np.fill_diagonal(M, M.diagonal() + 10 + 100*np.random.rand(M.shape[0]))
+
+    return M
+
 def get_splu(sparsity_pattern):
     n = sparsity_pattern.shape[0]
 
@@ -34,7 +39,7 @@ def get_splu(sparsity_pattern):
     M = np.random.rand(n, n)
     M += 1
     # Make diagonally dominant just so splu actually finishes without error and so perm_c is equal to perm_r
-    np.fill_diagonal(M, M.diagonal() + 10 + 100*np.random.rand(n))
+    M = make_diagonally_dominant(M)
     M[zero_idxs] = 0
     M_sparse = sparse.csc_array(M)
 
@@ -70,4 +75,60 @@ def get_lu_sparsity(A):
         if sp[j][j] == False:
             raise ValueError("j = {}, sp[j][j] = {}".format(j, sp[j][j]))
 
+    return sp
+
+def get_splu_sparsity_empirical(A):
+    n = A.shape[0]
+    assert(n == A.shape[1])
+
+    zero_idxs = A == 0
+    nonzero_idxs = A != 0
+
+    # Column ordering type
+    # permc_spec = "MMD_AT_PLUS_A"
+    # permc_spec = "COLAMD"
+    permc_spec = "NATURAL"
+
+    diag_pivot_thresh = 0.
+    options = {}
+    options["Equil"] = False # default True
+    options["RowPerm"] = "NOROWPERM"
+    options["PrintStat"] = True
+    options["SymmetricMode"] = True
+
+    n_test = 10 # number of test matrices
+    for i in range(n_test):
+        print("Test matrix {}".format(i+1))
+        M = np.random.rand(n, n)
+        M += 1
+        # Make diagonally dominant just so splu actually finishes without error and so perm_c is equal to perm_r
+        M = make_diagonally_dominant(M)
+        M[zero_idxs] = 0
+        M_sparse = sparse.csc_array(M)
+
+        M_sparse_lu = splu(M_sparse, permc_spec=permc_spec, diag_pivot_thresh=diag_pivot_thresh, options=options)
+        assert(np.all(M_sparse_lu.perm_c == M_sparse_lu.perm_r))
+
+        L = M_sparse_lu.L
+        U = M_sparse_lu.U
+
+        if i == 0:
+            # store indices
+            L_indices = L.indices
+            L_indptr = L.indptr
+            U_indices = U.indices
+            U_indptr = U.indptr
+        else:
+            # compare
+            np.testing.assert_array_equal(L_indices, L.indices)
+            np.testing.assert_array_equal(L_indptr, L.indptr)
+            np.testing.assert_array_equal(U_indices, U.indices)
+            np.testing.assert_array_equal(U_indptr, U.indptr)
+
+    # Convert to sparsity pattern (stored as dense matrix of type int)
+    L.data[:] = 1
+    L.setdiag(0)
+    U.data[:] = 1
+    sp = (L.toarray() + U.toarray()).astype(int)
+    
     return sp

@@ -240,7 +240,14 @@ def main():
 
         # Sparsity pattern of LU decomposition of permuted Jacobian
         print("Computing sparsity pattern of LU decomposition of permuted Jacobian")
-        sp_lu_perm = get_lu_sparsity(sp_perm).astype(int)
+        sp_lu_perm_empirical = get_splu_sparsity_empirical(sp_perm)
+
+        # Compare with analytical
+        # sp_lu_perm = get_lu_sparsity(sp_perm).astype(int) # slow for large matrices
+        # np.testing.assert_array_equal(sp_lu_perm_empirical, sp_lu_perm)
+
+        # Store
+        sp_lu_perm = sp_lu_perm_empirical
         setattr(configuration, "sp_lu_perm", sp_lu_perm)
 
         # Print info
