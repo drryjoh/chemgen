@@ -1,5 +1,12 @@
+bin/
 src/
 build
 *.so
+*_states.npy
+J_*.npy
+L2*.npy
+__*
+post_jacobian_temp_ignore.py
+dTdc_ffcm2_h2.npy
 error
 
