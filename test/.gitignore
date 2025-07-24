@@ -1,4 +1,0 @@
-*.h
-*.cpp
-!tbb_examples.cpp
-build

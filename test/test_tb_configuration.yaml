@@ -1,8 +1,0 @@
-test_conditions:
-  temperature: 1800
-  pressure: 101325.0
-  species:
-    - name: H2O
-      MoleFraction: 0.5
-    - name: N2
-      MoleFraction: 0.5
