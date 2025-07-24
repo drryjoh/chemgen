@@ -31,6 +31,11 @@ def create_headers(configuration, chemistry_solver, destination_folder):
     file_names = ['arrhenius.h.in', 'third_body.h.in','falloff_troe.h.in', 'falloff_lindemann.h.in', 'falloff_sri.h.in', 'pressure_dependent_arrhenius.h.in']
     make_headers(code_directory, file_names, headers, configuration, destination_folder)
 
+    if configuration.chemgen_library:
+        code_directory = Path('src') / 'static_library_headers'
+        file_names = ['chemgen_library.h.in']
+        make_headers(code_directory, file_names, headers, configuration, destination_folder)
+
     if chemistry_solver:
         code_directory = Path('src') / 'solvers'
         file_names = []

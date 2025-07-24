@@ -260,6 +260,9 @@ def main():
 
     third_parties = [use_third_parties, third_party_path, libraries]
 
+    chemgen_library = configuration_file.get('build', {}).get('chemgen_library', False)
+    setattr(configuration, "chemgen_library",  chemgen_library)
+
     test_file = 'chemgen.cpp'
 
     if args.skip:
@@ -307,6 +310,8 @@ def main():
         if "types_inl.h" in headers:
             headers.remove("types_inl.h")
             headers.insert(0,"types_inl.h")
+
+        headers.insert(1,"generated_constants.h")
 
         if "chemical_state_functions.h" in headers:
             headers.remove("chemical_state_functions.h")

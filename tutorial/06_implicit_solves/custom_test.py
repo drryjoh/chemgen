@@ -5,13 +5,14 @@ from pathlib import Path
 import yaml
 import numpy as np
 
-def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 0):
-    test_file = destination_folder/test_file_name
-    with open(test_file, 'w') as file:
-        file.write("#include <cmath>\n")
-        file.write("#include <algorithm>\n")
-        file.write("#include <array>\n#include <chrono>\n")
-        file.write("""
+def write_generic_include(file):
+    file.write("#include <cmath>\n")
+    file.write("#include <algorithm>\n")
+    file.write("#include <array>\n#include <chrono>\n")
+    file.write("#include <iostream>\n")
+
+def write_eigen_include(file, configuration):
+    file.write("""
 {eigen}
 {eigen_sparse_directive}
 #ifdef CHEMGEN_EIGEN
@@ -20,7 +21,30 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
 #include <unsupported/Eigen/IterativeSolvers>
 #endif
         """.format(**vars(configuration)))
-        file.write("#include <iostream>  // For printing the result to the console\n#include <fstream>\n")
+
+def create_chemgen_library(headers_chemistry, configuration, destination_folder):
+    # Create cpp file that includes all the source term files
+    with open(destination_folder/"chemgen_library.cpp", 'w') as file:
+        write_generic_include(file)
+        write_eigen_include(file, configuration)
+        for header in headers_chemistry:
+            file.write(f"#include \"{header}\"\n")
+
+def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 0):
+    if configuration.chemgen_library:
+        headers.remove("chemgen_library.h")
+        index = headers.index('default_parameters.h') # start of non-chemistry headers
+        headers_chemistry = headers[:index]
+        create_chemgen_library(headers_chemistry, configuration, destination_folder)
+        # Retain only non-chemistry headers
+        headers = headers[index:]
+        headers.insert(0, "chemgen_library.h")
+
+    test_file = destination_folder/test_file_name
+    with open(test_file, 'w') as file:
+        write_generic_include(file)
+        write_eigen_include(file, configuration)
+        file.write("#include <fstream>\n")
         file.write("""
 
 #include <yaml-cpp/yaml.h>
@@ -122,7 +146,7 @@ Species read_species_from_yaml(const std::string& filename,
     if (massfractions == 1)
     {{
         {scalar} density = density_from_massfractions_pressure_temperature(species, pressure, temperature);
-        concentrations = scale_gen(density, species * inv_molecular_weights());
+        concentrations = scale_gen(density, species * inv_molecular_weights_());
     }}
     else if (molefractions == 1)
     {{

@@ -35,11 +35,29 @@ def compile_cpp_code(build_dir, source_files, config):
         print("no build input specified defaulting to O3")
         build_option = "-O3"
 
+    chemgen_library = config.get('build', {}).get('chemgen_library', False)
+
     # Command to compile C++ code
-    compile_command = f"clang++ -std=c++17 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
-    print(compile_command)
-    print(f"Compiling C++ files: {source_files}")
-    run_command(compile_command)
+    if chemgen_library:
+        compile_command = f"clang++ -std=c++17 {build_option} -c src/chemgen_library.cpp -o src/chemgen_library.o"
+        print(compile_command)
+        print(f"Compiling chemgen static library")
+        run_command(compile_command)
+
+        compile_command = "ar rcs src/libchemgen_library.a src/chemgen_library.o"
+        print(compile_command)
+        print(f"Creating chemgen static library")
+        run_command(compile_command)
+
+        compile_command = f"clang++ -std=c++17 {build_option} -L./src -lchemgen_library -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+        print(compile_command)
+        print(f"Compiling C++ files: {source_files}")
+        run_command(compile_command)
+    else:
+        compile_command = f"clang++ -std=c++17 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+        print(compile_command)
+        print(f"Compiling C++ files: {source_files}")
+        run_command(compile_command)
 
 def run_tests(build_dir):
     """Run tests on the compiled binary."""

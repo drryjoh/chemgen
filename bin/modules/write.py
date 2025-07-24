@@ -51,6 +51,8 @@ def write_permutation_indices(file, configuration):
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
     content += "\n"+"{device_option} {constexpr} {species_function} inv_molecular_weights() {const_option} {{return {inv_molecular_weights};}}".format(**vars(configuration), inv_molecular_weights = inv_molecular_weights)
+    # non-constexpr wrapper for static library
+    content += "\n"+"{device_option} {species_function} inv_molecular_weights_() {const_option} {{return inv_molecular_weights();}}".format(**vars(configuration))
     file.write(content)
 
 def write_species_names(file, species_names, configuration):
