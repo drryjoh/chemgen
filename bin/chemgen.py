@@ -239,8 +239,17 @@ def main():
         sp_perm = sp[:, perm][perm, :]
 
         # Sparsity pattern of LU decomposition of permuted Jacobian
+        print("Computing sparsity pattern of LU decomposition of permuted Jacobian")
         sp_lu_perm = get_lu_sparsity(sp_perm).astype(int)
         setattr(configuration, "sp_lu_perm", sp_lu_perm)
+
+        # Print info
+        n_nonzeros = np.count_nonzero(sp_lu_perm)
+        n_entries = sp_lu_perm.size
+        n_zeros = n_entries - n_nonzeros
+        sparsity_percent = 100.*(1. - n_nonzeros/n_entries)
+        print("LU decomposition of permuted Jacobian: # nonzero entries = {}, # zero entries = {}, total # entries = {}".format(n_nonzeros, n_zeros, n_entries))
+        print("LU decomposition of permuted Jacobian: sparsity percentage = %g%%" % sparsity_percent)
 
     third_parties = [use_third_parties, third_party_path, libraries]
 
@@ -273,7 +282,7 @@ def main():
             n_zeros = n_entries - n_nonzeros
             sparsity_percent = 100.*(1. - n_nonzeros/n_entries)
             print("Jacobian: # nonzero entries = {}, # zero entries = {}, total # entries = {}".format(n_nonzeros, n_zeros, n_entries))
-            print("Sparsity percentage = %g%%" % sparsity_percent)
+            print("Jacobian: sparsity percentage = %g%%" % sparsity_percent)
             if args.save_sparsity:
                 np.save('sparsity_pattern.npy', sparsity_pattern)
             if args.plot_sparsity:
