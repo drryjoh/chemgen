@@ -6,3 +6,4 @@ src/*
 *.npy
 *.csv
 *.png
+.DS_Store
