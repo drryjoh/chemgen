@@ -1,1 +1,0 @@
-rm -rf profile.dSYM profile profile.txt chemgen.prof

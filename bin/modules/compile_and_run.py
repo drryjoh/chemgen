@@ -44,7 +44,7 @@ def compile_cpp_code(build_dir, source_files, config):
         if os.path.exists(build_dir/"src/libchemgen_library.a"):
             print("\nWARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.\n\n")
         else:
-            compile_command = f"clang++ -std=c++17 {build_option} -c src/chemgen_library.cpp -o src/chemgen_library.o"
+            compile_command = f"g++ -std=c++23 {build_option} -c src/chemgen_library.cpp -o src/chemgen_library.o"
             print(compile_command)
             print(f"Compiling chemgen static library")
             run_command(compile_command)
