@@ -23,6 +23,12 @@ direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linea
 
     if (compute) lu = {linear_solver_direct_eigen}(A);
 
+    /** forJay
+     * We convert A * x = b to the equivalent system B * y = c, where B = P^T * A * P, y = P^T * x, c = P^T * b
+     * In other words, the new RHS for the linear solver is c = P^T * b
+     * The linear solver gives y. Left-multiply by P to get x (i.e., x = P * y)
+    **/
+
     x = lu.permutationP() * b;
     lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
     lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
