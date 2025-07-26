@@ -3,40 +3,59 @@
 {chemical_state} 
 yass({chemical_state} y,  
      {scalar_parameter} dt, 
+     //int & csv_iter,
+     {index} &n_gmres_iter_total,
      {scalar} max_norm  = 0.1,
      {scalar} min_dt  = 1e-10,
-     {index} max_iter = 20) 
+     {index} max_iter = 20)
 {{
 
-    {species} y_init = get_species(y);
-    {species} y_n = y_init;
+    {chemical_state} y_init = y;
+    {chemical_state} y_n = y_init;
     {scalar} dt_ = dt;
     {scalar} time = 0;
     {index} iteration = 0;
-    const {jacobian} I = jacobian_I();
 
     while(time < dt && iteration < max_iter)
     {{
 
         {scalar} temperature_ = temperature(y[0], y_n);
-        {jacobian} J = source_jacobian(y_n, temperature_);
-        {jacobian} G = I - scale_gen(dt_, J);
-        {species} rhs1 = scale_gen(dt_, source(y_n, temperature_));
+        {jacobian_eigen} G = source_jacobian(y_n, temperature_, -dt_, 1);
+        {chemical_state} rhs1 = scale_gen(dt_, source(y_n, temperature_));
+        //................................................................
+        // Eigen::MatrixXd denseA = Eigen::MatrixXd(G);
+        // std::ostringstream ss;
+        // ss << "Y_DATA/jacobian_" << csv_iter << ".csv"; //change path
+        // std::ofstream out(ss.str());
+        // for (int i = 0; i < denseA.rows(); ++i) 
+        // {{
+        //     for (int j = 0; j < denseA.cols(); ++j) 
+        //     {{
+        //         out << denseA(i, j);
+        //         if (j + 1 < denseA.cols())
+        //             out << ",";
+        //     }}
+        //     out << "\n";
+        // }}
+        // csv_iter += 1;
+        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         #ifdef CHEMGEN_DIRECT_SOLVER
-        {species} dy = invert_jacobian(G) * rhs1;
+        {chemical_state} dy = direct_solve(G, rhs1);
         #else
-        {species} dy = gmres_solve(G, rhs1);
+        {chemical_state} dy = gmres_solve(G, rhs1, n_gmres_iter_total);
         #endif
 
-        {scalar} dy_norm  = norm2(dy);
+        {scalar} dy_norm  = norm2(get_species(dy));
 
         if (dy_norm > max_norm)
         {{
+            std::cout << "refining YASS; dy: " <<dy_norm<<std::endl;
             dt_ *= {scalar_cast}(0.5);
+            // TODO: don't recompute entire Jacobian; just modify the diagonal
             if (dt_ < min_dt)
             {{
-                    return set_chemical_state({scalar_cast}(0.0), scale_gen({scalar_cast}(0.0), y_n)); //return garbage
+                    return scale_gen({scalar_cast}(0.0), y_n); //return garbage
             }}
         }}
         else
@@ -48,7 +67,5 @@ yass({chemical_state} y,
         iteration++;
     }}
 
-    return 
-    set_chemical_state(y[0], 
-                        y_n); 
+    return y_n;
 }}

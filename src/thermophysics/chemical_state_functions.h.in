@@ -1,16 +1,55 @@
+#define {internal_energy_or_temperature}
+
 {device_option}
-{scalar_function} 
-temperature({chemical_state_parameter} chemical_state) {const_option} 
+{scalar_function}
+temperature({chemical_state_parameter} chemical_state) {const_option}
 {{
-    return temperature(get_energy(chemical_state), get_species(chemical_state));
+    return
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
+    temperature(get_energy(chemical_state), get_species(chemical_state));
+#elif defined(CHEMGEN_TEMPERATURE_EQUATION)
+    get_energy(chemical_state);
+#else
+#error
+#endif
+}}
+
+{device_option}
+{scalar_function}
+temperature({scalar} energy, {chemical_state_parameter} chemical_state) {const_option}
+{{
+    return
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
+    temperature(energy, get_species(chemical_state));
+#elif defined(CHEMGEN_TEMPERATURE_EQUATION)
+    energy;
+#else
+#error
+#endif
 }}
 
 {device_option}
 {chemical_state_function} 
-source({chemical_state_parameter} chemical_state) {const_option} 
+source({chemical_state_parameter} chemical_state, {scalar} temperature) {const_option}
 {{
     return 
-    set_chemical_state({scalar_cast}(0),
-                       source(get_species(chemical_state), temperature(chemical_state)));
+    source(get_species(chemical_state), temperature);
 }}
 
+{device_option}
+{chemical_state_function}
+source({chemical_state_parameter} chemical_state) {const_option}
+{{
+    return
+    source(get_species(chemical_state), temperature(chemical_state));
+}}
+
+{device_option}
+{jacobian_function_eigen}
+source_jacobian({chemical_state_parameter} chemical_state, {scalar} temperature, {scalar_parameter} scaling_factor=1, {scalar_parameter} diagonal_add=0) {const_option}
+{{
+    return
+    source_jacobian(get_species(chemical_state), temperature, scaling_factor, diagonal_add);
+}}
+
+#undef {internal_energy_or_temperature}

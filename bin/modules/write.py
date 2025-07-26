@@ -6,11 +6,12 @@ def write_type_defs(file, gas, configuration):
 
     file.write("""
 const {index} n_species = {n_species};
+const {index} n_variables = {n_species} + 1;
 const {index} n_reactions = {n_reactions};
 const {index} n_order_thermo = {n_thermo_order} + 1;
 const {index} n_chemical_state = {n_species} + 1;
 // Using alias for the array type (for example, an array of double values)
-using Species = {species_typedef};
+using {species} = {species_typedef};
 using Reactions = {reactions_typedef};
 using TemperatureMonomial = {temperature_monomial_typedef};
 using TemperatureEnergyMonomial = {temperature_energy_monomial_typedef};
@@ -27,6 +28,11 @@ temperature_energy_monomial_typedef = "{temperature_monomial_typedef}".format(**
 temperature_gibbs_monomial_typedef = "{temperature_monomial_typedef}".format(**vars(configuration)).replace("n_order_thermo", "n_order_thermo + 2"),
 chemical_state_tyedef = "{species_typedef}".format(**vars(configuration)).replace("n_species", "n_species + 1"))
     )
+
+    if configuration.eigen != "":
+        file.write("""
+using namespace Eigen;
+using Triplet_ = Eigen::Triplet<{scalar}>;""".format(**vars(configuration)))
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)

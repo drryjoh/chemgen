@@ -1,43 +1,70 @@
 {device_option}
 {chemical_state} 
 backwards_euler({chemical_state} y,  
-                {scalar_parameter} dt, 
-                {scalar} tol = 1e-10, 
-                {index} max_iter = 10) 
+                {scalar_parameter} dt,
+                // int & csv_iter, 
+                {index}  &n_gmres_iter_total,
+                {scalar} abs_newton_tol = newton_abs_tol_default,
+                {scalar} rel_newton_tol = newton_rel_tol_default,
+                {index}  max_iter = newton_iter_max_default)
 {{
-        
-        
-        {species} y_init = get_species(y);
-        {scalar} temperature_guess = temperature(y[0], y_init);
-        {species} y_guess = get_species(y);
-        for ({index} iter = 0; iter < 5; ++iter) 
+        {chemical_state} y_init = y;
+        {chemical_state} y_guess = y;
+
+        {jacobian_eigen} A;
+        {declare_linear_solver_eigen}
+        {declare_compute_flag}
+        {initialize_compute_flag}
+
+        for ({index} iter = 0; iter < max_iter; ++iter)
         {{
+            {update_compute_flag}
             {scalar} temperature_ = temperature(y[0], y_guess);
-            {species} f = source(y_guess, temperature_);
-            {jacobian} J = source_jacobian(y_guess, temperature_);
-            {jacobian} A = jacobian_I();
-            {species} res = {{}};
-            
-            //LHS
-            for ({index} i = 0; i < n_species; ++i) A[i][i] = A[i][i]/dt; 
-            A = A - J;
+            {chemical_state} f = source(y_guess, temperature_);
+            {chemical_state} res = {{}};
+
+            {if_compute_flag}
+            {{
+                A = source_jacobian(y_guess, temperature_, -1, 1/dt);
+            }}
+            //................................................................
+            // Eigen::MatrixXd denseA = Eigen::MatrixXd(A);
+            // std::ostringstream ss;
+            // ss << "BE_DATA/jacobian_" << csv_iter << ".csv"; //change path
+            // std::ofstream out(ss.str());
+            // for (int i = 0; i < denseA.rows(); ++i) 
+            // {{
+            //     for (int j = 0; j < denseA.cols(); ++j) 
+            //     {{
+            //         out << denseA(i, j);
+            //         if (j + 1 < denseA.cols())
+            //             out << ",";
+            //     }}
+            //     out << "\n";
+            // }}
+            // csv_iter += 1;
+            //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             //RHS
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
             //Solve
             #ifdef CHEMGEN_DIRECT_SOLVER
-            {species} dy = invert_jacobian(A) * res;
+            {chemical_state} dy = direct_solve(A, res{solver_and_compute_flag_arguments});
             #else
-            {species} dy = gmres_solve(A, res, tol = 1e-10);
+            {chemical_state} dy = gmres_solve(A, res{solver_and_compute_flag_arguments}, n_gmres_iter_total);
             #endif
 
             //Increment
             y_guess = y_guess + dy;
 
-            if (norm2(dy) < 1e-10)
+            if (error_norm(dy, y_guess, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
-                return set_chemical_state(y[0], y_guess); 
-            }};
+                // std::cout << "# Newton iterations = " << iter + 1 << std::endl;
+                return y_guess;
+            }}
         }}
-        return set_chemical_state(y[0], y_guess); //sets energy to zero to signal integration broke
+
+        // std::cout << "Newton solve did not converge!" << std::endl;
+
+        return y_guess; //sets energy to zero to signal integration broke
 }}

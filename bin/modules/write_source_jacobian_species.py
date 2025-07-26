@@ -1,16 +1,19 @@
+from .write_jacobian_helpers import *
+
 class SourceJacobianWriter:
 # Jacobian
-    def write_start_of_source_function_jacobian(self, file, configuration, fit_gibbs_reaction = True):
+    def write_start_of_source_function_jacobian(self, file, configuration, sparsity_pattern, fit_gibbs_reaction = True):
         if fit_gibbs_reaction:
             gibbs = "{reactions} gibbs_reactions = gibbs_reaction(log_temperature);\n        {reactions} dgibbs_reactions_dlog_temperature = dgibbs_reaction_dlog_temperature(log_temperature);\n".format(**vars(configuration)) 
         else:
             gibbs = "{species} gibbs_free_energies = species_gibbs_energy_mole_specific(temperature);".format(**vars(configuration)) 
         file.write("""
     {device_option}
-    {jacobian_function} source_jacobian({species_parameter} species, {scalar_parameter} temperature) {const_option} 
+    {jacobian_output} source_jacobian({species_parameter} species, {scalar_parameter} temperature, {scalar} scaling_factor=1, {scalar} diagonal_add=0) {const_option}
     {{
+        // after J is filled, do J = scaling_factor*J + diagonal_add
         {species} net_production_rates = {{{scalar_cast}(0)}};
-        {jacobian} jacobian_net_production_rates = {{{scalar_cast}(0)}};
+        {jacobian_initialize}
         {scalar} inv_universal_gas_constant_temperature  = inv_gen(universal_gas_constant() * temperature);
         {scalar} log_temperature = log_gen(temperature);
         {scalar} drate_of_progress_dspecies  = {scalar_cast}(0);
@@ -28,12 +31,13 @@ class SourceJacobianWriter:
         
         {species} dmixture_concentration_dspecies = {species}{{1}}; // optimized (1/(RT))*(RT,...,RT)
         
-            \n""".format(**vars(configuration), gibbs = gibbs))
+            \n""".format(**vars(configuration), gibbs = gibbs, jacobian_initialize=jacobian_initialize_text(configuration, sparsity_pattern),
+                         jacobian_output=jacobian_output_text(configuration)))
     
     def write_progress_rates_jacobian(self, file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("        equilibrium_constant = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
+                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
             file.write(f"        {progress_rates_derivatives[i]}")
         file.write("\n")
         
@@ -79,10 +83,14 @@ class SourceJacobianWriter:
 
     def write_source_jacobian(self, file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                      reaction_calls,  progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts,
-                     species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction = True): 
-        self.write_start_of_source_function_jacobian(file, configuration, fit_gibbs_reaction = fit_gibbs_reaction)
+                     species_production_texts, species_production_jacobian_texts, headers, configuration, sparsity_pattern, fit_gibbs_reaction=True):
+        self.write_start_of_source_function_jacobian(file, configuration, sparsity_pattern, fit_gibbs_reaction=fit_gibbs_reaction)
         self.write_reaction_calculations_jacobian(file, reaction_calls, reactions_depend_on, configuration)
         self.write_progress_rates_jacobian(file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration)
         self.write_species_production_jacobian(file, species_production_jacobian_texts, configuration)
+        if configuration.eigen_sparse:
+            write_helpers_eigen_sparse(file, False, configuration)
+        write_scale_jacobian(file, configuration)
+        write_add_diagonal(file, configuration)
         self.write_end_of_function_jacobian(file)
         #headers.append('source.h')

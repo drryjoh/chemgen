@@ -74,7 +74,7 @@ decorators:
 
 build:
   chemgen_smp: None 
-  chemgen_optimized: O2
+  chemgen_input: "-O3"
 
 decorators_double:
   scalar: "double"
