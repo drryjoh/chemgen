@@ -71,6 +71,7 @@ def process_cantera_file(gas, configuration, destination_folder, args, chemistry
         write_species_names(file, species_names, configuration)
         if args.generate_permutation:
             write_permutation_indices(file, configuration)
+            write_permuted_sparsity_pattern(file, configuration)
     with open(destination_folder/'thermotransport_fits.h','w') as file:
         for name, thermo_fit, thermo_type in zip(thermo_names, thermo_fits, thermo_types):
             if thermo_type == "energy":

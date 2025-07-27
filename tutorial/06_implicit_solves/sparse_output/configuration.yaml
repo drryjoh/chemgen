@@ -81,5 +81,5 @@ solver:
   linear_solver: gmres
   preconditioner: none
   eigen: on
-  eigen_sparse: on
+  eigen_sparse: off
   fixed_jacobian: off

@@ -210,7 +210,9 @@ main()
         auto be_start = std::chrono::high_resolution_clock::now();
         for({index} i = 0; i < n_run; i++)
         {{
-            y = backwards_euler(y, dt, n_gmres_iter_total);
+            {index} max_iter = 5;
+            if (i == n_run-1) max_iter = 20; // just used as a flag to print out stuff
+            y = backwards_euler(y, dt, n_gmres_iter_total, newton_abs_tol_default, newton_rel_tol_default, max_iter=max_iter);
             t = t + dt;
             be_file << t << " " << temperature(y);
             for (const auto& val : get_species(y)) be_file << " " << val;
