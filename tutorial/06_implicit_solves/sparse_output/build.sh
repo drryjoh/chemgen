@@ -1,16 +1,22 @@
 #!/bin/bash
 MECH=jetA-detailed-NOx-203-1589.yaml
 
-#FIRST
-python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
-    --get-sparsity \
-    --save-sparsity \
-    --skip-tests \
+# #FIRST
+# python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
+#     --get-sparsity \
+#     --save-sparsity \
+#     --skip-tests \
 
-#SECOND
+# #SECOND
+# python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
+#     --generate-permutation \
+#     --save-output-sparsity \
+#     --save-input-sparsity \
+#     --compile
+
+#OTHER
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
-    --generate-permutation \
-    --save-generated-permutation \
+    --skip \
     --compile
 
 rm -rf __pycache__

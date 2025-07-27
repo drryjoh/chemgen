@@ -179,9 +179,10 @@ main()
         for (const auto& val : get_species(y)) be_file << " " << val;
         be_file << "\n";
         auto be_start = std::chrono::high_resolution_clock::now();
+        int csv_iter = 0;
         for(int i = 0; i < n_run; i++)
         {
-            y = backwards_euler(y, dt, n_gmres_iter_total);
+            y = backwards_euler(y, dt, csv_iter, n_gmres_iter_total);
             t = t + dt;
             be_file << t << " " << temperature(y);
             for (const auto& val : get_species(y)) be_file << " " << val;
@@ -193,137 +194,137 @@ main()
         std::cout << "[Backward Euler] Time elapsed: " << be_duration.count() << " seconds" << std::endl;
     }
 
-    if (dt_sdirk2 > 0.)
-    {
-        y = y_init;
-        dt = dt_sdirk2;
-        t = 0;
-        n_run = int(end_time/dt_sdirk2);
-        n_gmres_iter_total = 0;
+    // if (dt_sdirk2 > 0.)
+    // {
+    //     y = y_init;
+    //     dt = dt_sdirk2;
+    //     t = 0;
+    //     n_run = int(end_time/dt_sdirk2);
+    //     n_gmres_iter_total = 0;
 
-        sdirk2_file << t << " " << temperature(y);
-        for (const auto& val : get_species(y)) sdirk2_file << " " << val;
-        sdirk2_file << "\n";
+    //     sdirk2_file << t << " " << temperature(y);
+    //     for (const auto& val : get_species(y)) sdirk2_file << " " << val;
+    //     sdirk2_file << "\n";
 
-        auto sdirk2_start = std::chrono::high_resolution_clock::now();
-        for(int i = 0; i < n_run; i++)
-        {
-            y = sdirk2(y, dt, n_gmres_iter_total);
-            t = t + dt;
-            sdirk2_file << t << " " << temperature(y);
-            for (const auto& val : get_species(y)) sdirk2_file << " " << val;
-            sdirk2_file << "\n";
-        }
-        auto sdirk2_end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> sdirk2_duration = sdirk2_end - sdirk2_start;
-        std::cout << "[SDIRK2] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
-        std::cout << "[SDIRK2] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
-    }
+    //     auto sdirk2_start = std::chrono::high_resolution_clock::now();
+    //     for(int i = 0; i < n_run; i++)
+    //     {
+    //         y = sdirk2(y, dt, n_gmres_iter_total);
+    //         t = t + dt;
+    //         sdirk2_file << t << " " << temperature(y);
+    //         for (const auto& val : get_species(y)) sdirk2_file << " " << val;
+    //         sdirk2_file << "\n";
+    //     }
+    //     auto sdirk2_end = std::chrono::high_resolution_clock::now();
+    //     std::chrono::duration<double> sdirk2_duration = sdirk2_end - sdirk2_start;
+    //     std::cout << "[SDIRK2] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
+    //     std::cout << "[SDIRK2] Time elapsed: " << sdirk2_duration.count() << " seconds" << std::endl;
+    // }
 
-    if (dt_ros > 0.)
-    {
-        y = y_init;
-        dt = dt_ros;
-        t = 0;
-        n_run = int(end_time/dt_ros);
-        n_gmres_iter_total = 0;
+    // if (dt_ros > 0.)
+    // {
+    //     y = y_init;
+    //     dt = dt_ros;
+    //     t = 0;
+    //     n_run = int(end_time/dt_ros);
+    //     n_gmres_iter_total = 0;
 
-        ros_file << t << " " << temperature(y);
-        for (const auto& val : get_species(y)) ros_file << " " << val;
-        ros_file << "\n";
+    //     ros_file << t << " " << temperature(y);
+    //     for (const auto& val : get_species(y)) ros_file << " " << val;
+    //     ros_file << "\n";
 
-        auto ros_start = std::chrono::high_resolution_clock::now();
-        for(int i = 0; i < n_run; i++)
-        {
-            y = rosenbroc(y, dt, n_gmres_iter_total);
-            t = t + dt;
-            ros_file << t << " " << temperature(y);
-            for (const auto& val : get_species(y)) ros_file << " " << val;
-            ros_file << "\n";
-        }
-        auto ros_end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> ros_duration = ros_end - ros_start;
-        std::cout << "[ROSENBROC] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
-        std::cout << "[ROSENBROC] Time elapsed: " << ros_duration.count() << " seconds" << std::endl;
-    }
+    //     auto ros_start = std::chrono::high_resolution_clock::now();
+    //     for(int i = 0; i < n_run; i++)
+    //     {
+    //         y = rosenbroc(y, dt, n_gmres_iter_total);
+    //         t = t + dt;
+    //         ros_file << t << " " << temperature(y);
+    //         for (const auto& val : get_species(y)) ros_file << " " << val;
+    //         ros_file << "\n";
+    //     }
+    //     auto ros_end = std::chrono::high_resolution_clock::now();
+    //     std::chrono::duration<double> ros_duration = ros_end - ros_start;
+    //     std::cout << "[ROSENBROC] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
+    //     std::cout << "[ROSENBROC] Time elapsed: " << ros_duration.count() << " seconds" << std::endl;
+    // }
 
-    if (dt_yass > 0.)
-    {
-        y = y_init;
-        dt = dt_yass;
-        t = 0;
-        n_run = int(end_time/dt_yass);
-        n_gmres_iter_total = 0;
+    // if (dt_yass > 0.)
+    // {
+    //     y = y_init;
+    //     dt = dt_yass;
+    //     t = 0;
+    //     n_run = int(end_time/dt_yass);
+    //     n_gmres_iter_total = 0;
 
-        yass_file << t << " " << temperature(y);
-        for (const auto& val : get_species(y)) yass_file << " " << val;
-        yass_file << "\n";
+    //     yass_file << t << " " << temperature(y);
+    //     for (const auto& val : get_species(y)) yass_file << " " << val;
+    //     yass_file << "\n";
 
-        auto yass_start = std::chrono::high_resolution_clock::now();
-        for(int i = 0; i < n_run; i++)
-        {
-            y = yass(y, dt, n_gmres_iter_total);
-            t = t + dt;
-            yass_file << t << " " << temperature(y);
-            for (const auto& val : get_species(y)) yass_file << " " << val;
-            yass_file << "\n";
-        }
-        auto yass_end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> yass_duration = yass_end - yass_start;
-        std::cout << "[YASS] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
-        std::cout << "[YASS] Time elapsed: " << yass_duration.count() << " seconds" << std::endl;
-    }
+    //     auto yass_start = std::chrono::high_resolution_clock::now();
+    //     for(int i = 0; i < n_run; i++)
+    //     {
+    //         y = yass(y, dt, n_gmres_iter_total);
+    //         t = t + dt;
+    //         yass_file << t << " " << temperature(y);
+    //         for (const auto& val : get_species(y)) yass_file << " " << val;
+    //         yass_file << "\n";
+    //     }
+    //     auto yass_end = std::chrono::high_resolution_clock::now();
+    //     std::chrono::duration<double> yass_duration = yass_end - yass_start;
+    //     std::cout << "[YASS] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
+    //     std::cout << "[YASS] Time elapsed: " << yass_duration.count() << " seconds" << std::endl;
+    // }
 
-    if (dt_rk4 > 0.)
-    {
-        y = y_init;
-        dt = dt_rk4;
-        n_run = int(end_time/dt_rk4);
-        t = 0;
-        rk4_file << t << " " << temperature(y);
-        for (const auto& val : get_species(y)) rk4_file << " " << val;
-        rk4_file << "\n";
+    // if (dt_rk4 > 0.)
+    // {
+    //     y = y_init;
+    //     dt = dt_rk4;
+    //     n_run = int(end_time/dt_rk4);
+    //     t = 0;
+    //     rk4_file << t << " " << temperature(y);
+    //     for (const auto& val : get_species(y)) rk4_file << " " << val;
+    //     rk4_file << "\n";
 
-        auto rk4_start = std::chrono::high_resolution_clock::now();
-        for(int i = 0; i < n_run; i++)
-        {
-            y = rk4(y, dt);
-            t = t + dt;
-            rk4_file << t << " " << temperature(y);
-            for (const auto& val : get_species(y)) rk4_file << " " << val;
-            rk4_file << "\n";
-        }
-        auto rk4_end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> rk4_duration = rk4_end - rk4_start;
-        std::cout << "[RK4] Time elapsed: " << rk4_duration.count() << " seconds" << std::endl;
-    }
+    //     auto rk4_start = std::chrono::high_resolution_clock::now();
+    //     for(int i = 0; i < n_run; i++)
+    //     {
+    //         y = rk4(y, dt);
+    //         t = t + dt;
+    //         rk4_file << t << " " << temperature(y);
+    //         for (const auto& val : get_species(y)) rk4_file << " " << val;
+    //         rk4_file << "\n";
+    //     }
+    //     auto rk4_end = std::chrono::high_resolution_clock::now();
+    //     std::chrono::duration<double> rk4_duration = rk4_end - rk4_start;
+    //     std::cout << "[RK4] Time elapsed: " << rk4_duration.count() << " seconds" << std::endl;
+    // }
 
-    if (dt_sdirk4 > 0.)
-    {
-        y = y_init;
-        dt = dt_sdirk4;
-        n_run = int(end_time/dt_sdirk4);
-        t = 0;
-        n_gmres_iter_total = 0;
+    // if (dt_sdirk4 > 0.)
+    // {
+    //     y = y_init;
+    //     dt = dt_sdirk4;
+    //     n_run = int(end_time/dt_sdirk4);
+    //     t = 0;
+    //     n_gmres_iter_total = 0;
 
-        sdirk4_file << t << " " << temperature(y);
-        for (const auto& val : get_species(y)) sdirk4_file << " " << val;
-        sdirk4_file << "\n";
+    //     sdirk4_file << t << " " << temperature(y);
+    //     for (const auto& val : get_species(y)) sdirk4_file << " " << val;
+    //     sdirk4_file << "\n";
 
-        auto sdirk4_start = std::chrono::high_resolution_clock::now();
-        for(int i = 0; i < n_run; i++)
-        {
-            y = sdirk4(y, dt, n_gmres_iter_total);
-            t = t + dt;
-            sdirk4_file << t << " " << temperature(y);
-            for (const auto& val : get_species(y)) sdirk4_file << " " << val;
-            sdirk4_file << "\n";
-        }
-        auto sdirk4_end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> sdirk4_duration = sdirk4_end - sdirk4_start;
-        std::cout << "[SDIRK4] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
-        std::cout << "[SDIRK4] Time elapsed: " << sdirk4_duration.count() << " seconds" << std::endl;
-    }
+    //     auto sdirk4_start = std::chrono::high_resolution_clock::now();
+    //     for(int i = 0; i < n_run; i++)
+    //     {
+    //         y = sdirk4(y, dt, n_gmres_iter_total);
+    //         t = t + dt;
+    //         sdirk4_file << t << " " << temperature(y);
+    //         for (const auto& val : get_species(y)) sdirk4_file << " " << val;
+    //         sdirk4_file << "\n";
+    //     }
+    //     auto sdirk4_end = std::chrono::high_resolution_clock::now();
+    //     std::chrono::duration<double> sdirk4_duration = sdirk4_end - sdirk4_start;
+    //     std::cout << "[SDIRK4] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
+    //     std::cout << "[SDIRK4] Time elapsed: " << sdirk4_duration.count() << " seconds" << std::endl;
+    // }
 
     return 0;
 }
