@@ -367,7 +367,7 @@ set_chemical_state({scalar_parameter} energy, // internal_energy or temperature
     factor  = factor * factor;
 
     {scalar} sum = {scalar_cast}(0.0);
-    for ({index} i  = 0; i<n_species; i++)
+    for ({index} i  = 0; i<n_variables; i++)
     {{
         sum += x[i] * x[i] * factor;
     }}

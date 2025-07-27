@@ -35,7 +35,36 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 }}
 #endif
 
+#ifdef CHEMGEN_PRECONDITIONER_NN
+{device_option}
+std::array<double, (n_species + 1)*(n_species + 1)> flatten_jacobian({jacobian_parameter} A)
+{{
+    std::array<double, (n_species + 1)*(n_species + 1)> flat_A;
+    for (int i = 0; i < (n_species + 1); i++)
+    {{
+        for (int j = 0; j < (n_species + 1); i++)
+        {{
+            flat_A[(i*(n_species + 1))+j] = A[i][j];
+        }}
+    }}
+    return flat_A;
+}}
+
+{device_option}
+{jacobian_parameter} unflatten_jacobian(const std::array<{scalar}, (n_species + 1)*(n_species + 1)>& flat_A)
+{{
+    {jacobian} Q;
+    for (int i = 0; i < (n_species + 1); ++i) {{
+        for (int j = 0; j < (n_species + 1); ++j) {{
+            Q[i][j] = flat_A[i*(n_species + 1) + j];
+        }}
+    }}
+    return Q;
+}}
+#endif
+
 #ifdef CHEMGEN_EIGEN
+#include "./nn_preconditioner.hpp"
 #include "./custom_preconditioners_eigen.h"
 
 using Preconditioner =
@@ -49,8 +78,8 @@ GaussSeidelPreconditioner<{scalar}, {jacobian_eigen}>;
 #elif defined(CHEMGEN_PRECONDITIONER_ILU)
 IncompleteLUT<{scalar}>;
 
-#elif defined(CHEMGEN_PRECONDITIONER_CUSTOM)
-JacobiPreconditioner<{scalar}>;
+#elif defined(CHEMGEN_PRECONDITIONER_NN)
+NNPreconditioner<{scalar}>;
 
 #else
 IdentityPreconditioner;
@@ -74,11 +103,11 @@ gmres_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linear
     {{
 #if defined(CHEMGEN_PRECONDITIONER_ILU)
 
+        // gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
+        gmres.preconditioner().setDroptol(0.0001); //0.0001 is most optimal
+
         //gmres.preconditioner().setFillfactor(10); // default value
         gmres.preconditioner().setFillfactor(n_variables * n_variables); // allow for maximum fill-in, such that only droptol controls ilu sparsity
-
-        gmres.preconditioner().setDroptol(NumTraits<{scalar}>::dummy_precision()); // default value
-        //gmres.preconditioner().setDroptol(0.001);
 
 #endif
 
@@ -135,6 +164,12 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmr
     {chemical_state} r = diag_inv * (b);
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
     {chemical_state} r = apply_gauss_seidel(A, b);
+#elif CHEMGEN_PRECONDITIONER_NN
+    SpeciesJacobian A_ = A;
+    std::array<{scalar}, n_variables * n_variables> A_flat = flatten_jacobian(A);
+    std::array<{scalar}, n_variables * n_variables> P_flat = MLP_BE(A_flat);
+    {jacobian} P = unflatten_jacobian(P_flat);
+    Species r = P*(b - A_*x); 
 #else
 	{chemical_state} r = b;
 #endif
@@ -165,8 +200,15 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {index} &n_gmr
         w = diag_inv * w;
 #elif defined(CHEMGEN_PRECONDITIONER_GAUSS_SEIDEL)
         w = apply_gauss_seidel(A, w);
+#elif defined(CHEMGEN_PRECONDITIONER_NN)
+        w = P * w;
 #endif
 
+        #ifdef CHEMGEN_PRECONDITIONER_NN
+        {{
+            w = P * (A * V[j]);
+        }}
+        #endif
         // Modified Gram-Schmidt
         for ({index} i = 0; i <= j; ++i)
         {{

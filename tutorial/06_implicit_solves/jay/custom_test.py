@@ -13,6 +13,10 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <array>\n#include <chrono>\n")
         file.write("""
 {eigen}
+<<<<<<<< HEAD:tutorial/06_implicit_solves/jay/custom_test.py
+========
+{eigen_sparse_directive}
+>>>>>>>> develop/mac_learn:tutorial/06_implicit_solves/custom_test.py
 #ifdef CHEMGEN_EIGEN
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
