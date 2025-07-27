@@ -32,13 +32,18 @@ namespace Eigen
         void compute(const MatType &A)
         {
             //assert input size
-            Eigen::SparseMatrix<Scalar> A_ = A;
-            A_.makeCompressed();
+            // Eigen::SparseMatrix<Scalar> A_ = A; // sparse already
+            A.makeCompressed();
             // assert(A_.valueSize() == INPUT_DIM && "A does not match sparsity count");
+
+            //TODO:
+            PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
+            perm.indices() = perm_indices;
+            B = perm.transpose() * A * perm;
 
             //pack all 3256 entries from A_.valuePtr()
             std::array<Scalar, INPUT_DIM> input_arr;
-            std::copy_n(A_.valuePtr(), INPUT_DIM, input_arr.begin());
+            std::copy_n(A.valuePtr(), INPUT_DIM, input_arr.begin());
 
             //NN
             auto P = MLP_LU<Scalar>(input_arr);
@@ -59,6 +64,13 @@ namespace Eigen
             Rhs y = P_eig.template triangularView<UnitLower>().solve(b);
             Rhs x = P_eig.template triangularView<Upper>().solve(y);
             return x;
+        }
+        {
+            //TODO: Sepearte LU and permuate x
+            x = perm.transpose() * b;
+            lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
+            lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
+            x = perm * x;
         }
 
         //eigen stuff

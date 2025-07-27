@@ -75,6 +75,7 @@ def main():
     parser.add_argument("--generate-permutation", action="store_true", help="Generate permutation indices for Jacobian rows/columns - need to load a sparsity_pattern.npy file")
     parser.add_argument("--temperature-equation", action="store_true", help="Solve temperature equation instead of assuming constant internal energy")
     parser.add_argument("--ignore-other-species", action="store_true", help="Ignore third-body and pressure dependence when calculating derivatives with respect to species")
+    parser.add_argument("--save-generated-permutation", action="store_true", help="Print the generated permutation indices for Jacobian rows/columns")
 
     args = parser.parse_args()
 
@@ -254,6 +255,11 @@ def main():
         # Store
         sp_lu_perm = sp_lu_perm_empirical
         setattr(configuration, "sp_lu_perm", sp_lu_perm)
+        if args.save_generated_permutation: #ADDED
+            print("Permutation indices for Jacobian rows/columns:")
+            np.set_printoptions(threshold=np.inf)
+            # print(sp_lu_perm)
+            np.save('generated_permutation.npy', sp_lu_perm)
 
         # Print info
         n_nonzeros = np.count_nonzero(sp_lu_perm)

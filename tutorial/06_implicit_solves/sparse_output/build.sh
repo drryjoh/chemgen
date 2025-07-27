@@ -1,15 +1,16 @@
 #!/bin/bash
-MECH=isobutene-ic4h8-493-2716.yaml
+MECH=jetA-detailed-NOx-203-1589.yaml
 
 #FIRST
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
     --get-sparsity \
     --save-sparsity \
-    --print-sparsity
+    --skip-tests \
 
 #SECOND
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
     --generate-permutation \
+    --save-generated-permutation \
     --compile
 
 rm -rf __pycache__

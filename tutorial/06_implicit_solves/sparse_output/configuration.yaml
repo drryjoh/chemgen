@@ -74,12 +74,12 @@ decorators:
 build:
   chemgen_smp: None
   chemgen_library: on
-  chemgen_input: "-O2 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib"
+  chemgen_input: "-O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib"
 
 solver:
   chemistry_solver: all
   linear_solver: gmres
   preconditioner: none
   eigen: on
-  eigen_sparse: off
+  eigen_sparse: on
   fixed_jacobian: off

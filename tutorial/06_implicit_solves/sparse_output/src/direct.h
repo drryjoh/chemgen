@@ -1,19 +1,19 @@
 #ifdef CHEMGEN_EIGEN
 
-{device_option}
-{chemical_state_function}
-direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linear_solver_direct_eigen}& lu, bool compute)
-{{
-    {chemical_state_eigen} b(n_variables);
 
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
+ChemicalState
+direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_, SparseLU<SparseMatrix<double>, NaturalOrdering<int>>& lu, bool compute)
+{
+    Matrix<double, n_variables, 1> b(n_variables);
+
+    for (int i = 0; i < n_variables; ++i)
+    {
         b(i) = b_[i];
-    }}
+    }
 
-    {chemical_state_eigen} x;
+    Matrix<double, n_variables, 1> x;
 
-    {jacobian_eigen} B;
+    SparseMatrix<double> B;
 
     // Permutations
     PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
@@ -43,7 +43,7 @@ direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linea
 
 #else
 
-    if (compute) lu = {linear_solver_direct_eigen}(B);
+    if (compute) lu = SparseLU<SparseMatrix<double>, NaturalOrdering<int>>(B);
 
     /** forJay
      * We convert A * x = b to the equivalent system B * y = c, where B = P^T * A * P, y = P^T * x, c = P^T * b
@@ -63,123 +63,123 @@ direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linea
     MatrixXd m_lu = lu.matrixLU(); // LU decomposition where L (excluding unit diagonal) is stored in lower triangular part and U is stored in upper triangular part
 
 #if 1
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
-        for ({index} j = 0; j < n_variables; ++j)
-        {{
+    for (int i = 0; i < n_variables; ++i)
+    {
+        for (int j = 0; j < n_variables; ++j)
+        {
             if (m_lu(i,j) != 0. && sp_lu_perm[i][j] == 0)
-            {{
+            {
                 std::cout << "i = " << i << std::endl;
                 std::cout << "j = " << j << std::endl;
                 std::cout << "m_lu(i,j) = " << m_lu(i,j) << std::endl;
 
                 std::exit(0);
-            }}
-        }}
-    }}
+            }
+        }
+    }
 #endif
 
 #endif
 
 #if 1
     // Check that row permutation is identity
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
+    for (int i = 0; i < n_variables; ++i)
+    {
         if (row_perm.indices()(i) != i)
-        {{
+        {
             std::cout << "i = " << i << std::endl;
             std::cout << "row_perm.indices()(i) = " << row_perm.indices()(i) << std::endl;
 
             std::exit(0);
-        }}
-    }}
+        }
+    }
 #endif
 
     // Convert back to chemical_state
-    {chemical_state} result = {{}};
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
+    ChemicalState result = {};
+    for (int i = 0; i < n_variables; ++i)
+    {
         result[i] = x(i);
-    }}
+    }
 
     return result;
-}}
+}
 
-{device_option}
-{chemical_state_function}
-direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_)
-{{
-    {declare_linear_solver_direct_eigen}
+
+ChemicalState
+direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_)
+{
+    SparseLU<SparseMatrix<double>, NaturalOrdering<int>> solver;
 
     return
     direct_solve(A, b_, solver, true);
-}}
+}
 
 #else
 
 template<typename T>
 void swap_gen(T& a, T& b)
-{{
+{
     T temp = a;
     a = b;
     b = temp;
-}}
+}
 
-{jacobian} invert_jacobian({jacobian_parameter} J)
-{{
-    {jacobian} A = J; // make a copy
-    {jacobian} inv = {{}};
+SpeciesJacobian invert_jacobian(const SpeciesJacobian& J)
+{
+    SpeciesJacobian A = J; // make a copy
+    SpeciesJacobian inv = {};
 
     // Initialize inv to the identity matrix
-    for ({index} i = 0; i < n_variables; ++i)
+    for (int i = 0; i < n_variables; ++i)
         inv[i][i] = 1.0;
 
-    for ({index} i = 0; i < n_variables; ++i)
-    {{
+    for (int i = 0; i < n_variables; ++i)
+    {
         // Pivot: find the max row in column i
-        {index} max_row = i;
-        for ({index} k = i + 1; k < n_variables; ++k)
-        {{
+        int max_row = i;
+        for (int k = i + 1; k < n_variables; ++k)
+        {
             if (std::abs(A[k][i]) > std::abs(A[max_row][i]))
                 max_row = k;
-        }}
+        }
 
         // Swap rows in both A and inv
         swap_gen(A[i], A[max_row]);
         swap_gen(inv[i], inv[max_row]);
 
-        {scalar} pivot = A[i][i];
+        double pivot = A[i][i];
         if (std::abs(pivot) < 1e-14)
-        {{
+        {
             std::cerr << "Matrix is singular or nearly singular.\n";
-            return {jacobian}{{}}; // or throw exception
-        }}
+            return SpeciesJacobian{}; // or throw exception
+        }
 
         // Normalize the pivot row
-        for ({index} j = 0; j < n_variables; ++j)
-        {{
+        for (int j = 0; j < n_variables; ++j)
+        {
             A[i][j] /= pivot;
             inv[i][j] /= pivot;
-        }}
+        }
 
         // Eliminate column i in other rows
-        for ({index} k = 0; k < n_variables; ++k)
-        {{
+        for (int k = 0; k < n_variables; ++k)
+        {
             if (k == i) continue;
-            {scalar} factor = A[k][i];
-            for ({index} j = 0; j < n_variables; ++j)
-            {{
+            double factor = A[k][i];
+            for (int j = 0; j < n_variables; ++j)
+            {
                 A[k][j] -= factor * A[i][j];
                 inv[k][j] -= factor * inv[i][j];
-            }}
-        }}
-    }}
+            }
+        }
+    }
 
     return inv;
-}}
+}
 
-{chemical_state_function} direct_solve({jacobian_parameter} J, {chemical_state_parameter} rhs)
-{{
+ChemicalState direct_solve(const SpeciesJacobian& J, const ChemicalState& rhs)
+{
     return invert_jacobian(J) * rhs;
-}}
+}
 #endif

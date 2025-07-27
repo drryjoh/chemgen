@@ -3,7 +3,7 @@ import cantera as ct
 # Temperature: 700-1600 K
 # Pressure: 1-2 atm
 
-flag = 2
+flag = 3
 
 if flag == 0:
     mech_file = "../ffcm2_h2.yaml"
@@ -22,6 +22,14 @@ elif flag == 2:
     # Jacobian: sparsity percentage = 98.6214%
     # LU decomposition of permuted Jacobian: # nonzero entries = 50017, # zero entries = 1851624, total # entries = 1901641
     # LU decomposition of permuted Jacobian: sparsity percentage = 97.3698%
+elif flag == 3:
+    mech_file = "jetA-detailed-NOx-203-1589.yaml"
+    fuel_name = "POSF10325"
+
+elif flag == 4:
+    mech_file = "isobutene-ic4h8-493-2716.yaml"
+    fuel_name = "IC4H8"
+
 else:
     raise ValueError
 

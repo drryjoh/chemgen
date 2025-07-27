@@ -4,16 +4,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the reaction mechanism
-gas = ct.Solution("FFCM2_model.yaml")
+gas = ct.Solution("mechanisms/jetA-detailed-NOx-203-1589.yaml")
 
 # Define initial conditions
 test_conditions = {
     "temperature": 1800,  # K
     "pressure": 101325.0,  # Pa
     "species": {
-        "O2": 0.2,
-        "N2": 0.6,
-        "H2": 0.2,
+        "O2": 0.20736086175942545,
+        "N2": 0.7800718132854579,
+        "POSF10325": 0.012567324955116694
     }
 }
 
@@ -29,7 +29,7 @@ network = ct.ReactorNet([reactor])
 
 # Define simulation time (in seconds)
 time_end = 2e-5
-dt_small = 1e-7
+dt_small = 1e-8
 n_steps = int(time_end/dt_small)
 #time_end = 200 * 2e-7  # Convert ns to seconds
 #n_steps = 200  # Number of time steps
