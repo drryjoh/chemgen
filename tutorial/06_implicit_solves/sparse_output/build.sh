@@ -4,14 +4,12 @@ MECH=isobutene-ic4h8-493-2716.yaml
 #FIRST
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
     --get-sparsity \
-    --save-sparsity
+    --save-sparsity \
+    --print-sparsity
 
 #SECOND
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
-    --generate-permutation
-
-#THIRD
-python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
+    --generate-permutation \
     --compile
 
 rm -rf __pycache__
