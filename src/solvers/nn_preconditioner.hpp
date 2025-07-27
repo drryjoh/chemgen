@@ -18,7 +18,8 @@ namespace Eigen
         static constexpr int INPUT_DIM = 3256;   // number of stored non-zeros
         static constexpr int OUTPUT_DIM = M * M; // 9409
 
-        using Matrix_ = Matrix<Scalar, M, M>;
+        // using Matrix_ = Matrix<Scalar, M, M>;
+        using Matrix_ = SparseMatrix<Scalar>;
 
     public:
         NNPreconditioner() = default;
@@ -31,27 +32,33 @@ namespace Eigen
         template <typename MatType>
         void compute(const MatType &A)
         {
-            //assert input size
-            // Eigen::SparseMatrix<Scalar> A_ = A; // sparse already
+            //permute input
             A.makeCompressed();
             // assert(A_.valueSize() == INPUT_DIM && "A does not match sparsity count");
-
-            //TODO:
             PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
             perm.indices() = perm_indices;
             B = perm.transpose() * A * perm;
 
             //pack all 3256 entries from A_.valuePtr()
             std::array<Scalar, INPUT_DIM> input_arr;
-            std::copy_n(A.valuePtr(), INPUT_DIM, input_arr.begin());
+            std::copy_n(B.valuePtr(), INPUT_DIM, input_arr.begin());
 
             //NN
             auto P = MLP_LU<Scalar>(input_arr);
 
-            //copy into P_eig
+            //dense matrix
             for (int i = 0, k = 0; i < M; ++i)
                 for (int j = 0; j < M; ++j, ++k)
                     P_eig(i, j) = P[k];
+            //sparse matrix
+            P_eig.setZero();  
+            for (int i = 0, k = 0; i < M; ++i)
+                for (int j = 0; j < M; ++j, ++k)
+                    if (P[k] != 0)  
+                    {
+                        P_eig.insert(i, j) = P[k];
+                    }
+            P_eig.makeCompressed();
         }
 
         //apply preconditioner
@@ -60,16 +67,15 @@ namespace Eigen
         // { //INV_A
         //     return P_eig * b;
         // }
-        { //LU
-            Rhs y = P_eig.template triangularView<UnitLower>().solve(b);
-            Rhs x = P_eig.template triangularView<Upper>().solve(y);
-            return x;
-        }
-        {
-            //TODO: Sepearte LU and permuate x
+        // { //LU
+        //     Rhs y = P_eig.template triangularView<UnitLower>().solve(b);
+        //     Rhs x = P_eig.template triangularView<Upper>().solve(y);
+        //     return x;
+        // }
+        { //LU with permutation
             x = perm.transpose() * b;
-            lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
-            lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
+            P_eig.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
+            P_eig.matrixLU().template triangularView<Upper>().solveInPlace(x);
             x = perm * x;
         }
 

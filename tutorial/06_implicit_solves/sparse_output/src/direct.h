@@ -2,7 +2,7 @@
 
 
 ChemicalState
-direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_, SparseLU<SparseMatrix<double>, NaturalOrdering<int>>& lu, bool compute)
+direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_, SparseLU<SparseMatrix<double>, COLAMDOrdering<int>>& lu, bool compute)
 {
     Matrix<double, n_variables, 1> b(n_variables);
 
@@ -13,37 +13,15 @@ direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_, SparseLU<Sp
 
     Matrix<double, n_variables, 1> x;
 
-    SparseMatrix<double> B;
-
-    // Permutations
-    PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
-    perm.indices() = perm_indices;
-    B = perm.transpose() * A * perm;
-
-    PermutationMatrix<n_variables, n_variables> row_perm; // note: this corresponds to PA = LU
-
 #ifdef CHEMGEN_EIGEN_SPARSE
-    MatrixXd A_, B_;
 
-    lu.setPivotThreshold(0.);
-
-    if (compute) lu.compute(B);
+    if (compute) lu.compute(A);
     if (lu.info() != Success) std::cerr << "lu factorization failed!" << std::endl;
-    x = perm * lu.solve(perm.transpose() * b);
-
-    row_perm.indices() = lu.rowsPermutation().indices();
-
-#if 0
-    A_ = A; B_ = B;
-    std::cout << "\n\nA = \n" << A_ << std::endl;
-    std::cout << "\n\nB = \n" << B_ << std::endl;
-    std::cout << "\n\nlu.rowsPermutation().indices() = \n" << lu.rowsPermutation().indices() << std::endl;
-    // std::exit(0);
-#endif
+    x = lu.solve(b);
 
 #else
 
-    if (compute) lu = SparseLU<SparseMatrix<double>, NaturalOrdering<int>>(B);
+    if (compute) lu = SparseLU<SparseMatrix<double>, COLAMDOrdering<int>>(A);
 
     /** forJay
      * We convert A * x = b to the equivalent system B * y = c, where B = P^T * A * P, y = P^T * x, c = P^T * b
@@ -54,45 +32,7 @@ direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_, SparseLU<Sp
     x = perm.transpose() * b;
     lu.matrixLU().template triangularView<UnitLower>().solveInPlace(x);
     lu.matrixLU().template triangularView<Upper>().solveInPlace(x);
-    x = perm * x;
 
-    row_perm.indices() = lu.permutationP().indices();
-
-    // Check expected sparsity - can't easily do this for SparseLU since can't directly access L and U matrices
-    // Need extremely small dt to prevent pivoting since can't directly control pivoting threshold (unlike for Sparse LU)
-    MatrixXd m_lu = lu.matrixLU(); // LU decomposition where L (excluding unit diagonal) is stored in lower triangular part and U is stored in upper triangular part
-
-#if 1
-    for (int i = 0; i < n_variables; ++i)
-    {
-        for (int j = 0; j < n_variables; ++j)
-        {
-            if (m_lu(i,j) != 0. && sp_lu_perm[i][j] == 0)
-            {
-                std::cout << "i = " << i << std::endl;
-                std::cout << "j = " << j << std::endl;
-                std::cout << "m_lu(i,j) = " << m_lu(i,j) << std::endl;
-
-                std::exit(0);
-            }
-        }
-    }
-#endif
-
-#endif
-
-#if 1
-    // Check that row permutation is identity
-    for (int i = 0; i < n_variables; ++i)
-    {
-        if (row_perm.indices()(i) != i)
-        {
-            std::cout << "i = " << i << std::endl;
-            std::cout << "row_perm.indices()(i) = " << row_perm.indices()(i) << std::endl;
-
-            std::exit(0);
-        }
-    }
 #endif
 
     // Convert back to chemical_state
@@ -109,7 +49,7 @@ direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_, SparseLU<Sp
 ChemicalState
 direct_solve(const SparseMatrix<double>& A, const ChemicalState& b_)
 {
-    SparseLU<SparseMatrix<double>, NaturalOrdering<int>> solver;
+    SparseLU<SparseMatrix<double>, COLAMDOrdering<int>> solver;
 
     return
     direct_solve(A, b_, solver, true);
