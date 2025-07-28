@@ -1,4 +1,4 @@
-
+#define CHEMGEN_PRECONDITIONER_NN
 
 #define CHEMGEN_EIGEN
 
@@ -64,7 +64,7 @@ const SpeciesJacobian& unflatten_jacobian(const std::array<double, (n_species + 
 #endif
 
 #ifdef CHEMGEN_EIGEN
-// #include "./nn_preconditioner.hpp"
+#include "./nn_preconditioner.hpp"
 #include "./custom_preconditioners_eigen.h"
 
 using Preconditioner =

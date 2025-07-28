@@ -2,7 +2,7 @@
 ChemicalState 
 backwards_euler(ChemicalState y,  
                 const double& dt,
-                int & csv_iter, 
+                // int & csv_iter, 
                 int  &n_gmres_iter_total,
                 double abs_newton_tol = newton_abs_tol_default,
                 double rel_newton_tol = newton_rel_tol_default,
@@ -28,21 +28,21 @@ backwards_euler(ChemicalState y,
                 A = source_jacobian(y_guess, temperature_, -1, 1/dt);
             }
             //................................................................
-            Eigen::MatrixXd denseA = Eigen::MatrixXd(A);
-            std::ostringstream ss;
-            ss << "jetA/jacobian_" << csv_iter << ".csv"; //change path
-            std::ofstream out(ss.str());
-            for (int i = 0; i < denseA.rows(); ++i) 
-            {
-                for (int j = 0; j < denseA.cols(); ++j) 
-                {
-                    out << denseA(i, j);
-                    if (j + 1 < denseA.cols())
-                        out << ",";
-                }
-                out << "\n";
-            }
-            csv_iter += 1;
+            // Eigen::MatrixXd denseA = Eigen::MatrixXd(A);
+            // std::ostringstream ss;
+            // ss << "BE_DATA/jacobian_" << csv_iter << ".csv"; //change path
+            // std::ofstream out(ss.str());
+            // for (int i = 0; i < denseA.rows(); ++i) 
+            // {
+            //     for (int j = 0; j < denseA.cols(); ++j) 
+            //     {
+            //         out << denseA(i, j);
+            //         if (j + 1 < denseA.cols())
+            //             out << ",";
+            //     }
+            //     out << "\n";
+            // }
+            // csv_iter += 1;
             //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             //RHS

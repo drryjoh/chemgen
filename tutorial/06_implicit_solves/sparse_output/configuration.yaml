@@ -79,7 +79,7 @@ build:
 solver:
   chemistry_solver: all
   linear_solver: gmres
-  preconditioner: none
+  preconditioner: neural_net
   eigen: on
   eigen_sparse: on
   fixed_jacobian: off
