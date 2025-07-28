@@ -131,7 +131,7 @@ def update_configuration_eigen(configuration):
             jacobian_parameter_eigen = f"const SparseMatrix<{scalar}>&"
             jacobian_eigen_dynamic = f"SparseMatrix<{scalar}>"
 
-            linear_solver_direct_eigen = f"SparseLU<SparseMatrix<{scalar}>, COLAMDOrdering<{index}>>"
+            linear_solver_direct_eigen = f"SparseLU<SparseMatrix<{scalar}>, NaturalOrdering<{index}>>"
 
         declare_linear_solver_direct_eigen = f"{linear_solver_direct_eigen} solver;"
 
