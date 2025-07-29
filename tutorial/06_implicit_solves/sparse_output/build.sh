@@ -5,7 +5,7 @@ MECH=jetA-detailed-NOx-203-1589.yaml
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
     --get-sparsity \
     --save-sparsity \
-    --skip-tests \
+    --skip-tests
 
 #SECOND
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \

@@ -51,16 +51,13 @@ def create_headers(configuration, chemistry_solver, destination_folder):
             exit()
         make_headers(code_directory, file_names, headers, configuration, destination_folder)
 
-        n_nonzeros_output = np.count_nonzero(configuration.sp_lu_perm)
-        setattr(configuration, "n_nonzeros_output", n_nonzeros_output)
-
         if configuration.eigen != "":
             file_name = 'custom_preconditioners_eigen.h'
             headers.append(file_name)
             write_formatted_code(code_directory, file_name, configuration, destination_folder, format_code=False)
-            file_name = 'nn_preconditioner.hpp'
-            headers.append(file_name)
-            write_formatted_code(code_directory, file_name, configuration, destination_folder, format_code=False)
+            file_name = 'nn_preconditioner.hpp.in'
+            # headers.append(file_name)
+            write_formatted_code(code_directory, file_name, headers, configuration, destination_folder)
             
             
     return headers

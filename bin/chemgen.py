@@ -275,6 +275,9 @@ def main():
         print("LU decomposition of permuted Jacobian: # nonzero entries = {}, # zero entries = {}, total # entries = {}".format(n_nonzeros, n_zeros, n_entries))
         print("LU decomposition of permuted Jacobian: sparsity percentage = %g%%" % sparsity_percent)
 
+        n_nonzeros_output = n_nonzeros
+        setattr(configuration, "n_nonzeros_output", n_nonzeros_output)
+
     third_parties = [use_third_parties, third_party_path, libraries]
 
     chemgen_library = configuration_file.get('build', {}).get('chemgen_library', False)
