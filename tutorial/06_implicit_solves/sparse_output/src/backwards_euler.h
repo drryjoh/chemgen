@@ -60,6 +60,24 @@ backwards_euler(ChemicalState y,
             if (error_norm(dy, y_guess, abs_newton_tol, rel_newton_tol) < 1.0)
             {
                 // std::cout << "# Newton iterations = " << iter + 1 << std::endl;
+
+#if defined(CHEMGEN_EIGEN) && !defined(CHEMGEN_EIGEN_SPARSE)
+                if (max_iter > 10)
+                {
+                    int n_nonzeros = 0;
+
+                    for (int i = 0; i < n_variables; ++i)
+                    {
+                        for (int j = 0; j < n_variables; ++j)
+                        {
+                            if (A(i,j) != 0) n_nonzeros++;
+                        }
+                    }
+
+                    // std::cout << "A = \n" << A << std::endl;
+                    std::cout << "n_nonzeros = \n" << n_nonzeros << std::endl;
+                }
+#endif
                 return y_guess;
             }
         }

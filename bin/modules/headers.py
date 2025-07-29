@@ -6,6 +6,7 @@ import subprocess
 import sys
 import os
 import glob
+import numpy as np
 from .format_code import *
 
 def write_headers(file, headers):
@@ -49,6 +50,9 @@ def create_headers(configuration, chemistry_solver, destination_folder):
             print("Chemistry Solver not recognized")
             exit()
         make_headers(code_directory, file_names, headers, configuration, destination_folder)
+
+        n_nonzeros_output = np.count_nonzero(configuration.sp_lu_perm)
+        setattr(configuration, "n_nonzeros_output", n_nonzeros_output)
 
         if configuration.eigen != "":
             file_name = 'custom_preconditioners_eigen.h'

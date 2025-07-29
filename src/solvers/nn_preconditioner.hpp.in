@@ -9,14 +9,14 @@
 #include "MLP_LU.hpp" //CODEJENN
 
 namespace Eigen
-{
+{{
 
     template <typename Scalar>
     class NNPreconditioner
-    {
-        static constexpr int M = 97;
-        static constexpr int INPUT_DIM = 3256;   // number of stored non-zeros
-        static constexpr int OUTPUT_DIM = M * M; // 9409
+    {{
+        static constexpr int M = {n_variables}; // number of variables
+        static constexpr int INPUT_DIM = 5858;   // number of stored non-zeros
+        static constexpr int OUTPUT_DIM = {n_nonzeros_output}; // 9409
 
         // using Matrix_ = Matrix<Scalar, M, M>;
         using Matrix_ = SparseMatrix<Scalar>;
@@ -27,14 +27,14 @@ namespace Eigen
 
         //eigen stuff
         template <typename MatType>
-        NNPreconditioner &analyzePattern(const MatType &) { return *this; }
+        NNPreconditioner &analyzePattern(const MatType &) {{ return *this; }}
 
         //compute
         template <typename MatType>
         void compute(const MatType &A)
-        {
+        {{
             //permute input
-            // PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
+            PermutationMatrix<{n_variables}, {n_variables}> perm; // column perm (input)
             perm.indices() = perm_indices;
             B = perm.transpose() * A * perm;
             B.makeCompressed();
@@ -47,65 +47,56 @@ namespace Eigen
             //NN
             auto P = MLP_LU<Scalar>(input_arr);
 
+            //convert to sparse
+            Matrix<Scalar, Dynamic, Dynamic> P_dense(M, M);
+            for (int i = 0, k = 0; i < M; ++i)
+                for (int j = 0; j < M; ++j, ++k)
+                    P_dense(i, j) = P[k];
+            P_eig = P_dense.sparseView();
+
             // //dense matrix
             // for (int i = 0, k = 0; i < M; ++i)
             //     for (int j = 0; j < M; ++j, ++k)
             //         P_eig(i, j) = P[k];
-            //sparse matrix
-            P_eig.resize(M, M);
-            P_eig.setZero();  
-            for (int i = 0, k = 0; i < M; ++i)
-                for (int j = 0; j < M; ++j, ++k)
-                    if (P[k] != 0)  
-                    {
-                        P_eig.insert(i, j) = P[k];
-                    }
-            P_eig.makeCompressed();
-        }
+            
+            std::vector<Triplet_> lu_perm_triplets;
+            lu_perm_triplets.reserve(7652);
+            for (int i = 0; i < 7652; i++)
+            {
+                lu_perm_triplets.push_back(Triplet_(lu_perm_row_indices[i], lu_perm_col_indices[j], 0.)); // replace 0. with actual value
+            }
+            SparseMatrix<double> lu_perm(n_variables, n_variables);
+            lu_perm.setFromTriplets(lu_perm_triplets.begin(), lu_perm_triplets.end());
+        }}
 
         //apply preconditioner
         template <typename Rhs>
         Rhs solve(const Rhs &b) const
-        // { //INV_A
+        // {{ //INV_A
         //     return P_eig * b;
-        // }
-        // { //LU
+        // }}
+        // {{ //LU
         //     Rhs y = P_eig.template triangularView<UnitLower>().solve(b);
         //     Rhs x = P_eig.template triangularView<Upper>().solve(y);
         //     return x;
-        // }
-        { //LU with permutation
+        // }}
+        {{ //LU with permutation - optimized with Eigen triangular solvers
             Rhs x = perm.transpose() * b;
-            for (int i = 0; i < M; ++i) {
-                Scalar sum = Scalar(0);
-                for (typename Matrix_::InnerIterator it(P_eig, i); it; ++it) {
-                    int j = it.col();
-                    if (j < i) sum += it.value() * x[j];
-                    else break;   
-                }
-                x[i] -= sum;
-            }
-            for (int i = M - 1; i >= 0; --i) {
-                Scalar sum = Scalar(0), diag = Scalar(0);
-                for (typename Matrix_::InnerIterator it(P_eig, i); it; ++it) {
-                    int j = it.col();
-                    if (j > i)      sum  += it.value() * x[j];
-                    else if (j == i) diag = it.value();
-                }
-                x[i] = (x[i] - sum) / diag;
-            }
+            P_eig.template triangularView<UnitLower>().solveInPlace(x);
+            P_eig.template triangularView<Upper>().solveInPlace(x);
             x = perm * x;
             return x;
-        }
+            
+        }}
 
         //eigen stuff
-        ComputationInfo info() const { return Success; }
+        ComputationInfo info() const {{ return Success; }}
 
     private:
         Matrix_ P_eig;
         Perm_ perm;
         std::array<int, M> perm_indices;
         Matrix_ B;
-    };
+    }};
 
-}
+}}

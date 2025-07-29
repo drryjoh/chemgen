@@ -371,6 +371,7 @@ def main():
 
         if "nn_preconditioner.hpp" in headers:
             headers.remove("nn_preconditioner.hpp")
+            headers.append("nn_preconditioner.hpp")
 
         if args.custom_test:
             try:
