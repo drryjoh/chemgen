@@ -1,6 +1,5 @@
-// nn_preconditioner.hpp
+{device_option}
 #pragma once
-
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 #include <array>
