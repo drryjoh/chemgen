@@ -1,3 +1,4 @@
+import numpy as np
 
 def write_type_defs(file, gas, configuration):
     n_species  = gas.n_species
@@ -57,6 +58,30 @@ def write_permutation_indices(file, configuration):
         content =  "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> perm_indices() {const_option} {{return {{{perm_text}}};}}".format(**vars(configuration), perm_text=array1d_int_text(configuration.perm))
         content += "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> inv_perm_indices() {const_option} {{return {{{inv_perm_text}}};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm))
     file.write(content)
+
+def write_lu_perm_row_col_indices(file, configuration):
+    rows, cols = np.nonzero(configuration.sp_lu_perm)
+    n_nonzeros = len(rows)
+
+    content =  "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
+    content += "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
+
+    file.write(content)
+
+    file.write("""
+#if 0
+std::vector<Triplet_> lu_perm_triplets;
+lu_perm_triplets.reserve(83);
+
+for ({index} i = 0; i < {n_nonzeros}; i++)
+{{
+    lu_perm_triplets.push_back(Triplet_(lu_perm_row_indices[i], lu_perm_row_indices[j], 0.)); // replace 0. with actual value
+}}
+
+SparseMatrix<{scalar}> lu_perm(n_variables, n_variables);
+lu_perm.setFromTriplets(lu_perm_triplets.begin(), lu_perm_triplets.end());
+#endif
+""".format(**vars(configuration), n_nonzeros=n_nonzeros))
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
