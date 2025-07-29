@@ -1,3 +1,4 @@
+import numpy as np
 
 def write_type_defs(file, gas, configuration):
     n_species  = gas.n_species
@@ -46,6 +47,15 @@ def write_permutation_indices(file, configuration):
     else:
         content =  "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> perm_indices() {const_option} {{return {{{perm_text}}};}}".format(**vars(configuration), perm_text=array1d_int_text(configuration.perm))
         content += "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> inv_perm_indices() {const_option} {{return {{{inv_perm_text}}};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm))
+    file.write(content)
+
+def write_lu_perm_row_col_indices(file, configuration):
+    rows, cols = np.nonzero(configuration.sp_lu_perm)
+    n_nonzeros = len(rows)
+
+    content =  "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
+    content += "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
+
     file.write(content)
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
