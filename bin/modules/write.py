@@ -58,6 +58,21 @@ def write_lu_perm_row_col_indices(file, configuration):
 
     file.write(content)
 
+    file.write("""
+#if 0
+std::vector<Triplet_> lu_perm_triplets;
+lu_perm_triplets.reserve(83);
+
+for ({index} i = 0; i < {n_nonzeros}; i++)
+{{
+    lu_perm_triplets.push_back(Triplet_(lu_perm_row_indices[i], lu_perm_row_indices[j], 0.)); // replace 0. with actual value
+}}
+
+SparseMatrix<{scalar}> lu_perm(n_variables, n_variables);
+lu_perm.setFromTriplets(lu_perm_triplets.begin(), lu_perm_triplets.end());
+#endif
+""".format(**vars(configuration), n_nonzeros=n_nonzeros))
+
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
     content += "\n"+"{device_option} {constexpr} {species_function} inv_molecular_weights() {const_option} {{return {inv_molecular_weights};}}".format(**vars(configuration), inv_molecular_weights = inv_molecular_weights)
