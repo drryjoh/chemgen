@@ -215,6 +215,7 @@ def main():
                 raise NotImplementedError("ilu preconditioner requires sparse eigen")
 
         elif chemistry_solver_preconditioner.lower() == "neural_net":
+            # setattr(configuration, "nn_preconditioner", True)
             preconditioner = "#define CHEMGEN_PRECONDITIONER_NN"
 
         else:
@@ -275,6 +276,7 @@ def main():
         print("LU decomposition of permuted Jacobian: # nonzero entries = {}, # zero entries = {}, total # entries = {}".format(n_nonzeros, n_zeros, n_entries))
         print("LU decomposition of permuted Jacobian: sparsity percentage = %g%%" % sparsity_percent)
 
+        #ERIC ADDED
         n_nonzeros_output = n_nonzeros
         setattr(configuration, "n_nonzeros_output", n_nonzeros_output)
 

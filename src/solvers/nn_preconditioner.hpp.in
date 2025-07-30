@@ -13,7 +13,7 @@ namespace Eigen
     template <typename Scalar>
     class NNPreconditioner
     {{
-        static constexpr int M = {n_variables}; // number of variables
+        static constexpr int M = n_variables; // number of variables
         static constexpr int INPUT_DIM = 5858;   // number of stored non-zeros
         static constexpr int OUTPUT_DIM = {n_nonzeros_output}; // 9409
 
@@ -33,7 +33,7 @@ namespace Eigen
         void compute(const MatType &A)
         {{
             //permute input
-            PermutationMatrix<{n_variables}, {n_variables}> perm; // column perm (input)
+            PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
             perm.indices() = perm_indices;
             B = perm.transpose() * A * perm;
             B.makeCompressed();
@@ -59,11 +59,11 @@ namespace Eigen
             //         P_eig(i, j) = P[k];
             
             std::vector<Triplet_> lu_perm_triplets;
-            lu_perm_triplets.reserve(7652);
-            for (int i = 0; i < 7652; i++)
-            {
-                lu_perm_triplets.push_back(Triplet_(lu_perm_row_indices[i], lu_perm_col_indices[j], 0.)); // replace 0. with actual value
-            }
+            lu_perm_triplets.reserve(n_nonzeros_output);
+            for (int i = 0; i < n_nonzeros_output; i++)
+            {{
+                lu_perm_triplets.push_back(Triplet_(lu_perm_row_indices[j], lu_perm_col_indices[i], P[i])); // replace 0. with actual value
+            }}
             SparseMatrix<double> lu_perm(n_variables, n_variables);
             lu_perm.setFromTriplets(lu_perm_triplets.begin(), lu_perm_triplets.end());
         }}

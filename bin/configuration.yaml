@@ -1,4 +1,4 @@
-decorators:
+  decorators:
   scalar: "double"
   scalar_function: "double"
   scalar_cast: "double"

@@ -64,8 +64,7 @@ const SpeciesJacobian& unflatten_jacobian(const std::array<double, (n_species + 
 #endif
 
 #ifdef CHEMGEN_EIGEN
-#include "./nn_preconditioner.hpp"
-#include "./custom_preconditioners_eigen.h"
+// #include "./custom_preconditioners_eigen.h"
 
 using Preconditioner =
 
@@ -79,6 +78,7 @@ GaussSeidelPreconditioner<double, SparseMatrix<double>>;
 IncompleteLUT<double>;
 
 #elif defined(CHEMGEN_PRECONDITIONER_NN)
+#include "./nn_preconditioner.hpp"
 NNPreconditioner<double>;
 
 #else
