@@ -234,6 +234,7 @@ def main():
     update_configuration_eigen(configuration)
 
     setattr(configuration, "n_nonzeros_output", -1)
+    setattr(configuration, "n_nonzeros_input", -1)
 
     if args.generate_permutation:
         print("Generating permutation indices for Jacobian!")
@@ -279,6 +280,8 @@ def main():
         print("LU decomposition of permuted Jacobian: sparsity percentage = %g%%" % sparsity_percent)
 
         #ERIC ADDED
+        setattr(configuration, "n_nonzeros_input", np.count_nonzero(sp))
+
         n_nonzeros_output = n_nonzeros
         setattr(configuration, "n_nonzeros_output", n_nonzeros_output)
 

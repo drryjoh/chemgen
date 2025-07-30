@@ -13,7 +13,7 @@ namespace Eigen
     class NNPreconditioner
     {{
         static constexpr int M = {n_variables}; // number of variables
-        // static constexpr int INPUT_DIM = 5858;   // number of stored non-zeros
+        // static constexpr int INPUT_DIM = {n_nonzeros_input};   // number of stored non-zeros
         static constexpr int OUTPUT_DIM = {n_nonzeros_output}; // 9409
 
         // using Matrix_ = Matrix<Scalar, M, M>;
@@ -34,13 +34,14 @@ namespace Eigen
             //permute input
             PermutationMatrix<{n_variables}, {n_variables}> perm; // column perm (input)
             perm.indices() = perm_indices;
+            {jacobian_eigen} B;
             B = perm.transpose() * A * perm;
-            B.makeCompressed();
-            // assert(B.valueSize() == INPUT_DIM && "A does not match sparsity count");
+            // B.makeCompressed();
+            // assert(INPUT_DIM == INPUT_DIM && "A does not match sparsity count");
 
             //pack all 3256 entries from A_.valuePtr()
-            std::array<Scalar, B.valueSize()> input_arr;
-            std::copy_n(B.valuePtr(), B.valueSize(), input_arr.begin());
+            std::array<Scalar, INPUT_DIM> input_arr;
+            std::copy_n(B.valuePtr(), INPUT_DIM, input_arr.begin());
 
             //NN
             auto P = MLP_LU<Scalar>(input_arr);
