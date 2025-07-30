@@ -116,6 +116,9 @@ get_species({chemical_state_parameter} y) {const_option};
                              {scalar} abs_tolerance,
                              {scalar} rel_tolerance) {const_option};
 
+Matrix<{index}, n_variables, 1> get_perm_indices();
+Matrix<{index}, n_variables, 1> get_inv_perm_indices();
+
 {device_option}
 {index}
 get_lu_perm_row_index({index} i);

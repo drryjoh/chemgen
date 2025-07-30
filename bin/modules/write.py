@@ -59,6 +59,11 @@ def write_permutation_indices(file, configuration):
         content += "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> inv_perm_indices() {const_option} {{return {{{inv_perm_text}}};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm))
     file.write(content)
 
+    file.write("""
+Matrix<{index}, n_variables, 1> get_perm_indices() {{ return perm_indices; }}
+Matrix<{index}, n_variables, 1> get_inv_perm_indices() {{ return inv_perm_indices; }}
+""".format(**vars(configuration)))
+
 def write_lu_perm_row_col_indices(file, configuration):
     rows, cols = np.nonzero(configuration.sp_lu_perm)
     n_nonzeros = len(rows)
