@@ -63,8 +63,8 @@ def write_lu_perm_row_col_indices(file, configuration):
     rows, cols = np.nonzero(configuration.sp_lu_perm)
     n_nonzeros = len(rows)
 
-    content =  "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
-    content += "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
+    content =  "\n{device_option} static const {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
+    content += "\n{device_option} static const {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
 
     file.write(content)
 

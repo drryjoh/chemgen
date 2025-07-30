@@ -34,9 +34,9 @@ namespace Eigen
             //permute input
             PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
             // perm.indices() = perm_indices;
-            for (int i = 0; i < n_variables; ++i) {
-                perm.indices()(i) = perm_indices(i);
-            }
+            for (int i = 0; i < n_variables; ++i) {{
+                perm.indices()(i) = perm_indices[i];
+            }}
             {jacobian_eigen} B;
             B = perm.transpose() * A * perm;
             // B.makeCompressed();
