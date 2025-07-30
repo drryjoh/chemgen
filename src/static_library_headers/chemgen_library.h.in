@@ -115,3 +115,6 @@ get_species({chemical_state_parameter} y) {const_option};
                              {chemical_state_parameter} x_ref,
                              {scalar} abs_tolerance,
                              {scalar} rel_tolerance) {const_option};
+
+Matrix<{index}, n_variables, 1> get_perm_indices();
+Matrix<{index}, n_variables, 1> get_inv_perm_indices();
