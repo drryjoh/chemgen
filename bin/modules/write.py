@@ -69,13 +69,28 @@ def write_lu_perm_row_col_indices(file, configuration):
     file.write(content)
 
     file.write("""
+               
+{device_option}
+{index}
+get_lu_perm_row_index({index} i)
+{{
+    return lu_perm_row_indices[i];
+}}
+
+{device_option}
+{index}
+get_lu_perm_col_index({index} i)
+{{
+    return lu_perm_col_indices[i];
+}}
+
 #if 0
 std::vector<Triplet_> lu_perm_triplets;
 lu_perm_triplets.reserve({n_nonzeros});
 
 for ({index} i = 0; i < {n_nonzeros}; i++)
 {{
-    lu_perm_triplets.push_back(Triplet_(lu_perm_row_indices[i], lu_perm_col_indices[j], 0.)); // replace 0. with actual value
+    lu_perm_triplets.push_back(Triplet_(get_lu_perm_row_index[i], get_lu_perm_col_index[i], 0.)); // replace 0. with actual value
 }}
 
 SparseMatrix<{scalar}> lu_perm(n_variables, n_variables);

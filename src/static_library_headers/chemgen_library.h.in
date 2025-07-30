@@ -115,3 +115,11 @@ get_species({chemical_state_parameter} y) {const_option};
                              {chemical_state_parameter} x_ref,
                              {scalar} abs_tolerance,
                              {scalar} rel_tolerance) {const_option};
+
+{device_option}
+{index}
+get_lu_perm_row_index({index} i);
+
+{device_option}
+{index}
+get_lu_perm_col_index({index} i);
