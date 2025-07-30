@@ -1,6 +1,6 @@
 bin/
 __pycache__
-# src
+src/
 # src/*
 *.txt
 *.npy
