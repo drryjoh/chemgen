@@ -79,7 +79,6 @@ GaussSeidelPreconditioner<{scalar}, {jacobian_eigen}>;
 IncompleteLUT<{scalar}>;
 
 #elif defined(CHEMGEN_PRECONDITIONER_NN)
-#include "./nn_preconditioner.hpp"
 NNPreconditioner<{scalar}>;
 
 #else

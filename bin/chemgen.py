@@ -281,7 +281,6 @@ def main():
 
         #ERIC ADDED
         setattr(configuration, "n_nonzeros_input", np.count_nonzero(sp))
-
         n_nonzeros_output = n_nonzeros
         setattr(configuration, "n_nonzeros_output", n_nonzeros_output)
 
