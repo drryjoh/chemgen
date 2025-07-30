@@ -5,6 +5,7 @@
 #include <algorithm> 
 #include <cassert>
 #include "MLP_LU.hpp" //CODEJENN
+// #include "generated_constants.h"
 
 namespace Eigen
 {{
@@ -13,8 +14,8 @@ namespace Eigen
     class NNPreconditioner
     {{
         static constexpr int M = n_variables; // number of variables
-        static constexpr int INPUT_DIM = {n_nonzeros_input};   // number of stored non-zeros
-        static constexpr int OUTPUT_DIM = {n_nonzeros_output}; // 9409
+        static constexpr int INPUT_DIM = {n_nonzeros_input};   
+        static constexpr int OUTPUT_DIM = {n_nonzeros_output}; 
 
         // using Matrix_ = Matrix<Scalar, M, M>;
         using Matrix_ = SparseMatrix<Scalar>;
@@ -32,14 +33,11 @@ namespace Eigen
         void compute(const MatType &A)
         {{
             //permute input
-            PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
-            // perm.indices() = perm_indices;
-            for (int i = 0; i < n_variables; ++i) {{
-                perm.indices()(i) = perm_indices[i];
-            }}
+            std::cout << "entered MLP" << std::endl;
+            perm.indices() = perm_indices;
             {jacobian_eigen} B;
             B = perm.transpose() * A * perm;
-            // B.makeCompressed();
+            B.makeCompressed();
             // assert(INPUT_DIM == INPUT_DIM && "A does not match sparsity count");
 
             //pack all 3256 entries from A_.valuePtr()
@@ -61,12 +59,14 @@ namespace Eigen
             // P_eig = P_dense.sparseView();
             // //convert to sparse output
             std::vector<Triplet_> P_eig_trips;
+            std::cout << "before trips" << std::endl;
             P_eig_trips.reserve(OUTPUT_DIM);
             for (int i = 0; i < OUTPUT_DIM; i++)
             {{
-                P_eig_trips.push_back(Triplet_(lu_perm_row_indices[i], lu_perm_col_indices[i], P[i])); // replace 0. with actual value
+                P_eig_trips.push_back(Triplet_(get_lu_perm_row_index(i), get_lu_perm_col_index(i), P[i])); 
+                std::cout << "in loops" << std::endl;
             }}
-            SparseMatrix<double> P_eig(n_variables, n_variables);
+            P_eig.resize(n_variables, n_variables);
             P_eig.setFromTriplets(P_eig_trips.begin(), P_eig_trips.end());
         }}
 
@@ -82,7 +82,7 @@ namespace Eigen
         //     return x;
         // }}
         {{ //LU with permutation - optimized with Eigen triangular solvers
-            Rhs x = perm.transpose() * b;
+            Rhs x =  perm.transpose() * b;
             P_eig.template triangularView<UnitLower>().solveInPlace(x);
             P_eig.template triangularView<Upper>().solveInPlace(x);
             x = perm * x;
@@ -96,8 +96,10 @@ namespace Eigen
     private:
         Matrix_ P_eig;
         Perm_ perm;
-        std::array<int, M> perm_indices;
+        // std::array<int, M> perm_indices;
         Matrix_ B;
+        //TODO: change this later.
+        const Matrix<int, n_variables, 1> perm_indices = (Matrix<int, n_variables, 1>() << 168,119,103,167,116,61,51,153,115,114,86,43,112,89,136,82,58,30,150,97,94,93,98,83,87,166,159,157,152,72,92,60,165,111,109,96,91,140,100,139,110,196,185,85,47,99,158,156,191,189,182,169,164,113,37,64,151,201,195,178,163,145,132,84,63,199,187,62,117,75,118,194,171,70,71,192,81,57,65,198,184,130,107,80,1,108,78,134,160,26,127,76,105,49,183,162,176,155,128,55,79,161,197,90,69,59,131,129,77,35,104,39,190,177,193,149,73,175,74,54,133,8,6,102,56,88,181,148,186,106,68,5,154,53,48,188,174,4,95,52,33,50,13,66,67,18,14,15,12,45,46,180,179,126,101,10,146,170,172,200,142,125,141,173,144,31,32,34,123,2,16,25,40,41,135,137,138,38,3,7,22,28,29,27,17,23,36,42,120,121,9,21,24,124,147,11,20,44,122,19,143,0).finished();
     }};
 
 }}
