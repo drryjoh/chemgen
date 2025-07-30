@@ -233,6 +233,8 @@ def main():
 
     update_configuration_eigen(configuration)
 
+    setattr(configuration, "n_nonzeros_output", -1)
+
     if args.generate_permutation:
         print("Generating permutation indices for Jacobian!")
         sp = np.load("sparsity_pattern.npy")

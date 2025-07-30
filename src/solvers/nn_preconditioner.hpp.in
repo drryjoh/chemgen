@@ -60,7 +60,7 @@ namespace Eigen
             P_eig_trips.reserve(OUTPUT_DIM);
             for (int i = 0; i < OUTPUT_DIM; i++)
             {
-                P_eig_trips.push_back(Triplet_(lu_perm_row_indices[j], lu_perm_col_indices[i], P[i])); // replace 0. with actual value
+                P_eig_trips.push_back(Triplet_(lu_perm_row_indices[i], lu_perm_col_indices[i], P[i])); // replace 0. with actual value
             }
             SparseMatrix<double> P_eig(n_variables, n_variables);
             P_eig.setFromTriplets(P_eig_trips.begin(), P_eig_trips.end());
