@@ -2699,11 +2699,11 @@ p=RT\sum_{i=1}^{n_{s}}C_{i},
 
 \end_inset
 
-with 
+where 
 \begin_inset Formula $R=8314.4626\,\mathrm{J\cdot kmol}^{-1}\mathrm{K}^{-1}$
 \end_inset
 
- denoting the universal gas constant.
+ is the universal gas constant.
  An additional parameter used in optimizations of reactions is 
 \begin_inset Formula $\ln T$
 \end_inset
