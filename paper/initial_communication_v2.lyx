@@ -2856,9 +2856,10 @@ nolink "false"
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{equation}
-h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}\label{eq:entahlpy-polynomial}
-\end{equation}
+\begin{align}
+h_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1},\nonumber \\
+= & \sum_{k=0}^{n_{p}+1}b_{ik}T^{k},\label{eq:entahlpy-polynomial}
+\end{align}
 
 \end_inset
 
@@ -2867,9 +2868,10 @@ and
 
 \begin_layout Standard
 \begin_inset Formula 
-\begin{equation}
-u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-RT=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
-\end{equation}
+\begin{align}
+u_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-RT,\nonumber \\
+= & \sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
+\end{align}
 
 \end_inset
 
