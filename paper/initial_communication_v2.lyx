@@ -2984,11 +2984,13 @@ where
 \end_inset
 
  is the partial pressure.
- The 
+ The term,
+ 
 \begin_inset Formula $R\log\frac{p_{i}}{p_{\mathrm{ref}}}$
 \end_inset
 
- term accounts for the effect of pressure on entropy and does not depend on thermodynamic polynomial fits.
+,
+ accounts for the effect of pressure on entropy and does not depend on thermodynamic polynomial fits.
  Using Equation
 \begin_inset space ~
 \end_inset
