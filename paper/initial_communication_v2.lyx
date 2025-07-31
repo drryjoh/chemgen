@@ -127,6 +127,7 @@ todonotes
 \html_be_strict false
 \docbook_table_output 0
 \docbook_mathml_prefix 1
+\author 555506250 "akercher"
 \end_header
 
 \begin_body
@@ -3489,6 +3490,31 @@ name "tab:Summary-of-polynomial"
 \end_layout
 
 \begin_layout Standard
+
+\change_inserted 555506250 1753993042
+The temperature of a given state,
+ y_f,
+ is defined such that the corresponding internal energy,
+ given by,
+\end_layout
+
+\begin_layout Standard
+
+\change_inserted 555506250 1753993042
+\begin_inset Formula 
+\begin{equation}
+\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t},
+\end{equation}
+
+\end_inset
+
+is consistent with the internal energy given by the polynomial fit,
+ 
+\begin_inset Formula $\rho u(T)$
+\end_inset
+
+.
+\change_deleted 555506250 1753993042
 ChemGen supplies a Newton's method implementation to extract temperature from internal energy in the case where temperature is needed from 
 \begin_inset Formula $y_{f}$
 \end_inset
@@ -3504,6 +3530,8 @@ ChemGen supplies a Newton's method implementation to extract temperature from in
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted 555506250 1753993042
 \begin_inset Formula 
 \begin{equation}
 \rho e_{t}=\rho u+\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k},
@@ -3520,6 +3548,8 @@ where the term
 \end_layout
 
 \begin_layout Standard
+
+\change_deleted 555506250 1753993042
 \begin_inset Formula 
 \begin{equation}
 \rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t}.
@@ -3527,6 +3557,8 @@ where the term
 
 \end_inset
 
+
+\change_unchanged
 
 \end_layout
 
