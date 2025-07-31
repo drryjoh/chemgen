@@ -2920,34 +2920,16 @@ h_{\text{ref},i}, & k=0.
 
 \end_inset
 
-This integration requires two vectors for temperature:
- a monomial basis for polynomials of degree 
+Therefore,
+ thermodynamic quantities can be evaluated by contracting the corresponding polynomial coefficients,
+ with the temperature monomial basis of the appropriate polynomial degree,
+ e.g.,
+ 
 \begin_inset Formula $n_{p}$
 \end_inset
 
-,
- 
-\begin_inset Formula $T_{n_{p}}=\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
-\end_inset
-
- and a monomial basis for polynomials of degree 
+ or 
 \begin_inset Formula $n_{p}+1$
-\end_inset
-
-,
- 
-\begin_inset Formula $T_{n_{p}+1}=\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$
-\end_inset
-
-.
- These vectors can then be contracted with a vector of coefficients;
- for example,
- 
-\begin_inset Formula $u_{i}=\left<A_{i},T_{n_{p}+1}\right>$
-\end_inset
-
- where 
-\begin_inset Formula $A_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})$
 \end_inset
 
 .
