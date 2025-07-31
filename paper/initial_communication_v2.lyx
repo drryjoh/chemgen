@@ -2728,28 +2728,6 @@ what does this mean?
 \end_inset
 
 .
- In the following sections,
- we assume that the elements of 
-\begin_inset Formula $y_{c}$
-\end_inset
-
-,
- 
-\begin_inset Formula $\ln T,$
-\end_inset
-
- 
-\begin_inset Formula $p$
-\end_inset
-
-,
- and 
-\begin_inset Formula $M_{c}$
-\end_inset
-
- are accessible at all levels of ChemGen.
- As such,
- functional dependencies are omitted for brevity.
 \end_layout
 
 \begin_layout Subsection
