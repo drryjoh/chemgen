@@ -3070,37 +3070,6 @@ Note,
 \end_layout
 
 \begin_layout Standard
-This gives two new temperature vectors:
- 
-\begin_inset Formula $T_{n_{p},\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}},\ln T\right)$
-\end_inset
-
- and 
-\begin_inset Formula $T_{n_{p}+1,T\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}+1},-T\ln T\right)$
-\end_inset
-
-.
- These vectors can then be contracted with a vector of coefficients,
- 
-\begin_inset Formula $s_{i}=\left<A_{i},T_{n_{p},\ln T}\right>$
-\end_inset
-
- where 
-\begin_inset Formula $A_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{i,0})$
-\end_inset
-
- and 
-\begin_inset Formula $g_{i}=\left<A_{i},T_{n_{p}+1,T\ln T}\right>$
-\end_inset
-
- where 
-\begin_inset Formula $A_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{i,0})$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
 The thermodynamic relationships used by ChemGen are summarized in Table
 \begin_inset space ~
 \end_inset
