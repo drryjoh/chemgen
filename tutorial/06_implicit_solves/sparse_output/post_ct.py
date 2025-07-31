@@ -29,7 +29,7 @@ network = ct.ReactorNet([reactor])
 
 # Define simulation time (in seconds)
 time_end = 2e-5
-dt_small = 1e-8
+dt_small = 1e-7
 n_steps = int(time_end/dt_small)
 #time_end = 200 * 2e-7  # Convert ns to seconds
 #n_steps = 200  # Number of time steps

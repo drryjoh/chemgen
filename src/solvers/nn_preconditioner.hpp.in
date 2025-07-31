@@ -13,13 +13,14 @@ namespace Eigen
     template <typename Scalar>
     class NNPreconditioner
     {{
-        static constexpr int M = n_variables; // number of variables
-        static constexpr int INPUT_DIM = {n_nonzeros_input};   
+        static constexpr int M = n_variables; //no. of species
+        static constexpr int INPUT_DIM = {n_nonzeros_input}; 
         static constexpr int OUTPUT_DIM = {n_nonzeros_output}; 
 
-        // using Matrix_ = Matrix<Scalar, M, M>;
-        using Matrix_ = SparseMatrix<Scalar>;
+        // using Matrix_ = Matrix<Scalar, M, M>; //non sparse output
+        using Matrix_ = {jacobian_eigen};
         using Perm_ = Eigen::PermutationMatrix<M, M>;
+        using Trips_ = std::vector<Triplet_>;
 
     public:
         NNPreconditioner() = default;
@@ -33,20 +34,19 @@ namespace Eigen
         void compute(const MatType &A)
         {{
             //permute input
-            std::cout << "entered MLP" << std::endl;
             perm.indices() = get_perm_indices();
-            {jacobian_eigen} B;
             B = perm.transpose() * A * perm;
             B.makeCompressed();
-            // assert(INPUT_DIM == INPUT_DIM && "A does not match sparsity count");
+            // assert(INPUT_DIM == B.nonZeros() && "B does not match sparsity count");
 
-            //pack all 3256 entries from A_.valuePtr()
+            //pack all entries from valueptr
             std::array<Scalar, INPUT_DIM> input_arr;
             std::copy_n(B.valuePtr(), INPUT_DIM, input_arr.begin());
 
             //NN
             auto P = MLP_LU<Scalar>(input_arr);
 
+            //DO NOT TOUCH THIS
             // //convert to sparse output
             // for (int i = 0, k = 0; i < M; ++i)
             //     for (int j = 0; j < M; ++j, ++k)
@@ -58,13 +58,10 @@ namespace Eigen
             //         P_dense(i, j) = P[k];
             // P_eig = P_dense.sparseView();
             // //convert to sparse output
-            std::vector<Triplet_> P_eig_trips;
-            std::cout << "before trips" << std::endl;
             P_eig_trips.reserve(OUTPUT_DIM);
             for (int i = 0; i < OUTPUT_DIM; i++)
             {{
                 P_eig_trips.push_back(Triplet_(get_lu_perm_row_index(i), get_lu_perm_col_index(i), P[i])); 
-                std::cout << "in loops" << std::endl;
             }}
             P_eig.resize(n_variables, n_variables);
             P_eig.setFromTriplets(P_eig_trips.begin(), P_eig_trips.end());
@@ -81,7 +78,7 @@ namespace Eigen
         //     Rhs x = P_eig.template triangularView<Upper>().solve(y);
         //     return x;
         // }}
-        {{ //LU with permutation - optimized with Eigen triangular solvers
+        {{ //LU with permutation
             Rhs x =  perm.transpose() * b;
             P_eig.template triangularView<UnitLower>().solveInPlace(x);
             P_eig.template triangularView<Upper>().solveInPlace(x);
@@ -96,8 +93,8 @@ namespace Eigen
     private:
         Matrix_ P_eig;
         Perm_ perm;
-        // std::array<int, M> perm_indices;
         Matrix_ B;
+        Trips_ P_eig_trips;
     }};
 
 }}

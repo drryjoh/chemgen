@@ -1,6 +1,7 @@
 #!python3
 
 import argparse
+from ast import parse
 import sys
 import cantera as ct
 import numpy as np
@@ -77,6 +78,7 @@ def main():
     parser.add_argument("--ignore-other-species", action="store_true", help="Ignore third-body and pressure dependence when calculating derivatives with respect to species")
     parser.add_argument("--save-output-sparsity", action="store_true", help="Print the generated sparsity pattern for LU of Jacobian rows/columns")
     parser.add_argument("--save-input-sparsity", action="store_true", help="Print the sparsity pattern for permuted Jacobian rows/columns")
+    parser.add_argument("--save-permutation", action="store_true", help="Save the permutation indices")
 
     args = parser.parse_args()
 
@@ -244,6 +246,9 @@ def main():
         perm = invert_permutation(lu_sp.perm_c)
         assert(perm.shape[0] == gas.n_species+1)
         setattr(configuration, "perm", perm)
+        if args.save_permutation: 
+            print("Saving permutation indices to 'permutation.npy'")
+            np.save('permutation.npy', perm)
         setattr(configuration, "inv_perm", invert_permutation(perm))
 
         # Sparsity pattern of permuted Jacobian (P^T * A * P)
