@@ -3067,10 +3067,7 @@ Note,
  the Gibbs free energy,
  like entropy,
  has a pressure dependency that is calculated independent of these thermodynamic fits.
-\end_layout
-
-\begin_layout Standard
-The thermodynamic relationships used by ChemGen are summarized in Table
+ Table
 \begin_inset space ~
 \end_inset
 
@@ -3085,7 +3082,7 @@ nolink "false"
 
 \end_inset
 
-.
+ summarizes the thermodynamic relationships used by ChemGen.
 \end_layout
 
 \begin_layout Standard
