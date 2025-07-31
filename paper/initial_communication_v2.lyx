@@ -2773,10 +2773,14 @@ where
 
 ,
  
-\begin_inset Formula $T_{\mathrm{ref}}$
+\begin_inset Formula $T_{\mathrm{ref}}=298\text{ K}$
 \end_inset
 
- is the reference temperature (298 K),
+ is the reference temperature
+\change_deleted 555506250 1753993934
+ (298 K)
+\change_unchanged
+,
  
 \begin_inset Formula $h_{\mathrm{ref},i}$
 \end_inset
@@ -2879,23 +2883,65 @@ u_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T,\no
 
 \end_inset
 
-Here,
- we use 
-\begin_inset Formula $h_{i}(T=298\text{ K})$
+
+\change_inserted 555506250 1753995889
+We specify 
+\begin_inset Formula $h_{\text{ref},i}$
 \end_inset
 
- from the existing NASA coefficients,
+ as
+\change_deleted 555506250 1753993760
+Here,
+ we use 
+\begin_inset Formula $h_{i}\left(T=298\text{ K}\right)$
+\end_inset
+
+ from the existing NASA coefficients
+\change_unchanged
+,
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-h_{\text{ref},i}=h_{i}(T=298\text{ K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\text{ K}\right)^{k+1},\label{eq:enthalpy-adjustment}
+h_{\text{ref},i}=h_{i}(T_{\mathrm{ref}})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(T_{\mathrm{ref}}\right)^{k+1},\label{eq:enthalpy-adjustment}
 \end{equation}
 
 \end_inset
 
+
+\change_inserted 555506250 1753996533
+where 
+\begin_inset Formula $h_{i}\left(T_{\mathrm{ref}}\right)$
+\end_inset
+
+ is the value given by the NASA polynomials.
+ This ensures that the enthalpies resulting from Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:enthalpy-polynomial"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ and the NASA polynomials are equivalent when evaluated at the reference temperature,
+ 
+\begin_inset Formula $T_{\mathrm{ref}}=298\text{ K}$
+\end_inset
+
+.
+ The coefficients can then be written as
+\change_deleted 555506250 1753996537
 which gives
+\change_unchanged
+
 \end_layout
 
 \begin_layout Standard
@@ -2924,8 +2970,14 @@ h_{\text{ref},i}, & k=0.
 
 \end_inset
 
+
+\change_inserted 555506250 1753996558
+and the 
+\change_deleted 555506250 1753996554
 Therefore,
- thermodynamic quantities can be evaluated by contracting the corresponding polynomial coefficients,
+ 
+\change_unchanged
+thermodynamic quantities can be evaluated by contracting the corresponding polynomial coefficients,
  with the temperature monomial basis of the appropriate polynomial degree,
  e.g.,
  
@@ -3494,7 +3546,11 @@ name "tab:Summary-of-polynomial"
 \change_inserted 555506250 1753993042
 The temperature of a given state,
  y_f,
- is defined such that the corresponding internal energy,
+ is defined such that the corresponding internal energy
+\change_unchanged
+ density
+\change_inserted 555506250 1753993042
+,
  given by,
 \end_layout
 
@@ -3503,14 +3559,43 @@ The temperature of a given state,
 \change_inserted 555506250 1753993042
 \begin_inset Formula 
 \begin{equation}
-\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t},
+\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t},\label{eq:weighted_internal_energy_state}
 \end{equation}
 
 \end_inset
 
-is consistent with the internal energy given by the polynomial fit,
+is consistent with the
+\change_unchanged
  
-\begin_inset Formula $\rho u(T)$
+\change_inserted 555506250 1753993042
+internal energy given by the polynomial fit
+\change_unchanged
+ weighted by the species density,
+ given as
+\begin_inset Formula 
+\begin{equation}
+\rho u(C,T)=\sum_{i}^{n_{s}}W_{i}C_{i}u_{i}\left(T\right),\label{eq:weighted_internal_energy_polynomial}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $u_{i}$
+\end_inset
+
+ is given by Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:internal-energy-polynomial"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
 \end_inset
 
 .
@@ -3563,18 +3648,18 @@ where the term
 \end_layout
 
 \begin_layout Standard
-The temperature is determined by a root finding algorithm which iterates via Netwon's method.
+ChemGen solves the resulting nonlinear equation for temperature using Newton's method..
  The temperature at the 
-\begin_inset Formula $\left(k+1\right)$
+\begin_inset Formula $k\text{th}+1$
 \end_inset
 
-th Newton iteration is given by
+ Newton iteration is given by
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-T_{k+1}=T_{k}-\frac{\rho u(T_{k})}{\frac{\partial\rho u(T_{k})}{\partial T}}.\label{eq:netwon_iteration_temperature}
+T_{k+1}=T_{k}-\frac{\left(\rho u-\rho u(C,T_{k})\right)}{\frac{\partial\rho u(C,T_{k})}{\partial T}}.\label{eq:netwon_iteration_temperature}
 \end{equation}
 
 \end_inset
