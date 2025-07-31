@@ -79,9 +79,9 @@ namespace Eigen
         //     return x;
         // }}
         {{ //LU with permutation
-            Rhs x =  perm.transpose() * b;
-            P_eig.template triangularView<UnitLower>().solveInPlace(x);
-            P_eig.template triangularView<Upper>().solveInPlace(x);
+            Rhs bb =  perm.transpose() * b;
+            Rhs y = P_eig.template triangularView<UnitLower>().solve(bb);
+            Rhs x = P_eig.template triangularView<Upper>().solve(y);
             x = perm * x;
             return x;
             

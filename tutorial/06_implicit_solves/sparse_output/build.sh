@@ -1,5 +1,6 @@
 #!/bin/bash
 MECH=jetA-detailed-NOx-203-1589.yaml
+# MECH=isobutene-ic4h8-493-2716.yaml
 
 #FIRST
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
