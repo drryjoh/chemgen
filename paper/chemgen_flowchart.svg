@@ -27,7 +27,7 @@
      showgrid="false"
      inkscape:zoom="2.4826207"
      inkscape:cx="214.69248"
-     inkscape:cy="354.46413"
+     inkscape:cy="354.46414"
      inkscape:window-width="1549"
      inkscape:window-height="834"
      inkscape:window-x="0"
@@ -116,7 +116,10 @@
        height="9.5563812"
        x="-78.548645"
        y="94.954033"
-       transform="scale(-1,1)" /><rect
+       transform="scale(-1,1)"
+       inkscape:export-filename="flowchizzle.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" /><rect
        style="fill:#00ff02;fill-opacity:1;stroke:#000d0d;stroke-width:0.264999;stroke-opacity:1"
        id="rect641-0-0"
        width="16.371557"

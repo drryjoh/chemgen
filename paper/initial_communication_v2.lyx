@@ -6395,7 +6395,7 @@ double dpow_da(const double& a,
 
 \begin_layout Plain Layout
 
-{return b * std::pow(a,
+{return b * pow_gen(a,
  b - double(1));}
 \end_layout
 
@@ -6407,8 +6407,8 @@ double dpow_db(const double& a,
 
 \begin_layout Plain Layout
 
-{return std::pow(a,
- b) * std::log(a);}
+{return pow_gen(a,
+ b) * log_gen(a);}
 \end_layout
 
 \begin_layout Plain Layout
@@ -9071,7 +9071,7 @@ nolink "false"
 .
  
 \begin_inset Note Note
-status collapsed
+status open
 
 \begin_layout Plain Layout
 post_convergence_H2.py
