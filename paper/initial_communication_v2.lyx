@@ -2872,7 +2872,7 @@ and
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align}
-u_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-RT,\nonumber \\
+u_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T,\nonumber \\
 = & \sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
 \end{align}
 
@@ -2916,7 +2916,7 @@ and
 \begin{equation}
 c_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k>1\\
-a_{i,0}-R & k=1\\
+a_{i,0}-R_{i} & k=1\\
 h_{\text{ref},i}, & k=0.
 \end{cases}\label{eq:internal-energy-coeffs}
 \end{equation}
