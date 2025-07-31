@@ -2765,11 +2765,7 @@ where
 \begin_inset Formula $h_{i}$
 \end_inset
 
- is the mass-specific enthalpy of the 
-\begin_inset Formula $i$
-\end_inset
-
-th species,
+ is the mass-specific enthalpy,
  
 \begin_inset Formula $R_{i}=R/W_{i}$
 \end_inset
@@ -2784,25 +2780,19 @@ th species,
 \begin_inset Formula $h_{\mathrm{ref},i}$
 \end_inset
 
- is the reference-state enthalpy of formation of specie 
-\begin_inset Formula $i$
-\end_inset
-
- evaluated as 
-\begin_inset Formula $h_{ref,i}=h_{i}\left(T_{ref}\right)$
-\end_inset
-
-,
+ is the reference-state enthalpy of formation,
  and 
 \begin_inset Formula $c_{p,i}$
 \end_inset
 
- is the mass-specific heat capacity at constant pressure of the 
-\begin_inset Formula $i$
+ is the mass-specific heat capacity at constant pressure.
+ For differentiability and computational efficiency,
+ ChemGen fits the polynomial for 
+\begin_inset Formula $c_{p,i}$
 \end_inset
 
-th species.
- 
+ to arbitrary order.
+ The value of 
 \begin_inset Formula $c_{p,i}$
 \end_inset
 
@@ -2818,7 +2808,9 @@ c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k},\label{eq:specific_heat_polynomial}
 
 \end_inset
 
-which is based on but not equivalent to the NASA n-coefficient polynomial parametrization
+which is based on,
+ but not equivalent,
+ to the NASA n-coefficient polynomial parametrization
 \begin_inset space ~
 \end_inset
 
@@ -2831,13 +2823,23 @@ literal "false"
 \end_inset
 
 .
- For differentiability and computational efficiency,
- ChemGen fits the polynomial for 
-\begin_inset Formula $c_{p,i}$
+ Using Equation
+\begin_inset space ~
 \end_inset
 
- to arbitrary order.
- Equation
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:specific_heat_polynomial"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+,
+ we can write Equation
 \begin_inset space ~
 \end_inset
 
@@ -2852,7 +2854,7 @@ nolink "false"
 
 \end_inset
 
- yields
+ as
 \end_layout
 
 \begin_layout Standard
