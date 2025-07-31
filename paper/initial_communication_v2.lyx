@@ -2717,7 +2717,17 @@ M_{c}=\sum_{i=1}^{n_{s}}C_{i}=\frac{p}{R^{}T},
 \end_inset
 
 is utilized in the evaluation of many reaction rates,
- such as third body reactions with no specified efficiencies.
+ such as third body reactions with no specified efficiencies
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+what does this mean?
+\end_layout
+
+\end_inset
+
+.
  In the following sections,
  we assume that the elements of 
 \begin_inset Formula $y_{c}$
