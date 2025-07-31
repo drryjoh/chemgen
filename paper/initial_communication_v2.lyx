@@ -2862,7 +2862,7 @@ nolink "false"
 \begin_inset Formula 
 \begin{align}
 h_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1},\nonumber \\
-= & \sum_{k=0}^{n_{p}+1}b_{ik}T^{k},\label{eq:entahlpy-polynomial}
+= & \sum_{k=0}^{n_{p}+1}b_{ik}T^{k},\label{eq:enthalpy-polynomial}
 \end{align}
 
 \end_inset
