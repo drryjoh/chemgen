@@ -2754,9 +2754,10 @@ literal "false"
 
 
 \begin_inset Formula 
-\begin{equation}
-u_{i}=h_{i}-R_{i}T=h_{\mathrm{ref},i}+\int_{T_{\mathrm{ref}}}^{T}c_{p,i}(\tau)d\tau-R_{i}T,\label{eq:internal_energy_identity}
-\end{equation}
+\begin{align}
+u_{i}= & h_{i}-R_{i}T,\nonumber \\
+= & h_{\mathrm{ref},i}+\int_{T_{\mathrm{ref}}}^{T}c_{p,i}(\tau)d\tau-R_{i}T,\label{eq:internal_energy_identity}
+\end{align}
 
 \end_inset
 
