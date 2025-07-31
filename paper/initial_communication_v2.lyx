@@ -238,9 +238,51 @@ Chemistry,
 
 \begin_layout Abstract
 This paper introduces ChemGen,
- a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based computational physics codes.
+ a software package that uses code generation to integrate multispecies thermodynamics and chemical kinetics into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+C
+\backslash
+nolinebreak[4]
+\backslash
+hspace{-.05em}
+\backslash
+raisebox{.4ex}{
+\backslash
+tiny
+\backslash
+bf ++}
+\end_layout
+
+\end_inset
+
+-based computational physics codes.
  ChemGen aims to make chemical kinetics more accessible in existing simulation frameworks and help bridge the gap between combustion modeling and computational physics.
- The package employs the concept of decorators which enable flexible C++ code generation to target established software ecosystems.
+ The package employs the concept of decorators which enable flexible 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+C
+\backslash
+nolinebreak[4]
+\backslash
+hspace{-.05em}
+\backslash
+raisebox{.4ex}{
+\backslash
+tiny
+\backslash
+bf ++}
+\end_layout
+
+\end_inset
+
+ code generation to target established software ecosystems.
  ChemGen generates code to evaluate thermodynamic properties,
  chemical source terms,
  and their analytical derivatives for Jacobian calculations.
@@ -286,6 +328,31 @@ newcommand*{
 horzbar}{
 \backslash
 rule[.5ex]{2.5ex}{0.5pt}}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+ 
+\backslash
+def
+\backslash
+Cpp{{C
+\backslash
+nolinebreak[4]
+\backslash
+hspace{-.05em}
+\backslash
+raisebox{.4ex}{
+\backslash
+tiny
+\backslash
+bf ++}}}
 \end_layout
 
 \end_inset
@@ -2071,7 +2138,20 @@ literal "false"
 
 ,
  which can serve as a third-party library for codes written in C,
- C++,
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+,
  and Fortran,
  as well as in interpreted languages such as Python and MATLAB.
 \begin_inset CommandInset label
@@ -2275,7 +2355,20 @@ literal "false"
 .
  PyJac specializes in generating analytical source term Jacobians,
  which can be used to accelerate the computation of chemical species evolution.
- Pyrometheus generates either C++ header files or Python files for gas-phase combustion calculations,
+ Pyrometheus generates either 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ header files or Python files for gas-phase combustion calculations,
  incorporating several on-the-fly optimizations to enhance scalability for high-performance computing in CFD.
  Additionally,
  KinetiX
@@ -2297,7 +2390,20 @@ literal "false"
 \begin_layout Standard
 In this work,
  we introduce ChemGen,
- a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++ based codes.
+ a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ based codes.
  ChemGen introduces decorators,
  discussed in detail in Section
 \begin_inset space ~
@@ -2315,7 +2421,20 @@ nolink "false"
 \end_inset
 
 ,
- to enable flexible C++ code generation tailored to existing software ecosystems.
+ to enable flexible 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ code generation tailored to existing software ecosystems.
  ChemGen currently focuses on thermodynamic properties and chemical source terms,
  as well as their analytical derivatives.
  The analytical derivatives facilitate Jacobian assembly for implicit time integration strategies appropriate for CFD.
@@ -5876,7 +5995,19 @@ The concept of decorators
 \end_layout
 
 \begin_layout Standard
-C++ is a malleable language that allows developers to abstract underlying data structures through type aliases (
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ is a malleable language that allows developers to abstract underlying data structures through type aliases (
 \begin_inset ERT
 status open
 
@@ -5894,7 +6025,20 @@ texttt{using scalar = float;}
  variables may appear to be simple scalars while in fact representing complex types with custom behavior.
  This flexibility enables expressive,
  domain-specific syntax,
- but this means that there is no single set of generated code that can be embedded into all existing C++ software.
+ but this means that there is no single set of generated code that can be embedded into all existing 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ software.
 \end_layout
 
 \begin_layout Standard
@@ -6089,7 +6233,20 @@ emph{decorators}
 
 \end_inset
 
- to assist in the flexibility of generating desirable C++ code.
+ to assist in the flexibility of generating desirable 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ code.
  The above example can be changed to a Python formattable Python string as
 \end_layout
 
@@ -6616,7 +6773,20 @@ literal "false"
  While symbolic differentiation can be valuable,
  the mechanical approach is better suited for organizing and maintaining ChemGen’s code generation process.
  Regardless,
- since the functions are available in C++,
+ since the functions are available in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+,
  packages such as autodiff
 \begin_inset space ~
 \end_inset
@@ -6973,7 +7143,20 @@ texttt{mech.yaml}
 \end_inset
 
  is a Cantera supported file,
- generates C++ code in the current directory in a 
+ generates 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ code in the current directory in a 
 \begin_inset ERT
 status open
 
@@ -10055,9 +10238,35 @@ Conclusion
 \begin_layout Standard
 In this work,
  we introduced ChemGen,
- a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into C++-based computational physics software,
+ a software package that leverages code generation to integrate multispecies thermodynamics and chemical kinetics into 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+-based computational physics software,
  with an emphasis on CFD applications.
- ChemGen employs a decorator-based approach to enable flexible and modular C++ code generation tailored to existing simulation ecosystems.
+ ChemGen employs a decorator-based approach to enable flexible and modular 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Cpp
+\end_layout
+
+\end_inset
+
+ code generation tailored to existing simulation ecosystems.
  It generates both thermodynamic property approximations and source term expressions,
  along with their analytical derivatives,
  facilitating Jacobian assembly for implicit time integration.
