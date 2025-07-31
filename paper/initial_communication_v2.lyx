@@ -2688,7 +2688,7 @@ which is the complete derived state needed to calculate the components of
 
 ,
  are all conserved quantities and can be extracted readily from the fluid state.
- The pressure from the ideal gas law is
+ The pressure is given from the ideal gas law as
 \end_layout
 
 \begin_layout Standard
