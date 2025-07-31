@@ -2735,12 +2735,12 @@ Thermodynamics
 \end_layout
 
 \begin_layout Standard
-This work assumes a thermally perfect gas,
- with 
-\begin_inset Formula $u_{i}$
+In this section we define the relevant thermodynamic quantities for the 
+\begin_inset Formula $i$
 \end_inset
 
- given by
+th species assuming a thermally perfect gas.
+ The internal energy is given by
 \begin_inset space ~
 \end_inset
 
