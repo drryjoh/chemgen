@@ -3066,7 +3066,7 @@ g_{i}^{o}=-a_{i,0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}.\label{eq:gibbs-polynom
 Note,
  the Gibbs free energy,
  like entropy,
- has a pressure dependency that is calculated indepedent of these thermodynamic fits.
+ has a pressure dependency that is calculated independent of these thermodynamic fits.
 \end_layout
 
 \begin_layout Standard
