@@ -3412,7 +3412,7 @@ h_{\text{ref},i}, & k=0
 \end_layout
 
 \begin_layout Plain Layout
-\begin_inset Formula $h_{\text{ref},i}=h_{i}(T_{\mathrm{ref}})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1}$
+\begin_inset Formula $h_{\text{ref},i}=h_{i}(T_{\mathrm{ref}})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(T_{\mathrm{ref}}\right)^{k+1}$
 \end_inset
 
 
