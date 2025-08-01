@@ -127,7 +127,6 @@ todonotes
 \html_be_strict false
 \docbook_table_output 0
 \docbook_mathml_prefix 1
-\author 555506250 "akercher"
 \end_header
 
 \begin_body
@@ -2741,7 +2740,7 @@ In this section we define the relevant thermodynamic quantities for the
 \end_inset
 
 th species assuming a thermally perfect gas.
- The internal energy is given by
+ The mass-specific internal energy is given by
 \begin_inset space ~
 \end_inset
 
@@ -2756,8 +2755,7 @@ literal "false"
 
 \begin_inset Formula 
 \begin{align}
-u_{i}= & h_{i}-R_{i}T,\nonumber \\
-= & h_{\mathrm{ref},i}+\int_{T_{\mathrm{ref}}}^{T}c_{p,i}(\tau)d\tau-R_{i}T,\label{eq:internal_energy_identity}
+u_{i}= & h_{i}-R_{i}T,\label{eq:internal_energy_identity}
 \end{align}
 
 \end_inset
@@ -2776,12 +2774,22 @@ where
 \begin_inset Formula $T_{\mathrm{ref}}=298\text{ K}$
 \end_inset
 
- is the reference temperature
-\change_deleted 555506250 1753993934
- (298 K)
-\change_unchanged
-,
+ is the reference temperature.
+ The mass-specific enthalpy,
  
+\begin_inset Formula $h_{i}$
+\end_inset
+
+,
+ is given as
+\begin_inset Formula 
+\begin{align}
+h_{i}= & h_{\mathrm{ref},i}+\int_{T_{\mathrm{ref}}}^{T}c_{p,i}(\tau)d\tau,\label{eq:enthalpy_identity}
+\end{align}
+
+\end_inset
+
+where 
 \begin_inset Formula $h_{\mathrm{ref},i}$
 \end_inset
 
@@ -2797,7 +2805,8 @@ where
 \end_inset
 
  to arbitrary order.
- The value of 
+ As such,
+ the value of 
 \begin_inset Formula $c_{p,i}$
 \end_inset
 
@@ -2828,7 +2837,7 @@ literal "false"
 \end_inset
 
 .
- Using Equation
+ Substituting Equation
 \begin_inset space ~
 \end_inset
 
@@ -2843,15 +2852,14 @@ nolink "false"
 
 \end_inset
 
-,
- we can write Equation
+ into Equation
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand eqref
-reference "eq:internal_energy_identity"
+reference "eq:enthalpy_identity"
 plural "false"
 caps "false"
 noprefix "false"
@@ -2859,10 +2867,8 @@ nolink "false"
 
 \end_inset
 
- as
-\end_layout
-
-\begin_layout Standard
+,
+ we evaluate the mass-specific enthalpy as
 \begin_inset Formula 
 \begin{align}
 h_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1},\nonumber \\
@@ -2871,52 +2877,57 @@ h_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1},\nonumber 
 
 \end_inset
 
-and
-\end_layout
-
-\begin_layout Standard
+with
 \begin_inset Formula 
-\begin{align}
-u_{i}= & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-R_{i}T,\nonumber \\
-= & \sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
-\end{align}
+\begin{equation}
+b_{ik}=\begin{cases}
+\frac{a_{i,k-1}}{k}, & k\geqq1\\
+h_{\text{ref},i}, & k=0,
+\end{cases}\label{eq:enthalpy_coeffs}
+\end{equation}
 
 \end_inset
 
+where we have augmented the coefficients 
+\begin_inset Formula $a_{i}$
+\end_inset
 
-\change_inserted 555506250 1753995889
+to include a coefficient 
+\begin_inset Formula $h_{\text{ref},i}$
+\end_inset
+
+,
+ which corresponds to the zero degree polynomial,
+ i.e.,
+ 
+\begin_inset Formula $1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
 We specify 
 \begin_inset Formula $h_{\text{ref},i}$
 \end_inset
 
  as
-\change_deleted 555506250 1753993760
-Here,
- we use 
-\begin_inset Formula $h_{i}\left(T=298\text{ K}\right)$
-\end_inset
-
- from the existing NASA coefficients
-\change_unchanged
-,
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-h_{\text{ref},i}=h_{i}(T_{\mathrm{ref}})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(T_{\mathrm{ref}}\right)^{k+1},\label{eq:enthalpy-adjustment}
+h_{\text{ref},i}=\tilde{h}_{i}(T_{\mathrm{ref}}=298\text{ K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(T_{\mathrm{ref}}=298\text{ K}\right)^{k+1},\label{eq:enthalpy-adjustment}
 \end{equation}
 
 \end_inset
 
-
-\change_inserted 555506250 1753996533
 where 
-\begin_inset Formula $h_{i}\left(T_{\mathrm{ref}}\right)$
+\begin_inset Formula $\tilde{h}_{i}\left(T_{\mathrm{ref}}=298\text{ K}\right)$
 \end_inset
 
  is the value given by the NASA polynomials.
- This ensures that the enthalpies resulting from Equation
+ This ensures that the species enthalpies resulting from Equation
 \begin_inset space ~
 \end_inset
 
@@ -2931,31 +2942,67 @@ nolink "false"
 
 \end_inset
 
- and the NASA polynomials are equivalent when evaluated at the reference temperature,
+ and those given by the NASA polynomials are equivalent when evaluated at the reference temperature,
  
 \begin_inset Formula $T_{\mathrm{ref}}=298\text{ K}$
 \end_inset
 
 .
- The coefficients can then be written as
-\change_deleted 555506250 1753996537
-which gives
-\change_unchanged
+ Using Equation
+\begin_inset space ~
+\end_inset
 
-\end_layout
 
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-b_{ik}=\begin{cases}
-\frac{a_{i,k-1}}{k}, & k\geqq1\\
-h_{\text{ref},i}, & k=0
-\end{cases}\label{eq:enthalpy_coeffs}
-\end{equation}
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:enthalpy-polynomial"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
 
 \end_inset
 
-and
+,
+ it is straight forward to evaluate Equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:internal_energy_identity"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+ to obtain the mass-specific internal energy.
+ However,
+ in practice,
+ we define the coefficients 
+\begin_inset Formula $c_{ik}$
+\end_inset
+
+ by modifying the coefficients 
+\begin_inset Formula $b_{ik}$
+\end_inset
+
+to that account for the term 
+\begin_inset Formula $R_{i}T$
+\end_inset
+
+ and evaluate the mass-specific internal energy as
+\begin_inset Formula 
+\begin{align}
+u_{i}= & \sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
+\end{align}
+
+\end_inset
+
+where
 \end_layout
 
 \begin_layout Standard
@@ -2970,15 +3017,8 @@ h_{\text{ref},i}, & k=0.
 
 \end_inset
 
-
-\change_inserted 555506250 1753996558
-and the 
-\change_deleted 555506250 1753996554
 Therefore,
- 
-\change_unchanged
-thermodynamic quantities can be evaluated by contracting the corresponding polynomial coefficients,
- with the temperature monomial basis of the appropriate polynomial degree,
+ thermodynamic quantities can be evaluated by taking the scalar inner product between the corresponding polynomial coefficients and a monomial basis for temperature of the appropriate polynomial degree,
  e.g.,
  
 \begin_inset Formula $n_{p}$
@@ -3034,7 +3074,7 @@ where
 \begin_inset Formula $s_{i}^{o}$
 \end_inset
 
- denotes the species entropy at the reference pressure,
+ denotes the mass-specific entropy at the reference pressure,
  and 
 \begin_inset Formula $p_{i}=C_{i}R^{}T$
 \end_inset
@@ -3063,10 +3103,12 @@ nolink "false"
 \end_inset
 
 ,
+ the mass-specific standard entropy,
  
 \begin_inset Formula $s_{i}^{o}$
 \end_inset
 
+,
  is computed as
 \end_layout
 
@@ -3248,7 +3290,11 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-Thermodynamic Quantity
+Thermodynamic Quantity of the 
+\begin_inset Formula $i$
+\end_inset
+
+th Species
 \end_layout
 
 \end_inset
@@ -3277,7 +3323,7 @@ Coefficient Description
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific heat at
+Mass-specific heat at
 \end_layout
 
 \begin_layout Plain Layout
@@ -3330,7 +3376,7 @@ literal "false"
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific enthalpy,
+Mass-specific enthalpy,
  
 \begin_inset Formula $h_{i}$
 \end_inset
@@ -3380,7 +3426,7 @@ h_{\text{ref},i}, & k=0
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific internal energy,
+Mass-specific internal energy,
  
 \begin_inset Formula $u_{i}$
 \end_inset
@@ -3424,7 +3470,7 @@ h_{\text{ref},i}, & k=0.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific standard entropy,
+Mass-specific entropy at the reference pressure,
  
 \begin_inset Formula $s_{i}^{o}$
 \end_inset
@@ -3467,7 +3513,7 @@ s_{\mathrm{ref},i}^{o} & k=0.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Species specific standard Gibbs
+Mass-specific Gibbs
 \end_layout
 
 \begin_layout Plain Layout
@@ -3542,39 +3588,20 @@ name "tab:Summary-of-polynomial"
 \end_layout
 
 \begin_layout Standard
-
-\change_inserted 555506250 1753993042
 The temperature of a given state,
  y_f,
- is defined such that the corresponding internal energy
-\change_unchanged
- density
-\change_inserted 555506250 1753993042
-,
- given by,
-\end_layout
-
-\begin_layout Standard
-
-\change_inserted 555506250 1753993042
+ is defined such that the corresponding internal energy density,
 \begin_inset Formula 
 \begin{equation}
-\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t},\label{eq:weighted_internal_energy_state}
+\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t},\label{eq:internal-energy-density-state}
 \end{equation}
 
 \end_inset
 
-is consistent with the
-\change_unchanged
- 
-\change_inserted 555506250 1753993042
-internal energy given by the polynomial fit
-\change_unchanged
- weighted by the species density,
- given as
+is consistent with the internal energy density computed via
 \begin_inset Formula 
 \begin{equation}
-\rho u(C,T)=\sum_{i}^{n_{s}}W_{i}C_{i}u_{i}\left(T\right),\label{eq:weighted_internal_energy_polynomial}
+\rho u(C,T)=\sum_{i}^{n_{s}}W_{i}C_{i}u_{i}\left(T\right),\label{eq:internal-energy-density-polynomial}
 \end{equation}
 
 \end_inset
@@ -3583,7 +3610,7 @@ where
 \begin_inset Formula $u_{i}$
 \end_inset
 
- is given by Equation
+ is the polynomial fit for mass specific internal energy given by Equation
 \begin_inset space ~
 \end_inset
 
@@ -3599,57 +3626,64 @@ nolink "false"
 \end_inset
 
 .
-\change_deleted 555506250 1753993042
-ChemGen supplies a Newton's method implementation to extract temperature from internal energy in the case where temperature is needed from 
-\begin_inset Formula $y_{f}$
-\end_inset
-
-.
- For example,
- internal energy is typically part of a conserved state.
- The total energy in 
-\begin_inset Formula $y_{f}$
-\end_inset
-
- is given as
+ 
 \end_layout
 
 \begin_layout Standard
-
-\change_deleted 555506250 1753993042
+ChemGen solves the resulting nonlinear equation for temperature,
+ namely,
 \begin_inset Formula 
 \begin{equation}
-\rho e_{t}=\rho u+\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k},
+\rho u-\rho u(C,T)=0,\label{eq:temperature-nonlinear}
 \end{equation}
 
 \end_inset
 
-where the term 
-\begin_inset Formula $\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k}$
-\end_inset
-
- can be computed from other conserved variables.
- Thus one can directly compute the internal energy at any time as
-\end_layout
-
-\begin_layout Standard
-
-\change_deleted 555506250 1753993042
+using Newton's method 
 \begin_inset Formula 
 \begin{equation}
-\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t}.
+\frac{\partial\rho u(C,T)}{\partial T}\cdot\delta T=\rho u-\rho u(C,T).\label{eq:netwons-method-temperature}
 \end{equation}
 
 \end_inset
 
+The Jacobian of the 
+\begin_inset Formula $\rho u\left(C,T\right)$
+\end_inset
 
-\change_unchanged
+with respect to temperature is given by
+\begin_inset Formula 
+\begin{align}
+\frac{\partial\rho u(C,T)}{\partial T}= & \sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T)}{\partial T},\nonumber \\
+= & \sum_{i=1}^{n_{s}}W_{i}C_{i}\left(\sum_{k=0}^{n_{p}+1}c_{ik}\frac{\partial(T^{k})}{\partial T}\right),\label{eq:enthalpy-polynomial-1}\\
+= & \sum_{i=1}^{n_{s}}W_{i}C_{i}\left(\sum_{k=1}^{n_{p}+1}c_{ik}\left(kT^{k-1}\right)\right),\\
+= & \rho c_{v}\left(C,T\right),
+\end{align}
 
+\end_inset
+
+where 
+\begin_inset Formula $c_{v}$
+\end_inset
+
+ is the specific heat at constant volume,
+ which is related to 
+\begin_inset Formula $c_{p}$
+\end_inset
+
+ via
 \end_layout
 
 \begin_layout Standard
-ChemGen solves the resulting nonlinear equation for temperature using Newton's method..
- The temperature at the 
+\begin_inset Formula 
+\begin{equation}
+c_{v}=c_{p}-R.\label{eq:cv_equation}
+\end{equation}
+
+\end_inset
+
+Therefore,
+ temperature at the 
 \begin_inset Formula $k\text{th}+1$
 \end_inset
 
@@ -3659,96 +3693,7 @@ ChemGen solves the resulting nonlinear equation for temperature using Newton's m
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-T_{k+1}=T_{k}-\frac{\left(\rho u-\rho u(C,T_{k})\right)}{\frac{\partial\rho u(C,T_{k})}{\partial T}}.\label{eq:netwon_iteration_temperature}
-\end{equation}
-
-\end_inset
-
-where 
-\begin_inset Formula $T_{k}$
-\end_inset
-
- is the temperature at the 
-\begin_inset Formula $k$
-\end_inset
-
-th iteration.
- The numerator and denominator are given by
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\rho u(C,T_{k})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{k})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},T_{k,n_{p}+1}\right>
-\end{equation}
-
-\end_inset
-
- and
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\frac{\partial\rho u(C,T_{k})}{\partial T}=\rho c_{v}\left(C,T_{k}\right)=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{k,n_{p}+1}}{\partial T}\right>,\label{eq:denominator_for_temp_solve}
-\end{equation}
-
-\end_inset
-
-respectively,
- where
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-A_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})
-\end{equation}
-
-\end_inset
-
-and
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-\frac{\partial T_{k,n_{p}+1}}{\partial T}=\left(0,1,2T_{k},\dots,\left(n_{p}+1\right)T_{k}^{n_{p}}\right).
-\end{equation}
-
-\end_inset
-
-
-\begin_inset Formula $c_{v}$
-\end_inset
-
- in Equation
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:denominator_for_temp_solve"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
- is the specific heat at constant volume,
- which is related to 
-\begin_inset Formula $c_{p}$
-\end_inset
-
- as
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\begin{equation}
-c_{v}=c_{p}-R.\label{eq:cv_equation}
+T_{k+1}=T_{k}-\frac{\left(\rho u-\rho u(C,T_{k})\right)}{\rho c_{v}\left(C,T_{k}\right)}.\label{eq:netwon_iteration_temperature}
 \end{equation}
 
 \end_inset
