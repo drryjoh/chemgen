@@ -1,7 +1,6 @@
 import numpy as np
 import cantera as ct
 
-
 pressure_reference = 101325.0
 def get_gibbs_energy_coefficients(gas, order, specific_heat_coefficients, enthalpy_coefficients, entropy_coefficients):
     specific_heat_shape = np.shape(specific_heat_coefficients)
@@ -27,7 +26,7 @@ def get_gibbs_energy_coefficients(gas, order, specific_heat_coefficients, enthal
 def get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_heat_constant_pressure_species_coefficients):
     entropy_coefficients = np.zeros_like(internal_energy_coefficients)
             
-    entropy_log_coefficient = specific_heat_constant_pressure_species_coefficients[0,:] # a_0
+    entropy_log_coefficient = specific_heat_constant_pressure_species_coefficients[0,:]
     for k in range(gas.n_species):
         for i, a in enumerate(specific_heat_constant_pressure_species_coefficients[:,k]):
             if i==0:
@@ -46,7 +45,7 @@ def get_entropy_coefficients(gas, order, internal_energy_coefficients, specific_
     for k in range(gas.n_species):
         sref_polyfit.append(np.sum(entropy_coefficients[:,k] * T_entropy_monomial_sequence))
     sref_polyfit = np.array(sref_polyfit)
-    sref_exact = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights # J/kg
+    sref_exact = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights
     entropy_coefficients[0, :] += sref_exact - sref_polyfit
 
     return entropy_coefficients
@@ -66,14 +65,14 @@ def check_against_temperature(gas, temperature_min, temperature_max, n_samples, 
     for i, temperature in enumerate(temperatures):
         gas.TP = temperature, pressure_reference
         T_energy_monomial_sequence = np.power(gas.T, np.linspace(0., order + 1, num = order + 2))
-        href_exact = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights # J/kg
+        href_exact = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights
         for k in range(gas.n_species):
             h_exact[k,i] = href_exact[k]
             h_fit[k,i] = np.sum(enthalpy_coefficients[:,k] * T_energy_monomial_sequence)
     for k in range(gas.n_species):
         plt.figure()
-        plt.plot(temperatures, h_exact[k,:],'-r')
-        plt.plot(temperatures, h_fit[k,:],'--k')
+        plt.plot(temperatures, h_exact[k,:],"-r")
+        plt.plot(temperatures, h_fit[k,:],"--k")
     plt.show()
 
 def get_enthalpy_coefficients(gas, order, specific_heat_coefficients):
@@ -161,8 +160,8 @@ def check_gibbs_against_temperature(gas, temperature_min, temperature_max, n_sam
             gibbs_fit[k,i] = np.sum(gibbs_coefficients[:,k] * log_T_energy_monomial_sequence)
     for k in range(gas.n_reactions):
         plt.figure()
-        plt.plot(temperatures, gibbs_exact[k,:],'-r')
-        plt.plot(temperatures, gibbs_fit[k,:],'--k')
+        plt.plot(temperatures, gibbs_exact[k,:],"-r")
+        plt.plot(temperatures, gibbs_fit[k,:],"--k")
     plt.show()
 def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200, temperature_max = 8000, transport = False):
     if transport:
@@ -203,7 +202,7 @@ def polyfit_thermodynamics(gas, configuration, order = 4, temperature_min = 200,
     ["specific_heat", "specific_heat", "energy", "energy", "entropy", "gibbs", "gibbs_reaction"]]
 
 
-def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration, indentation=' '*8, return_type = '{species}'):
+def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration, indentation=" "*8, return_type = "{species}"):
     thermo_shape = np.shape(coefficients)
     order = thermo_shape[0]
     n_species  = thermo_shape[1]
@@ -212,12 +211,12 @@ def thermo_fit_text(contract_variable, coefficients, thermo_type, configuration,
     return_type = return_type.format(**vars(configuration))
 
     for k in range(n_species):
-        coefficients_k = ', '.join(["{scalar_cast}({coefficient})".format(**vars(configuration), coefficient = coefficient) for coefficient in coefficients[:,k]])
+        coefficients_k = ", ".join(["{scalar_cast}({coefficient})".format(**vars(configuration), coefficient = coefficient) for coefficient in coefficients[:,k]])
         content_array.append("{indentation}contract({contract_variable}, {temperature_monomial_type}{{{coefficients_k}}})".format(indentation = indentation,
         **vars(configuration),
         contract_variable = contract_variable,
         temperature_monomial_type = "{temperature_monomial}".format(**vars(configuration)) if thermo_type == "default" else f"{{temperature_{thermo_type}_monomial}}".format(**vars(configuration)) , 
         coefficients_k = coefficients_k))
 
-    content += f'{indentation}{return_type}'+'{{\n'.format(**vars(configuration), indentation = indentation) + ',\n'.join(content_array)+'};\n'
+    content += f"{indentation}{return_type}"+"{{\n".format(**vars(configuration), indentation = indentation) + ",\n".join(content_array)+"};\n"
     return content

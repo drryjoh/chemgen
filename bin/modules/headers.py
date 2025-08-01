@@ -36,10 +36,10 @@ def create_headers(configuration, chemistry_solver, destination_folder):
         file_names = []
         if chemistry_solver.lower() == "rk4":
             file_names = ['rk4.h.in']
-        elif chemistry_solver.lower() == "backwards_euler":
-            file_names = ['backwards_euler.h.in', 'linear_solvers.h.in','direct.h.in','default_parameters.h.in']
+        elif chemistry_solver.lower() == "backward_euler":
+            file_names = ['backward_euler.h.in', 'linear_solvers.h.in','direct.h.in','default_parameters.h.in']
         elif chemistry_solver.lower() == "all":
-            file_names = ['rk4.h.in', 'backwards_euler.h.in','sdirk.h.in','rosenbroc.h.in','yass.h.in','linear_solvers.h.in','direct.h.in','default_parameters.h.in']
+            file_names = ['rk4.h.in', 'backward_euler.h.in','sdirk.h.in','rosenbroc.h.in','yass.h.in','linear_solvers.h.in','direct.h.in','default_parameters.h.in']
         else:
             print("Chemistry Solver not recognized")
             exit()
@@ -47,13 +47,10 @@ def create_headers(configuration, chemistry_solver, destination_folder):
     return headers
 
 def clear_headers(directory):
-    # Find all .cpp and .h files in the directory (and optionally subdirectories)
     h_files = glob.glob(os.path.join(directory, '*.h'))
 
-    # Combine the lists of files
     files_to_delete = h_files
 
-    # Delete each file
     for file_path in files_to_delete:
         try:
             os.remove(file_path)

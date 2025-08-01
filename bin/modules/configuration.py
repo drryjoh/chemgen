@@ -5,15 +5,16 @@ class Config:
     pass
 
 def add_derived_attributes(config_obj):
+    """ adds derived attributes from configuration decorators """
     setattr(config_obj, "device_sum_inl",  "{device_sum}".format(**vars(config_obj)).format(**vars(config_obj)))
     setattr(config_obj, "device_fill_inl", "{device_fill}".format(**vars(config_obj)).format(**vars(config_obj)))
     setattr(config_obj, "device_transform_inl", "{device_transform}".format(**vars(config_obj)).format(**vars(config_obj)))
     setattr(config_obj, "device_element_sum_inl", "{device_element_sum}".format(**vars(config_obj)).format(**vars(config_obj)))
     setattr(config_obj, "device_element_multiply_inl", "{device_element_multiply}".format(**vars(config_obj)).format(**vars(config_obj)))
-
     setattr(config_obj, "device_element_sum_offset_inl", config_obj.device_element_sum_inl.replace("a_s.begin()", "a_s.begin()+1").replace("c_s.begin()", "c_s.begin()+1"))
 
 def get_configuration(configuration_filename = 'configuration.yaml', decorators = 'decorators'):
+    """ opens and returns configuration file """
     config_path = Path(configuration_filename)
     
     if config_path.exists():
@@ -33,12 +34,8 @@ def get_configuration(configuration_filename = 'configuration.yaml', decorators 
 
 #update with other checks later on
 def check_configuration(configuration, args):
+    """ tests configuraiton file compatability with some hard-set """
     if args.ignore_temp_dependence:
-        # jacobian_type  = f"{configuration.jacobian_typedef}"
-        # if "Species, n_species" in jacobian_type and not force:
-        #     exit(f"{jacobian_type} is probably incorrect for jacobian_typedef in configuraiton file\n Consider one with size <n_species +1, n_species + 1> such as std::array<ChemicalState, n_species + 1>\n to continue use --force")
-        # elif "Species, n_species" in jacobian_type and force:
-        #     print(f"{jacobian_type} is probably incorrect ")
         setattr(configuration, "temperature_jacobian", "off")
     else:
         setattr(configuration, "temperature_jacobian", "on")

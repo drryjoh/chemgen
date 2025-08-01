@@ -25,6 +25,7 @@ def run_command(command):
 
 def compile_cpp_code(build_dir, source_files, config):
     """Compile C++ code using g++ or other compilers."""
+    print("Experimental, see issue: https://github.com/drryjoh/chemgen/issues/31")
     os.makedirs(build_dir, exist_ok=True)
     os.makedirs(build_dir/"bin", exist_ok=True)
     build_option = ''
@@ -48,18 +49,14 @@ def run(build_dir):
     run_command(test_command)
 
 def compile_and_run(test_file, configuration_file, destination_folder, third_parties, cmake, compile, run_tests):
-    # Define directories and C++ source files
     build_directory = destination_folder.parent
     cpp_source_files = ['src'+'/'+test_file]
 
-    # Generate cmake
     if cmake or compile:
         generate_cmake_file(configuration_file, build_directory, third_parties)
 
-    # Compile the C++ code
     if compile:
         compile_cpp_code(build_directory, cpp_source_files, configuration_file)
 
-    # Run tests
     if run_tests:
         run(build_directory)

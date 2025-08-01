@@ -2,31 +2,31 @@ import os
 import re
 from pathlib import Path
 def pybind_extract_functions_from_header(file_path):
-    FUNC_PATTERN = re.compile(r'^\s*(?:inline\s+)?([\w:<>]+)\s+(\w+)\s*\(([^)]*)\)\s*(?:;|\{)?',  re.MULTILINE)
+    FUNC_PATTERN = re.compile(r'^\s*(?:inline\s+)?([\w:<>]+)\s+(\w+)\s*\(([^)]*)\)\s*(?:;|\{)?',  re.MULTILINE) #https://github.com/drryjoh/chemgen/issues/32
     with open(file_path, "r") as f:
         content = f.read()
         return FUNC_PATTERN.findall(content)
 
 def pybind_format_binding(return_type, func_name, args):
-    return f'    m.def("{func_name}", &{func_name}, "{func_name} function");'
+    return f'    m.def("{func_name}", &{func_name}, "{func_name} function");' #https://github.com/drryjoh/chemgen/issues/32
 
 def create_pybind(gas, headers, args, configuration, destination_folder, remove_reactions = False):
     includes = headers
     bindings = []
-    bindings_file = Path(destination_folder) / Path("chemgen_pybind.cpp")     # generated binding file\
-    setup_file = Path(destination_folder) / Path("setup_chemgen.py")     # generated binding file
+    bindings_file = Path(destination_folder) / Path("chemgen_pybind.cpp")
+    setup_file = Path(destination_folder) / Path("setup_chemgen.py")
 
     for path in Path(destination_folder).rglob("*.h"):
         for return_type, func_name, args_ in pybind_extract_functions_from_header(path):
             bindings.append(pybind_format_binding(return_type, func_name, args_))
 
     with open(bindings_file, "w") as f:
-        f.write('#include <pybind11/pybind11.h>\n')
-        f.write('#include <pybind11/stl.h>\n\n')
+        f.write("#include <pybind11/pybind11.h>\n")
+        f.write("#include <pybind11/stl.h>\n\n")
         f.write("#include <cmath>\n")
         f.write("#include <algorithm>\n")
         f.write("#include <array>\n")
-        f.write("#include <iostream>  // For printing the result to the console\n")
+        f.write("#include <iostream> \n")
         for header in headers:
             f.write(f"#include \"{header}\"\n")
         remove_reactions_text = ""

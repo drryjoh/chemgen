@@ -115,32 +115,7 @@ d{name}_dtemperature({scalar_parameter} temperature) {const_option}
 }}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
-'''
-def write_energy_thermo_transport_fit_frozen_species(file, name, thermo_fit_text, configuration):
-    content ="""
-{device_option}
-{thermo_table_function} 
-({thermo_table_parameter} thermo_table, ) {const_option} 
-{{
-    return contract(thermo_table, temperature_energy_monomial_sequence)
-}}
-
-{device_option}
-{species_function} 
-internal_energy_frozen_species({thermo_table_parameter} thermo_table, {temperature_energy_monomial_parameter} temperature_energy_monomial_sequence) {const_option} 
-{{
-    return contract(thermo_table, temperature_energy_monomial_sequence)
-}}
-
-{device_option}
-{species_function} 
-internal_energy_frozen_species({thermo_table_parameter} thermo_table, {scalar_parameter} temperature) {const_option} 
-{{
-    return internal_energy_frozen_species(temperature_energy_monomial(temperature));
-}}
-    """.format(**vars(configuration))
-    file.write(content)
-'''
+    
 def write_entropy_thermo_transport_fit(file, name, thermo_fit_text, configuration):
     content ="""
 {device_option}

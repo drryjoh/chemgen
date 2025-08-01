@@ -9,7 +9,7 @@ import glob
 from .configuration import *
 
 def get_text_to_format(code_directory, file_to_format):
-    # Get the current directory
+    """grabs text to format"""
     current_dir = Path(__file__).resolve().parent
     file_path = current_dir.parent.parent / code_directory / file_to_format
 
@@ -20,7 +20,9 @@ def get_text_to_format(code_directory, file_to_format):
     return content
 
 def write_formatted_code(code_directory, file_to_format, configuration, destination_folder, target_file = None, append = False):
+    """write formatted C++ code"""
     content = get_text_to_format(code_directory, file_to_format)
+
     try:
         new_content = content.format(**vars(configuration))
     except:
@@ -35,7 +37,6 @@ def write_formatted_code(code_directory, file_to_format, configuration, destinat
                 print(line)
         sys.exit(f"unescaped braces found in file {file_to_format}")
 
-    
     if target_file == None:
         target_file = file_to_format.replace('.in','')
 

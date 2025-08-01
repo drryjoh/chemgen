@@ -14,7 +14,7 @@ def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_b
         species_element_i  = configuration.species_element.format(i = species_index)
         forward_rate_array.append(raise_to_power(species_element_i, coeff))
         indexes_of_species_in_reaction.append(species_names.index(species))
-    forward_rate = ' * '.join(forward_rate_array)
+    forward_rate = " * ".join(forward_rate_array)
 
     backward_rate_array = []
     for species, coeff in reaction.products.items():
@@ -23,7 +23,7 @@ def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_b
         species_element_i  = configuration.species_element.format(i = species_index)
         backward_rate_array.append(raise_to_power(species_element_i, coeff))
         indexes_of_species_in_reaction.append(species_names.index(species))
-    backward_rate = ' * '.join(backward_rate_array)
+    backward_rate = " * ".join(backward_rate_array)
 
     return (forward_rate, backward_rate)
 
@@ -57,31 +57,31 @@ def get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoi
         species_element_i  = configuration.species_element.format(i = species_index)
         dbackward_rate_array.append(draise_to_power(species_element_i, coeff))
     
-    dforward_rates = ['0']*len(species_names)
-    dbackward_rates = ['0']*len(species_names)
+    dforward_rates = ["0"]*len(species_names)
+    dbackward_rates = ["0"]*len(species_names)
 
     for i, forward_index in enumerate(forward_indices):
         other_species = forward_rate_array.copy()
         other_species.pop(i)
         if len(other_species) > 1:
-            dforward_rates[forward_index] = '{0} * {1}'.format(dforward_rate_array[i], '*'.join(other_species))
+            dforward_rates[forward_index] = "{0} * {1}".format(dforward_rate_array[i], "*".join(other_species))
         elif len(other_species) == 1:
-            dforward_rates[forward_index] = '{0} * {1}'.format(dforward_rate_array[i], other_species[0])
+            dforward_rates[forward_index] = "{0} * {1}".format(dforward_rate_array[i], other_species[0])
         else:
-            dforward_rates[forward_index] = '{0}'.format(dforward_rate_array[i])
+            dforward_rates[forward_index] = "{0}".format(dforward_rate_array[i])
 
     for i, backward_index in enumerate(backward_indices):
         other_species = backward_rate_array.copy()
         other_species.pop(i)
         if len(other_species) > 1:
-            dbackward_rates[backward_index] = '{0} * {1}'.format(dbackward_rate_array[i], '*'.join(other_species))
+            dbackward_rates[backward_index] = "{0} * {1}".format(dbackward_rate_array[i], "*".join(other_species))
         elif len(other_species) == 1:
-            dbackward_rates[backward_index] = '{0} * {1}'.format(dbackward_rate_array[i], other_species[0])
+            dbackward_rates[backward_index] = "{0} * {1}".format(dbackward_rate_array[i], other_species[0])
         else:
-            dbackward_rates[backward_index] = '{0}'.format(dbackward_rate_array[i])
+            dbackward_rates[backward_index] = "{0}".format(dbackward_rate_array[i])
     for i, db_rates in enumerate(dbackward_rates):
-        dbackward_rates[i].replace('1 * ','')
-        dforward_rates[i].replace('1 * ','')
+        dbackward_rates[i].replace("1 * ","")
+        dforward_rates[i].replace("1 * ","")
 
     return (dforward_rates, dbackward_rates)
 
@@ -91,20 +91,20 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         formatted_text = "{scalar_cast}({stoichiometric_production}) * rate_of_progress_{reaction_index}".format(**vars(configuration), 
         stoichiometric_production = stoichiometric_production[index], 
         reaction_index = reaction_index)
-        if species_production_texts[index] == '':
+        if species_production_texts[index] == "":
             species_production_texts[index] = formatted_text
         else:
-            species_production_texts[index] = ' + '.join([species_production_texts[index], formatted_text])
-    formatted_text = ''
+            species_production_texts[index] = " + ".join([species_production_texts[index], formatted_text])
+    formatted_text = ""
 
     for index in indexes_of_species_in_reaction: 
         formatted_text = "{scalar_cast}({stoichiometric_production}) * progress_rates[{reaction_index}]".format(**vars(configuration), 
         stoichiometric_production = stoichiometric_production[index], 
         reaction_index = reaction_index)
-        if species_production_function_texts[index] == '':
+        if species_production_function_texts[index] == "":
             species_production_function_texts[index] = formatted_text
         else:
-            species_production_function_texts[index] = ' + '.join([species_production_function_texts[index], formatted_text])
+            species_production_function_texts[index] = " + ".join([species_production_function_texts[index], formatted_text])
     
     on_the_fly_production = []
     for index in indexes_of_species_in_reaction: 
@@ -112,24 +112,25 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
         stoichiometric_production = stoichiometric_production[index], 
         reaction_index = reaction_index,
         species_index = index))
-    species_production_on_fly_function_texts[reaction_index] = '\n'.join(on_the_fly_production)
+    species_production_on_fly_function_texts[reaction_index] = "\n".join(on_the_fly_production)
 
 def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose=False, temperature_jacobian=False):
     is_reversible[reaction_index] = reaction.reversible
 
     if reaction.reaction_type == "Arrhenius":
-        reactions_depend_on[reaction_index] = ['temperature','log_temperature']
+        reactions_depend_on[reaction_index] = ["temperature","log_temperature"]
         create_reaction_functions_and_calls_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)
     elif reaction.reaction_type == "three-body-Arrhenius":
-        reactions_depend_on[reaction_index] = ['temperature','species','log_temperature']
+        reactions_depend_on[reaction_index] = ["temperature","species","log_temperature"]
         create_reaction_functions_and_calls_third_body(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)
     elif "falloff" in reaction.reaction_type:
-        reactions_depend_on[reaction_index] = ['temperature','species','log_temperature']
+        reactions_depend_on[reaction_index] = ["temperature","species","log_temperature"]
         create_reaction_functions_and_calls_falloff(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)
     elif reaction.reaction_type == "pressure-dependent-Arrhenius":
-        reactions_depend_on[reaction_index] = ['temperature','pressure']
+        reactions_depend_on[reaction_index] = ["temperature","pressure"]
         create_reaction_functions_and_calls_pressure_dependent_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)
     elif reaction.reaction_type == "Chebyshev":
+        print("Not supported yet, see: https://github.com/drryjoh/chemgen/issues/34")
         print(f"  Chebyshev Reaction Coefficients:")
         print(f"    Tmin = {reaction.Tmin}, Tmax = {reaction.Tmax}")
         print(f"    Pmin = {reaction.Pmin}, Pmax = {reaction.Pmax}")
@@ -161,13 +162,13 @@ def add_to_jacobian(variable, index_with_respect_to, indexes_of_species_in_react
             running_text.append(f"        jacobian_net_production_rates[{species_index+1}][{index_with_respect_to+1}] += {stoichiometric_production[species_index]}*{variable};\n")
             if sparsity_pattern is not None:
                 sparsity_pattern[species_index+1][index_with_respect_to+1] += 1
-    return ''.join(running_text)
+    return "".join(running_text)
 def add_to_jacobian_all(variable, indexes_of_species_in_reaction, stoichiometric_production):
     running_text = []
     for i, species_index in enumerate(indexes_of_species_in_reaction):
         if stoichiometric_production[species_index]!=0:
             running_text.append(f"        jacobian_net_production_rates[{species_index+1}] = add_species_to_chemical_state(jacobian_net_production_rates[{species_index+1}], scale_gen({stoichiometric_production[species_index]}, {variable}));\n")
-    return ''.join(running_text)
+    return "".join(running_text)
 
 def add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, stoichiometric_production, n_species, configuration, temperature_equation, sparsity_pattern):
     running_text = []
@@ -178,7 +179,7 @@ def add_to_jacobian_temperature(reaction_index, indexes_of_species_in_reaction, 
             if temperature_equation and sparsity_pattern is not None:
                 # if not temperature_equation, then row is fully dense (excluding first column for internal energy) due to dtemperature_dspecies term
                 sparsity_pattern[species_index+1][0] += 1
-    return ''.join(running_text)
+    return "".join(running_text)
 
 def create_drate_of_progress_i_dtemperature(reaction_index, forward_rate, backward_rate, is_reversible, configuration):
     if is_reversible:
@@ -206,7 +207,7 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                                          backward_rate_derivatives, is_reversible,
                                          indexes_of_species_in_reaction, stoichiometric_production, reaction,
                                          configuration, temperature_jacobian = False, sparsity_pattern=None):
-    formatted_text = ''
+    formatted_text = ""
     drate_of_progress_dspecies_all_species = "drate_of_progress_dspecies_all_species"
     if temperature_jacobian:
         drate_of_progress_dspecies_all_species = "{species} drate_of_progress_dspecies_all_species".format(**vars(configuration))
@@ -226,22 +227,22 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
         //drate_of_progress_temperature unused
             """
         if ("species" in reactions_depend_on[reaction_index]) or ("pressure" in reactions_depend_on[reaction_index]):
-            dforward_rate_dspecies = ''
-            dbackward_rate_dspecies = ''
+            dforward_rate_dspecies = ""
+            dbackward_rate_dspecies = ""
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
                 #jacobian_net_production_rates
-                if dforward_rate == '1':
+                if dforward_rate == "1":
                     dforward_rate_dspecies += f"        drate_of_progress_dspecies = forward_reaction_{reaction_index};// {reaction_index} {species_index} \n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-                elif dforward_rate != '0':
+                elif dforward_rate != "0":
                     dforward_rate_dspecies += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index});//{reaction_index} {species_index}\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
 
             for species_index, dbackward_rate in enumerate(backward_rate_derivatives):
-                if dbackward_rate == '1':
+                if dbackward_rate == "1":
                     dforward_rate_dspecies += f"        drate_of_progress_dspecies = -divide(forward_reaction_{reaction_index}, equilibrium_constant_{reaction_index}); //{reaction_index} {species_index}\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-                elif dbackward_rate != '0':
+                elif dbackward_rate != "0":
                     dforward_rate_dspecies += f"        drate_of_progress_dspecies = -multiply({dbackward_rate}, divide(forward_reaction_{reaction_index}, equilibrium_constant_{reaction_index}));// {reaction_index} {species_index}\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
             formatted_text += """
@@ -264,18 +265,18 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
             formatted_text += """        //drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
 """.format(reaction_index = reaction_index, **vars(configuration))
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
-                if dforward_rate == '1':
+                if dforward_rate == "1":
                     formatted_text += f"        drate_of_progress_dspecies = forward_reaction_{reaction_index}; // [{reaction_index}][{species_index}]\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-                elif dforward_rate != '0':
+                elif dforward_rate != "0":
                     formatted_text += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index}); // [{reaction_index}][{species_index}] +\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
 
             for species_index, dbackward_rate in enumerate(backward_rate_derivatives):
-                if dbackward_rate == '1':
+                if dbackward_rate == "1":
                     formatted_text += f"        drate_of_progress_dspecies = -divide(forward_reaction_{reaction_index}, equilibrium_constant_{reaction_index});\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-                elif dbackward_rate != '0':
+                elif dbackward_rate != "0":
                     formatted_text += f"        drate_of_progress_dspecies = -multiply({dbackward_rate}, divide(forward_reaction_{reaction_index}, equilibrium_constant_{reaction_index}));\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
 
@@ -292,12 +293,12 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                 // rate_of_progress temperature derivative unused
                 """
         if ("species" in reactions_depend_on[reaction_index]) or ("pressure" in reactions_depend_on[reaction_index]):
-            dforward_rate_dspecies = ''
+            dforward_rate_dspecies = ""
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
-                if dforward_rate == '1':
+                if dforward_rate == "1":
                     dforward_rate_dspecies += f"        drate_of_progress_dspecies = forward_reaction_{reaction_index};\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-                elif dforward_rate != '0':
+                elif dforward_rate != "0":
                     dforward_rate_dspecies += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
                     dforward_rate_dspecies += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
 
@@ -320,13 +321,13 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
         //drate_of_progress_dspecies[{reaction_index}] = {{{scalar_cast}(0)}};
 """.format(reaction_index = reaction_index, **vars(configuration))
             for species_index, dforward_rate in enumerate(forward_rate_derivatives):
-                if dforward_rate == '1':
+                if dforward_rate == "1":
                     formatted_text += f"        drate_of_progress_dspecies = forward_reaction_{reaction_index};\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-                elif dforward_rate != '0':
+                elif dforward_rate != "0":
                     formatted_text += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-    progress_rates_derivatives[reaction_index] = f"\n\n        // Reaction {reaction_index}: {reaction}\n"+formatted_text.replace('1 * ','').replace('1.0*','')
+    progress_rates_derivatives[reaction_index] = f"\n\n        // Reaction {reaction_index}: {reaction}\n"+formatted_text.replace("1 * ","").replace("1.0*","")
 
     # Sparsity for add_to_jacobian_all and temperature_jacobian
     if sparsity_pattern is not None:
@@ -350,13 +351,13 @@ def create_equilibrium_constants(stoichiometric_production, reaction_index, inde
     equilibrium_constant_elements = []
     sum_stoichiometric_production = np.sum(stoichiometric_production)
     
-    power_term = ''
-    dpower_term_dtemperature = ''
+    power_term = ""
+    dpower_term_dtemperature = ""
     if sum_stoichiometric_production.is_integer():
         power_integer = int(sum_stoichiometric_production)
         if power_integer < 0:
-            power_term = raise_to_power('inv_pressure_atmosphere() * universal_gas_constant() * temperature', np.abs(power_integer))
-            dpower_term_dtemperature = draise_to_power_chain('inv_pressure_atmosphere() * universal_gas_constant() * temperature', 'inv_pressure_atmosphere() * universal_gas_constant()', np.abs(power_integer))
+            power_term = raise_to_power("inv_pressure_atmosphere() * universal_gas_constant() * temperature", np.abs(power_integer))
+            dpower_term_dtemperature = draise_to_power_chain("inv_pressure_atmosphere() * universal_gas_constant() * temperature", "inv_pressure_atmosphere() * universal_gas_constant()", np.abs(power_integer))
         elif power_integer > 0:
             power_term = raise_to_power("pressure_atmosphere() * inv_universal_gas_constant_temperature",power_integer)
             dpower_term_dtemperature = draise_to_power_chain("pressure_atmosphere() * inv_universal_gas_constant_temperature", "pressure_atmosphere() * dinv_universal_gas_constant_temperature_dtemperature", np.abs(power_integer))
@@ -364,10 +365,10 @@ def create_equilibrium_constants(stoichiometric_production, reaction_index, inde
             power_term = f"{scalar_cast}(1.0)"
             dpower_term_dtemperature = f"{scalar_cast}(0.0)"
         else:
-            power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature, {power_integer})'
+            power_term = f"pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature, {power_integer})"
     else:
-        power_term = f'pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature, {scalar_cast}({sum_stoichiometric_production}))'
-        dpower_term_dtemperature = f'multiply(dpow_gen_da(pressure_atmosphere() * inv_universal_gas_constant_temperature, {scalar_cast}({sum_stoichiometric_production})), pressure_atmosphere() * dinv_universal_gas_constant_temperature_dtemperature)'
+        power_term = f"pow_gen(pressure_atmosphere() * inv_universal_gas_constant_temperature, {scalar_cast}({sum_stoichiometric_production}))"
+        dpower_term_dtemperature = f"multiply(dpow_gen_da(pressure_atmosphere() * inv_universal_gas_constant_temperature, {scalar_cast}({sum_stoichiometric_production})), pressure_atmosphere() * dinv_universal_gas_constant_temperature_dtemperature)"
     
     for index in indexes_of_species_in_reaction:
         if stoichiometric_production[index] != 0:
@@ -388,4 +389,4 @@ def create_equilibrium_constants(stoichiometric_production, reaction_index, inde
             """
     else:
         print("**WARNING SUPPORT WILL BE DROPPED FOR THIS SOON**")
-        equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = '+'.join(equilibrium_constant_elements).replace("+-","-"), power_term=power_term)
+        equilibrium_constants[reaction_index] = "exp_gen(-({gibbs_sum}) * inv_universal_gas_constant_temperature) * {power_term}".format(gibbs_sum = "+".join(equilibrium_constant_elements).replace("+-","-"), power_term=power_term)
