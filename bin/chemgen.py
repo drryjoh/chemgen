@@ -237,6 +237,7 @@ def main():
 
         # Sparsity pattern of permuted Jacobian (P^T * A * P)
         sp_perm = sp[:, perm][perm, :]
+        np.save('input_sparsity.npy', sp_perm)
 
         # Sparsity pattern of LU decomposition of permuted Jacobian
         print("Computing sparsity pattern of LU decomposition of permuted Jacobian")
