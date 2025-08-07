@@ -64,7 +64,9 @@ std::array<double, (n_species + 1)*(n_species + 1)> flatten_jacobian({jacobian_p
 #endif
 
 #ifdef CHEMGEN_EIGEN
+#ifdef CHEMGEN_PRECONDITIONER_NN
 #include "./nn_preconditioner.hpp"
+#endif
 #include "./custom_preconditioners_eigen.h"
 
 using Preconditioner =

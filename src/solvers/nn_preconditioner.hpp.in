@@ -19,8 +19,10 @@ namespace Eigen
         static constexpr int OUTPUT_DIM = {n_nonzeros_output}; 
 
         // using Matrix_ = Matrix<Scalar, M, M>; //non sparse output
-        using Matrix_ = {jacobian_eigen};
+        using Matrix_ = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+        // using Matrix_ = {jacobian_eigen};
         using Perm_ = Eigen::PermutationMatrix<M, M>;
+        using Triplet_ = Eigen::Triplet<Scalar>; 
         using Trips_ = std::vector<Triplet_>;
 
     public:
@@ -59,6 +61,7 @@ namespace Eigen
             //         P_dense(i, j) = P[k];
             // P_eig = P_dense.sparseView();
             // //convert to sparse output
+            P_eig_trips.clear();
             P_eig_trips.reserve(OUTPUT_DIM);
             for (int i = 0; i < OUTPUT_DIM; i++)
             {{

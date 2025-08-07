@@ -54,7 +54,7 @@ def compile_cpp_code(build_dir, source_files, config):
             print(f"Creating chemgen static library")
             run_command(compile_command)
 
-        compile_command = f"clang++ -std=c++17 {build_option} -L./src -lchemgen_library -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+        compile_command = f"clang++ -std=c++23 {build_option} -L./src -lchemgen_library -o {build_dir}/bin/chemgen {' '.join(source_files)}"
         print(compile_command)
         print(f"Compiling C++ files: {source_files}")
         run_command(compile_command)

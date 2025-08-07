@@ -2,12 +2,18 @@ test_conditions:
   temperature: 1800 #1800 is default
   pressure: 101325.0
   MoleFraction:
+    # - name: O2
+    #   value: 0.20342771982116242
+    # - name: N2
+    #   value: 0.7652757078986588
+    # - name: C4H10
+    #   value: 0.03129657228017883
     - name: O2
-      value: 0.20736086175942545
+      value: 0.14788732394366194
     - name: N2
-      value: 0.7800718132854579
-    - name: POSF10325
-      value: 0.012567324955116694
+      value: 0.5563380281690141
+    - name: H2
+      value: 0.2957746478873239
   end_time: 2e-5 #2e-5
   dt_be: 1e-7 #1e-7
   # dt_sdirk2: 1e-8 #1e-8
