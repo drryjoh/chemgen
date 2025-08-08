@@ -329,6 +329,10 @@ def main():
             headers.remove("linear_solvers.h")
             headers.append("linear_solvers.h")
 
+        if "direct.h" in headers:
+            headers.remove("direct.h")
+            headers.append("direct.h")
+
         if "backwards_euler.h" in headers:
             headers.remove("backwards_euler.h")
             headers.append("backwards_euler.h")
