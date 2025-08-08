@@ -4,16 +4,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the reaction mechanism
-gas = ct.Solution("FFCM2_model.yaml")
+gas = ct.Solution("mechanisms/jetA-detailed-NOx-203-1589.yaml")
 
 # Define initial conditions
 test_conditions = {
     "temperature": 1800,  # K
     "pressure": 101325.0,  # Pa
     "species": {
-        "O2": 0.2,
-        "N2": 0.6,
-        "H2": 0.2,
+        "O2": 0.20736086175942545,
+        "N2": 0.7800718132854579,
+        "POSF10325": 0.012567324955116697,
     }
 }
 

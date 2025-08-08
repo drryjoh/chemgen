@@ -3,15 +3,15 @@ test_conditions:
   pressure: 101325.0
   MoleFraction:
     - name: O2
-      value: 0.2
+      value: 0.20736086175942545
     - name: N2
-      value: 0.6
-    - name: H2
-      value: 0.2 
+      value: 0.7800718132854579
+    - name: POSF10325
+      value: 0.012567324955116697
   end_time: 2e-5
-  dt_be: 0.25e-6
-  dt_sdirk2: 1e-6
+  # dt_be: 1e-7
+  dt_sdirk2: 1e-8
   # dt_sdirk4: 1e-7
-  # dt_ros: 1e-8
+  # dt_ros: 1e-7
   # dt_rk4: 5e-8
-  dt_yass: 1e-7
+  # dt_yass: 1e-7
