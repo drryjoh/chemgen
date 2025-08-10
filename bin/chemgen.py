@@ -383,9 +383,9 @@ def main():
         if "custom_preconditioners_eigen.h" in headers:
             headers.remove("custom_preconditioners_eigen.h")
 
-        if "nn_preconditioner.hpp" in headers:
-            headers.remove("nn_preconditioner.hpp")
-            headers.append("nn_preconditioner.hpp")
+        # if "nn_preconditioner.hpp" in headers:
+        #     headers.remove("nn_preconditioner.hpp")
+        #     headers.append("nn_preconditioner.hpp")
 
         if args.custom_test:
             try:

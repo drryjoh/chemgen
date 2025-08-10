@@ -19,8 +19,8 @@ namespace Eigen
         static constexpr int OUTPUT_DIM = {n_nonzeros_output}; 
 
         // using Matrix_ = Matrix<Scalar, M, M>; //non sparse output
-        using Matrix_ = Eigen::SparseMatrix<double, Eigen::RowMajor>;
-        // using Matrix_ = {jacobian_eigen};
+        // using Matrix_ = Eigen::SparseMatrix<double, Eigen::RowMajor>;
+        using Matrix_ = {jacobian_eigen};
         using Perm_ = Eigen::PermutationMatrix<M, M>;
         using Triplet_ = Eigen::Triplet<Scalar>; 
         using Trips_ = std::vector<Triplet_>;
@@ -36,15 +36,18 @@ namespace Eigen
         template <typename MatType>
         void compute(const MatType &A)
         {{
+            // std::cout << "A size: " << A.nonZeros() << std::endl;
             //permute input
             perm.indices() = get_perm_indices();
             B = perm.transpose() * A * perm;
             B.makeCompressed();
             // assert(INPUT_DIM == B.nonZeros() && "B does not match sparsity count");
+            // std::cout << "INPUT_DIM: " << INPUT_DIM << std::endl;
+            // std::cout << "B size: " << B.nonZeros() << std::endl;
 
             //pack all entries from valueptr
             std::array<Scalar, INPUT_DIM> input_arr;
-            std::copy_n(B.valuePtr(), INPUT_DIM, input_arr.begin());
+            std::copy_n(B.valuePtr(), INPUT_DIM, input_arr.begin()); //pass only nonzeros
 
             //NN
             auto P = MLP_LU<Scalar>(input_arr);
@@ -60,6 +63,7 @@ namespace Eigen
             //     for (int j = 0; j < M; ++j, ++k)
             //         P_dense(i, j) = P[k];
             // P_eig = P_dense.sparseView();
+
             // //convert to sparse output
             P_eig_trips.clear();
             P_eig_trips.reserve(OUTPUT_DIM);

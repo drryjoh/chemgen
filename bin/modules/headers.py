@@ -59,7 +59,11 @@ def create_headers(configuration, chemistry_solver, destination_folder):
             headers.append(file_name)
             write_formatted_code(code_directory, file_name, configuration, destination_folder, format_code=False)
 
-    if configuration.preconditioner != "":
+    # print("aaaaaaaaa")
+    # print(configuration.preconditioner)
+
+    if configuration.preconditioner == "#define CHEMGEN_PRECONDITIONER_NN":
+    # if configuration.get('solver', {}).get('preconditioner', None) == "neural_net":
         code_directory = Path('src') / 'solvers'
         file_names = ['nn_preconditioner.hpp.in']
         make_headers(code_directory, file_names, headers, configuration, destination_folder)

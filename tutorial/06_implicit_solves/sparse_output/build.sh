@@ -1,6 +1,6 @@
 #!/bin/bash
-# MECH=jetA-detailed-NOx-203-1589.yaml
-MECH=hydrogen-10-28.yaml
+MECH=jetA-detailed-NOx-203-1589.yaml
+# MECH=hydrogen-10-28.yaml
 
 #FIRST
 python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test custom_test.py --temperature-equation --ignore-other-species \
@@ -23,6 +23,16 @@ python3 $HOME/code/chemgen/bin/chemgen.py ./mechanisms/$MECH . --custom-test cus
 
 rm -rf __pycache__
 
-# #PURE COMPILING
-# clang++ -std=c++23 -O2 -I/Users/jsampa/homebrew/opt/yaml-cpp/include -L/Users/jsampa/homebrew/opt/yaml-cpp/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -o bin/bin/chemgen bin/src/chemgen.cpp
-# ./bin/bin/chemgen
+# #compile only
+# g++ -std=c++23 -O3 -ffast-math -march=native -mtune=native \
+#   -funroll-loops -fvectorize -fslp-vectorize \
+#   -I$CONDA_PREFIX/include \
+#   -L$CONDA_PREFIX/lib -lyaml-cpp \
+#   -I$CONDA_PREFIX/include/eigen3 \
+#   -Wl,-rpath,$CONDA_PREFIX/lib \
+#   -L./src -lchemgen_library \
+#   -framework Accelerate \
+#   -Wno-deprecated-declarations \
+#   -Wno-nan-infinity-disabled \
+#   -o ./bin/chemgen ./src/chemgen.cpp
+# ./bin/chemgen

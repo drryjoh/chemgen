@@ -5,7 +5,7 @@ count=0
 
 for i in $(seq 1 50); do
     # Run the executable and capture its output
-    output=$(./bin/bin/chemgen)
+    output=$(./bin/chemgen)
 
     # Extract the Backward Euler time line
     time_line=$(echo "$output" | grep "\[Backward Euler\] Time elapsed")

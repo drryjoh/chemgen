@@ -4,16 +4,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load the reaction mechanism
-gas = ct.Solution("mechanisms/hydrogen-10-28.yaml")
+gas = ct.Solution("mechanisms/jetA-detailed-NOx-203-1589.yaml")
 
 # Define initial conditions
 test_conditions = {
     "temperature": 1800,  # K
     "pressure": 101325.0,  # Pa
     "species": {
-        "O2": 0.14788732394366194,
-        "N2": 0.5563380281690141,
-        "H2": 0.2957746478873239
+        "O2": 0.20736086175942545,
+        "N2": 0.7800718132854579,
+        "POSF10325": 0.012567324955116694
+        # "O2": 0.14788732394366194,
+        # "N2": 0.5563380281690141,
+        # "H2": 0.2957746478873239
     }
 }
 
