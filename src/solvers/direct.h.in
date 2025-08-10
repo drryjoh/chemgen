@@ -1,3 +1,4 @@
+#ifdef CHEMGEN_DIRECT_SOLVER
 #ifdef CHEMGEN_EIGEN
 
 {device_option}
@@ -182,4 +183,5 @@ void swap_gen(T& a, T& b)
 {{
     return invert_jacobian(J) * rhs;
 }}
+#endif
 #endif
