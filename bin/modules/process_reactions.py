@@ -337,7 +337,8 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                 array = get_mixture_concentration_derivatives_array(reaction, get_efficiencies(reaction), gas.species_names, configuration)
                 array_sparsity = (array != 0.).astype(int)
                 for species_index in indexes_of_species_in_reaction:
-                    sparsity_pattern[species_index+1][1:] += array_sparsity
+                    # sparsity_pattern[species_index+1][1:] += array_sparsity
+                    sparsity_pattern[species_index+1][1:] += 1 # even if some array entries are 0, eigen triplets created for all species in row
             elif ("pressure" in reactions_depend_on[reaction_index]):
                 for species_index in indexes_of_species_in_reaction:
                     sparsity_pattern[species_index+1][1:] += 1 # pressure couples all species

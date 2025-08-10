@@ -277,7 +277,11 @@ def main():
 
             sparsity_pattern = np.zeros([gas.n_species+1, gas.n_species+1], dtype=int)
             np.fill_diagonal(sparsity_pattern, 1)
-            if args.temperature_equation: sparsity_pattern[0] += 1 # temperature source is dependent on entire state
+            if args.temperature_equation:
+                sparsity_pattern[0,:] += 1 # temperature source is dependent on entire state
+                sparsity_pattern[:,0] += 1 # even if production rate of a given species (e.g., N2) is zero, eigen triplets created for entire first column
+            elif not args.ignore_temp_dependence:
+                sparsity_pattern[1:,1:] += 1 # even if production rate of a given species (e.g., N2) is zero, eigen triplets created for all species-species entries
         else:
             sparsity_pattern = None
             if args.plot_sparsity:
@@ -286,7 +290,6 @@ def main():
         headers = process_cantera_file(gas, configuration, destination_folder,args, chemistry_solver, verbose = args.verbose, fit_gibbs_reaction = fit_gibbs_reaction, temperature_jacobian = temperature_jacobian, remove_reactions = args.remove_reactions, sparsity_pattern=sparsity_pattern)
 
         if args.get_sparsity:
-
             n_nonzeros = np.count_nonzero(sparsity_pattern)
             n_entries = sparsity_pattern.size
             n_zeros = n_entries - n_nonzeros
