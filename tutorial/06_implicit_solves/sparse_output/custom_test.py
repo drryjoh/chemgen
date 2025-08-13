@@ -16,11 +16,12 @@ def write_eigen_include(file, configuration):
 {eigen}
 {eigen_sparse_directive}
 #ifdef CHEMGEN_EIGEN
+#define EIGEN_DONT_VECTORIZE
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <unsupported/Eigen/IterativeSolvers>
 #endif
-        """.format(**vars(configuration)))
+""".format(**vars(configuration)))
 
 def create_chemgen_library(headers_chemistry, configuration, destination_folder):
     # Create cpp file that includes all the source term files
@@ -355,6 +356,14 @@ main()
         std::cout << "[SDIRK4] Total # GMRES iterations: " << n_gmres_iter_total << std::endl;
         std::cout << "[SDIRK4] Time elapsed: " << sdirk4_duration.count() << " seconds" << std::endl;
     }}
+
+    //check for vectorization
+    #ifdef EIGEN_VECTORIZE
+        std::cout << "Eigen vectorization is ON\\n";
+    #else
+        std::cout << "Eigen vectorization is OFF\\n";
+    #endif
+        return 0;
 
     return 0;
 }}

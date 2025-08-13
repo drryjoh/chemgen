@@ -35,33 +35,33 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 }}
 #endif
 
-#ifdef CHEMGEN_PRECONDITIONER_NN
-{device_option}
-std::array<double, (n_species + 1)*(n_species + 1)> flatten_jacobian({jacobian_parameter} A)
-{{
-    std::array<double, (n_species + 1)*(n_species + 1)> flat_A;
-    for (int i = 0; i < (n_species + 1); i++)
-    {{
-        for (int j = 0; j < (n_species + 1); i++)
-        {{
-            flat_A[(i*(n_species + 1))+j] = A[i][j];
-        }}
-    }}
-    return flat_A;
-}}
+// #ifdef CHEMGEN_PRECONDITIONER_NN
+// {device_option}
+// std::array<double, (n_species + 1)*(n_species + 1)> flatten_jacobian({jacobian_parameter} A)
+// {{
+//     std::array<double, (n_species + 1)*(n_species + 1)> flat_A;
+//     for (int i = 0; i < (n_species + 1); i++)
+//     {{
+//         for (int j = 0; j < (n_species + 1); i++)
+//         {{
+//             flat_A[(i*(n_species + 1))+j] = A[i][j];
+//         }}
+//     }}
+//     return flat_A;
+// }}
 
-{device_option}
-{jacobian_parameter} unflatten_jacobian(const std::array<{scalar}, (n_species + 1)*(n_species + 1)>& flat_A)
-{{
-    {jacobian} Q;
-    for (int i = 0; i < (n_species + 1); ++i) {{
-        for (int j = 0; j < (n_species + 1); ++j) {{
-            Q[i][j] = flat_A[i*(n_species + 1) + j];
-        }}
-    }}
-    return Q;
-}}
-#endif
+// {device_option}
+// {jacobian_parameter} unflatten_jacobian(const std::array<{scalar}, (n_species + 1)*(n_species + 1)>& flat_A)
+// {{
+//     {jacobian} Q;
+//     for (int i = 0; i < (n_species + 1); ++i) {{
+//         for (int j = 0; j < (n_species + 1); ++j) {{
+//             Q[i][j] = flat_A[i*(n_species + 1) + j];
+//         }}
+//     }}
+//     return Q;
+// }}
+// #endif
 
 #ifdef CHEMGEN_EIGEN
 #ifdef CHEMGEN_PRECONDITIONER_NN

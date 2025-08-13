@@ -118,3 +118,11 @@ get_species({chemical_state_parameter} y) {const_option};
 
 Matrix<{index}, n_variables, 1> get_perm_indices();
 Matrix<{index}, n_variables, 1> get_inv_perm_indices();
+
+{device_option}
+{index}
+get_lu_perm_row_index({index} i);
+
+{device_option}
+{index}
+get_lu_perm_col_index({index} i);

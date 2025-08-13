@@ -19,8 +19,8 @@ namespace Eigen
         static constexpr int OUTPUT_DIM = {n_nonzeros_output}; 
 
         // using Matrix_ = Matrix<Scalar, M, M>; //non sparse output
-        // using Matrix_ = Eigen::SparseMatrix<double, Eigen::RowMajor>;
-        using Matrix_ = {jacobian_eigen};
+        // using Matrix_ = {jacobian_eigen};
+        using Matrix_ = Eigen::SparseMatrix<double, Eigen::RowMajor>;
         using Perm_ = Eigen::PermutationMatrix<M, M>;
         using Triplet_ = Eigen::Triplet<Scalar>; 
         using Trips_ = std::vector<Triplet_>;
@@ -36,12 +36,14 @@ namespace Eigen
         template <typename MatType>
         void compute(const MatType &A)
         {{
-            // std::cout << "A size: " << A.nonZeros() << std::endl;
+            //assert matrix structure
+            // static_assert(!Matrix_::IsRowMajor, "IN ROW-MAJOR NOT COLUMN-MAJOR");
+
             //permute input
             perm.indices() = get_perm_indices();
             B = perm.transpose() * A * perm;
             B.makeCompressed();
-            // assert(INPUT_DIM == B.nonZeros() && "B does not match sparsity count");
+            assert(INPUT_DIM == B.nonZeros() && "B does not match sparsity count");
             // std::cout << "INPUT_DIM: " << INPUT_DIM << std::endl;
             // std::cout << "B size: " << B.nonZeros() << std::endl;
 
@@ -64,8 +66,11 @@ namespace Eigen
             //         P_dense(i, j) = P[k];
             // P_eig = P_dense.sparseView();
 
-            // //convert to sparse output
+            //clear memory
             P_eig_trips.clear();
+            P_eig_trips.shrink_to_fit();
+
+            //convert to sparse output
             P_eig_trips.reserve(OUTPUT_DIM);
             for (int i = 0; i < OUTPUT_DIM; i++)
             {{
@@ -73,6 +78,7 @@ namespace Eigen
             }}
             P_eig.resize(n_variables, n_variables);
             P_eig.setFromTriplets(P_eig_trips.begin(), P_eig_trips.end());
+            P_eig.makeCompressed();
         }}
 
         //apply preconditioner

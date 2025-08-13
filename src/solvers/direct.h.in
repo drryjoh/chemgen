@@ -18,7 +18,7 @@ direct_solve({jacobian_parameter_eigen} A, {chemical_state_parameter} b_, {linea
 
     // Permutations
     PermutationMatrix<n_variables, n_variables> perm; // column perm (input)
-    perm.indices() = perm_indices;
+    perm.indices() = get_perm_indices();
     B = perm.transpose() * A * perm;
 
     PermutationMatrix<n_variables, n_variables> row_perm; // note: this corresponds to PA = LU
