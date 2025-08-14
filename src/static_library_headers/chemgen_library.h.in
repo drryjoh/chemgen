@@ -121,3 +121,6 @@ Matrix<{index}, n_variables, 1> get_inv_perm_indices();
 
 void initialize_perm_indices(Matrix<{index}, n_variables, 1>& perm_indices_eigen);
 void initialize_inv_perm_indices(Matrix<{index}, n_variables, 1>& inv_perm_indices_eigen);
+
+void initialize_lu_perm_row_indices({scalar_list}<{index}, {n_nonzeros}>& lu_perm_row_indices);
+void initialize_lu_perm_col_indices({scalar_list}<{index}, {n_nonzeros}>& lu_perm_col_indices);

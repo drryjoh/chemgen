@@ -71,11 +71,34 @@ void initialize_inv_perm_indices(Matrix<{index}, n_variables, 1>& inv_perm_indic
 def write_lu_perm_row_col_indices(file, configuration):
     rows, cols = np.nonzero(configuration.sp_lu_perm)
     n_nonzeros = len(rows)
+    setattr(configuration, "n_nonzeros", n_nonzeros)
 
-    content =  "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
-    content += "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
+    # content =  "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
+    # content += "\n{device_option} {constexpr} {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
 
-    file.write(content)
+    # file.write(content)
+
+    file.write("""
+void initialize_lu_perm_row_indices({scalar_list}<{index}, {n_nonzeros}>& lu_perm_row_indices)
+{{""".format(**vars(configuration)))
+
+    for i in range(n_nonzeros):
+        file.write("\n    lu_perm_row_indices[{i}] = {row};".format(i=i, row=rows[i]))
+
+    file.write("""
+}
+""")
+
+    file.write("""
+void initialize_lu_perm_col_indices({scalar_list}<{index}, {n_nonzeros}>& lu_perm_col_indices)
+{{""".format(**vars(configuration)))
+
+    for i in range(n_nonzeros):
+        file.write("\n    lu_perm_col_indices[{i}] = {col};".format(i=i, col=cols[i]))
+
+    file.write("""
+}
+""")
 
     file.write("""
 #if 0
@@ -90,7 +113,7 @@ for ({index} i = 0; i < {n_nonzeros}; i++)
 SparseMatrix<{scalar}> lu_perm(n_variables, n_variables);
 lu_perm.setFromTriplets(lu_perm_triplets.begin(), lu_perm_triplets.end());
 #endif
-""".format(**vars(configuration), n_nonzeros=n_nonzeros))
+""".format(**vars(configuration)))
 
 def write_molecular_weights(file, molecular_weights, inv_molecular_weights, configuration):
     content = "{device_option} {constexpr} {species_function} molecular_weights() {const_option} {{return {molecular_weights};}}".format(**vars(configuration), molecular_weights = molecular_weights)
