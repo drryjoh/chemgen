@@ -49,29 +49,22 @@ def write_permutation_indices(file, configuration):
         content += "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> inv_perm_indices() {const_option} {{return {{{inv_perm_text}}};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm))
     file.write(content)
 
-    file.write("""
-Matrix<{index}, n_variables, 1> get_perm_indices()
+    if configuration.eigen:
+        file.write("""
+void initialize_perm_indices(Matrix<{index}, n_variables, 1>& perm_indices_eigen)
 {{
-    Matrix<{index}, n_variables, 1> perm_indices_;
-
     for({index} i = 0; i < n_variables; i++)
     {{
-        perm_indices_(i) = perm_indices()[i];
+        perm_indices_eigen(i) = perm_indices()[i];
     }}
-
-    return perm_indices_;
 }}
 
-Matrix<{index}, n_variables, 1> get_inv_perm_indices()
+void initialize_inv_perm_indices(Matrix<{index}, n_variables, 1>& inv_perm_indices_eigen)
 {{
-    Matrix<{index}, n_variables, 1> inv_perm_indices_;
-
     for({index} i = 0; i < n_variables; i++)
     {{
-        inv_perm_indices_(i) = inv_perm_indices()[i];
+        inv_perm_indices_eigen(i) = inv_perm_indices()[i];
     }}
-
-    return inv_perm_indices_;
 }}
 """.format(**vars(configuration)))
 
