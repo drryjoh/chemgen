@@ -39,7 +39,7 @@ def array1d_int_text(arr):
     return ','.join(["{e}".format(e=e) for e in arr])
 
 def write_permutation_indices(file, configuration):
-    if configuration.eigen:
+    if False:
         # how to initialize static matrix - https://stackoverflow.com/questions/31549398/c-eigen-initialize-static-matrix
         # how to initialize and apply permutation matrix - https://stackoverflow.com/questions/57858014/permute-columns-of-matrix-in-eigen
         content =  "\nstatic const {indices_type} perm_indices = ({indices_type}() << {perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", perm_text=array1d_int_text(configuration.perm))
@@ -50,8 +50,29 @@ def write_permutation_indices(file, configuration):
     file.write(content)
 
     file.write("""
-Matrix<{index}, n_variables, 1> get_perm_indices() {{ return perm_indices; }}
-Matrix<{index}, n_variables, 1> get_inv_perm_indices() {{ return inv_perm_indices; }}
+Matrix<{index}, n_variables, 1> get_perm_indices()
+{{
+    Matrix<{index}, n_variables, 1> perm_indices_;
+
+    for({index} i = 0; i < n_variables; i++)
+    {{
+        perm_indices_(i) = perm_indices()[i];
+    }}
+
+    return perm_indices_;
+}}
+
+Matrix<{index}, n_variables, 1> get_inv_perm_indices()
+{{
+    Matrix<{index}, n_variables, 1> inv_perm_indices_;
+
+    for({index} i = 0; i < n_variables; i++)
+    {{
+        inv_perm_indices_(i) = inv_perm_indices()[i];
+    }}
+
+    return inv_perm_indices_;
+}}
 """.format(**vars(configuration)))
 
 def write_lu_perm_row_col_indices(file, configuration):
