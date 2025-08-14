@@ -126,3 +126,6 @@ get_lu_perm_row_index({index} i);
 {device_option}
 {index}
 get_lu_perm_col_index({index} i);
+
+void initialize_perm_indices(Matrix<{index}, n_variables, 1>& perm_indices_eigen);
+void initialize_inv_perm_indices(Matrix<{index}, n_variables, 1>& inv_perm_indices_eigen);

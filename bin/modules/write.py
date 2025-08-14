@@ -49,7 +49,7 @@ def write_permuted_sparsity_pattern(file, configuration):
     file.write("\nstatic const {jacobian} sp_lu_perm = {{ {{ {sp_lu_perm_text} }} }};".format(**vars(configuration), sp_lu_perm_text=sp_lu_perm_text))
 
 def write_permutation_indices(file, configuration):
-    if configuration.eigen:
+    if False:
         # how to initialize static matrix - https://stackoverflow.com/questions/31549398/c-eigen-initialize-static-matrix
         # how to initialize and apply permutation matrix - https://stackoverflow.com/questions/57858014/permute-columns-of-matrix-in-eigen
         content =  "\nstatic const {indices_type} perm_indices = ({indices_type}() << {perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", perm_text=array1d_int_text(configuration.perm))
@@ -59,9 +59,23 @@ def write_permutation_indices(file, configuration):
         content += "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> inv_perm_indices() {const_option} {{return {{{inv_perm_text}}};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm))
     file.write(content)
 
-    file.write("""
-Matrix<{index}, n_variables, 1> get_perm_indices() {{ return perm_indices; }}
-Matrix<{index}, n_variables, 1> get_inv_perm_indices() {{ return inv_perm_indices; }}
+    if configuration.eigen:
+        file.write("""
+void initialize_perm_indices(Matrix<{index}, n_variables, 1>& perm_indices_eigen)
+{{
+    for({index} i = 0; i < n_variables; i++)
+    {{
+        perm_indices_eigen(i) = perm_indices()[i];
+    }}
+}}
+
+void initialize_inv_perm_indices(Matrix<{index}, n_variables, 1>& inv_perm_indices_eigen)
+{{
+    for({index} i = 0; i < n_variables; i++)
+    {{
+        inv_perm_indices_eigen(i) = inv_perm_indices()[i];
+    }}
+}}
 """.format(**vars(configuration)))
 
 def write_lu_perm_row_col_indices(file, configuration):
