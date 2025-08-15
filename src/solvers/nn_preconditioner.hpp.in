@@ -40,7 +40,8 @@ namespace Eigen
             // static_assert(!Matrix_::IsRowMajor, "IN ROW-MAJOR NOT COLUMN-MAJOR");
 
             //permute input
-            perm.indices() = get_perm_indices();
+            // perm.indices() = get_perm_indices();
+            initialize_perm_indices(perm.indices());
             B = perm.transpose() * A * perm;
             B.makeCompressed();
             assert(INPUT_DIM == B.nonZeros() && "B does not match sparsity count");

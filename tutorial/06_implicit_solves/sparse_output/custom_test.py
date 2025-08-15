@@ -10,6 +10,7 @@ def write_generic_include(file):
     file.write("#include <algorithm>\n")
     file.write("#include <array>\n#include <chrono>\n")
     file.write("#include <iostream>\n")
+    file.write("#include <iomanip>\n") #set double precision
 
 def write_eigen_include(file, configuration):
     file.write("""

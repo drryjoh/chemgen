@@ -30,8 +30,9 @@ backwards_euler({chemical_state} y,
             //................................................................
             // Eigen::MatrixXd denseA = Eigen::MatrixXd(A);
             // std::ostringstream ss;
-            // ss << "BE_DATA/jacobian_" << csv_iter << ".csv"; //change path
+            // ss << "BE_DATA/jacobian_" << csv_iter << ".csv";
             // std::ofstream out(ss.str());
+            // out << std::scientific << std::setprecision(17); 
             // for (int i = 0; i < denseA.rows(); ++i) 
             // {{
             //     for (int j = 0; j < denseA.cols(); ++j) 

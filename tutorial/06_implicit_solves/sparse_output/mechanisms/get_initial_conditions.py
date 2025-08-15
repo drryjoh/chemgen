@@ -3,7 +3,7 @@ import cantera as ct
 # Temperature: 700-1600 K
 # Pressure: 1-2 atm
 
-flag = 6
+flag = 8
 
 if flag == 0:
     mech_file = "../ffcm2_h2.yaml"
