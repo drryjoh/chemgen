@@ -3678,10 +3678,10 @@ The Jacobian of the
 with respect to temperature is given by
 \begin_inset Formula 
 \begin{align}
-\frac{\partial\rho u(C,T)}{\partial T}= & \sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T)}{\partial T},\nonumber \\
-= & \sum_{i=1}^{n_{s}}W_{i}C_{i}\left(\sum_{k=0}^{n_{p}+1}c_{ik}\frac{\partial(T^{k})}{\partial T}\right),\label{eq:enthalpy-polynomial-1}\\
-= & \sum_{i=1}^{n_{s}}W_{i}C_{i}\left(\sum_{k=1}^{n_{p}+1}c_{ik}\left(kT^{k-1}\right)\right),\\
-= & \rho c_{v}\left(C,T\right),
+\begin{array}{ccc}
+\frac{\partial\rho u(C,T)}{\partial T} & = & \sum_{i=1}^{n_{s}}W_{i}C_{i}\left(\sum_{k=1}^{n_{p}+1}c_{ik}\left(kT^{k-1}\right)\right),\\
+ & = & \rho c_{v}\left(C,T\right),
+\end{array}
 \end{align}
 
 \end_inset
