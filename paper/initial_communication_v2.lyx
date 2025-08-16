@@ -2687,8 +2687,13 @@ which is the complete derived state needed to calculate the components of
 \end_inset
 
 ,
- are all conserved quantities and can be extracted readily from the fluid state.
- The pressure is given from the ideal gas law as
+ are all conserved quantities and can be extracted readily from the fluid state along with the temperature,
+ 
+\begin_inset Formula $T$
+\end_inset
+
+.
+ The pressure from the ideal gas law is
 \end_layout
 
 \begin_layout Standard
@@ -2699,18 +2704,18 @@ p=RT\sum_{i=1}^{n_{s}}C_{i},
 
 \end_inset
 
-where 
+with 
 \begin_inset Formula $R=8314.4626\,\mathrm{J\cdot kmol}^{-1}\mathrm{K}^{-1}$
 \end_inset
 
- is the universal gas constant.
+ denoting the universal gas constant.
  An additional parameter used in optimizations of reactions is 
 \begin_inset Formula $\ln T$
 \end_inset
 
 ,
- which is common to utilize along with the chemical state to avoid repeated logarithm computations. Finally,
- the mixture concentration,
+ which is common to utilize along with the chemical state to avoid repeated logarithm computations.
+ Finally the mixture concentration,
 \end_layout
 
 \begin_layout Standard
@@ -2722,14 +2727,29 @@ M_{c}=\sum_{i=1}^{n_{s}}C_{i}=\frac{p}{R^{}T},
 \end_inset
 
 is utilized in the evaluation of many reaction rates,
- such as third body reactions with no specified efficiencies
-\begin_inset Note Note
-status open
-
-
+ such as third body reactions with no specified efficiencies.
+ In the following sections,
+ we assume that the elements of 
+\begin_inset Formula $y_{c}$
 \end_inset
 
-.
+,
+ 
+\begin_inset Formula $\ln T,$
+\end_inset
+
+ 
+\begin_inset Formula $p$
+\end_inset
+
+,
+ and 
+\begin_inset Formula $M_{c}$
+\end_inset
+
+ are accessible at all levels of ChemGen.
+ As such,
+ functional dependencies are omitted for brevity.
 \end_layout
 
 \begin_layout Subsection
