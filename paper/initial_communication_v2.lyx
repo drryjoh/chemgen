@@ -2704,7 +2704,12 @@ where
 \end_inset
 
  is the universal gas constant.
- Finally,
+ An additional parameter used in optimizations of reactions is 
+\begin_inset Formula $\ln T$
+\end_inset
+
+,
+ which is common to utilize along with the chemical state to avoid repeated logarithm computations. Finally,
  the mixture concentration,
 \end_layout
 
