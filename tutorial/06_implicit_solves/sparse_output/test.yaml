@@ -14,24 +14,24 @@ test_conditions:
     #   value: 0.7800718132854579
     # - name: POSF10325
     #   value: 0.012567324955116694
-    # - name: O2
-    #   value: 0.20653029110936266
-    # - name: N2
-    #   value: 0.7769472856018884
-    # - name: IC8H18
-    #   value: 0.016522423288749016
+    - name: O2
+      value: 0.20653029110936266
+    - name: N2
+      value: 0.7769472856018884
+    - name: IC8H18
+      value: 0.016522423288749016
     # - name: O2
     #   value: 0.2060660124888492
     # - name: N2
     #   value: 0.7752007136485282
     # - name: NC7H16
     #   value: 0.01873327386262266
-    - name: O2
-      value: 0.20856398567241938
-    - name: N2
-      value: 0.7845978508629112
-    - name: c20h42-2
-      value: 0.006838163464669487
+    # - name: O2
+    #   value: 0.20856398567241938
+    # - name: N2
+    #   value: 0.7845978508629112
+    # - name: c20h42-2
+    #   value: 0.006838163464669487
   end_time: 2e-5 #2e-5
   dt_be: 1e-7 #1e-7
   # dt_sdirk2: 1e-8 #1e-8
