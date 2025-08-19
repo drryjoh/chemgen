@@ -55,8 +55,8 @@ def write_permutation_indices(file, configuration):
         content =  "\nstatic const {indices_type} perm_indices = ({indices_type}() << {perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", perm_text=array1d_int_text(configuration.perm))
         content += "\nstatic const {indices_type} inv_perm_indices = ({indices_type}() << {inv_perm_text}).finished();".format(**vars(configuration), indices_type=f"Matrix<{configuration.index}, n_variables, 1>", inv_perm_text=array1d_int_text(configuration.inv_perm))
     else:
-        content =  "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> perm_indices() {const_option} {{return {{{perm_text}}};}}".format(**vars(configuration), perm_text=array1d_int_text(configuration.perm))
-        content += "\n{device_option} {constexpr} {scalar_list}<{index}, n_variables> inv_perm_indices() {const_option} {{return {{{inv_perm_text}}};}}".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm))
+        content =  "\nstatic const {scalar_list}<{index}, n_variables> perm_indices = {{{perm_text}}};".format(**vars(configuration), perm_text=array1d_int_text(configuration.perm))
+        content += "\nstatic const {scalar_list}<{index}, n_variables> inv_perm_indices = {{{inv_perm_text}}};".format(**vars(configuration), inv_perm_text=array1d_int_text(configuration.inv_perm))
     file.write(content)
 
     if configuration.eigen:
@@ -65,7 +65,7 @@ void initialize_perm_indices(Matrix<{index}, n_variables, 1>& perm_indices_eigen
 {{
     for({index} i = 0; i < n_variables; i++)
     {{
-        perm_indices_eigen(i) = perm_indices()[i];
+        perm_indices_eigen(i) = perm_indices[i];
     }}
 }}
 
@@ -73,7 +73,7 @@ void initialize_inv_perm_indices(Matrix<{index}, n_variables, 1>& inv_perm_indic
 {{
     for({index} i = 0; i < n_variables; i++)
     {{
-        inv_perm_indices_eigen(i) = inv_perm_indices()[i];
+        inv_perm_indices_eigen(i) = inv_perm_indices[i];
     }}
 }}
 """.format(**vars(configuration)))
@@ -82,8 +82,8 @@ def write_lu_perm_row_col_indices(file, configuration):
     rows, cols = np.nonzero(configuration.sp_lu_perm)
     n_nonzeros = len(rows)
 
-    content =  "\n{device_option} static const {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
-    content += "\n{device_option} static const {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
+    content =  "\nstatic const {scalar_list}<{index}, {n_nonzeros}> lu_perm_row_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(rows), n_nonzeros=n_nonzeros)
+    content += "\nstatic const {scalar_list}<{index}, {n_nonzeros}> lu_perm_col_indices = {{{indices}}};".format(**vars(configuration), indices=array1d_int_text(cols), n_nonzeros=n_nonzeros)
 
     file.write(content)
 
