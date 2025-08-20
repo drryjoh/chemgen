@@ -45,6 +45,21 @@ backwards_euler({chemical_state} y,
             // }}
             // csv_iter += 1;
             //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            //................................................................
+            // std::ostringstream ss;
+            // ss << "BE_DATA/jacobian_sparse_" << csv_iter << ".csv";
+            // std::ofstream out(ss.str());
+            // out << std::scientific << std::setprecision(17);
+            // out << "row,col,value\n";  // CSV header
+            // for (int k = 0; k < A.outerSize(); ++k)
+            // {{
+            //     for (typename {jacobian_eigen}::InnerIterator it(A, k); it; ++it)
+            //     {{
+            //         out << it.row() << "," << it.col() << "," << it.value() << "\n";
+            //     }}
+            // }}
+            // csv_iter += 1;
+            //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             //RHS
             res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
