@@ -1,0 +1,135 @@
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh 
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/hydrogen-10-28.yaml
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Skipping code generation
+Warning: cannot get sparsity pattern if skipping code generation
+building with options: -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 2660
+[Backward Euler] Time elapsed: 0.00768833 seconds
+
+(cantera) jay@jays-MacBook-Pro sparse_output % ./runtime.sh 
+avg be time: .007611 seconds
+runs: 50
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh 
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/hydrogen-10-28.yaml
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Skipping code generation
+Warning: cannot get sparsity pattern if skipping code generation
+building with options: -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 4670
+[Backward Euler] Time elapsed: 0.00410462 seconds
+
+(cantera) jay@jays-MacBook-Pro sparse_output % ./runtime.sh 
+avg be time: .004142 seconds
+runs: 50
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh 
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/hydrogen-10-28.yaml
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Skipping code generation
+Warning: cannot get sparsity pattern if skipping code generation
+building with options: -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 3864
+[Backward Euler] Time elapsed: 0.00464692 seconds
+
+(cantera) jay@jays-MacBook-Pro sparse_output % ./bu
+zsh: no such file or directory: ./bu
+(cantera) jay@jays-MacBook-Pro sparse_output % ./runtime.sh 
+avg be time: .004582 seconds
+runs: 50
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh 
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/hydrogen-10-28.yaml
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Skipping code generation
+Warning: cannot get sparsity pattern if skipping code generation
+building with options: -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 2619
+[Backward Euler] Time elapsed: 0.00704887 seconds
+
+(cantera) jay@jays-MacBook-Pro sparse_output % ./runtime.sh 
+avg be time: .007104 seconds
+runs: 50
+(cantera) jay@jays-MacBook-Pro sparse_output % 

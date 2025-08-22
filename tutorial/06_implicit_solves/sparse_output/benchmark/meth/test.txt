@@ -1,0 +1,329 @@
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh 
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Generating permutation indices for Jacobian!
+Saving permutation indices to 'permutation.npy'
+Sparsity pattern for permuted Jacobian rows/columns:
+Computing sparsity pattern of LU decomposition of permuted Jacobian
+Test matrix 1
+Test matrix 2
+Test matrix 3
+Test matrix 4
+Test matrix 5
+Test matrix 6
+Test matrix 7
+Test matrix 8
+Test matrix 9
+Test matrix 10
+Sparsity pattern for LU of Jacobian rows/columns:
+LU decomposition of permuted Jacobian: # nonzero entries = 314079, # zero entries = 51123505, total # entries = 51437584
+LU decomposition of permuted Jacobian: sparsity percentage = 99.3894%
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+building with options: -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 2350
+[Backward Euler] Time elapsed: 33.4814 seconds
+Eigen vectorization is OFF
+
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh 
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Generating permutation indices for Jacobian!
+Saving permutation indices to 'permutation.npy'
+Sparsity pattern for permuted Jacobian rows/columns:
+Computing sparsity pattern of LU decomposition of permuted Jacobian
+Test matrix 1
+Test matrix 2
+Test matrix 3
+Test matrix 4
+Test matrix 5
+Test matrix 6
+Test matrix 7
+Test matrix 8
+Test matrix 9
+Test matrix 10
+Sparsity pattern for LU of Jacobian rows/columns:
+LU decomposition of permuted Jacobian: # nonzero entries = 314079, # zero entries = 51123505, total # entries = 51437584
+LU decomposition of permuted Jacobian: sparsity percentage = 99.3894%
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+building with options: -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 8247
+[Backward Euler] Time elapsed: 36.564 seconds
+Eigen vectorization is OFF
+
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Generating permutation indices for Jacobian!
+Saving permutation indices to 'permutation.npy'
+Sparsity pattern for permuted Jacobian rows/columns:
+Computing sparsity pattern of LU decomposition of permuted Jacobian
+Test matrix 1
+Test matrix 2
+Test matrix 3
+Test matrix 4
+Test matrix 5
+Test matrix 6
+Test matrix 7
+Test matrix 8
+Test matrix 9
+Test matrix 10
+Sparsity pattern for LU of Jacobian rows/columns:
+LU decomposition of permuted Jacobian: # nonzero entries = 314079, # zero entries = 51123505, total # entries = 51437584
+LU decomposition of permuted Jacobian: sparsity percentage = 99.3894%
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+building with options: -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 6904
+[Backward Euler] Time elapsed: 36.3159 seconds
+Eigen vectorization is OFF
+
+(cantera) jay@jays-MacBook-Pro sparse_output % ./build.sh
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+Source Jacobian will be created without dependence on third-body efficiencies or pressure
+Processing file: ./mechanisms/mmc5-7171-38324.yaml
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in h/RT detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  61.01372625318256
+        Value computed using high-temperature polynomial: 62.013726584521585
+
+  gas = ct.Solution(chemical_mechanism)
+/Users/jay/code/chemgen/bin/chemgen.py:118: UserWarning: NasaPoly2::validate: 
+For species c17h33-1-2, discontinuity in s/R detected at Tmid = 1389
+        Value computed using low-temperature polynomial:  215.90784058433323
+        Value computed using high-temperature polynomial: 223.14418075880374
+
+  gas = ct.Solution(chemical_mechanism)
+All solver options will be compiled in
+GMRES linear solver chosen
+Running with eigen!
+Running with sparse data structures!
+Generating permutation indices for Jacobian!
+Saving permutation indices to 'permutation.npy'
+Sparsity pattern for permuted Jacobian rows/columns:
+Computing sparsity pattern of LU decomposition of permuted Jacobian
+Test matrix 1
+Test matrix 2
+Test matrix 3
+Test matrix 4
+Test matrix 5
+Test matrix 6
+Test matrix 7
+Test matrix 8
+Test matrix 9
+Test matrix 10
+Sparsity pattern for LU of Jacobian rows/columns:
+LU decomposition of permuted Jacobian: # nonzero entries = 314079, # zero entries = 51123505, total # entries = 51437584
+LU decomposition of permuted Jacobian: sparsity percentage = 99.3894%
+Jacobian: # nonzero entries = 136333, # zero entries = 51301251, total # entries = 51437584
+Jacobian: sparsity percentage = 99.735%
+Sparsity percentage = 99.735%
+building with options: -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib
+
+
+WARNING! libchemgen_library.a already exists; not overwriting. If you would like to recreate libchemgen_library.a, remove it first.
+
+
+clang++ -std=c++23 -O3 -DEIGEN_DONT_VECTORIZE -I$CONDA_PREFIX/include -L$CONDA_PREFIX/lib -lyaml-cpp -I$CONDA_PREFIX/include/eigen3 -Wl,-rpath,$CONDA_PREFIX/lib -L./src -lchemgen_library -o ./bin/chemgen ./src/chemgen.cpp
+Compiling C++ files: ['./src/chemgen.cpp']
+
+Running tests...
+dt_be = 1e-07
+dt_sdirk2 = 0
+dt_ros = 0
+dt_sdirk4 = 0
+dt_rk4 = 0
+dt_yass = 0
+end_time = 2e-05
+Using MoleFraction
+[Backward Euler] Total # GMRES iterations: 1628
+[Backward Euler] Time elapsed: 81.9174 seconds
+Eigen vectorization is OFF
+
+(cantera) jay@jays-MacBook-Pro sparse_output % 

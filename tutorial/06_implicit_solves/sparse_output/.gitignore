@@ -2,7 +2,14 @@ bin/
 __pycache__
 src/
 # src/*
-*.txt
+# *.txt
+backward_euler.txt
+rk4.txt
+ros.txt
+sdirk2.txt
+sdirk4.txt
+yass.txt
+CMakeLists.txt
 *.npy
 *.csv
 *.png
