@@ -135,8 +135,10 @@ def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivativ
         print(f"    Tmin = {reaction.Tmin}, Tmax = {reaction.Tmax}")
         print(f"    Pmin = {reaction.Pmin}, Pmax = {reaction.Pmax}")
         print(f"    Coefficients: {reaction.coeffs}")
+        raise NotImplementedError
     else:
         print(f"  Unknown reaction type: {reaction.reaction_type }")
+        raise NotImplementedError
 
 def create_rates_of_progress(progress_rates, progress_rates_functions, reaction_index, forward_rate, backward_rate, is_reversible, configuration):
     if is_reversible[reaction_index]:

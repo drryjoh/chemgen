@@ -116,6 +116,7 @@ get_species({chemical_state_parameter} y) {const_option};
                              {scalar} abs_tolerance,
                              {scalar} rel_tolerance) {const_option};
 
+#if defined(CHEMGEN_EIGEN)
 Matrix<{index}, n_variables, 1> get_perm_indices();
 Matrix<{index}, n_variables, 1> get_inv_perm_indices();
 
@@ -129,3 +130,23 @@ get_lu_perm_col_index({index} i);
 
 void initialize_perm_indices(Matrix<{index}, n_variables, 1>& perm_indices_eigen);
 void initialize_inv_perm_indices(Matrix<{index}, n_variables, 1>& inv_perm_indices_eigen);
+
+#else
+
+{device_option}
+{scalar_function}
+norm2({chemical_state_parameter} x) {const_option};
+
+{device_option}
+{scalar_function}
+inv_gen({scalar_parameter} a) {const_option};
+
+{device_option}
+{chemical_state_function}
+operator*({jacobian_parameter} A, {chemical_state_parameter} x) {const_option};
+
+{device_option}
+{scalar_function}
+dot({chemical_state_parameter} a, {chemical_state_parameter} b) {const_option};
+
+#endif
