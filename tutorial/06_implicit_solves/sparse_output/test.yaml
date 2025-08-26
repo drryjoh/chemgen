@@ -45,7 +45,7 @@ test_conditions:
     # - name: c20h42-2
     #   value: 0.006838163464669487
   end_time: 2e-5 #2e-5
-  dt_be: 1e-7 #1e-7
+  # dt_be: 1e-7 #1e-7
   dt_sdirk2: 1e-8 #1e-8
   # dt_sdirk4: 1e-7
   dt_ros: 1e-8
