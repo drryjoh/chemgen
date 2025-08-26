@@ -1,8 +1,8 @@
 #!/bin/bash
 # MECH=hydrogen-10-28.yaml
 # MECH=jetA-detailed-NOx-203-1589.yaml
-MECH=ic8-874-6864.yaml
-# MECH=3-methylheptane-c8h18-3-1378-8143.yaml
+# MECH=ic8-874-6864.yaml
+MECH=3-methylheptane-c8h18-3-1378-8143.yaml
 # MECH=md5d-2649-10487.yaml
 # MECH=md-nc7-3787-10264.yaml
 # MECH=mmc5-7171-38324.yaml
