@@ -5,7 +5,10 @@ import matplotlib.pyplot as plt
 
 # Load the reaction mechanism
 # gas = ct.Solution("mechanisms/ic8-874-6864.yaml")
-gas = ct.Solution("mechanisms/mmc5-7171-38324.yaml")
+gas = ct.Solution("mechanisms/3-methylheptane-c8h18-3-1378-8143.yaml")
+# gas = ct.Solution("mechanisms/md5d-2649-10487.yaml")
+# gas = ct.Solution("mechanisms/md-nc7-3787-10264.yaml")
+# gas = ct.Solution("mechanisms/mmc5-7171-38324.yaml")
 
 # Define initial conditions
 test_conditions = {
@@ -25,13 +28,21 @@ test_conditions = {
         # "N2": 0.7769472856018884,
         # "IC8H18": 0.016522423288749016
 
+        "O2": 0.20653029110936266,
+        "N2": 0.7769472856018884,
+        "c8h18-3": 0.016522423288749016
+
+        # "O2": 0.20710059171597628,
+        # "N2": 0.7790927021696252,
+        # "md5d": 0.013806706114398418
+
         # "O2": 0.2060660124888492,
         # "N2": 0.7752007136485282,
-        # "NC7H16": 0.01873327386262266
+        # "nc7h16": 0.01873327386262266
 
-        "O2": 0.20856398567241938,
-        "N2": 0.7845978508629112,
-        "c20h42-2": 0.006838163464669487
+        # "O2": 0.20856398567241938,
+        # "N2": 0.7845978508629112,
+        # "c20h42-2": 0.006838163464669487
     }
 }
 

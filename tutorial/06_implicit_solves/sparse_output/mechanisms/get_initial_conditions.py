@@ -3,7 +3,7 @@ import cantera as ct
 # Temperature: 700-1600 K
 # Pressure: 1-2 atm
 
-flag = 8
+flag = 5
 
 if flag == 0:
     mech_file = "../ffcm2_h2.yaml"
@@ -35,9 +35,15 @@ elif flag == 6:
     mech_file = "ic8-874-6864.yaml"
     fuel_name = "IC8H18"
 elif flag == 7:
-    mech_file = "md-nc7-3787-10264.yaml"
-    fuel_name = "n-c7h16"
+    mech_file = "3-methylheptane-c8h18-3-1378-8143.yaml"
+    fuel_name = "c8h18-3"
 elif flag == 8:
+    mech_file = "md5d-2649-10487.yaml"
+    fuel_name = "MD5D"
+elif flag == 9:
+    mech_file = "md-nc7-3787-10264.yaml"
+    fuel_name = "nc7h16"
+elif flag == 10:
     mech_file = "mmc5-7171-38324.yaml"
     fuel_name = "c20h42-2"
 
