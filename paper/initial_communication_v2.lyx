@@ -3708,7 +3708,7 @@ c_{v}=c_{p}-R.\label{eq:cv_equation}
 
 Therefore,
  temperature at the 
-\begin_inset Formula $k\text{th}+1$
+\begin_inset Formula $k\text{th}$
 \end_inset
 
  Newton iteration is given by
@@ -3717,7 +3717,7 @@ Therefore,
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-T_{k+1}=T_{k}-\frac{\left(\rho u-\rho u(C,T_{k})\right)}{\rho c_{v}\left(C,T_{k}\right)}.\label{eq:netwon_iteration_temperature}
+T_{k}=T_{k-1}-\frac{\left(\rho u-\rho u(C,T_{k-1})\right)}{\rho c_{v}\left(C,T_{k-1}\right)}.\label{eq:netwon_iteration_temperature}
 \end{equation}
 
 \end_inset
