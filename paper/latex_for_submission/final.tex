@@ -1,6 +1,7 @@
 %% LyX 2.4.2.1 created this file.  For more info, see https://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[english,3p]{elsarticle}
+%\documentclass[english,3p]{elsarticle}
+\documentclass[preprint,3p]{elsarticle}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{array}
@@ -58,6 +59,22 @@
 \usepackage{listings}
 \renewcommand{\lstlistingname}{\inputencoding{latin9}Listing}
 
+\newcounter{bla}
+\newenvironment{refnummer}{%
+\list{[\arabic{bla}]}%
+{\usecounter{bla}%
+ \setlength{\itemindent}{0pt}%
+ \setlength{\topsep}{0pt}%
+ \setlength{\itemsep}{0pt}%
+ \setlength{\labelsep}{2pt}%
+ \setlength{\listparindent}{0pt}%
+ \settowidth{\labelwidth}{[9]}%
+ \setlength{\leftmargin}{\labelwidth}%
+ \addtolength{\leftmargin}{\labelsep}%
+ \setlength{\rightmargin}{0pt}}}
+ {\endlist}
+
+\journal{Computer Physics Communications}
 \begin{document}
 \begin{frontmatter}
 \title{ChemGen: Chemistry Reaction Code Generation for Computational Physics\author[NRL]{Ryan F. Johnson}
@@ -898,7 +915,7 @@ computationally faster time integrator may be more suitable.
 \begin{table}
 \caption{Implicit time integration strategies provided by ChemGen. $n_{\mathrm{max}}$
 is the maximum number of Newton iterations.\label{tab:Time_integrators}}
-
+\begin{centering}
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
 Strategy & Order & Stages & \# Linear Solves & Section/Appendix\tabularnewline
@@ -915,7 +932,9 @@ YASS & 1st & 1 & one & (\ref{subsec:YASS})\tabularnewline
 Backward Euler & 1st & 1 & up to $n_{\mathrm{max}}$ & (\ref{subsec:Implicit-Time-Integration})\tabularnewline
 \hline 
 \end{tabular}
+\end{centering}
 \end{table}
+
 
 Other time integration strategies not yet implemented in ChemGen can
 be added using the same framework as the existing methods. These include,
@@ -1573,7 +1592,7 @@ three cases, the expected convergence rates are recovered.
 
 \begin{figure}[H]
 \begin{centering}
-\includegraphics[scale=0.4]{renamed_images/image_5.png}
+\includegraphics[scale=0.6]{renamed_images/image_5.png}
 \par\end{centering}
 \caption{\label{fig:convergence_study}Convergence study for YASS, Rosenbroc,
 and SDIRK-4 using a hydrogen submodel extracted from FFCM-2 with initial
