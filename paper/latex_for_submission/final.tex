@@ -77,11 +77,12 @@ Dynamics, Code Generation
 \begin{abstract}
 This paper introduces ChemGen, a software package that uses code generation
 to integrate multispecies thermodynamics and chemical kinetics into
-C++-based computational physics codes. ChemGen aims to make chemical
-kinetics more accessible in existing simulation frameworks and help
-bridge the gap between combustion modeling and computational physics.
-The package employs the concept of decorators which enable flexible
-C++ code generation to target established software ecosystems. ChemGen
+C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}-based
+computational physics codes. ChemGen aims to make chemical kinetics
+more accessible in existing simulation frameworks and help bridge
+the gap between combustion modeling and computational physics. The
+package employs the concept of decorators which enable flexible C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}
+code generation to target established software ecosystems. ChemGen
 generates code to evaluate thermodynamic properties, chemical source
 terms, and their analytical derivatives for Jacobian calculations.
 Also included are a variety of implicit time integration schemes,
@@ -97,7 +98,7 @@ Laboratory.
 \global\long\def\middlebar{\,\middle|\,}%
 \global\long\def\average#1{\left\{  \!\!\left\{  #1\right\}  \!\!\right\}  }%
 \global\long\def\expnumber#1#2{{#1}\mathrm{e}{#2}}%
- \newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}}
+ \newcommand*{\horzbar}{\rule[.5ex]{2.5ex}{0.5pt}} \def\Cpp{{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
 
 \global\long\def\revisionmathone#1{\textcolor{red}{#1}}%
 
@@ -181,7 +182,7 @@ common are:
 for the target CFD code.\label{enu:chemkin}
 \item Use the more widely adopted, open-source, and actively maintained
 Cantera~\citep{cantera}, which can serve as a third-party library
-for codes written in C, C++, and Fortran, as well as in interpreted
+for codes written in C, \Cpp, and Fortran, as well as in interpreted
 languages such as Python and MATLAB.\label{enu:cantera}
 \item Manually code chemical source term evaluations, thermodynamic fits,
 transport properties, and other physical models.\label{enu:manual}
@@ -210,19 +211,19 @@ applications. There are two publicly available code generators focused
 on gas-phase combustion: PyJac~\citep{Nie17} and Pyrometheus~\citep{Cis25}.
 PyJac specializes in generating analytical source term Jacobians,
 which can be used to accelerate the computation of chemical species
-evolution. Pyrometheus generates either C++ header files or Python
+evolution. Pyrometheus generates either \Cpp header files or Python
 files for gas-phase combustion calculations, incorporating several
 on-the-fly optimizations to enhance scalability for high-performance
-computing in CFD. Additionally, KinetiX~\citep{Dan25} is a software
+computing in CFD. Additionally, KinetiX~\citet{Dan25} is a software
 toolkit that generates chemical source terms and thermodynamic and
 mixture-averaged transport properties tailored to specific hardware
 targets, such as CPU or GPU architectures.
 
 In this work, we introduce ChemGen, a software package that leverages
 code generation to integrate multispecies thermodynamics and chemical
-kinetics into C++ based codes. ChemGen introduces decorators, discussed
+kinetics into \Cpp based codes. ChemGen introduces decorators, discussed
 in detail in Section~(\ref{sec:Code-Generation}), to enable flexible
-C++ code generation tailored to existing software ecosystems. ChemGen
+\Cpp code generation tailored to existing software ecosystems. ChemGen
 currently focuses on thermodynamic properties and chemical source
 terms, as well as their analytical derivatives. The analytical derivatives
 facilitate Jacobian assembly for implicit time integration strategies
@@ -308,7 +309,8 @@ y_{c}=\left(T,C_{1},\ldots,C_{n_{s}}\right)\label{eq:reacting-navier-stokes-stat
 which is the complete derived state needed to calculate the components
 of $\mathcal{S}\left(y_{f}\right)$. The species concentrations, $C_{i}$,
 are all conserved quantities and can be extracted readily from the
-fluid state. The pressure from the ideal gas law is
+fluid state along with the temperature, $T$. The pressure from the
+ideal gas law is
 
 \[
 p=RT\sum_{i=1}^{n_{s}}C_{i},
@@ -330,60 +332,79 @@ are omitted for brevity.
 
 \subsection{Thermodynamics}
 
-This work assumes a thermally perfect gas, with $u_{i}$ given by~\citep{Gio99}
-\begin{equation}
-u_{i}=h_{i}-R_{i}T=h_{\mathrm{ref},i}+\int_{T_{\mathrm{ref}}}^{T}c_{p,i}(\tau)d\tau-R_{i}T,\label{eq:internal_energy_identity}
-\end{equation}
-where $h_{i}$ is the mass-specific enthalpy of the $i$th specie,
-$R_{i}=R/W_{i}$, $T_{\mathrm{ref}}$ is the reference temperature
-(298 K), $h_{\mathrm{ref},i}$ is the reference-state enthalpy of
-formation of specie $i$ evaluated as $h_{ref,i}=h_{i}\left(T_{ref}\right)$,
-and $c_{p,i}$ is the mass-specific heat capacity at constant pressure
-of the $i$th specie. $c_{p,i}$ is computed from an $n_{p}$-order
-polynomial as
+In this section we define the relevant thermodynamic quantities for
+the $i$th species assuming a thermally perfect gas. The mass-specific
+internal energy is given by~\citep{Gio99}
+\begin{align}
+u_{i}= & h_{i}-R_{i}T,\label{eq:internal_energy_identity}
+\end{align}
+where $h_{i}$ is the mass-specific enthalpy, $R_{i}=R/W_{i}$, $T_{\mathrm{ref}}=298\text{ K}$
+is the reference temperature. The mass-specific enthalpy, $h_{i}$,
+is given as
+\begin{align}
+h_{i}= & h_{\mathrm{ref},i}+\int_{T_{\mathrm{ref}}}^{T}c_{p,i}(\tau)d\tau,\label{eq:enthalpy_identity}
+\end{align}
+where $h_{\mathrm{ref},i}$ is the reference-state enthalpy of formation,
+and $c_{p,i}$ is the mass-specific heat capacity at constant pressure.
+For differentiability and computational efficiency, ChemGen fits the
+polynomial for $c_{p,i}$ to arbitrary order. As such, the value of
+$c_{p,i}$ is computed from an $n_{p}$-order polynomial as
 \begin{equation}
 c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k},\label{eq:specific_heat_polynomial}
 \end{equation}
-which is based on but not equivalent to the NASA n-coefficient polynomial
-parametrization~\citep{Mcb93,Mcb02}. For differentiability and computational
-efficiency, ChemGen fits the polynomial for $c_{p,i}$ to arbitrary
-order. Equation~(\ref{eq:internal_energy_identity}) yields
-
-\begin{equation}
-h_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}\label{eq:entahlpy-polynomial}
-\end{equation}
-and
-
-\begin{equation}
-u_{i}=h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1}-RT=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
-\end{equation}
-Here, we use $h_{i}(T=298\text{ K})$ from the existing NASA coefficients,
-
-\begin{equation}
-h_{\text{ref},i}=h_{i}(T=298\text{ K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\text{ K}\right)^{k+1},\label{eq:enthalpy-adjustment}
-\end{equation}
-which gives
-
+which is based on, but not equivalent, to the NASA n-coefficient polynomial
+parametrization~\citep{Mcb93,Mcb02}. Substituting Equation~(\ref{eq:specific_heat_polynomial})
+into Equation~(\ref{eq:enthalpy_identity}), we evaluate the mass-specific
+enthalpy as
+\begin{align}
+\begin{array}{ccc}
+h_{i} & = & h_{\text{ref},i}+\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}T^{k+1},\\
+ & = & \sum_{k=0}^{n_{p}+1}b_{ik}T^{k},
+\end{array}\label{eq:enthalpy-polynomial}
+\end{align}
+with
 \begin{equation}
 b_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k\geqq1\\
-h_{\text{ref},i}, & k=0
+h_{\text{ref},i}, & k=0,
 \end{cases}\label{eq:enthalpy_coeffs}
 \end{equation}
-and
+where we have augmented the coefficients $a_{i}$to include a coefficient
+$h_{\text{ref},i}$, which corresponds to the zero degree polynomial,
+i.e., $1$.
+
+We specify $h_{\text{ref},i}$ as
+
+\begin{equation}
+h_{\text{ref},i}=\tilde{h}_{i}(T_{\mathrm{ref}}=298\text{ K})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(T_{\mathrm{ref}}=298\text{ K}\right)^{k+1},\label{eq:enthalpy-adjustment}
+\end{equation}
+where $\tilde{h}_{i}\left(T_{\mathrm{ref}}=298\text{ K}\right)$ is
+the value given by the NASA polynomials. This ensures that the species
+enthalpies resulting from Equation~(\ref{eq:enthalpy-polynomial})
+and those given by the NASA polynomials are equivalent when evaluated
+at the reference temperature, $T_{\mathrm{ref}}=298\text{ K}$. Using
+Equation~(\ref{eq:enthalpy-polynomial}), it is straight forward
+to evaluate Equation~(\ref{eq:internal_energy_identity}) to obtain
+the mass-specific internal energy. However, in practice, we define
+the coefficients $c_{ik}$ by modifying the coefficients $b_{ik}$to
+that account for the term $R_{i}T$ and evaluate the mass-specific
+internal energy as
+\begin{align}
+u_{i}= & \sum_{k=0}^{n_{p}+1}c_{ik}T^{k}.\label{eq:internal-energy-polynomial}
+\end{align}
+where
 
 \begin{equation}
 c_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k>1\\
-a_{i,0}-R & k=1\\
+a_{i,0}-R_{i} & k=1\\
 h_{\text{ref},i}, & k=0.
 \end{cases}\label{eq:internal-energy-coeffs}
 \end{equation}
-This integration requires two vectors for temperature: a monomial
-basis for polynomials of degree $n_{p}$, $T_{n_{p}}=\left(1,T,T^{2},\dots,T^{n_{p}}\right)$
-and a monomial basis for polynomials of degree $n_{p}+1$, $T_{n_{p}+1}=\left(1,T,T^{2},\dots,T^{n_{p}+1}\right)$.
-These vectors can then be contracted with a vector of coefficients;
-for example, $u_{i}=\left<A_{i},T_{n_{p}+1}\right>$ where $A_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})$.
+Therefore, thermodynamic quantities can be evaluated by taking the
+scalar inner product between the corresponding polynomial coefficients
+and a monomial basis for temperature of the appropriate polynomial
+degree, e.g., $n_{p}$ or $n_{p}+1$.
 
 The mass-specific thermodynamic entropy of the mixture is defined
 as
@@ -397,11 +418,11 @@ s_{i}=s_{i}^{o}-R\log\frac{p_{i}}{p_{\mathrm{ref}}},\quad s_{i}^{o}=s_{\mathrm{r
 where $s_{\mathrm{ref},i}^{o}$ is the species entropy of formation
 from the NASA n-coefficient polynomial parametrization evaluated at
 $T=298$ K, and $p_{ref}$ is the reference pressure (usually $p_{\mathrm{ref}}=1\text{ atm}$),
-$s_{i}^{o}$ denotes the species entropy at the reference pressure,
-and $p_{i}=C_{i}R^ {}T$ is the partial pressure. The $R\log\frac{p_{i}}{p_{\mathrm{ref}}}$
-term accounts for the effect of pressure on entropy and does not depend
+$s_{i}^{o}$ denotes the mass-specific entropy at the reference pressure,
+and $p_{i}=C_{i}R^ {}T$ is the partial pressure. The term, $R\log\frac{p_{i}}{p_{\mathrm{ref}}}$,
+accounts for the effect of pressure on entropy and does not depend
 on thermodynamic polynomial fits. Using Equation~(\ref{eq:specific_heat_polynomial}),
-$s_{i}^{o}$ is computed as
+the mass-specific standard entropy, $s_{i}^{o}$, is computed as
 
 \begin{equation}
 s_{i}^{o}=s_{\mathrm{ref},i}^{o}+a_{i,0}\ln T+\sum_{k=1}^{n_{p}}\frac{a_{ik}}{k}T^{k}=a_{i,o}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k},\label{eq:entropy_polynomial}
@@ -425,46 +446,38 @@ which can be represented as
 g_{i}^{o}=-a_{i,0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}.\label{eq:gibbs-polynomial}
 \end{equation}
 Note, the Gibbs free energy, like entropy, has a pressure dependency
-that is calculated indepedent of these thermodynamic fits.
-
-This gives two new temperature vectors: $T_{n_{p},\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}},\ln T\right)$
-and $T_{n_{p}+1,T\ln T}=\left(1,T,T^{2},\dots,T^{n_{p}+1},-T\ln T\right)$.
-These vectors can then be contracted with a vector of coefficients,
-$s_{i}=\left<A_{i},T_{n_{p},\ln T}\right>$ where $A_{i}=(d_{i,0},d_{i,1},d_{i,2},\dots,d_{i,n_{p}},a_{i,0})$
-and $g_{i}=\left<A_{i},T_{n_{p}+1,T\ln T}\right>$ where $A_{i}=(f_{i,0},f_{i,1},f_{i,2},\dots,f_{i,n_{p}+1},a_{i,0})$.
-
-The thermodynamic relationships used by ChemGen are summarized in
-Table~(\ref{tab:Summary-of-polynomial}).
+that is calculated independent of these thermodynamic fits. Table~(\ref{tab:Summary-of-polynomial})
+summarizes the thermodynamic relationships used by ChemGen.
 
 \begin{table}
 \begin{tabular}{|>{\centering}p{1.35in}|>{\centering}p{1.95in}|>{\centering}p{2.6in}|}
 \hline 
-Thermodynamic Quantity & Fit & Coefficient Description\tabularnewline
+Thermodynamic Quantity of the $i$th Species & Fit & Coefficient Description\tabularnewline
 \hline 
 \hline 
-Species specific heat at
+Mass-specific heat at
 
-constant pressure, $c_{p,i}$ & $c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k}$ & Re-fit from existing data\tabularnewline
+constant pressure, $c_{p,i}$ & $c_{p,i}=\sum_{k=0}^{n_{p}}a_{ik}T^{k}$ & Re-fit from existing data~\citep{Mcb93,Mcb02}\tabularnewline
 \hline 
-Species specific enthalpy, $h_{i}$ & $h_{i}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}$ & $b_{ik}=\begin{cases}
+Mass-specific enthalpy, $h_{i}$ & $h_{i}=\sum_{k=0}^{n_{p}+1}b_{ik}T^{k}$ & $b_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k\geqq1\\
 h_{\text{ref},i}, & k=0
 \end{cases}$;
 
-$h_{\text{ref},i}=h_{i}(T_{\mathrm{ref}})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(298\right)^{k+1}$\tabularnewline
+$h_{\text{ref},i}=h_{i}(T_{\mathrm{ref}})-\sum_{k=0}^{n_{p}}\frac{a_{ik}}{k+1}\left(T_{\mathrm{ref}}\right)^{k+1}$\tabularnewline
 \hline 
-Species specific internal energy, $u_{i}$ & $u_{i}=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k}$ & $c_{ik}=\begin{cases}
+Mass-specific internal energy, $u_{i}$ & $u_{i}=\sum_{k=0}^{n_{p}+1}c_{ik}T^{k}$ & $c_{ik}=\begin{cases}
 \frac{a_{i,k-1}}{k}, & k>1\\
 a_{i,0}-R & k=1\\
 h_{\text{ref},i}, & k=0.
 \end{cases}$\tabularnewline
 \hline 
-Species specific standard entropy, $s_{i}^{o}$ & $s_{i}^{o}=a_{i,0}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}$ & $d_{ik}=\begin{cases}
+Mass-specific entropy at the reference pressure, $s_{i}^{o}$ & $s_{i}^{o}=a_{i,0}\ln T+\sum_{k=0}^{n_{p}}d_{ik}T^{k}$ & $d_{ik}=\begin{cases}
 \frac{a_{i,k}}{k}, & k\geq1\\
 s_{\mathrm{ref},i}^{o} & k=0.
 \end{cases}$\tabularnewline
 \hline 
-Species specific standard Gibbs
+Mass-specific Gibbs
 
 free energy, $g_{i}^{o}$ & $g_{i}^{o}=-a_{i,0}T\ln T+\sum_{k=0}^{n_{p}+1}f_{ik}T^{k}$ & $f_{ik}=\begin{cases}
 \left(\frac{1}{k}-\frac{1}{k-1}\right)a_{i,k-1} & n_{p}+1>k>1\\
@@ -478,60 +491,50 @@ h_{\text{ref},i} & k=0.
 species specific relationships.\label{tab:Summary-of-polynomial}}
 \end{table}
 
-ChemGen supplies a Newton's method implementation to extract temperature
-from internal energy in the case where temperature is needed from
-$y_{f}$. For example, internal energy is typically part of a conserved
-state. The total energy in $y_{f}$ is given as
-
+The temperature of a given state, y\_f, is defined such that the corresponding
+internal energy density,
 \begin{equation}
-\rho e_{t}=\rho u+\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k},
+\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t},\label{eq:internal-energy-density-state}
 \end{equation}
-where the term $\frac{1}{2}\sum_{k=1}^{d}\rho v_{k}v_{k}$ can be
-computed from other conserved variables. Thus one can directly compute
-the internal energy at any time as
-
+is consistent with the internal energy density computed via
 \begin{equation}
-\rho u=\frac{1}{2}\sum_{k=1}^{d}\frac{\left(\rho v_{k}\right)\left(\rho v_{k}\right)}{\sum_{i}^{n_{s}}W_{i}C_{i}}-\rho e_{t}.
+\rho u(C,T)=\sum_{i}^{n_{s}}W_{i}C_{i}u_{i}\left(T\right),\label{eq:internal-energy-density-polynomial}
 \end{equation}
+where $u_{i}$ is the polynomial fit for mass specific internal energy
+given by Equation~(\ref{eq:internal-energy-polynomial}). 
 
-The temperature is determined by a root finding algorithm which iterates
-via Netwon's method. The temperature at the $\left(k+1\right)$th
-Newton iteration is given by
-
+ChemGen solves the resulting nonlinear equation for temperature, namely,
 \begin{equation}
-T_{k+1}=T_{k}-\frac{\rho u(T_{k})}{\frac{\partial\rho u(T_{k})}{\partial T}}.\label{eq:netwon_iteration_temperature}
+\rho u-\rho u(C,T)=0,\label{eq:temperature-nonlinear}
 \end{equation}
-where $T_{k}$ is the temperature at the $k$th iteration. The numerator
-and denominator are given by
-
+using Newton's method 
 \begin{equation}
-\rho u(C,T_{k})=\sum_{i=1}^{n_{s}}W_{i}C_{i}u_{i}(T_{k})=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},T_{k,n_{p}+1}\right>
+\frac{\partial\rho u(C,T)}{\partial T}\cdot\delta T=\rho u-\rho u(C,T).\label{eq:netwons-method-temperature}
 \end{equation}
- and
-
-\begin{equation}
-\frac{\partial\rho u(C,T_{k})}{\partial T}=\rho c_{v}\left(C,T_{k}\right)=\sum_{i=1}^{n_{s}}W_{i}C_{i}\frac{\partial u_{i}(T_{k})}{\partial T}=\sum_{i=1}^{n_{s}}W_{i}C_{i}\left<A_{i},\frac{\partial T_{k,n_{p}+1}}{\partial T}\right>,\label{eq:denominator_for_temp_solve}
-\end{equation}
-respectively, where
-
-\begin{equation}
-A_{i}=(c_{i,0},c_{i,1},c_{i,2},\dots,c_{i,n_{p}+1})
-\end{equation}
-and
-
-\begin{equation}
-\frac{\partial T_{k,n_{p}+1}}{\partial T}=\left(0,1,2T_{k},\dots,\left(n_{p}+1\right)T_{k}^{n_{p}}\right).
-\end{equation}
-$c_{v}$ in Equation~\ref{eq:denominator_for_temp_solve} is the
-specific heat at constant volume, which is related to $c_{p}$ as
+The Jacobian of the $\rho u\left(C,T\right)$with respect to temperature
+is given by
+\begin{align}
+\begin{array}{ccc}
+\frac{\partial\rho u(C,T)}{\partial T} & = & \sum_{i=1}^{n_{s}}W_{i}C_{i}\left(\sum_{k=1}^{n_{p}+1}c_{ik}\left(kT^{k-1}\right)\right),\\
+ & = & \rho c_{v}\left(C,T\right),
+\end{array}
+\end{align}
+where $c_{v}$ is the specific heat at constant volume, which is related
+to $c_{p}$ via
 
 \begin{equation}
 c_{v}=c_{p}-R.\label{eq:cv_equation}
 \end{equation}
-In ChemGen, Newton's method for computing temperature terminates after
-five iterations, which in our experience is sufficient to be within
-$1\times10^{-8}$ relative error for a variety of models at different
-conditions.
+Therefore, temperature at the $k\text{th}$ Newton iteration is given
+by
+
+\begin{equation}
+T_{k}=T_{k-1}-\frac{\left(\rho u-\rho u(C,T_{k-1})\right)}{\rho c_{v}\left(C,T_{k-1}\right)}\;\;\textrm{for }k=1,\ldots,n,\label{eq:netwon_iteration_temperature}
+\end{equation}
+where $n$ is the number of iterations and $T_{0}$ is the initial
+guess for temperature, e.g., $T_{0}=500\textrm{K}$. In ChemGen, we
+set $n=5$, which, in our experience, is sufficient to be within $1\times10^{-8}$
+relative error for a variety of models at different conditions.
 
 
 \subsection{Chemical reaction rates and their ChemGen representations\label{subsec:chemical-reaction-rates}}
@@ -737,7 +740,7 @@ $\ln p_{i}$ values.
 The stability of the CFD time integration may be compromised by explicitly
 applying the source term of Equation~(\ref{enu:source}). Different
 approaches can be utilized by time-splitting the evolution of the
-chemical state and retain the stability of the fluid dynamic algorithms~\citep{Str68,Hou11,Lv15,Joh20}.
+chemical state and retain the stability of the fluid dynamic algorithms~\citet{Str68,Hou11,Lv15,Joh20}.
 These approaches typically do not involve the flux from either convection
 or diffusion. By removing any spatial fluxes, the conservation Equation~(\ref{eq:conservation-law-strong-form})
 reduces to an ordinary differential equation,
@@ -972,13 +975,13 @@ terms and Jacobians that can then be used in time integration strategies.
 
 \subsection{The concept of decorators}
 
-C++ is a malleable language that allows developers to abstract underlying
+\Cpp is a malleable language that allows developers to abstract underlying
 data structures through type aliases (\texttt{using scalar = float;})
 and operator overloading. As a result, variables may appear to be
 simple scalars while in fact representing complex types with custom
 behavior. This flexibility enables expressive, domain-specific syntax,
 but this means that there is no single set of generated code that
-can be embedded into all existing C++ software.
+can be embedded into all existing \Cpp software.
 
 For instance, it may be more suitable for the function
 
@@ -1003,8 +1006,8 @@ float sqr (const float& a) const {return a * a;} \\example function 2
 \leavevmode\egroup
 
 ChemGen utilizes \emph{decorators} to assist in the flexibility of
-generating desirable C++ code. The above example can be changed to
-a Python formattable Python string as
+generating desirable \Cpp code. The above example can be changed
+to a Python formattable Python string as
 
 \bgroup\inputencoding{latin9}
 \begin{lstlisting}
@@ -1071,9 +1074,9 @@ two derivatives and one chain rule,
 \bgroup\inputencoding{latin9}
 \begin{lstlisting}
 double dpow_da(const double& a, const double& b)  
-{return b * std::pow(a, b - double(1));}
+{return b * pow_gen(a, b - double(1));}
 double dpow_db(const double& a, const double& b)  
-{return std::pow(a, b) * std::log(a);}
+{return pow_gen(a, b) * log_gen(a);}
 
 double
 pow_gen_chain(const double& a, 
@@ -1121,10 +1124,10 @@ darrhenius_dtemperature(const double& A,
 \leavevmode\egroup
 
 The mechanical differentiation approach is both efficient and more
-readable than symbolic differentiation using tools such as SymPy~\citep{sympy}.
+readable than symbolic differentiation using tools such as SymPy~\citet{sympy}.
 While symbolic differentiation can be valuable, the mechanical approach
 is better suited for organizing and maintaining ChemGen’s code generation
-process. Regardless, since the functions are available in C++, packages
+process. Regardless, since the functions are available in \Cpp, packages
 such as autodiff~\citep{Lea18} can be implemented to use a wider
 variety of differentiable functionality. For a mathematical overview
 of the derivatives needed for chemically reacting flow, see~\citep{Nie17}.
@@ -1203,7 +1206,7 @@ chemgen.py mech.yaml .
 \end{lstlisting}
 \leavevmode\egroup
 This command, as long as \texttt{mech.yaml} is a Cantera supported
-file, generates C++ code in the current directory in a \texttt{src}
+file, generates \Cpp code in the current directory in a \texttt{src}
 folder using the standard settings.
 
 \begin{figure}[H]
@@ -1469,7 +1472,7 @@ $\mathcal{J}_{ij}/\hat{\mathcal{J}_{ij,1}}$                     & 2.84 & 3.23 & 
 \end{tabular}
 \end{table}
 
-Finally, Niemeyer et al.~\citep{Nie17} reported error metrics that
+Finally, Niemeyer et al.~\citet{Nie17} reported error metrics that
 can be used to verify Jacobian accuracy. These metrics are utilized
 in Appendix~(\ref{subsec:jacobianErel}) to provide additional confidence
 in the correctness of ChemGen's Jacobian computations.
@@ -1722,9 +1725,9 @@ with subscript $cg$).}
 
 In this work, we introduced ChemGen, a software package that leverages
 code generation to integrate multispecies thermodynamics and chemical
-kinetics into C++-based computational physics software, with an emphasis
-on CFD applications. ChemGen employs a decorator-based approach to
-enable flexible and modular C++ code generation tailored to existing
+kinetics into \Cpp-based computational physics software, with an
+emphasis on CFD applications. ChemGen employs a decorator-based approach
+to enable flexible and modular \Cpp code generation tailored to existing
 simulation ecosystems. It generates both thermodynamic property approximations
 and source term expressions, along with their analytical derivatives,
 facilitating Jacobian assembly for implicit time integration. Additionally,
