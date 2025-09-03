@@ -11,7 +11,7 @@
 In all tutorials we will shorten the use of ChemGen's paths to the repo. To access ChemGen in this folder run the following command:
 
 ```bash
-export PATH="$(cd ../../../bin && pwd):$PATH"
+export PATH="$(cd ../../bin && pwd):$PATH"
 ```
 
 Now, ChemGen can be run from any directory by simply specifying `chemgen.py`
@@ -54,7 +54,7 @@ falloff_troe.h
 pressure_dependent_arrhenius.h
 thermotransport_fits.h
 ```
-Exploring the generated code one can see all functionality to calculate the source term for `simple_mech` using c++ has been generated. For instance the reaction in the yaml file
+Exploring the generated code one can see all functionality to calculate the source term for `simple_mech` using C++ has been generated. For instance the reaction in the yaml file
 
 ```yaml
 - equation: 2 H2 + O2 <=> 2 H2O  # Reaction 1
@@ -70,7 +70,7 @@ in `reactions.h` which is then used in `source.h`.
 
 running
 ```bash
-chemgen.py simple_mech . --compile
+chemgen.py simple_mech.yaml . --compile --run-tests
 ```
 
 compiles and runs a new file, `chemgen.cpp`, which includes all the header files and performs a test with output
@@ -130,7 +130,7 @@ Previously, running
 chemgen.py simple_mech . --compile
 ```
 
-Generates source code and compile with a hard coded command. Eventually these hard coded commands will be replaced with generating cmake on the fly and compiling. If your machine has specific compilation setting the `cmake` approach is probably best.
+If your machine has specific compilation setting the `cmake` approach is probably best.
 
 
 ## Run Larger Mechanism
@@ -165,6 +165,8 @@ test_conditions:
       MoleFraction: 0.1
 ```
 
+This configuration is available in `test_configuration_C2H4.yaml`
+
 or we could generate a random state
 ```yaml
 test_conditions:
@@ -192,5 +194,3 @@ Then you can run chemgen in any run directory:
 ```bash
 chemgen.py FFCM2_model.yaml . --compile
 ```
-
-For the explicit `C2H4` addition, the source term is easy to parse, but the random data is large and cumbersome. In further tutorials we perform random scattering of the source term to compare its `$L_2$`-norm and compute ChemGen's accuracy compared to cantera.
