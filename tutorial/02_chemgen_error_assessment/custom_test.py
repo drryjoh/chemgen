@@ -218,7 +218,7 @@ void write_states({species_parameter} concentrations, {scalar_parameter} tempera
     // Process each point
     for ({index} i = 0; i < n_points; i++)
     {{
-        {species} result = source((*concentration_tests)[i], (*temperatures)[i]);
+        {species} result = source_species((*concentration_tests)[i], (*temperatures)[i]);
         write_states((*concentration_tests)[i], (*temperatures)[i], states);
         l2_norm((*temperatures)[i], result, (*cantera_sources)[i], (*concentration_tests)[i], file);
     }}
