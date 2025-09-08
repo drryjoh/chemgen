@@ -20,9 +20,9 @@ test_conditions:
     #   value: 0.7769472856018884
     # - name: IC8H18
     #   value: 0.016522423288749016
-    - name: O2
+    - name: o2
       value: 0.20653029110936266
-    - name: N2
+    - name: n2
       value: 0.7769472856018884
     - name: c8h18-3
       value: 0.016522423288749016
@@ -45,9 +45,9 @@ test_conditions:
     # - name: c20h42-2
     #   value: 0.006838163464669487
   end_time: 2e-5 #2e-5
-  # dt_be: 1e-7 #1e-7
-  dt_sdirk2: 1e-8 #1e-8
+  dt_be: 1e-7 #1e-7
+  # dt_sdirk2: 1e-8 #1e-8
   # dt_sdirk4: 1e-7
-  dt_ros: 1e-8
+  # dt_ros: 1e-8
   # dt_rk4: 5e-8
   # dt_yass: 1e-7
