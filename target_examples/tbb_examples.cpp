@@ -19,8 +19,10 @@ std::vector<double> source(const std::vector<double>& species, double temperatur
     double inv_universal_gas_constant_temperature = inv_gen(universal_gas_constant() * temperature);
 
     // Parallel loop using TBB (Threading Building Blocks)
-    tbb::parallel_for(tbb::blocked_range<int>(0, 43), [&](tbb::blocked_range<int>& r) {
-        for ({index} i = r.begin(); i != r.end(); ++i) {
+    tbb::parallel_for(tbb::blocked_range<int>(0, 43), [&](tbb::blocked_range<int>& r)
+    {
+        for ({index} i = r.begin(); i != r.end(); ++i)
+        {
             double forward_reaction = call_forward_reaction(i, species, temperature);
             // Perform the necessary computations here (similar to your original code)
             // Calculate equilibrium constants, rate of progress, etc.
@@ -55,7 +57,8 @@ int main(int argc, char** argv) {
     if (world_rank == 0) {
         // Print results (on the root process)
         std::cout << "Net production rates: ";
-        for (const auto& rate : global_net_production_rates) {
+        for (const auto& rate : global_net_production_rates)
+        {
             std::cout << rate << " ";
         }
         std::cout << std::endl;

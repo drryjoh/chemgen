@@ -7,7 +7,8 @@
 
 #include <iostream>  // For printing the result to the console
 
-int main() {
+int main()
+{
     // Call the arrhenius function with the specified parameters
     float result = arrhenius(float(100), float(1.3e6), float(1.5), float(1800));
     float dresult_dtemperature = darrhenius_dtemperature(float(100), float(1.3e6), float(1.5), float(1800));

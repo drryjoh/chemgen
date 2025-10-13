@@ -6,11 +6,12 @@ def write_type_defs(file, gas, configuration):
 
     file.write("""
 const {index} n_species = {n_species};
+const {index} n_variables = {n_species} + 1;
 const {index} n_reactions = {n_reactions};
 const {index} n_order_thermo = {n_thermo_order} + 1;
 const {index} n_chemical_state = {n_species} + 1;
 // Using alias for the array type (for example, an array of double values)
-using Species = {species_typedef};
+using {species} = {species_typedef};
 using Reactions = {reactions_typedef};
 using TemperatureMonomial = {temperature_monomial_typedef};
 using TemperatureEnergyMonomial = {temperature_energy_monomial_typedef};
@@ -114,32 +115,7 @@ d{name}_dtemperature({scalar_parameter} temperature) {const_option}
 }}
     """.format(**vars(configuration), thermo_fit = thermo_fit_text, name=name)
     file.write(content)
-'''
-def write_energy_thermo_transport_fit_frozen_species(file, name, thermo_fit_text, configuration):
-    content ="""
-{device_option}
-{thermo_table_function} 
-({thermo_table_parameter} thermo_table, ) {const_option} 
-{{
-    return contract(thermo_table, temperature_energy_monomial_sequence)
-}}
-
-{device_option}
-{species_function} 
-internal_energy_frozen_species({thermo_table_parameter} thermo_table, {temperature_energy_monomial_parameter} temperature_energy_monomial_sequence) {const_option} 
-{{
-    return contract(thermo_table, temperature_energy_monomial_sequence)
-}}
-
-{device_option}
-{species_function} 
-internal_energy_frozen_species({thermo_table_parameter} thermo_table, {scalar_parameter} temperature) {const_option} 
-{{
-    return internal_energy_frozen_species(temperature_energy_monomial(temperature));
-}}
-    """.format(**vars(configuration))
-    file.write(content)
-'''
+    
 def write_entropy_thermo_transport_fit(file, name, thermo_fit_text, configuration):
     content ="""
 {device_option}

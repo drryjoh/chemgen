@@ -6,7 +6,11 @@ import seaborn as sns
 # Setup
 fig, axes = plt.subplots(1, 2, figsize=(18, 6), sharey=True)
 
-colors = ["purple", "blue", "orange", "red", "green"]
+try:
+    plt.style.use('seaborn-colorblind')
+except OSError:
+    plt.style.use('seaborn-v0_8-colorblind')
+colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 mechs = ["OConnaire", "burke", "gri30", "sandiego", "FFCM2_model"]
 names = ["Ó Connaire", "Burke", "GRI v3.0", "UCSD", "FFCM2"]
 
@@ -29,12 +33,21 @@ for k, L2 in enumerate(L2s):
         log_errors,
         ax=ax,
         bins=300,
+        stat='density',
         color=colors[k],
         alpha=0.5,
         edgecolor='black',
         label=names[k],
-        kde=True
-    )
+        kde=False  # disable internal kde
+        )
+# Add KDE manually
+    sns.kdeplot(
+        log_errors,
+        ax=ax,
+        color='black',
+        linewidth=0.75,
+        label=None
+        )
     ax.axvline(np.mean(log_errors), color=colors[k], linestyle='--', linewidth=1)
 
 ax.set_xlim([-14,-2])
@@ -42,10 +55,9 @@ xticks = ax.get_xticks()
 integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]
 ax.set_xticks(integer_ticks)
 ax.set_xticklabels([f"$10^{{{int(t)}}}$" for t in integer_ticks])
-ax.set_title("$E_{norm}$ Error")
-ax.set_xlabel("$E_{norm}$ Error")
-ax.set_ylabel("Frequency")
-ax.legend(title="Mechanism")
+ax.set_xlabel("$E_{norm}$ Error", fontsize=16)
+ax.set_ylabel("Frequency", fontsize=16)
+ax.legend()
 
 # Right subplot: neighbor-aware error
 ax = axes[1]
@@ -64,20 +76,29 @@ for k, L2 in enumerate(L2snei):
         log_errors,
         ax=ax,
         bins=300,
+        stat='density',
         color=colors[k],
         alpha=0.5,
         edgecolor='black',
         label=names[k],
-        kde=True
-    )
+        kde=False  # disable internal kde
+        )
+# Add KDE manually
+    sns.kdeplot(
+        log_errors,
+        ax=ax,
+        color='black',
+        linewidth=0.75,
+        label=None
+        )
     ax.axvline(np.mean(log_errors), color=colors[k], linestyle='--', linewidth=1)
 ax.set_xlim([-14,-2])
 xticks = ax.get_xticks()
 integer_ticks = xticks[np.isclose(xticks, np.round(xticks))]
 ax.set_xticks(integer_ticks)
 ax.set_xticklabels([f"$10^{{{int(t)}}}$" for t in integer_ticks])
-ax.set_xlabel("$E_{rel}$ Error")
-ax.legend(title="Mechanism")
+ax.set_xlabel("$E_{rel}$ Error",fontsize=16)
+ax.legend()
 
 plt.tight_layout()
 plt.savefig("error_distribution.png",dpi=300)

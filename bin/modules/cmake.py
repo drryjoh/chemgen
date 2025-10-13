@@ -3,6 +3,8 @@ import os
 
 def generate_cmake_file(config, output_path, third_parties):
     """Generate a CMakeLists.txt file based on the configuration."""
+    print("Experimental, see issue: https://github.com/drryjoh/chemgen/issues/30")
+
     cmake_content = f"""\
 cmake_minimum_required(VERSION 3.15)
 project(ChemGen)  # Replace with your project name
@@ -12,7 +14,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Compiler options
-set(CMAKE_CXX_FLAGS "-{config['build'].get('chemgen_optimized', 'O2')}")
+set(CMAKE_CXX_FLAGS "-{config['build'].get('chemgen_input', 'O2').replace('-','')}")
 
 # Source files
 set(SOURCE_FILES
@@ -80,11 +82,8 @@ target_link_libraries(chemgen PRIVATE ${{{library.upper()}_LIB}} ${{{library.upp
 # Ensure {library.upper()} is built before chemgen
 add_dependencies(chemgen {library})
 """
-    # Enable debugging flags if needed
     cmake_content += "\n# Enable debugging flags\nset(CMAKE_BUILD_TYPE Release)"
 
     # Write content to CMakeLists.txt
     with open(output_path/"CMakeLists.txt", 'w') as file:
         file.write(cmake_content)
-
-# Load configuration and generate CMakeLists.txt

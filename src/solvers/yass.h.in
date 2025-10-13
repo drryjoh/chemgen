@@ -5,11 +5,11 @@ yass({chemical_state} y,
      {scalar_parameter} dt, 
      {scalar} max_norm  = 0.1,
      {scalar} min_dt  = 1e-10,
-     {index} max_iter = 20) 
+     {index} max_iter = 20)
 {{
 
-    {species} y_init = get_species(y);
-    {species} y_n = y_init;
+    {chemical_state} y_init = y;
+    {chemical_state} y_n = y_init;
     {scalar} dt_ = dt;
     {scalar} time = 0;
     {index} iteration = 0;
@@ -21,22 +21,24 @@ yass({chemical_state} y,
         {scalar} temperature_ = temperature(y[0], y_n);
         {jacobian} J = source_jacobian(y_n, temperature_);
         {jacobian} G = I - scale_gen(dt_, J);
-        {species} rhs1 = scale_gen(dt_, source(y_n, temperature_));
+        {chemical_state} rhs1 = scale_gen(dt_, source(y_n, temperature_));
 
         #ifdef CHEMGEN_DIRECT_SOLVER
-        {species} dy = invert_jacobian(G) * rhs1;
+        {chemical_state} dy = invert_jacobian(G) * rhs1;
         #else
-        {species} dy = gmres_solve(G, rhs1);
+        {chemical_state} dy = gmres_solve(G, rhs1);
         #endif
 
-        {scalar} dy_norm  = norm2(dy);
+        {scalar} dy_norm  = norm2(get_species(dy));
 
         if (dy_norm > max_norm)
         {{
+            std::cout << "refining YASS; dy: " <<dy_norm<<std::endl;
             dt_ *= {scalar_cast}(0.5);
+            // TODO: don't recompute entire Jacobian; just modify the diagonal
             if (dt_ < min_dt)
             {{
-                    return set_chemical_state({scalar_cast}(0.0), scale_gen({scalar_cast}(0.0), y_n)); //return garbage
+                    return scale_gen({scalar_cast}(0.0), y_n); //return garbage
             }}
         }}
         else
@@ -48,7 +50,5 @@ yass({chemical_state} y,
         iteration++;
     }}
 
-    return 
-    set_chemical_state(y[0], 
-                        y_n); 
+    return y_n;
 }}

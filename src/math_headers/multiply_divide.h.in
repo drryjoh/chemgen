@@ -11,7 +11,7 @@
 {device_option} {scalar_function} pow2({scalar_parameter} a) {const_option} {{return a * a;}}
 {device_option} {scalar_function} dpow2_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(2) * a;}}
 
-//iverse
+//inverse
 {device_option} {scalar_function} inv_gen({scalar_parameter} a) {const_option} {{return {scalar_cast}(1)/a;}}
 {device_option} {scalar_function} dinv_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(-1)/pow2(a);}}
 {device_option} {scalar_function} inv_safe_gen({scalar_parameter} a) {const_option} {{return (a != {scalar_cast}(0)) ? ({scalar_cast}(1.0) / a) : {scalar_cast}(0.0);}}
@@ -29,4 +29,7 @@
 {device_option} {scalar_function} sqrt_gen({scalar_parameter} a) {const_option} {{return {sqrtmath}(a);}}
 {device_option} {scalar_function} dsqrt_da({scalar_parameter} a) {const_option} {{return {scalar_cast}(0.5) * inv_gen({sqrtmath}(a));}}
 {device_option} {scalar_function} sqrt_chain({scalar_parameter} a, {scalar_parameter} da) {const_option} {{ return {scalar_cast}(0.5) * da * inv_gen({sqrtmath}(a));}}
+
+//abs/min/max
+{device_option} {scalar_function} abs_gen({scalar_parameter} a) {const_option} {{ return std::abs(a);}}
 

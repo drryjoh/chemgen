@@ -1,0 +1,45 @@
+{device_option}
+{chemical_state} 
+backwards_euler({chemical_state} y,  
+                {scalar_parameter} dt,
+                {scalar} abs_newton_tol = newton_abs_tol_default,
+                {scalar} rel_newton_tol = newton_rel_tol_default,
+                {index}  max_iter = newton_iter_max_default)
+{{
+        {chemical_state} y_init = y;
+        {chemical_state} y_guess = y;
+        for ({index} iter = 0; iter < max_iter; ++iter)
+        {{
+            {scalar} temperature_ = temperature(y[0], y_guess);
+            {chemical_state} f = source(y_guess, temperature_);
+            {jacobian} J = source_jacobian(y_guess, temperature_);
+            {jacobian} A = jacobian_I();
+            {chemical_state} res = {{}};
+            
+            //LHS
+            for ({index} i = 0; i < n_variables; ++i) A[i][i] = A[i][i]/dt;
+            A = A - J;
+
+            //RHS
+            res = scale_gen(-{scalar_cast}(1)/dt, y_guess - y_init) + f;
+            //Solve
+            #ifdef CHEMGEN_DIRECT_SOLVER
+            {chemical_state} dy = invert_jacobian(A) * res;
+            #else
+            {chemical_state} dy = gmres_solve(A, res);
+            #endif
+
+            //Increment
+            y_guess = y_guess + dy;
+
+            if (error_norm(dy, y_guess, abs_newton_tol, rel_newton_tol) < 1.0)
+            {{
+                std::cout << "# Newton iterations = " << iter + 1 << std::endl;
+                return y_guess;
+            }}
+        }}
+
+        std::cout << "Newton solve did not converge!" << std::endl;
+
+        return y_guess; //sets energy to zero to signal integration broke
+}}

@@ -33,7 +33,7 @@ class SourceJacobianWriter:
     def write_progress_rates_jacobian(self, file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("        equilibrium_constant = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
+                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
             file.write(f"        {progress_rates_derivatives[i]}")
         file.write("\n")
         
@@ -79,8 +79,8 @@ class SourceJacobianWriter:
 
     def write_source_jacobian(self, file, equilibrium_constants, dequilibrium_constants_dtemperature, reactions_depend_on,
                      reaction_calls,  progress_rates, progress_rates_derivatives, is_reversible, species_production_on_fly_function_texts,
-                     species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction = True): 
-        self.write_start_of_source_function_jacobian(file, configuration, fit_gibbs_reaction = fit_gibbs_reaction)
+                     species_production_texts, species_production_jacobian_texts, headers, configuration, fit_gibbs_reaction=True, sparsity_pattern=None):
+        self.write_start_of_source_function_jacobian(file, configuration, fit_gibbs_reaction=fit_gibbs_reaction)
         self.write_reaction_calculations_jacobian(file, reaction_calls, reactions_depend_on, configuration)
         self.write_progress_rates_jacobian(file, progress_rates, progress_rates_derivatives, is_reversible, equilibrium_constants, dequilibrium_constants_dtemperature, configuration)
         self.write_species_production_jacobian(file, species_production_jacobian_texts, configuration)

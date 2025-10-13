@@ -31,12 +31,12 @@ gas.TPX = (
 )
 
 # Create a reactor and insert the gas
-reactor = ct.IdealGasReactor(gas)
+reactor = ct.IdealGasMoleReactor(gas)
 network = ct.ReactorNet([reactor])
 
 # Define simulation time (in seconds)
 time_end = 2e-5
-dt_small = 1e-7
+dt_small = 1e-6
 n_steps = int(time_end/dt_small)
 #time_end = 200 * 2e-7  # Convert ns to seconds
 #n_steps = 200  # Number of time steps
@@ -44,12 +44,23 @@ time = np.linspace(0, time_end, n_steps)
 
 temperature = []
 data = []
-import time as clock 
+# Before the loop, set solver options
+network.linear_solver_type = 'GMRES'           # Use GMRES instead of dense solver
+network.preconditioner = ct.AdaptivePreconditioner()
+network.derivative_settings = {"skip-third-bodies":True, "skip-falloff":True}
+network.rtol = 1e-10                           # Optional: tighter relative tolerance
+network.atol = 1e-20                           # Optional: tighter absolute tolerance
+
+# Now run the simulation loop
+
+import time as clock
 start_time = clock.time()
+
 for t in time:
     network.advance(t)
     temperature.append(reactor.T)
     data.append([t, reactor.T])
+
 end_time = clock.time()
 print(f"Elapsed time: {end_time - start_time:.6f} seconds")
 data = np.array(data)
@@ -70,8 +81,7 @@ d = np.loadtxt("yass.txt")
 plt.plot(d[:, 0]*1000000.0, d[:, 1],'-d',color='orange', label = "ChemGen YASS", markevery=int(len(d[:, 0])/10))
 
 plt.legend()
-plt.xlabel("Time ($\mu$s)")
-plt.ylabel("Temperature (K)")
-plt.title("Temperature Evolution in Homogeneous Reactor")
+plt.xlabel("Time ($\mu$s)",fontsize=16)
+plt.ylabel("Temperature (K)",fontsize=16)
 plt.savefig("implicit_time.png",dpi=300)
 plt.show()

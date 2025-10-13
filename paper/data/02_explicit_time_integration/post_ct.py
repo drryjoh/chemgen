@@ -59,9 +59,8 @@ ax_temp.plot(d[:, 0]*1000.0, d[:, 1], '--k', label="ChemGen")
 np.save("c_T.npy", data[:, 1])
 np.save("c_time.npy", data[:, 0])
 ax_temp.set_xlim([0, 0.2])
-ax_temp.set_xlabel("Time ($\mu$s)")
-ax_temp.set_ylabel("Temperature (K)")
-ax_temp.set_title("Temperature Evolution")
+ax_temp.set_xlabel("Time ($\mu$s)", fontsize=16)
+ax_temp.set_ylabel("Temperature (K)", fontsize=16)
 ax_temp.legend()
 
 # ---- Plot Species Concentrations (Right) ----
@@ -73,8 +72,8 @@ for k, species in enumerate(["H2", "O2", "H2O"]):
                     color=plt.cm.tab10(color_idx[k]), label=species)
     ax_species.plot(d[:, 0]*1000.0, d[:,2 + idx], '--k')
 
-ax_species.set_xlabel("Time ($\mu$s)")
-ax_species.set_ylabel('Major Species Concentration [kmol/m³]')
+ax_species.set_xlabel("Time ($\mu$s)", fontsize=20)
+ax_species.set_ylabel('Major Species Concentration [kmol/m³]', fontsize=16)
 ax_species.set_xlim([0, 0.125])
 
 # Minor species on right y-axis
@@ -86,15 +85,13 @@ for k, (multiplier, species) in enumerate(zip(multipliers, ["H2O2", "OH", "H", "
              color=plt.cm.tab10(color_idx[3 + k]), linestyle='-', label=f"{species} $\\times$ {multiplier}")
     ax2.plot(d[:, 0]*1000.0, multiplier * d[:, 2+idx], '--k')
 
-ax2.set_ylabel('Minor Species Concentration [kmol/m³]')
+ax2.set_ylabel('Minor Species Concentration [kmol/m³]', fontsize=16)
 ax2.set_xlim([0, 0.125])
 
 # Combine legends
 lines1, labels1 = ax_species.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
-ax_species.legend(lines1 + lines2, labels1 + labels2, loc='upper right', ncol=2, fontsize=8)
-
-ax_species.set_title('Species Concentrations')
+ax_species.legend(lines1 + lines2, labels1 + labels2, loc='upper right', ncol=2, fontsize=10)
 
 # Final layout adjustments
 plt.tight_layout()

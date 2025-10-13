@@ -274,6 +274,30 @@ dpressure_dspecies({species_parameter} species,
 }}
 
 {device_option}
+{scalar}
+specific_heat_constant_volume_volume_specific({species_parameter} species,
+                                              {scalar_parameter} temperature) {const_option}
+{{
+    return {sum}(species * molecular_weights() * species_specific_heat_constant_volume_mass_specific(temperature));
+}}
+
+{device_option}
+{scalar}
+dspecific_heat_constant_volume_volume_specific_dtemperature({species_parameter} species,
+                                                            {scalar_parameter} temperature) {const_option}
+{{
+    return {sum}(species * molecular_weights() * dspecies_specific_heat_constant_volume_mass_specific_dtemperature(temperature));
+}}
+
+{device_option}
+{species_function}
+dtemperature_dspecies({species_parameter} species,
+                      {scalar_parameter} temperature) {const_option}
+{{
+    return  {scale}(-inv_gen(specific_heat_constant_volume_volume_specific(species, temperature)), molecular_weights() * species_internal_energy_mass_specific(temperature));
+}}
+
+{device_option}
 {scalar} 
 internal_energy_volume_specific({species_parameter} species, 
                                 {scalar_parameter} temperature) {const_option} 
@@ -289,6 +313,9 @@ dinternal_energy_volume_specific_dtemperature({species_parameter} species,
     return  {sum}(species * molecular_weights() * species_internal_energy_mass_specific(dtemperature_energy_monomial_dtemperature(temperature)));
 }}
 
+#define {internal_energy_or_temperature}
+
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
 {device_option}
 {scalar_function} 
 temperature({scalar_parameter} internal_energy, {species_parameter} species, {index} max_iterations) {const_option} 
@@ -309,7 +336,7 @@ temperature({scalar_parameter} internal_energy, {species_parameter} species, {in
 temperature({scalar_parameter} internal_energy, {species_parameter} species) {const_option} 
 {{
     {scalar} temperature_guess  = {scalar_cast}(500);
-    {index} max_iterations = 3;
+    {index} max_iterations = 5;
     for({index} i=0; i < max_iterations; ++i)
     {{
         temperature_guess = 
@@ -319,3 +346,22 @@ temperature({scalar_parameter} internal_energy, {species_parameter} species) {co
     
     return temperature_guess;
 }}
+
+#else
+
+{device_option}
+{scalar_function}
+temperature({scalar_parameter} temperature, {species_parameter} species) {const_option}
+{{
+    return temperature;
+}}
+
+{device_option}
+{species_function}
+dspecific_heat_constant_volume_volume_specific_dspecies({species_parameter} species, {scalar_parameter} temperature) {const_option}
+{{
+    return molecular_weights() * species_specific_heat_constant_volume_mass_specific(temperature);
+}}
+#endif
+
+#undef {internal_energy_or_temperature}

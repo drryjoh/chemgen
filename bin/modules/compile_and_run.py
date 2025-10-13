@@ -25,33 +25,38 @@ def run_command(command):
 
 def compile_cpp_code(build_dir, source_files, config):
     """Compile C++ code using g++ or other compilers."""
+    print("Experimental, see issue: https://github.com/drryjoh/chemgen/issues/31")
     os.makedirs(build_dir, exist_ok=True)
     os.makedirs(build_dir/"bin", exist_ok=True)
     build_option = ''
     if config['build'].get('chemgen_input'):
         build_option = config['build'].get('chemgen_input')
-        print(f"building with opentions: {build_option}")
+        print(f"building with options: {build_option}")
+    else:
+        print("no build input specified defaulting to O3")
+        build_option = "-O3"
+
     # Command to compile C++ code
-    compile_command = f"clang++ -std=c++17 {build_option} -O3 -o {build_dir}/bin/chemgen {' '.join(source_files)}"
+    compile_command = f"clang++ -std=c++17 {build_option} -o {build_dir}/bin/chemgen {' '.join(source_files)}"
     print(compile_command)
     print(f"Compiling C++ files: {source_files}")
     run_command(compile_command)
 
-def run_tests(build_dir):
+def run(build_dir):
     """Run tests on the compiled binary."""
     test_command = f"./{build_dir}/bin/chemgen"
     print("Running tests...")
     run_command(test_command)
 
-def compile(test_file, configuration_file, destination_folder, third_parties, compile = True):
-    # Define directories and C++ source files
+def compile_and_run(test_file, configuration_file, destination_folder, third_parties, cmake, compile, run_tests):
     build_directory = destination_folder.parent
     cpp_source_files = ['src'+'/'+test_file]
-    # generate cmake
-    
-    generate_cmake_file(configuration_file, build_directory, third_parties)
-    # Compile the C++ code
+
+    if cmake or compile:
+        generate_cmake_file(configuration_file, build_directory, third_parties)
+
     if compile:
         compile_cpp_code(build_directory, cpp_source_files, configuration_file)
-    # Run the tests
-        run_tests(build_directory)
+
+    if run_tests:
+        run(build_directory)

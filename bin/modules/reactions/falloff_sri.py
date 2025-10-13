@@ -30,9 +30,9 @@ def dsri_text_dlog_temperature(i, A_low, B_low, E_low, A_high, B_high, E_high, a
                                      a = a, b = b, c = c, d = d, e = e,
                                      mixture_concentration = mixture_concentration)
 
-def dsri_text_dmixture_concentration(i, A_low, B_low, E_low, A_high, B_high, E_high, a, b, c, d, e, efficiencies, species_names, configuration):
+def dsri_text_dmixture_concentration(reaction, i, A_low, B_low, E_low, A_high, B_high, E_high, a, b, c, d, e, efficiencies, species_names, configuration):
     mixture_concentration = get_mixture_concentration(efficiencies, species_names, configuration)
-    dmixture_concentration_dspecies = get_mixture_concentration_derivatives(efficiencies, species_names, configuration)
+    dmixture_concentration_dspecies = get_mixture_concentration_derivatives(reaction, efficiencies, species_names, configuration)
     return_text = ("""{device_option}\n{species_function}\ndcall_forward_reaction_{i}_dspecies({species_parameter} species, {scalar_parameter} temperature, {scalar_parameter} log_temperature, {scalar_parameter} mixture_concentration) {const_option} 
     {{ 
         {species} dmixture_concentration_dspecies = {{{dmixture_concentration_dspecies}}};
@@ -89,7 +89,7 @@ def create_reaction_functions_and_calls_sri(reaction_rates, reaction_rates_deriv
                                                 configuration))
     else:
         reaction_rates_derivatives.append(f'//dcall_forward_reaction_{reaction_index} temperature derivative unused')
-    reaction_rates_derivatives.append(dsri_text_dmixture_concentration(reaction_index,
+    reaction_rates_derivatives.append(dsri_text_dmixture_concentration(reaction, reaction_index,
                                                reaction_rate.low_rate.pre_exponential_factor, reaction_rate.low_rate.temperature_exponent, reaction_rate.low_rate.activation_energy,
                                                reaction_rate.high_rate.pre_exponential_factor, reaction_rate.high_rate.temperature_exponent, reaction_rate.high_rate.activation_energy,
                                                a, b, c, d, e,

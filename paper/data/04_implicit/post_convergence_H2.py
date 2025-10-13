@@ -43,7 +43,7 @@ for k, data_name in enumerate(["sdirk4","rosenbroc","yass"]):
     shift =0.30
 
 
-    plt.semilogy(refinement_levels[::-1], CL2/scales[k], 's-', color=colors[k], label=f'$L_{{2,h}}(C)$ for {titles[k]}', mfc="white")
+    plt.semilogy(refinement_levels[::-1], CL2/scales[k], 's-', color=colors[k], label=f'$\epsilon_{{h}}$ for {titles[k]}', mfc="white")
     if data_name=="yass":
         plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift) * (0.5)**(refinement_levels - 1)/scales[k], '--', color=colors[k], label=f'1st-order reference')
     elif data_name=="sdirk4":
@@ -51,13 +51,16 @@ for k, data_name in enumerate(["sdirk4","rosenbroc","yass"]):
     else:
         plt.semilogy(refinement_levels[::-1], (CL2[0]-CL2[0] * shift)  * (0.25)**(refinement_levels - 1)/scales[k], '--', color=colors[k], label=f'2nd-order reference')
     # Formatting
-    plt.xlabel("$h$")
-    plt.ylabel(f"$L_{{2,h}}(C)$")
+    plt.xlabel("$h$", fontsize=16)
+    plt.ylabel("$\epsilon_{h}$", fontsize=16)
     #plt.title("Convergence of Temperature and Species")
     #plt.xticks(range(1, len(CL2) + 1))  # <- only show 1, 2, 3, 4, ...
     refinement_levels = np.arange(len(CL2))  # 0, 1, 2, 3, ...
     tick_labels = [r"$\Delta t$" if i == 0 else fr"$\Delta t/{2**i}$" for i in refinement_levels]
     plt.xticks(refinement_levels + 1, tick_labels[::-1])  # Shift +1 if your levels are labeled 1, 2, 3, 4
+    ax = plt.gca()
+    for line in ax.lines:
+        line.set_linewidth(2.0)  # set to desired linewidth
 
 
     # Only major log grid lines on y-axis

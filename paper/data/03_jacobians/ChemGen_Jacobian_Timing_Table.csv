@@ -1,0 +1,16 @@
+Mechanism,Setting,Finite Difference Time (ms),Analytical Jacobian Time (ms),Ratio
+OConnaire,Ignoring Temperature Derivative,0.432668,0.0963961,4.48844
+OConnaire,Temperature Equation,0.909597,0.439192,2.07107
+OConnaire,Internal Energy,1.14993,0.268624,4.28083
+burke,Ignoring Temperature Derivative,0.790775,0.144587,5.46919
+burke,Temperature Equation,1.15275,0.425682,2.70801
+burke,Internal Energy,1.66339,0.276329,6.01961
+gri30,Ignoring Temperature Derivative,23.8638,1.85144,12.8893
+gri30,Temperature Equation,49.2026,4.99572,9.84895
+gri30,Internal Energy,39.7511,3.62327,10.971
+FFCM2_model,Ignoring Temperature Derivative,146.374,8.57118,17.0775
+FFCM2_model,Temperature Equation,294.264,18.9842,15.5005
+FFCM2_model,Internal Energy,199.245,14.4331,13.8047
+sandiego,Ignoring Temperature Derivative,21.5169,1.4558,14.7801
+sandiego,Temperature Equation,44.2069,4.31352,10.2484
+sandiego,Internal Energy,39.4795,3.00863,13.1221

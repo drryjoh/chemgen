@@ -5,37 +5,36 @@ from .headers import *
 import cantera as ct
 from .cmake import *
 
+def get_random_TPX(gas):
+    # Define species list
+    species_list = gas.species_names
+    species_array =  np.random.uniform(0, 1, len(gas.species_names))
+    species_array /= species_array.sum()
+
+    return (1000 + 1500 * np.random.random(), 10132.5 + 101325.0 * 10.9 * np.random.random(), species_array)
+
 def get_test_conditions(chemical_mechanism):
-    config_path = Path('test_configuration.yaml')
-    if "simple_tb" in chemical_mechanism:
-        print("**simple TB**")
-        test_file = 'test_tb_configuration.yaml'
-    else:
-        test_file = 'test_configuration.yaml'
+    test_file = "test_configuration.yaml"
     config_path = Path(test_file)
 
     if config_path.exists():
-        with config_path.open('r') as file:
+        with config_path.open("r") as file:
             configuration = yaml.safe_load(file)
     else:
-        current_dir = Path(__file__).resolve().parent
-        configuration_filename = current_dir.parent.parent/ 'test/{0}'.format(test_file)
-        print("**Test file test_configuration.yaml not found using /test/test_configuration.yaml **")
-        with open(configuration_filename, 'r') as file:
-            configuration = yaml.safe_load(file)
+        return [0, 0, 0, True]
     
     # Extract values from the parsed YAML data
-    test_conditions = configuration.get('test_conditions', {})
+    test_conditions = configuration.get("test_conditions", {})
 
-    # Handle the optional 'random' key
-    random = test_conditions.get('random', None)  # Default to None if 'random' is not present
+    # Handle the optional "random" key
+    random = test_conditions.get("random", None)  # Default to None if "random" is not present
     if random:
         return [0, 0, 0, random]
 
     # Extract other required values
-    temperature = test_conditions['temperature']
-    pressure = test_conditions['pressure']
-    species_list = test_conditions['species']
+    temperature = test_conditions["temperature"]
+    pressure = test_conditions["pressure"]
+    species_list = test_conditions["species"]
 
     # Print out the parsed values
     print("Test configuration:")
@@ -44,13 +43,13 @@ def get_test_conditions(chemical_mechanism):
     print("Species:")
 
     for species in species_list:
-        print(f"  - Name: {species['name']}, MoleFraction: {species['MoleFraction']}")
-    species_string  = ' '.join([f"{species['name']}:{species['MoleFraction']} " for species in species_list])
+        print(f"  - Name: {species['name']}, MoleFraction: {species['MoleFraction']}") #https://github.com/drryjoh/chemgen/issues/32
+    species_string  = " ".join([f"{species['name']}:{species['MoleFraction']} " for species in species_list]) #https://github.com/drryjoh/chemgen/issues/32
     return [temperature, pressure, species_string, False]
 
 def create_test(gas, chemical_mechanism, headers, test_file_name, configuration, destination_folder, n_points = 0):
     test_file = destination_folder/test_file_name
-    with open(test_file, 'w') as file:
+    with open(test_file, "w") as file:
         file.write("#include <cmath>\n")
         file.write("#include <algorithm>\n")
         file.write("#include <array>\n")
@@ -77,7 +76,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
             gas.TPX = temperature, pressure, species_string
         concentrations = gas.concentrations
 
-        concentration_test = '{species} species  = {{{array}}};'.format(array = ','.join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
+        concentration_test = "{species} species  = {{{array}}};".format(array = ",".join(["{scalar_cast}({c})".format(c=c, **vars(configuration)) for c in concentrations]),**vars(configuration)) 
         enthalpies = gas.standard_enthalpies_RT * gas.T * ct.gas_constant/gas.molecular_weights
         entropies = gas.standard_entropies_R * ct.gas_constant/gas.molecular_weights
         energies = gas.standard_int_energies_RT * gas.T * ct.gas_constant/gas.molecular_weights
@@ -102,7 +101,7 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
     std::cout << "*** ChemGen ***" <<std::endl;
     {concentration_test}
     {scalar} temperature_ =  {temperature};
-    {species} result = source(species, temperature_);
+    {species} result = source_species(species, temperature_);
 
 
     {scalar} pressure_return = pressure(species, temperature_);
@@ -153,12 +152,12 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr) {{
         file.write(content.format(**vars(configuration), 
         concentration_test = concentration_test, 
         temperature = temperature, 
-        cantera_net_production_rates = ' '.join([f"{npr}" for npr in gas.net_production_rates]),
-        cantera_species_cp = ' '.join([f"{scp}" for scp in gas.standard_cp_R * ct.gas_constant / gas.molecular_weights]),
-        cantera_species_enthalpy = ' '.join([f"{enth}" for enth in enthalpies]),
-        cantera_species_entropy = ' '.join([f"{ent}" for ent in entropies]),
-        cantera_species_energies = ' '.join([f"{energy}" for energy in energies]),
-        cantera_species_gibbs = ' '.join([f"{gibb}" for gibb in gibbs]),
-        cantera_gibbs_reactions = ' '.join([f"{gibb}" for gibb in gibbs_reactions]),
-        equilibrium_constants = ' '.join([f"{eqcon}" for eqcon in equilibrium_constants]),
+        cantera_net_production_rates = " ".join([f"{npr}" for npr in gas.net_production_rates]),
+        cantera_species_cp = " ".join([f"{scp}" for scp in gas.standard_cp_R * ct.gas_constant / gas.molecular_weights]),
+        cantera_species_enthalpy = " ".join([f"{enth}" for enth in enthalpies]),
+        cantera_species_entropy = " ".join([f"{ent}" for ent in entropies]),
+        cantera_species_energies = " ".join([f"{energy}" for energy in energies]),
+        cantera_species_gibbs = " ".join([f"{gibb}" for gibb in gibbs]),
+        cantera_gibbs_reactions = " ".join([f"{gibb}" for gibb in gibbs_reactions]),
+        equilibrium_constants = " ".join([f"{eqcon}" for eqcon in equilibrium_constants]),
         cantera_int_energy = gas.int_energy_mass * gas.density))

@@ -66,7 +66,7 @@ for r in range(n_refinements):
     C = C_in.copy()
     
     for k in range(n_steps):
-        y = cg.sdirk4(C, T, dt, 1e-14, 10)
+        y = cg.sdirk4(C, T, dt, 1e-14, 10, 1e-8, 1e-4)
         C = y[1:]
         T = cg.temperature_from_internal_energy(C, y[0])
     
@@ -94,7 +94,7 @@ for r in range(n_refinements):
     C = C_in.copy()
     
     for k in range(n_steps):
-        y = cg.rosenbrock(C, T, dt, 1e-10, 10)
+        y = cg.rosenbroc(C, T, dt, 1e-10, 10, 1e-8, 1e-4)
         C = y[1:]
         T = cg.temperature_from_internal_energy(C, y[0])
     
@@ -124,7 +124,7 @@ for r in range(n_refinements):
     C = C_in.copy()
     
     for k in range(n_steps):
-        y = cg.yass(C, T, dt, 0.1, 10, dt_min)
+        y = cg.yass(C, T, dt, 0.1, dt_min, 10, 1e-8, 1e-4)
         C = y[1:]
         T = cg.temperature_from_internal_energy(C, y[0])
     

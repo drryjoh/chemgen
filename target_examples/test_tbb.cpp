@@ -4,24 +4,30 @@
 #include <tbb/tbb.h>
 
 // Function to simulate work (replace these with your actual functions)
-void function_work(int id) {
+void function_work(int id)
+{
     // Simulate some computation
     for (volatile int i = 0; i < 1000000 * (id + 1); ++i);
 }
 
-void run_in_serial(const std::vector<void(*)(int)>& functions) {
-    for (int i = 0; i < functions.size(); ++i) {
+void run_in_serial(const std::vector<void(*)(int)>& functions)
+{
+    for (int i = 0; i < functions.size(); ++i)
+    {
         functions[i](i);
     }
 }
 
-void run_in_parallel(const std::vector<void(*)(int)>& functions) {
-    tbb::parallel_for(0, static_cast<int>(functions.size()), [&](int i) {
+void run_in_parallel(const std::vector<void(*)(int)>& functions)
+{
+    tbb::parallel_for(0, static_cast<int>(functions.size()), [&](int i)
+    {
         functions[i](i);
     });
 }
 
-int main() {
+int main()
+{
     const int num_functions = 50;
 
     // Create a vector of 50 function pointers (could be different functions if needed)
