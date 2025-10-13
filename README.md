@@ -1,7 +1,7 @@
 
 <h3 align="center">ChemGen</h3>
 <p align="center">
-  <img src="./chemgen_symbol.png" alt="ChemGen Symbol" width="10%">
+  <img src="./chemgen_symbol.png" alt="ChemGen Symbol" width="30%">
 </p>
 
 ---
