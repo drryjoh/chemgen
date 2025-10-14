@@ -22,11 +22,14 @@ decorators:
   string: "std::string"
 
   species_typedef: "std::array<double, n_species>"
-  species: "Species"
-  species_function: "Species"
-  species_cast: "Species"
-  species_parameter: "const Species&"
+  species: "SpeciesCG"
+  species_function: "SpeciesCG"
+  species_cast: "SpeciesCG"
+  species_parameter: "const SpeciesCG&"
   species_element: "species[{i}]"
+
+
+
   
   arbitrary_element: "{name}[{{i}}]"
 
@@ -44,13 +47,13 @@ decorators:
   chemical_state_parameter: "const ChemicalState&"
   chemical_state_element: "chemical_state[{i}]"
 
+  
   jacobian_typedef: "std::array<ChemicalState, n_species + 1>"
-  jacobian: "SpeciesJacobian"
-  jacobian_function: "SpeciesJacobian"
-  jacobian_cast: "SpeciesJacobian"
-  jacobian_parameter: "const SpeciesJacobian&"
+  jacobian: "SpeciesCGJacobian"
+  jacobian_function: "SpeciesCGJacobian"
+  jacobian_cast: "SpeciesCGJacobian"
+  jacobian_parameter: "const SpeciesCGJacobian&"
   jacobian_end: "n_variables"
-
   source_element: "net_production_rates[{i}]"
   const_option: ""
   constexpr: "constexpr"
@@ -72,10 +75,10 @@ decorators:
   sqrt: "sqrt_gen"
 
 build:
-  chemgen_smp: None
-  chemgen_input: "-O3 -I/Users/eching/homebrew/opt/yaml-cpp/include -L/Users/eching/homebrew/opt/yaml-cpp/lib -lyaml-cpp"
+  chemgen_smp: None 
+  chemgen_input: "-O3 -lyaml-cpp"
 
 solver:
   chemistry_solver: all
-  linear_solver: gmres
+  linear_solver: gmres 
   preconditioner: jacobi 

@@ -39,7 +39,7 @@ and preconditioners (see Figure 1 right).
 
 The various components of ChemGen are verified by demonstrating agreement with
 Cantera and/or theoretical convergence rates, as reported in our arXiv manuscript
-currently submitted to <em>Computer Physics Communications</em>.
+currently submitted to <em>Computer Physics Communications</em> [found here](https://arxiv.org/abs/2510.10005).
 
 As an example of ChemGen’s capabilities, we have successfully integrated ChemGen
 into OpenFOAM (see Figure 2) and achieved a speedup of approximately four times

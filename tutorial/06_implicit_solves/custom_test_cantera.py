@@ -86,7 +86,7 @@ auto read_index_or_default = [](const YAML::Node& node, const std::string& key, 
     return default_value;
 }};
 
-Species read_species_from_yaml(const std::string& filename, 
+{species_function} read_species_from_yaml(const std::string& filename, 
                                {scalar}& temperature, 
                                {scalar}& pressure, 
                                {scalar}& dt_be,
@@ -95,11 +95,14 @@ Species read_species_from_yaml(const std::string& filename,
                                {scalar}& dt_ros,
                                {scalar}& dt_yass,
                                {scalar}& dt_rk4,
+                               {scalar}& dt_cantera,
                                {scalar}& end_time,
-                               {index}& max_iter_sdirk4) 
+                               {index}& max_iter_sdirk4,
+                               std::map<std::string, double>& X_input) 
 {{
     YAML::Node config = YAML::LoadFile(filename);
     YAML::Node test_conditions = config["test_conditions"];
+
     temperature = test_conditions["temperature"].as<{scalar}>();
     pressure = test_conditions["pressure"].as<{scalar}>();
     dt_be     = read_scalar_or_default(test_conditions, "dt_be",     5e-8);
@@ -108,10 +111,11 @@ Species read_species_from_yaml(const std::string& filename,
     dt_sdirk4 = read_scalar_or_default(test_conditions, "dt_sdirk4", 2e-6);
     dt_rk4    = read_scalar_or_default(test_conditions, "dt_rk4",    1e-8);
     dt_yass    = read_scalar_or_default(test_conditions, "dt_yass",  1e-8);
+    dt_cantera    = read_scalar_or_default(test_conditions, "dt_cantera",  1e-7);
     end_time  = read_scalar_or_default(test_conditions, "end_time",  1e-5);
     max_iter_sdirk4  = read_index_or_default(test_conditions, "max_iter_sdirk4",  5);
 
-    Species species = {{}}; // Zero-initialize the entire species vector
+    {species} species = {{}}; // Zero-initialize the entire species vector
 
     YAML::Node species_reader;
     {index} molefractions  = 0;
@@ -138,6 +142,7 @@ Species read_species_from_yaml(const std::string& filename,
     {{
         std::string name = node["name"].as<std::string>();
         {scalar} value = node["value"].as<{scalar}>();
+        X_input[name] = value;
 
         {index} index = species_index_gen(name.c_str());
         if (index >= 0 && index < n_species) 
@@ -167,6 +172,52 @@ Species read_species_from_yaml(const std::string& filename,
     return concentrations;
 }}
 
+#include "cantera/zerodim.h"
+#include "cantera/numerics/Integrator.h"
+
+using namespace Cantera;
+
+void run_cantera_reactornet(double T0,
+                            double P0,
+                            const std::map<std::string, double>& X_input,
+                            double end_time,
+                            double dt,
+                            const std::string& output_filename)
+{{
+
+    // create an ideal gas mixture that corresponds to OH submech from GRI-Mech 3.0
+    auto sol = newSolution("{chemical_mechanism}", "test", "none");
+    auto gas = sol->thermo();
+
+    // set the state
+    gas->setState_TPX(T0,  P0, X_input);
+    int nsp = gas->nSpecies();
+
+    auto r = newReactorBase("IdealGasReactor", sol);
+
+    
+    int nsteps = end_time/dt; // number of intervals
+
+
+    ReactorNet sim(r);
+
+    // main loop
+    auto cantera_start = std::chrono::high_resolution_clock::now();
+    
+    for (int i = 1; i <= nsteps; i++) 
+    {{
+        double tm = i*dt;
+        sim.advance(tm);
+        double T = r->temperature();
+        std::cout << "time = " << tm << " s " << T << " K"<<std::endl;
+    }}
+    auto cantera_end = std::chrono::high_resolution_clock::now();
+
+    std::chrono::duration<{scalar}> cantera_duration = cantera_end - cantera_start;
+    std::cout << "[Cantera] Time elapsed: " << cantera_duration.count() << " seconds" << std::endl;
+
+}}
+
 
 {index}
 main()
@@ -187,14 +238,20 @@ main()
     {scalar} dt_yass;
     {scalar} dt_sdirk4;
     {scalar} dt_rk4;
+    {scalar} dt_cantera;
     {scalar} end_time;
     {index} max_iter_sdirk4;
-
-    Species species = 
+    
+    std::map<std::string, double> X_input;
+    
+    {species} species = 
     read_species_from_yaml("test.yaml", temperature_, pressure_, 
-                           dt_be, dt_sdirk2, dt_sdirk4, dt_ros, dt_yass, dt_rk4, 
-                           end_time, max_iter_sdirk4);
+                           dt_be, dt_sdirk2, dt_sdirk4, dt_ros, dt_yass, dt_rk4, dt_cantera,
+                           end_time, max_iter_sdirk4, X_input);
+
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
+
+    run_cantera_reactornet(temperature_, pressure_, X_input, end_time, dt_cantera, "cantera_out");
 
     {chemical_state} y_init = set_chemical_state(int_energy, species);
     {chemical_state} y = y_init;
@@ -328,4 +385,5 @@ main()
             """
         file.write(content.format(**vars(configuration), 
         concentration_test = concentration_test, 
-        temperature = temperature))
+        temperature = temperature,
+        chemical_mechanism = chemical_mechanism))
