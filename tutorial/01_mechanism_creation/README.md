@@ -3,8 +3,8 @@
 
 ## Table of Contents
 
-- [Add ChemGen to Path](#Add ChemGen to path)
-- [Run ChemGen](#Run ChemGen)
+- [Add ChemGen to Path](#Add_ChemGen_to_path)
+- [Run ChemGen](#Run_ChemGen)
 
 ## Add ChemGen to Path 
 

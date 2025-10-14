@@ -1,9 +1,11 @@
 # ChemGen Tutorial
 
 ## Table of Contents
-- [Description](#description)
-- [Preparation](#preparation)
-- [Homogeneous Reactor Simulation](#Homogeneous-Reactor-Simulation)
+- [ChemGen Tutorial](#chemgen-tutorial)
+  - [Table of Contents](#table-of-contents)
+  - [Description](#description)
+  - [Preparation](#preparation)
+  - [Homogeneous Reactor Simulation](#homogeneous-reactor-simulation)
 
 ## Description
 
@@ -32,9 +34,12 @@ ChemGen provides a `--custom-test` option that allows you to override the defaul
 ## Homogeneous Reactor Simulation
 
 To execute this tutorial, use the following command:
-
 ```bash
-chemgen.py ffcm2_h2.yaml . --custom-test custom_test.py --compile >> chem_out.txt
+chemgen.py ffcm2_h2.yaml . --custom-test custom_test.py --compile --run | tail -n +11 >> chem_out.txt
+```
+```bash
+chemgen.py ffcm2_h2.yaml . --custom-test custom_test.py --compile
+./bin/chemgen > chem_out.txt
 ```
 
 A [configuration](configuration.yaml) is provided in this tutorial with an extra field

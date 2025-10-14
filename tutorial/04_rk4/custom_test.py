@@ -75,7 +75,6 @@ main()
     {scalar} int_energy = internal_energy_volume_specific(species, temperature_);
     {chemical_state} y = set_chemical_state(int_energy, species);
     {scalar} dt = 1e-8;
-    {scalar} simple = 1;
     {scalar} t = 0;
 
     std::cout <<t<<" "<<temperature(y) <<" "<< get_species(y) << std::endl;

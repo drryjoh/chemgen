@@ -27,9 +27,13 @@ gas.TPX = (
 reactor = ct.IdealGasReactor(gas)
 network = ct.ReactorNet([reactor])
 
+# Load chemgen
+d = np.loadtxt("chem_out.txt")
+
+
 # Define simulation time (in seconds)
-time_end = 200000 * 1e-9  # Convert ns to seconds
-n_steps = 500  # Number of time steps
+time_end = d[-1,0]  # Convert ns to seconds
+n_steps = len(d[:,0]) * 10  # Number of time steps
 time = np.linspace(0, time_end, n_steps)
 
 temperature = []
@@ -40,10 +44,7 @@ for t in time:
     temperature.append(reactor.T)
     data.append([t, reactor.T])
 data = np.array(data)
-# Save results to file
 
-# Plot results
-d = np.loadtxt("chem_out.txt")
 plt.plot(data[:, 0]*1000.0, data[:, 1],'-r', label = "Cantera")
 plt.plot(d[:, 0]*1000.0, d[:, 1],'--k', label = "ChemGen")
 plt.legend()

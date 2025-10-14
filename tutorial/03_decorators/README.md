@@ -3,9 +3,27 @@
 
 ## Table of Contents
 
-- [The concept of decorators](#The-concept-of-deocrators)
-- [Single point vs Double precision](#Precision)
-- [Other Uses](#Other-Uses)
+
+
+- [Chemgen](#chemgen)
+  - [Table of Contents](#table-of-contents)
+  - [Preparation](#preparation)
+  - [The concept of decorators](#the-concept-of-decorators)
+  - [Precision](#precision)
+  - [Other uses](#other-uses)
+    - [Device functions](#device-functions)
+
+## Preparation
+
+For simplicity, we'll shorten references to ChemGen's paths. To access ChemGen in this directory, run the following command:
+
+```bash
+export PATH="$(cd ../../bin && pwd):$PATH"
+```
+
+Now, ChemGen can be executed from any directory by simply calling `chemgen.py`. Ensure that all [prerequisites are installed](../../README.md).
+
+ChemGen provides a `--custom-test` option that allows you to override the default `write_test` function to create a custom `chemgen.cpp`. This tutorial includes a `custom_test.py` file for that purpose.
 
 ## The concept of decorators
 
@@ -47,13 +65,13 @@ float my_function(const float& a) const {return a*a;}
 throughout the code.
 
 ## Precision
-Using the above example we have provided a [configuration_float](configuration_float.yaml) [configuration_double](configuration_double.yaml). By performing the following
+Using the above example we have provided a [configuration_float](configuration_float.yaml) and [configuration_double](configuration_double.yaml) file. By performing the following
 
 ```
 cp configuration_float.yaml configuration.yaml
-chemgen.py one_reaction . --custom-test custom_test.py --compile
+chemgen.py one_reaction . --custom-test custom_test.py --compile --run
 cp configuration_double.yaml configuration.yaml
-chemgen.py one_reaction . --custom-test custom_test.py --compile
+chemgen.py one_reaction . --custom-test custom_test.py --compile --run
 ```
 
 The resulting output demonstrating the difference in precision is found
@@ -119,6 +137,5 @@ using Species = Kokkos::View<double[n_species]>;
 KOKKOS_INLINE_FUNCTION
 double call_forward_reaction_0(double temperature, double log_temperature)  { return arrhenius(double(103990000.00000003), double(0.0), double(64057040.0), temperature, log_temperature);}
 ```
+
 Which definitely requires more nuances, but can be used to enable Kokkos
-
-

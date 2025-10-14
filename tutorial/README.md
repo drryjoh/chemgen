@@ -16,19 +16,19 @@
 
 These tutorials were created to give a general understanding of the code mechanics in ChemGen. 
 
-1) [Mechanism Creation](./mechanism_creation/README.md)
+1) [Mechanism Creation](./01_mechanism_creation/README.md)
 
 This tutorial generates source code using a the most basic ChemGen features. The mechanism is an arbitrary single reaction and several species so that the generated source code is readable.
 
-2) [ChemGen Error Assessment](./chemgen_error_assessment/README.md) 
+2) [ChemGen Error Assessment](./02_hemgen_error_assessment/README.md) 
 
 This tutorial creates a custom chemgen.cpp function that tests random chemical states and generates L2-norms for the specificied mechanism. We then plot their errors in various ways.
 
-3) [Mechansim Creation with Decorators](./decorators/README.md)
+3) [Mechansim Creation with Decorators](./03_decorators/README.md)
 
 This tutorial gives an overview of how ChemGen can be used to target difference C++ code using the decorators. Decorators can enable GPU device execuction via kokkos or simply change how variables are passed into functions. 
 
-4) [Homogeneous Reactor](./rk4/README.md)
+4) [Homogeneous Reactor](./04_rk4/README.md)
 
 This tutorial gives an overview of how ChemGen can be used to create a homogeneous reactor and used a built in Runge Kutta 4th order accurate time integrator to integrate the chemical soruce term.
 

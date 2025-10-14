@@ -1,0 +1,205 @@
+In file included from src/chemgen_pybind.cpp:17:
+src/falloff_troe.h:170:16: warning: unused variable 'dlog_Pr_dtemperature' [-Wunused-variable]
+  170 |         double dlog_Pr_dtemperature = double(0.0);
+      |                ^~~~~~~~~~~~~~~~~~~~
+src/falloff_troe.h:179:16: warning: unused variable 'dd_dtemperature' [-Wunused-variable]
+  179 |         double dd_dtemperature = double(0.0);
+      |                ^~~~~~~~~~~~~~~
+In file included from src/chemgen_pybind.cpp:18:
+src/falloff_lindemann.h:143:16: warning: unused variable 'Pr_inv_one_p_Pr' [-Wunused-variable]
+  143 |         double Pr_inv_one_p_Pr = multiply(Pr, inv_one_p_Pr);
+      |                ^~~~~~~~~~~~~~~
+In file included from src/chemgen_pybind.cpp:19:
+src/falloff_sri.h:80:11: warning: unused variable 'dinner_expr_dPr' [-Wunused-variable]
+   80 |    double dinner_expr_dPr = double(0.0);
+      |           ^~~~~~~~~~~~~~~
+In file included from src/chemgen_pybind.cpp:22:
+src/source.h:991:16: warning: variable 'dforward_reaction_0_dtemperature' set but not used [-Wunused-but-set-variable]
+  991 |         double dforward_reaction_0_dtemperature = dcall_forward_reaction_0_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:997:16: warning: unused variable 'rate_of_progress_0' [-Wunused-variable]
+  997 |         double rate_of_progress_0 = multiply(species[0] * species[3], forward_reaction_0) - multiply(species[2] * species[4], divide(forward_reaction_0, equilibrium_constant_0));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1036:16: warning: variable 'dforward_reaction_1_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1036 |         double dforward_reaction_1_dtemperature = dcall_forward_reaction_1_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1042:16: warning: unused variable 'rate_of_progress_1' [-Wunused-variable]
+ 1042 |         double rate_of_progress_1 = multiply(species[1] * species[2], forward_reaction_1) - multiply(species[0] * species[4], divide(forward_reaction_1, equilibrium_constant_1));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1081:16: warning: variable 'dforward_reaction_2_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1081 |         double dforward_reaction_2_dtemperature = dcall_forward_reaction_2_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1087:16: warning: unused variable 'rate_of_progress_2' [-Wunused-variable]
+ 1087 |         double rate_of_progress_2 = multiply(species[1] * species[2], forward_reaction_2) - multiply(species[0] * species[4], divide(forward_reaction_2, equilibrium_constant_2));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1126:16: warning: variable 'dforward_reaction_3_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1126 |         double dforward_reaction_3_dtemperature = dcall_forward_reaction_3_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1132:16: warning: unused variable 'rate_of_progress_3' [-Wunused-variable]
+ 1132 |         double rate_of_progress_3 = multiply(species[1] * species[4], forward_reaction_3) - multiply(species[0] * species[5], divide(forward_reaction_3, equilibrium_constant_3));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1171:16: warning: variable 'dforward_reaction_4_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1171 |         double dforward_reaction_4_dtemperature = dcall_forward_reaction_4_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1177:16: warning: unused variable 'rate_of_progress_4' [-Wunused-variable]
+ 1177 |         double rate_of_progress_4 = multiply(pow_gen2(species[4]), forward_reaction_4) - multiply(species[5] * species[2], divide(forward_reaction_4, equilibrium_constant_4));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1208:16: warning: variable 'dforward_reaction_5_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1208 |         double dforward_reaction_5_dtemperature = dcall_forward_reaction_5_dtemperature(species,temperature,log_temperature,mixture_concentration);
+      |                ^
+src/source.h:1216:16: warning: unused variable 'rate_of_progress_5' [-Wunused-variable]
+ 1216 |         double rate_of_progress_5 = multiply(species[1], forward_reaction_5) - multiply(pow_gen2(species[0]), divide(forward_reaction_5, equilibrium_constant_5));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1249:16: warning: variable 'dforward_reaction_6_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1249 |         double dforward_reaction_6_dtemperature = dcall_forward_reaction_6_dtemperature(species,temperature,log_temperature,mixture_concentration);
+      |                ^
+src/source.h:1257:16: warning: unused variable 'rate_of_progress_6' [-Wunused-variable]
+ 1257 |         double rate_of_progress_6 = multiply(pow_gen2(species[2]), forward_reaction_6) - multiply(species[3], divide(forward_reaction_6, equilibrium_constant_6));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1290:16: warning: variable 'dforward_reaction_7_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1290 |         double dforward_reaction_7_dtemperature = dcall_forward_reaction_7_dtemperature(species,temperature,log_temperature,mixture_concentration);
+      |                ^
+src/source.h:1298:16: warning: unused variable 'rate_of_progress_7' [-Wunused-variable]
+ 1298 |         double rate_of_progress_7 = multiply(species[0] * species[2], forward_reaction_7) - multiply(species[4], divide(forward_reaction_7, equilibrium_constant_7));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1338:16: warning: variable 'dforward_reaction_8_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1338 |         double dforward_reaction_8_dtemperature = dcall_forward_reaction_8_dtemperature(species,temperature,log_temperature,mixture_concentration);
+      |                ^
+src/source.h:1346:16: warning: unused variable 'rate_of_progress_8' [-Wunused-variable]
+ 1346 |         double rate_of_progress_8 = multiply(species[5], forward_reaction_8) - multiply(species[0] * species[4], divide(forward_reaction_8, equilibrium_constant_8));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1386:16: warning: variable 'dforward_reaction_9_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1386 |         double dforward_reaction_9_dtemperature = dcall_forward_reaction_9_dtemperature(species,temperature,log_temperature,species[5]);
+      |                ^
+src/source.h:1394:16: warning: unused variable 'rate_of_progress_9' [-Wunused-variable]
+ 1394 |         double rate_of_progress_9 = multiply(species[5], forward_reaction_9) - multiply(species[0] * species[4], divide(forward_reaction_9, equilibrium_constant_9));
+      |                ^~~~~~~~~~~~~~~~~~
+src/source.h:1434:16: warning: variable 'dforward_reaction_10_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1434 |         double dforward_reaction_10_dtemperature = dcall_forward_reaction_10_dtemperature(species,temperature,log_temperature,mixture_concentration);
+      |                ^
+src/source.h:1442:16: warning: unused variable 'rate_of_progress_10' [-Wunused-variable]
+ 1442 |         double rate_of_progress_10 = multiply(species[0] * species[3], forward_reaction_10) - multiply(species[6], divide(forward_reaction_10, equilibrium_constant_10));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1482:16: warning: variable 'dforward_reaction_11_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1482 |         double dforward_reaction_11_dtemperature = dcall_forward_reaction_11_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1488:16: warning: unused variable 'rate_of_progress_11' [-Wunused-variable]
+ 1488 |         double rate_of_progress_11 = multiply(species[0] * species[6], forward_reaction_11) - multiply(species[1] * species[3], divide(forward_reaction_11, equilibrium_constant_11));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1527:16: warning: variable 'dforward_reaction_12_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1527 |         double dforward_reaction_12_dtemperature = dcall_forward_reaction_12_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1533:16: warning: unused variable 'rate_of_progress_12' [-Wunused-variable]
+ 1533 |         double rate_of_progress_12 = multiply(species[0] * species[6], forward_reaction_12) - multiply(pow_gen2(species[4]), divide(forward_reaction_12, equilibrium_constant_12));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1564:16: warning: variable 'dforward_reaction_13_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1564 |         double dforward_reaction_13_dtemperature = dcall_forward_reaction_13_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1570:16: warning: unused variable 'rate_of_progress_13' [-Wunused-variable]
+ 1570 |         double rate_of_progress_13 = multiply(species[0] * species[6], forward_reaction_13) - multiply(species[5] * species[2], divide(forward_reaction_13, equilibrium_constant_13));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1609:16: warning: variable 'dforward_reaction_14_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1609 |         double dforward_reaction_14_dtemperature = dcall_forward_reaction_14_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1615:16: warning: unused variable 'rate_of_progress_14' [-Wunused-variable]
+ 1615 |         double rate_of_progress_14 = multiply(species[6] * species[2], forward_reaction_14) - multiply(species[3] * species[4], divide(forward_reaction_14, equilibrium_constant_14));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1654:16: warning: variable 'dforward_reaction_15_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1654 |         double dforward_reaction_15_dtemperature = dcall_forward_reaction_15_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1660:16: warning: unused variable 'rate_of_progress_15' [-Wunused-variable]
+ 1660 |         double rate_of_progress_15 = multiply(species[6] * species[4], forward_reaction_15) - multiply(species[5] * species[3], divide(forward_reaction_15, equilibrium_constant_15));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1699:16: warning: variable 'dforward_reaction_16_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1699 |         double dforward_reaction_16_dtemperature = dcall_forward_reaction_16_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1705:16: warning: unused variable 'rate_of_progress_16' [-Wunused-variable]
+ 1705 |         double rate_of_progress_16 = multiply(species[6] * species[4], forward_reaction_16) - multiply(species[5] * species[3], divide(forward_reaction_16, equilibrium_constant_16));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1744:16: warning: variable 'dforward_reaction_17_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1744 |         double dforward_reaction_17_dtemperature = dcall_forward_reaction_17_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1750:16: warning: unused variable 'rate_of_progress_17' [-Wunused-variable]
+ 1750 |         double rate_of_progress_17 = multiply(pow_gen2(species[6]), forward_reaction_17) - multiply(species[7] * species[3], divide(forward_reaction_17, equilibrium_constant_17));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1781:16: warning: variable 'dforward_reaction_18_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1781 |         double dforward_reaction_18_dtemperature = dcall_forward_reaction_18_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1787:16: warning: unused variable 'rate_of_progress_18' [-Wunused-variable]
+ 1787 |         double rate_of_progress_18 = multiply(pow_gen2(species[6]), forward_reaction_18) - multiply(species[7] * species[3], divide(forward_reaction_18, equilibrium_constant_18));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1818:16: warning: variable 'dforward_reaction_19_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1818 |         double dforward_reaction_19_dtemperature = dcall_forward_reaction_19_dtemperature(species,temperature,log_temperature,mixture_concentration);
+      |                ^
+src/source.h:1826:16: warning: unused variable 'rate_of_progress_19' [-Wunused-variable]
+ 1826 |         double rate_of_progress_19 = multiply(species[7], forward_reaction_19) - multiply(pow_gen2(species[4]), divide(forward_reaction_19, equilibrium_constant_19));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1859:16: warning: variable 'dforward_reaction_20_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1859 |         double dforward_reaction_20_dtemperature = dcall_forward_reaction_20_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1865:16: warning: unused variable 'rate_of_progress_20' [-Wunused-variable]
+ 1865 |         double rate_of_progress_20 = multiply(species[0] * species[7], forward_reaction_20) - multiply(species[5] * species[4], divide(forward_reaction_20, equilibrium_constant_20));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1904:16: warning: variable 'dforward_reaction_21_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1904 |         double dforward_reaction_21_dtemperature = dcall_forward_reaction_21_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1910:16: warning: unused variable 'rate_of_progress_21' [-Wunused-variable]
+ 1910 |         double rate_of_progress_21 = multiply(species[0] * species[7], forward_reaction_21) - multiply(species[1] * species[6], divide(forward_reaction_21, equilibrium_constant_21));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1949:16: warning: variable 'dforward_reaction_22_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1949 |         double dforward_reaction_22_dtemperature = dcall_forward_reaction_22_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:1955:16: warning: unused variable 'rate_of_progress_22' [-Wunused-variable]
+ 1955 |         double rate_of_progress_22 = multiply(species[7] * species[2], forward_reaction_22) - multiply(species[6] * species[4], divide(forward_reaction_22, equilibrium_constant_22));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:1994:16: warning: variable 'dforward_reaction_23_dtemperature' set but not used [-Wunused-but-set-variable]
+ 1994 |         double dforward_reaction_23_dtemperature = dcall_forward_reaction_23_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:2000:16: warning: unused variable 'rate_of_progress_23' [-Wunused-variable]
+ 2000 |         double rate_of_progress_23 = multiply(species[7] * species[4], forward_reaction_23) - multiply(species[5] * species[6], divide(forward_reaction_23, equilibrium_constant_23));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:2039:16: warning: variable 'dforward_reaction_24_dtemperature' set but not used [-Wunused-but-set-variable]
+ 2039 |         double dforward_reaction_24_dtemperature = dcall_forward_reaction_24_dtemperature(temperature,log_temperature);
+      |                ^
+src/source.h:2045:16: warning: unused variable 'rate_of_progress_24' [-Wunused-variable]
+ 2045 |         double rate_of_progress_24 = multiply(species[7] * species[4], forward_reaction_24) - multiply(species[5] * species[6], divide(forward_reaction_24, equilibrium_constant_24));
+      |                ^~~~~~~~~~~~~~~~~~~
+src/source.h:2075:58: warning: suggest braces around initialization of subobject [-Wmissing-braces]
+ 2075 |         SpeciesJacobian jacobian_net_production_rates = {double(0)};
+      |                                                          ^~~~~~~~~
+      |                                                          {        }
+src/source.h:2074:17: warning: unused variable 'net_production_rates' [-Wunused-variable]
+ 2074 |         Species net_production_rates = {double(0)};
+      |                 ^~~~~~~~~~~~~~~~~~~~
+src/source.h:2076:16: warning: unused variable 'drate_of_progress_dspecies' [-Wunused-variable]
+ 2076 |         double drate_of_progress_dspecies  = double(0);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~
+src/source.h:2077:16: warning: unused variable 'equilibrium_constant' [-Wunused-variable]
+ 2077 |         double equilibrium_constant  = double(0);
+      |                ^~~~~~~~~~~~~~~~~~~~
+src/source.h:2078:16: warning: unused variable 'dequilibrium_constant_dtemperature' [-Wunused-variable]
+ 2078 |         double dequilibrium_constant_dtemperature = double(0);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/source.h:2079:17: warning: unused variable 'drate_of_progress_dspecies_all_species' [-Wunused-variable]
+ 2079 |         Species drate_of_progress_dspecies_all_species  = {double(0)};
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/source.h:2093:17: warning: unused variable 'dpressure_dspecies_' [-Wunused-variable]
+ 2093 |         Species dpressure_dspecies_ = dpressure_dspecies(species, temperature); //unchecked
+      |                 ^~~~~~~~~~~~~~~~~~~
+src/source.h:2098:16: warning: unused variable 'dmixture_concentration_dtemperature' [-Wunused-variable]
+ 2098 |         double dmixture_concentration_dtemperature = 
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/source.h:2104:17: warning: unused variable 'dmixture_concentration_dspecies' [-Wunused-variable]
+ 2104 |         Species dmixture_concentration_dspecies = Species{1}; // optimized (1/(RT))*(RT,...,RT)
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+src/chemgen_pybind.cpp:74:19: error: use of undeclared identifier 'sdirk4'
+   74 |     auto result = sdirk4(y, dt);
+      |                   ^
+src/chemgen_pybind.cpp:91:19: error: use of undeclared identifier 'rosenbroc'
+   91 |     auto result = rosenbroc(y, dt);
+      |                   ^
+src/chemgen_pybind.cpp:109:19: error: use of undeclared identifier 'yass'
+  109 |     auto result = yass(y, dt, max_norm, min_dt, max_iter);
+      |                   ^
+63 warnings and 3 errors generated.
+error: command '/usr/bin/clang++' failed with exit code 1

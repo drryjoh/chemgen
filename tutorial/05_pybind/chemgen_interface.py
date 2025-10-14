@@ -48,9 +48,10 @@ plt.title("Temperature evolution")
 
 plt.subplot(2, 1, 2)
 plt.semilogy(time, inv_largest_eigs, '-r')
-plt.ylabel("1 / λ_max")
+plt.ylabel("1 / $\lambda_{max}$")
 plt.xlabel("Time [s]")
 plt.title("Inverse of largest non-zero eigenvalue")
 
 plt.tight_layout()
+plt.savefig("pybind_example.png",dpi=300)
 plt.show()
