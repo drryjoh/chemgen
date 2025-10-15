@@ -83,5 +83,5 @@ plt.plot(d[:, 0]*1000000.0, d[:, 1],'-d',color='orange', label = "ChemGen YASS",
 plt.legend()
 plt.xlabel("Time ($\mu$s)",fontsize=16)
 plt.ylabel("Temperature (K)",fontsize=16)
-plt.savefig("implicit_time.png",dpi=300)
+plt.savefig("implicit_time.png",dpi=150)
 plt.show()

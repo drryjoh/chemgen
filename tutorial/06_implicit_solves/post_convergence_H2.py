@@ -69,5 +69,5 @@ for k, data_name in enumerate(["sdirk4","rosenbroc","yass"]):
 
 plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=3)
 plt.tight_layout()
-plt.savefig("convergence.png",dpi=300)
+plt.savefig("convergence.png",dpi=100)
 plt.show()

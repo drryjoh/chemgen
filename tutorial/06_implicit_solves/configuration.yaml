@@ -80,5 +80,5 @@ build:
 
 solver:
   chemistry_solver: all
-  linear_solver: gmres 
-  preconditioner: jacobi 
+  linear_solver: direct 
+  preconditioner: none 
