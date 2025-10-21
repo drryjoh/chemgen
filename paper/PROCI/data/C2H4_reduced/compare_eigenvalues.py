@@ -24,17 +24,22 @@ def stiffness(J):
     stiffness_ratio = np.max(nonzero) / np.min(nonzero)
     return stiffness_ratio
 
+import cantera as ct
 gas = ct.Solution("ffcm2_h2.yaml")
-gas.TPX  = 1800, 1013250, "H2:0.2, O2:0.1, N2:0.7"
+gas.set_equivalence_ratio(phi=1.0, fuel="H2", oxidizer="O2:1, N2:3.76")
+gas.TP = 2200, 101325  # temperature [K], pressure [Pa]
 reactor = ct.IdealGasReactor(gas)
+
 network = ct.ReactorNet([reactor])
 
-n_steps = 400
-time_end = n_steps * 2e-8
+n_steps = 1200
+time_end = n_steps * 6e-8
 
 time = np.linspace(0, time_end, n_steps)
 
 temperature = []
+temperature_cgc = []
+temperature_cgt = []
 inv_largest_eigs_c = []
 inv_largest_eigs_t = []
 inv_smallest_eigs_c = []
