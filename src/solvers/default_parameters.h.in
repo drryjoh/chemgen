@@ -1,7 +1,7 @@
 static constexpr {scalar} linear_abs_tol_default = 10 * std::numeric_limits<{scalar}>::epsilon();
-static constexpr {scalar} linear_rel_tol_default = 1e-6;
+static constexpr {scalar} linear_rel_tol_default = 1e-9;
 
 static constexpr {scalar} newton_abs_tol_default = std::max(1e-8, std::numeric_limits<{scalar}>::epsilon());
 static constexpr {scalar} newton_rel_tol_default = std::max(1e-8, std::numeric_limits<{scalar}>::epsilon());
 
-static constexpr {index} newton_iter_max_default = 5; // backward_euler and sdirk only
+static constexpr {index} newton_iter_max_default = 20; // backward_euler and sdirk only

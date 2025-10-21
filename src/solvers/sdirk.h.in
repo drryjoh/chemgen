@@ -4,8 +4,12 @@
 {jacobian} preconditioned_J = apply_diagonal(M_inv, J);
 */
 
+#ifdef CHEMGEN_PROFILE
+LinearSolveResult
+#else
 {device_option}
-{chemical_state}
+{chemical_state_function}
+#endif
 sdirk2({chemical_state} y,
        {scalar_parameter} dt,
        {scalar} abs_newton_tol = newton_abs_tol_default,
@@ -18,6 +22,10 @@ sdirk2({chemical_state} y,
         {chemical_state} k1 = source(y_init);
         {chemical_state} k2 = k1;
         const {jacobian} I = jacobian_I();
+        #ifdef CHEMGEN_PROFILE
+        {index} linear_iterations = 0;
+        {index} newton_iterations = 0;
+        #endif
 
         //stage1
         for (int iter = 0; iter < max_iter; ++iter)
@@ -32,13 +40,20 @@ sdirk2({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
+            #ifdef CHEMGEN_PROFILE
+            LinearSolveResult solve_1 = gmres_solve(J, res);
+            {chemical_state} dk = solve_1.result;
+            linear_iterations += solve_1.linear_iterations;
+            #else
             {chemical_state} dk = gmres_solve(J, res);
+            #endif
             #endif
             k1 = k1 + dk;
             if (error_norm(dk, k1, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
+            newton_iterations++;
         }}
 
         //stage2
@@ -53,20 +68,34 @@ sdirk2({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dk = invert_jacobian(J) * res;
             #else
+            #ifdef CHEMGEN_PROFILE
+            LinearSolveResult solve_2 = gmres_solve(J, res);
+            {chemical_state} dk = solve_2.result;
+            linear_iterations += solve_2.linear_iterations;
+            #else
             {chemical_state} dk = gmres_solve(J, res);
+            #endif
             #endif
             k2 = k2 + dk;
             if (error_norm(dk, k2, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
                 break;
             }};
+            newton_iterations++;
         }}
 
-        return 
-        y_init + scale_gen(dt * one_minus_gamma, k1) + scale_gen(gamma * dt, k2);
+        return
+        #ifdef CHEMGEN_PROFILE
+        {{y_init + scale_gen(dt * one_minus_gamma, k1) + scale_gen(gamma * dt, k2),
+          linear_iterations,
+          newton_iterations}}; //yn = yn + m1 * k1 + m2 * k2
+        #else
+        y_init + scale_gen(dt * one_minus_gamma, k1) + scale_gen(gamma * dt, k2); //yn = yn + m1 * k1 + m2 * k2
+        #endif
 }}
 
-
+#ifdef CHEMGEN_PROFILE
+#else
 {device_option}
 {chemical_state}
 sdirk4({chemical_state} y,
@@ -231,4 +260,4 @@ sdirk4({chemical_state} y,
         return
         y_init + scale_gen(dt, (scale_gen(b1, k1) + scale_gen(b2, k2) + scale_gen(b3, k3) + scale_gen(b4, k4) + scale_gen(b5, k5)));
 }}
-
+#endif //chemgen_profile

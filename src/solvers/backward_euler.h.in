@@ -1,5 +1,9 @@
+#ifdef CHEMGEN_PROFILE
+LinearSolveResult
+#else
 {device_option}
-{chemical_state} 
+{chemical_state_function}
+#endif
 backwards_euler({chemical_state} y,  
                 {scalar_parameter} dt,
                 {scalar} abs_newton_tol = newton_abs_tol_default,
@@ -8,6 +12,9 @@ backwards_euler({chemical_state} y,
 {{
         {chemical_state} y_init = y;
         {chemical_state} y_guess = y;
+        #ifdef CHEMGEN_PROFILE
+        {index} running_linear = 0;
+        #endif
         for ({index} iter = 0; iter < max_iter; ++iter)
         {{
             {scalar} temperature_ = temperature(y[0], y_guess);
@@ -26,20 +33,35 @@ backwards_euler({chemical_state} y,
             #ifdef CHEMGEN_DIRECT_SOLVER
             {chemical_state} dy = invert_jacobian(A) * res;
             #else
+            #ifdef CHEMGEN_PROFILE
+            LinearSolveResult solve_1 = gmres_solve(A, res);
+            {chemical_state} dy = solve_1.result;
+            running_linear += solve_1.linear_iterations;
+            #else
             {chemical_state} dy = gmres_solve(A, res);
             #endif
+            #endif //CHEMGEN_DIRECT_SOLVER
 
             //Increment
             y_guess = y_guess + dy;
 
             if (error_norm(dy, y_guess, abs_newton_tol, rel_newton_tol) < 1.0)
             {{
-                //std::cout << "# Newton iterations = " << iter + 1 << std::endl;
-                return y_guess;
+                return
+                #ifdef CHEMGEN_PROFILE
+                {{y_guess, running_linear, iter+1}}; //yn = yn + m1 * k1 + m2 * k2
+                #else
+                y_guess; //yn = yn + m1 * k1 + m2 * k2
+                #endif
             }}
         }}
 
         std::cout << "Newton solve did not converge!" << std::endl;
 
-        return y_guess; //sets energy to zero to signal integration broke
+        return
+        #ifdef CHEMGEN_PROFILE
+        {{y_guess, running_linear, max_iter}}; //yn = yn + m1 * k1 + m2 * k2
+        #else
+        y_guess; //yn = yn + m1 * k1 + m2 * k2
+        #endif
 }}

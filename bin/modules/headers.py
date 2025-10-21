@@ -40,6 +40,8 @@ def create_headers(configuration, chemistry_solver, destination_folder):
             file_names = ['backward_euler.h.in', 'linear_solvers.h.in','direct.h.in','default_parameters.h.in']
         elif chemistry_solver.lower() == "all":
             file_names = ['rk4.h.in', 'backward_euler.h.in','sdirk.h.in','rosenbroc.h.in','yass.h.in','linear_solvers.h.in','direct.h.in','default_parameters.h.in']
+        elif chemistry_solver.lower() == "profile":
+            file_names = ['sdirk.h.in','rosenbroc.h.in', 'backward_euler.h.in', 'linear_solvers.h.in','direct.h.in','default_parameters.h.in']
         else:
             print("Chemistry Solver not recognized")
             exit()

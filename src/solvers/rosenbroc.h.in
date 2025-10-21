@@ -1,5 +1,9 @@
+#ifdef CHEMGEN_PROFILE
+LinearSolveResult
+#else
 {device_option}
-{chemical_state}
+{chemical_state_function}
+#endif
 rosenbroc({chemical_state} y,
           {scalar_parameter} dt)
 {{
@@ -22,7 +26,13 @@ rosenbroc({chemical_state} y,
         #ifdef CHEMGEN_DIRECT_SOLVER
         {chemical_state} k1 = invert_jacobian(G) * rhs1;
         #else
+        #ifdef CHEMGEN_PROFILE
+        LinearSolveResult solve_1 = gmres_solve(G, rhs1);
+        {chemical_state} k1 = solve_1.result;
+        {index} n_iter_1 = solve_1.linear_iterations;
+        #else
         {chemical_state} k1 = gmres_solve(G, rhs1);
+        #endif
         #endif
         
         // Stage 2
@@ -34,10 +44,22 @@ rosenbroc({chemical_state} y,
         #ifdef CHEMGEN_DIRECT_SOLVER
         {chemical_state} dk = invert_jacobian(G) * rhs2;
         #else
-        {chemical_state} dk = gmres_solve(G, rhs2);
+        #ifdef CHEMGEN_PROFILE
+        LinearSolveResult solve_2 = gmres_solve(G, rhs1);
+        {chemical_state} dk = solve_2.result;
+        {index} n_iter_2 = solve_2.linear_iterations;
+        #else
+        {chemical_state} dk = gmres_solve(G, rhs1);
+        #endif
         #endif
 
         {chemical_state} k2 = k1 + dk;
         return 
+        #ifdef CHEMGEN_PROFILE
+        {{y_init + scale_gen(m1, k1) + scale_gen(m2, k2), 
+          n_iter_1 + n_iter_2, 
+          2}}; //yn = yn + m1 * k1 + m2 * k2
+        #else
         y_init + scale_gen(m1, k1) + scale_gen(m2, k2); //yn = yn + m1 * k1 + m2 * k2
+        #endif
 }}

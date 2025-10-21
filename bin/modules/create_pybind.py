@@ -96,7 +96,118 @@ std::vector<std::vector<{scalar}>> source_jacobian_py(const std::vector<{scalar}
     return jac_out;
 }}
 
+#ifdef CHEMGEN_PROFILE
+std::tuple<std::vector<double>, int, int>
+#else
+std::vector<{scalar}> 
+#endif
+rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt) 
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
+    {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
+    {chemical_state} y = set_chemical_state(int_energy, sp);
+#else
+    {chemical_state} y = set_chemical_state(temperature, sp);
+#endif
+    
+    auto solver_result = rosenbroc(y, dt);
 
+#ifdef CHEMGEN_PROFILE
+    auto n_iterations_linear = solver_result.linear_iterations;
+    auto n_iterations_newton = solver_result.newton_iterations;
+    auto result = solver_result.result;
+#else
+    auto result = solver_result;
+#endif
+
+    auto return_result = std::vector<{scalar}>(result.begin(), result.end());
+    return 
+#ifdef CHEMGEN_PROFILE
+    std::make_tuple(return_result, n_iterations_linear, n_iterations_newton);
+#else
+    return_result;
+#endif
+}}
+
+#ifdef CHEMGEN_PROFILE
+std::tuple<std::vector<double>, int, int>
+#else
+std::vector<{scalar}> 
+#endif
+backwards_euler_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt) 
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
+    {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
+    {chemical_state} y = set_chemical_state(int_energy, sp);
+#else
+    {chemical_state} y = set_chemical_state(temperature, sp);
+#endif
+    
+    auto solver_result = backwards_euler(y, dt);
+
+#ifdef CHEMGEN_PROFILE
+    auto n_iterations_linear = solver_result.linear_iterations;
+    auto n_iterations_newton = solver_result.newton_iterations;
+    auto result = solver_result.result;
+#else
+    auto result = solver_result;
+#endif
+
+    auto return_result = std::vector<{scalar}>(result.begin(), result.end());
+    return 
+#ifdef CHEMGEN_PROFILE
+    std::make_tuple(return_result, n_iterations_linear, n_iterations_newton);
+#else
+    return_result;
+#endif
+}}
+
+#ifdef CHEMGEN_PROFILE
+std::tuple<std::vector<double>, int, int>
+#else
+std::vector<{scalar}> 
+#endif
+sdirk2_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt) 
+{{
+    Species sp;
+    std::copy(species.begin(), species.end(), sp.begin());
+#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
+    {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
+    {chemical_state} y = set_chemical_state(int_energy, sp);
+#else
+    {chemical_state} y = set_chemical_state(temperature, sp);
+#endif
+    
+    auto solver_result = sdirk2(y, dt);
+#ifdef CHEMGEN_PROFILE
+    auto n_iterations_linear = solver_result.linear_iterations;
+    auto n_iterations_newton = solver_result.newton_iterations;
+    auto result = solver_result.result;
+#else
+    auto result = solver_result;
+#endif
+
+    auto return_result = std::vector<{scalar}>(result.begin(), result.end());
+    return 
+#ifdef CHEMGEN_PROFILE
+    std::make_tuple(return_result, n_iterations_linear, n_iterations_newton);
+#else
+    return_result;
+#endif
+
+#ifdef CHEMGEN_PROFILE
+    std::make_tuple(return_result, n_iterations_linear, n_iterations_newton);
+#else
+    return_result;
+#endif
+}}
+
+#ifdef CHEMGEN_PROFILE
+#else
 std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt) 
 {{
     Species sp;
@@ -113,22 +224,6 @@ std::vector<{scalar}> sdirk4_py(const std::vector<{scalar}>& species, {scalar} t
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
 
-std::vector<{scalar}> rosenbroc_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt) 
-
-{{
-    Species sp;
-    std::copy(species.begin(), species.end(), sp.begin());
-#if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
-    {scalar} int_energy = internal_energy_volume_specific(sp, temperature);
-    {chemical_state} y = set_chemical_state(int_energy, sp);
-#else
-    {chemical_state} y = set_chemical_state(temperature, sp);
-#endif
-    
-    auto result = rosenbroc(y, dt);
-
-    return std::vector<{scalar}>(result.begin(), result.end());
-}}
 
 
 std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} temperature, {scalar} dt, {scalar} max_norm, {scalar} min_dt, {index} max_iter) 
@@ -147,7 +242,7 @@ std::vector<{scalar}> yass_py(const std::vector<{scalar}>& species, {scalar} tem
 
     return std::vector<{scalar}>(result.begin(), result.end());
 }}
-
+#endif
 #if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
 {scalar} temperature_from_internal_energy_py(const std::vector<{scalar}>& species, {scalar} internal_energy)
 {{
@@ -187,9 +282,14 @@ PYBIND11_MODULE(chemgen, m)
     m.def("temperature_equation", &temperature_equation_py, "temperature_equation function");
     m.def("source", &source_py, "source function");
     m.def("source_jacobian", &source_jacobian_py, "source_jacobian function");
-    m.def("sdirk4", &sdirk4_py, "SDIRK 4");
     m.def("rosenbroc", &rosenbroc_py, "Rosenbroc 2");
+    m.def("backwards_euler", &backwards_euler_py, "Backwards Euler");
+    m.def("sdirk2", &sdirk2_py, "SDIRK 2");
+#ifdef CHEMGEN_PROFILE
+#else
+    m.def("sdirk4", &sdirk4_py, "SDIRK 4");
     m.def("yass", &yass_py, "YASS");
+#endif
 #if defined(CHEMGEN_INTERNAL_ENERGY_EQUATION)
     m.def("temperature_from_internal_energy", &temperature_from_internal_energy_py, "temperature 4");
 #endif

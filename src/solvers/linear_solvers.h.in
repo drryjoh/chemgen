@@ -1,3 +1,5 @@
+{profile_setting}
+
 {preconditioner}
 {direct_solver}
 
@@ -34,8 +36,21 @@ apply_gauss_seidel({jacobian_function} A, {chemical_state_function} v)
 }}
 #endif
 
+#ifdef CHEMGEN_PROFILE
+struct LinearSolveResult
+{{
+    {chemical_state} result;
+    {index} linear_iterations;
+    {index} newton_iterations;
+}};
+#endif
+
+#ifdef CHEMGEN_PROFILE
+LinearSolveResult
+#else
 {device_option}
 {chemical_state_function}
+#endif
 gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_tol=linear_abs_tol_default, {scalar} rel_tol=linear_rel_tol_default)
 {{
 	{index} max_iter = 100;
@@ -58,7 +73,11 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
     if (norm2_r < std::numeric_limits<{scalar}>::epsilon())
     {{
         // std::cout << "# GMRES iterations = 0" << std::endl;
+#ifdef CHEMGEN_PROFILE
+        return {{x, 0}};
+#else
         return x;
+#endif
     }}
 
     std::array<{chemical_state}, n_variables + 1> V = {{}};
@@ -115,9 +134,17 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
         g[j] = temp_g;
 		
         // Convergence check
+        /*
         {scalar} res_norm = std::abs(g[j+1]);
         if (res_norm < abs_tol || res_norm < rel_tol * norm2_r)
             break;
+        */
+        
+        {scalar} res_norm = std::abs(g[j+1]);
+        {scalar} rel_proxy = res_norm / std::max(g[0], std::numeric_limits<{scalar}>::min());
+        if (res_norm < abs_tol || rel_proxy < rel_tol) break;
+        
+
     }}
 
     // Solve least squares problem Hy = g using back-substitution on H (upper triangular, rectangular)
@@ -139,6 +166,10 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
         // std::cout << "# GMRES iterations = " << final_iter + 1 << std::endl;
     }}
 
+#ifdef CHEMGEN_PROFILE
+    return {{result, final_iter + 1, 0}};
+#else
     return result;
+#endif
 }}
 

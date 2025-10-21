@@ -65,6 +65,7 @@ def main():
     parser.add_argument("--ignore-temp-dependence", action="store_true", help="Ignore temperature dependence in Jacobian if internal energy is state variable")
     parser.add_argument("--force", action="store_true", help="Force code generation despite warnings")
     parser.add_argument("--pybind", action="store_true", help="Create pybind linker")
+    parser.add_argument("--profile-linear-solve", action="store_true", help="Create profiles for linear solvers")
     parser.add_argument("--skip", action="store_true", help="Skip code generation")
     parser.add_argument("--run-tests", action="store_true", help="Skip running tests")
     parser.add_argument("--get-sparsity", action="store_true", help="Calculate Jacobian sparsity")
@@ -165,6 +166,13 @@ def main():
         generate_chemistry_solver = False
         print("Not generating with a chemgen chemistry solver.")
     
+    if args.profile_linear_solve:
+        profile_setting = "#define CHEMGEN_PROFILE"
+        setattr(configuration, "profile_setting", profile_setting)
+        chemistry_solver = "profile"
+        print("Chemistry solver profile only developed for Rosenbroc scheme, overwriting any other chemistry solver requests")
+    else:
+        setattr(configuration, "profile_setting", "")
     preconditioner = ""
     if chemistry_solver_preconditioner and chemistry_solver:
         
