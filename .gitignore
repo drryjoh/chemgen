@@ -1,3 +1,11 @@
 .vscode
 nn/
 *lyx#
+paper/PROCI/data/C2H4_reduced/__pycache__/metrics.cpython-311.pyc
+paper/PROCI/data/C2H4_reduced/__pycache__/metrics_refactored.cpython-311.pyc
+paper/PROCI/data/C2H4_reduced/__pycache__/metrics_refactored.py
+paper/PROCI/data/C2H4_reduced/__pycache__/numerics.cpython-311.pyc
+paper/PROCI/data/C2H4_reduced/__pycache__/numerics_refactored.cpython-311.pyc
+paper/PROCI/data/C2H4_reduced/__pycache__/numerics_refactored.py
+paper/PROCI/data/C2H4_reduced/__pycache__/parameter_space_numerics.cpython-311.pyc
+paper/PROCI/data/C2H4_reduced/__pycache__/run_experiment_refactored.py

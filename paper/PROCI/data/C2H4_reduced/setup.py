@@ -1,9 +1,9 @@
-
+#!python3
 from setuptools import setup, Extension
 import sys
 import pybind11
 
-formulations  = ["chemgen_conservative","chemgen_temperature"]
+formulations  = ["chemgen_conservative","chemgen_temperature","chemgen_dtemperature_ignore", "chemgen_conservative_ignore_species", "chemgen_temperature_ignore_species"]
 for formulation in formulations:
     # Open, replace, and overwrite the file
     file_path = f"{formulation}/src/chemgen_pybind.cpp"   # change to your filename

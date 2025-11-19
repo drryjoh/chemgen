@@ -1,1 +1,9 @@
+*.npz
+*.pdf
+*pychache*
+*.png
+*.txt
 */src/*
+*.npy
+*/data/*.npy
+*/data/*/*.npy

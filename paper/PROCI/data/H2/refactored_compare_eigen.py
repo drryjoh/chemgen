@@ -69,12 +69,12 @@ BACKENDS = [
         mod=cgt,
         temp_from_state=lambda y: y[0],
     ),
-    dict(
-        key="cgc_it",
-        label="Conservative_nodT",
-        mod=cgc_it,
-        temp_from_state=lambda y: cgc_it.temperature(y[1:], y[0]),
-    ),
+    #dict(
+    #    key="cgc_it",
+    #    label="Conservative_nodT",
+    #    mod=cgc_it,
+    #    temp_from_state=lambda y: cgc_it.temperature(y[1:], y[0]),
+    #),
     dict(
         key="cgc_is",
         label="Conservative_nodS",
@@ -108,8 +108,8 @@ gas.TP = 2500, 101325
 reactor = ct.IdealGasReactor(gas)
 net = ct.ReactorNet([reactor])
 
-n_steps = 200
-dt = 4e-7
+n_steps = 800
+dt = 1e-7
 time = np.linspace(0.0, n_steps * dt, n_steps)
 
 # Reference trajectory from Cantera
@@ -135,7 +135,7 @@ for t in time:
     # Run each backend at the current physical state
     for be in BACKENDS:
         mod = be["mod"]
-        y, n_lin, n_newt = mod.sdirk2(C, T, dt)
+        y, n_lin, n_newt = mod.backwards_euler(C, T, dt)
         T_hat = be["temp_from_state"](y)
 
         s = store[be["key"]]

@@ -134,15 +134,15 @@ gmres_solve({jacobian_parameter} A, {chemical_state_parameter} b, {scalar} abs_t
         g[j] = temp_g;
 		
         // Convergence check
-        /*
+        
         {scalar} res_norm = std::abs(g[j+1]);
         if (res_norm < abs_tol || res_norm < rel_tol * norm2_r)
             break;
-        */
         
-        {scalar} res_norm = std::abs(g[j+1]);
-        {scalar} rel_proxy = res_norm / std::max(g[0], std::numeric_limits<{scalar}>::min());
-        if (res_norm < abs_tol || rel_proxy < rel_tol) break;
+        
+        //{scalar} res_norm = std::abs(g[j+1]);
+        //{scalar} rel_proxy = res_norm / std::max(g[0], std::numeric_limits<{scalar}>::min());
+        //if (res_norm < abs_tol || rel_proxy < rel_tol) break;
         
 
     }}
