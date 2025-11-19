@@ -30,7 +30,16 @@ This tutorial gives an overview of how ChemGen can be used to target difference 
 
 4) [Homogeneous Reactor](./04_rk4/README.md)
 
-This tutorial gives an overview of how ChemGen can be used to create a homogeneous reactor and used a built in Runge Kutta 4th order accurate time integrator to integrate the chemical soruce term.
+This tutorial gives an overview of how ChemGen can be used to create a homogeneous reactor and used a built in Runge Kutta 4th order accurate time integrator to integrate the chemical source term.
+
+
+5) [Pybind](./05_pybind/README.md)
+
+This tutorial gives an overview of how ChemGen can be used with pybind to interface with some of the code generated functions. This allows for verification tasks as well as heavily desired Jacobian calculations.
+
+6) [Implicit Solves](./06_implicit_solves/README.md)
+
+This tutorial gives an overview of how ChemGen can be used to create different time split solves that use a variety of implicit methods. This is currently one of the most advanced capabilities of ChemGen and would give one the abilite to simulate chemically reacting euler equations with time-split chemistry.
 
 ## Advanced Examples
 
