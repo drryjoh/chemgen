@@ -31,7 +31,7 @@ sdirk2({chemical_state} y,
         for (int iter = 0; iter < max_iter; ++iter)
         {{
             {chemical_state} y_stage = y_init + scale_gen(gamma * dt, k1);
-            {scalar} temperature_ = temperature(y[0], y_stage);
+            {scalar} temperature_ = temperature(y_stage[0], y_stage);
 
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k1;
@@ -61,7 +61,7 @@ sdirk2({chemical_state} y,
         {{
             //y_stage = yn + dt * (one_minus_gamma * k1 + gamma * k2)
             {chemical_state} y_stage = y_init + scale_gen(one_minus_gamma * dt, k1) + scale_gen(gamma * dt, k2);
-            {scalar} temperature_ = temperature(y[0], y_stage);
+            {scalar} temperature_ = temperature(y_stage[0], y_stage);
             {chemical_state} f_val = source(y_stage, temperature_);
             {chemical_state} res = f_val - k2;
             {jacobian} J = I -scale_gen(gamma * dt, source_jacobian(y_stage, temperature_));
