@@ -54,9 +54,6 @@ over its native chemistry solver.
   <em>Figure 2: OH and temperature fields from a CFD detonation example using ChemGen chemistry.</em>
 </p>
 
-ChemGen is an ongoing project released under the <strong>NRL Open License</strong>, a
-source-available license provided by the <strong>U.S. Naval Research Laboratory</strong>.
-
 ---
 
 ## Installation
