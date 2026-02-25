@@ -208,7 +208,6 @@ def backwards_euler(C, T, dt, be, gmres_tolerance=1e-6, max_iter=10, gmres_metho
         if gmres_method == "numpy":
             dy_sys, info, iters_lin = gmres_with_iterations(A, res, tol=gmres_tolerance, maxiter=100)
         elif gmres_method == "lsqr":
-            print(np.shape(J))
             dy_sys, info, iters_lin = lsqr_with_iterations(A, res, tol=gmres_tolerance/100, maxiter=200)
         else:
             r = eigen_gmres.gmres_dense(A, res, rtol=gmres_tolerance, maxiter=100, restart=50)
