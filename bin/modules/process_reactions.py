@@ -116,7 +116,7 @@ def accrue_species_production(indexes_of_species_in_reaction, stoichiometric_pro
 
 def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivatives, reactions_depend_on, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose=False, temperature_jacobian=False):
     is_reversible[reaction_index] = reaction.reversible
-
+    print(reaction.reaction_type)
     if reaction.reaction_type == "Arrhenius":
         reactions_depend_on[reaction_index] = ["temperature","log_temperature"]
         create_reaction_functions_and_calls_arrhenius(reaction_rates, reaction_rates_derivatives, reaction_calls, reaction, configuration, reaction_index, is_reversible, requires_mixture_concentration, species_names, verbose = verbose, temperature_jacobian = temperature_jacobian)
