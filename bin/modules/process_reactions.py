@@ -7,9 +7,21 @@ from .write import *
 import sys
 
 def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_backward, indexes_of_species_in_reaction, reaction, species_names, configuration):
+    semiglobal = len(reaction.orders) > 0
+    forward_rate = ""
+    backward_rate = ""
+    reactants_items = {}
+    products_items = {}
+    #rates of progress
+    if semiglobal:
+        reactants_items = reaction.orders.items()
+        products_items = {}
+    else:
+        reactants_items = reaction.reactants.items()
+        products_items = reaction.products.items()
     forward_rate_array = []
-    for species, coeff in reaction.reactants.items():
-        stoichiometric_forward[species_names.index(species)] = coeff
+
+    for species, coeff in reactants_items:
         species_index = species_names.index(species)
         species_element_i  = configuration.species_element.format(i = species_index)
         forward_rate_array.append(raise_to_power(species_element_i, coeff))
@@ -17,13 +29,22 @@ def get_stoichmetric_balance_arithmetic(stoichiometric_forward, stoichiometric_b
     forward_rate = " * ".join(forward_rate_array)
 
     backward_rate_array = []
-    for species, coeff in reaction.products.items():
-        stoichiometric_backward[species_names.index(species)] = coeff
+    for species, coeff in products_items:
         species_index = species_names.index(species)
         species_element_i  = configuration.species_element.format(i = species_index)
         backward_rate_array.append(raise_to_power(species_element_i, coeff))
         indexes_of_species_in_reaction.append(species_names.index(species))
     backward_rate = " * ".join(backward_rate_array)
+
+    #production rates
+    reactants_items = reaction.reactants.items()
+    products_items = reaction.products.items()
+    for species, coeff in reactants_items:
+        stoichiometric_forward[species_names.index(species)] = coeff
+
+    for species, coeff in products_items:
+        stoichiometric_backward[species_names.index(species)] = coeff
+
 
     return (forward_rate, backward_rate)
 
@@ -32,7 +53,18 @@ def get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoi
     forward_rate_array = []
     dforward_rate_array = []
     forward_indices = []
-    for species, coeff in reaction.reactants.items():
+    semiglobal = len(reaction.orders) > 0
+    reactants_items = {}
+    products_items = {}
+    #rates of progress
+    if semiglobal:
+        reactants_items = reaction.orders.items()
+        products_items = {}
+    else:
+        reactants_items = reaction.reactants.items()
+        products_items = reaction.products.items()
+
+    for species, coeff in reactants_items:
         species_index = species_names.index(species)
         forward_indices.append(species_index)
         species_element_i  = configuration.species_element.format(i = species_index)
@@ -41,18 +73,18 @@ def get_stoichmetric_balance_arithmetic_derivatives(stoichiometric_forward, stoi
     backward_rate_array = []
     dbackward_rate_array = []
     backward_indices = []
-    for species, coeff in reaction.products.items():
+    for species, coeff in products_items:
         species_index = species_names.index(species)
         backward_indices.append(species_index)
         species_element_i  = configuration.species_element.format(i = species_index)
         backward_rate_array.append(raise_to_power(species_element_i, coeff))
     
-    for species, coeff in reaction.reactants.items():
+    for species, coeff in reactants_items:
         species_index = species_names.index(species)
         species_element_i  = configuration.species_element.format(i = species_index)
         dforward_rate_array.append(draise_to_power(species_element_i, coeff))
 
-    for species, coeff in reaction.products.items():
+    for species, coeff in products_items:
         species_index = species_names.index(species)
         species_element_i  = configuration.species_element.format(i = species_index)
         dbackward_rate_array.append(draise_to_power(species_element_i, coeff))
@@ -141,7 +173,7 @@ def create_reaction_functions_and_calls(reaction_rates, reaction_rates_derivativ
 def create_rates_of_progress(progress_rates, progress_rates_functions, reaction_index, forward_rate, backward_rate, is_reversible, configuration):
     if is_reversible[reaction_index]:
         formatted_text = (
-        "{scalar} rate_of_progress_{reaction_index} = multiply({forward_rate}, forward_reaction_{reaction_index}) "
+        "    {scalar} rate_of_progress_{reaction_index} = multiply({forward_rate}, forward_reaction_{reaction_index}) "
         "- multiply({backward_rate}, divide(forward_reaction_{reaction_index}, equilibrium_constant_{reaction_index}));"
         .format(reaction_index = reaction_index,
                 forward_rate = forward_rate,
@@ -149,7 +181,7 @@ def create_rates_of_progress(progress_rates, progress_rates_functions, reaction_
                 **vars(configuration)))
     else:
         formatted_text = (
-        "{scalar} rate_of_progress_{reaction_index} = multiply({forward_rate}, forward_reaction_{reaction_index});"
+        "    {scalar} rate_of_progress_{reaction_index} = multiply({forward_rate}, forward_reaction_{reaction_index});"
         .format(reaction_index = reaction_index,
                 forward_rate = forward_rate,
                 **vars(configuration)))
@@ -327,7 +359,7 @@ def create_rates_of_progress_derivatives(gas, args, progress_rates_derivatives, 
                 elif dforward_rate != "0":
                     formatted_text += f"        drate_of_progress_dspecies = multiply({dforward_rate}, forward_reaction_{reaction_index});\n"
                     formatted_text += add_to_jacobian("drate_of_progress_dspecies", species_index, indexes_of_species_in_reaction, stoichiometric_production, sparsity_pattern)
-    progress_rates_derivatives[reaction_index] = f"\n\n        // Reaction {reaction_index}: {reaction}\n"+formatted_text.replace("1 * ","").replace("1.0*","")
+    progress_rates_derivatives[reaction_index] = f"\n\n        // Reaction {reaction_index}: {reaction} {reaction.orders}\n"+formatted_text.replace("1 * ","").replace("1.0*","")
 
     # Sparsity for add_to_jacobian_all and temperature_jacobian
     if sparsity_pattern is not None:

@@ -31,4 +31,7 @@ def draise_to_power(raise_to, power):
         else:
             return f"dpow_gen{power_integer}_da({raise_to})"
     else:
-        return f"dpow_gen_da({raise_to}, {power})"
+        if power > 1.0:
+            return f"dpow_da({raise_to}, {power})"
+        else:
+            return f"dpow_da_safe({raise_to}, {power})"
