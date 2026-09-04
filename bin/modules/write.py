@@ -39,6 +39,7 @@ def write_species_names(file, species_names, configuration):
     // Define the species names as a fixed-size array
     #pragma once
     #include <string>
+    #include <cstring>
 
     static constexpr {scalar_list}<const char*, {n_species}> species_names_gen()
     {{
