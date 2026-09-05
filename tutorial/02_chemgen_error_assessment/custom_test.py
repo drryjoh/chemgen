@@ -101,6 +101,7 @@ def create_test(gas, chemical_mechanism, headers, test_file_name, configuration,
         file.write("#include <fstream> \n")
         file.write("#include <algorithm>\n")
         file.write("#include <array>\n")
+        file.write("#include <memory>  // For std::unique_ptr / std::make_unique\n")
         file.write("#include <iostream>  // For printing the result to the console\n")
         for header in headers:
             file.write(f"#include \"{header}\"\n")

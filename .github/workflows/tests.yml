@@ -1,0 +1,31 @@
+name: tutorial regression tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run fast tutorial regression suite
+        run: >
+          pytest -v
+          -m "not slow and not requires_kokkos and not requires_openfoam and not requires_pybind"
+
+      - name: Run pybind tutorial (05)
+        run: pytest -v -m requires_pybind
