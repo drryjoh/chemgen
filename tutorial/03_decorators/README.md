@@ -65,20 +65,17 @@ float my_function(const float& a) const {return a*a;}
 throughout the code.
 
 ## Precision
-Using the above example we have provided a [configuration_float](configuration_float.yaml) and [configuration_double](configuration_double.yaml) file. By performing the following
+Using the above example we have provided a [configuration_float](configuration_float.yaml) and [configuration_double](configuration_double.yaml) file, along with a [test_configuration.yaml](test_configuration.yaml) state for this directory's `one_reaction` mechanism. This tutorial has no `custom_test.py`, so drop `--custom-test` and use the default test writer with `--run-tests` (chemgen's actual flag -- there is no `--run`):
 
-```
+```bash
 cp configuration_float.yaml configuration.yaml
-chemgen.py one_reaction . --custom-test custom_test.py --compile --run
+chemgen.py one_reaction . --compile --run-tests
+
 cp configuration_double.yaml configuration.yaml
-chemgen.py one_reaction . --custom-test custom_test.py --compile --run
+chemgen.py one_reaction . --compile --run-tests
 ```
 
-The resulting output demonstrating the difference in precision is found
-```
-Source test result for scalar float:   [ -0.0027410432230681 -0.0013705216115341 0.0027410432230681 0.0000000000000000 ]
-Source test result for scalar double:  [ -0.0027410426276326 -0.0013705213138163 0.0027410426276326 0.0000000000000000 ]
-```
+Both runs print a `Source test result:` line. `std::cout`'s default precision (6 significant figures) hides the float/double difference at a glance -- to actually see it, increase the printed precision (e.g. `std::cout << std::setprecision(15)`) or inspect `src/reactions.h`, where the scalar type substitution is visible directly in the generated signatures (see below). `tests/test_tutorial_03_decorators.py` exercises both configs and asserts they each still agree with Cantera within their precision's tolerance.
 
 ## Other uses
 

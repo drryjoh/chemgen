@@ -49,7 +49,7 @@ decorators:
   jacobian_function: "SpeciesJacobian"
   jacobian_cast: "SpeciesJacobian"
   jacobian_parameter: "const SpeciesJacobian&"
-  jacobian_end: "n_species"
+  jacobian_end: "n_variables"
 
   source_element: "net_production_rates[{i}]"
   const_option: ""
