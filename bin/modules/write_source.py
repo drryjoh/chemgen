@@ -2,36 +2,36 @@ class SourceWriter:
     def write_energy_source(self, file, temperature_equation, configuration):
         if temperature_equation:
             file.write("""
-        {device_option}
-        {scalar_function}
-        species_internal_energy_mole_source_sum({species_parameter} species, {scalar_parameter} temperature) {const_option}
-        {{
-            return {sum}(molecular_weights() * multiply(species_internal_energy_mass_specific(temperature), source_species(species, temperature)));
-        }}
+            {device_option}
+            {scalar_function}
+            species_internal_energy_mole_source_sum({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return {sum}(molecular_weights() * multiply(species_internal_energy_mass_specific(temperature), source_species(species, temperature)));
+            }}
 
-        {device_option}
-        {scalar_function}
-        temperature_source({scalar_parameter} temperature, {species_parameter} species) {const_option}
-        {{
-            return
-            -divide(species_internal_energy_mole_source_sum(species, temperature),
-                    specific_heat_constant_volume_volume_specific(species, temperature));
-        }}
+            {device_option}
+            {scalar_function}
+            temperature_source({scalar_parameter} temperature, {species_parameter} species) {const_option}
+            {{
+                return
+                -divide(species_internal_energy_mole_source_sum(species, temperature),
+                        specific_heat_constant_volume_volume_specific(species, temperature));
+            }}
 
-        {device_option}
-        {scalar_function}
-        source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
-        {{
-            return temperature_source(temperature, species);
-        }}
+            {device_option}
+            {scalar_function}
+            source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return temperature_source(temperature, species);
+            }}
             """.format(**vars(configuration)))
         else:
             file.write("""
-        {device_option}
-        {scalar} source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
-        {{
-            return {scalar_cast}(0);
-        }}""".format(**vars(configuration)))
+            {device_option}
+            {scalar} source_energy({species_parameter} species, {scalar_parameter} temperature) {const_option}
+            {{
+                return {scalar_cast}(0);
+            }}""".format(**vars(configuration)))
 
     def write_start_of_source_function(self, file, configuration, fit_gibbs_reaction = True):
         if fit_gibbs_reaction:
@@ -52,7 +52,7 @@ class SourceWriter:
     def write_progress_rates(self, file, progress_rates, is_reversible, equilibrium_constants, configuration):
         for i, progress_rate in enumerate(progress_rates):
             if is_reversible[i]:
-                file.write("            {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
+                file.write("        {scalar} equilibrium_constant_{i} = {equilibrium_constant};\n".format(i=i, equilibrium_constant = equilibrium_constants[i], **vars(configuration)))
             file.write(f"        {progress_rate}\n") 
         file.write("\n")
         
@@ -66,11 +66,11 @@ class SourceWriter:
 
     def write_reaction_calculations(self, file, reaction_calls, configuration):
         for reaction_index, reaction_call in enumerate(reaction_calls):
-            file.write("            {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
+            file.write("        {scalar} forward_reaction_{reaction_index} = {reaction_call}".format(**vars(configuration), reaction_call=reaction_call, reaction_index = reaction_index))
 
 
     def write_end_of_function(self, file, temperature_equation, configuration):
-        file.write("            return net_production_rates;\n        }")
+        file.write("        return net_production_rates;\n    }")
 
         self.write_energy_source(file, temperature_equation, configuration)
 

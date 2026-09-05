@@ -121,6 +121,7 @@ reactions:
 - equation:  CO + 0.5 O2  =>  CO2  # Reaction 2
   rate-constant: {A: 2.24e+12, b: 0.0, Ea: 12000}
   orders: {CO: 1.0, H2O: 0.5, O2: 0.5}
+  nonreactant-orders: true
 - equation:  CO2  => CO + 0.5 O2  # Reaction 2
   rate-constant: {A: 5.0e+8, b: 0.0, Ea: 77200}
   orders: {CO2: 1.0}

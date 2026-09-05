@@ -1,0 +1,14 @@
+test_conditions:
+  temperature: 1400
+  pressure: 101325.0
+  species:
+    - name: C4H6
+      MoleFraction: 0.1
+    - name: O2
+      MoleFraction: 0.5
+    - name: CO
+      MoleFraction: 0.1
+    - name: H2O
+      MoleFraction: 0.1
+    - name: CO2
+      MoleFraction: 0.2

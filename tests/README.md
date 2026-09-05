@@ -78,6 +78,7 @@ Registered in `tests/conftest.py`:
 | 07 kokkos | Skipped placeholder -- needs the `third_party/kokkos` submodule built first. |
 | 08 derivatives, 09 large data | Not covered -- neither tutorial has a README; their `custom_test_*.py` scripts would need to be read and their intended usage documented before a runner can be written with confidence. |
 | 10 target_cfd (OpenFOAM) | Skipped placeholder -- needs a local OpenFOAM 2412 install. |
+| 11 semiglobal reactions | Full: semi-global/reduced reaction source terms (Cantera `orders`, including a rate depending on a non-reactant/product species) vs. Cantera; RK4 and SDIRK2 (which exercises `source_jacobian`'s Newton solve) integrating the same mechanism agree with each other and with Cantera. |
 
 ## Bugs this test-writing pass found and fixed
 
