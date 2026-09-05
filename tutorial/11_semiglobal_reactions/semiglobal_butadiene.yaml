@@ -1,0 +1,128 @@
+#**************************************************************************************
+#
+# Simple single reaction  mechanism
+#
+# - Description:
+#   A simple single reaction model for chemisty code generation testing based off off FFCM-2 thermo and transport
+#
+# - Date: 
+#     Oct 2024
+#
+# - Contact:
+#     Ryan Johnson: ryjoh@stanford.edu
+#
+#***************************************************************************************
+
+units: {length: cm, quantity: mol, activation-energy: cal/mol}
+
+phases:
+  - kinetics: gas
+    transport: mixture-averaged
+    name: gri30-CO-H2-submech
+    skip-undeclared-third-bodies: true
+    thermo: ideal-gas
+    elements: [H, O, C]
+    species: [O2, C4H6, CO, CO2, H2O]
+    state:
+      T: 1.0e-03
+      density: 1.0e-03
+      Y: {C4H6: 1.0}
+
+species:
+- name: C4H6
+  composition: {C: 4, H: 6}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 1000.0, 6000.0]
+    data:
+    - [4.10599669, 5.05575563e-03, 5.83885454e-05, -8.05950198e-08, 3.27447711e-11,
+      1.15092468e+04, 8.42978067]
+    - [7.62637466, 0.0172523403, -6.09184911e-06, 9.70800102e-10, -5.76169721e-14,
+      9553.06395, -14.8325259]
+  transport:
+    model: gas
+    geometry: nonlinear
+    diameter: 4.72
+    well-depth: 357.0
+    rotational-relaxation: 1.0
+- name: O2
+  composition: {O: 2}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 1000.0, 6000.0]
+    data:
+    - [3.78245636, -2.99673416e-03, 9.84730201e-06, -9.68129509e-09, 3.24372837e-12,
+      -1063.94356, 3.65767573]
+    - [3.66096065, 6.56365811e-04, -1.41149627e-07, 2.05797935e-11, -1.29913436e-15,
+      -1215.97718, 3.41536279]
+  transport:
+    model: gas
+    geometry: linear
+    diameter: 3.458
+    well-depth: 107.4
+    polarizability: 1.6
+    rotational-relaxation: 3.8
+- name: CO
+  composition: {C: 1, O: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 1000.0, 6000.0]
+    data:
+    - [3.5795335, -6.1035369e-04, 1.0168143e-06, 9.0700586e-10, -9.0442449e-13,
+      -1.4344086e+04, 3.5084093]
+    - [3.0484859, 1.3517281e-03, -4.8579405e-07, 7.8853644e-11, -4.6980746e-15,
+      -1.4266117e+04, 6.0170977]
+  transport:
+    model: gas
+    geometry: linear
+    diameter: 3.65
+    well-depth: 98.1
+    polarizability: 1.95
+    rotational-relaxation: 1.8
+- name: H2O
+  composition: {H: 2, O: 1}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 1000.0, 6000.0]
+    data:
+    - [4.1986352, -2.0364017e-03, 6.5203416e-06, -5.4879269e-09, 1.771968e-12,
+      -3.0293726e+04, -0.84900901]
+    - [2.6770389, 2.9731816e-03, -7.7376889e-07, 9.4433514e-11, -4.2689991e-15,
+      -2.9885894e+04, 6.88255]
+  transport:
+    model: gas
+    geometry: nonlinear
+    diameter: 2.605
+    well-depth: 572.4
+    dipole: 1.844
+    rotational-relaxation: 4.0
+- name: CO2
+  composition: {C: 1, O: 2}
+  thermo:
+    model: NASA7
+    temperature-ranges: [200.0, 1000.0, 6000.0]
+    data:
+    - [2.356813, 8.9841299e-03, -7.1220632e-06, 2.4573008e-09, -1.4288548e-13,
+      -4.8371971e+04, 9.9009035]
+    - [4.6365111, 2.7414569e-03, -9.9589759e-07, 1.6038666e-10, -9.1619857e-15,
+      -4.9024904e+04, -1.9348955]
+  transport:
+    model: gas
+    geometry: linear
+    diameter: 3.763
+    well-depth: 244.0
+    polarizability: 2.65
+    rotational-relaxation: 2.1
+
+reactions:
+- equation: C4H6 + 3.5 O2 => 4 CO + 3 H2O # Reaction 1
+  rate-constant: {A: 2.0925e10, b: 0.0, Ea: 30000}
+  orders: {C4H6: 0.25, O2: 1.5}
+- equation:  CO + 0.5 O2  =>  CO2  # Reaction 2
+  rate-constant: {A: 2.24e+12, b: 0.0, Ea: 12000}
+  orders: {CO: 1.0, H2O: 0.5, O2: 0.5}
+  nonreactant-orders: true
+- equation:  CO2  => CO + 0.5 O2  # Reaction 2
+  rate-constant: {A: 5.0e+8, b: 0.0, Ea: 77200}
+  orders: {CO2: 1.0}
+

@@ -41,6 +41,10 @@ This tutorial gives an overview of how ChemGen can be used with pybind to interf
 
 This tutorial gives an overview of how ChemGen can be used to create different time split solves that use a variety of implicit methods. This is currently one of the most advanced capabilities of ChemGen and would give one the abilite to simulate chemically reacting euler equations with time-split chemistry.
 
+11) [Semi-Global Reactions](./11_semiglobal_reactions/README.md)
+
+This tutorial demonstrates ChemGen's support for semi-global/reduced reactions (Cantera's `orders` field), where a reaction's rate law doesn't follow its stoichiometry -- including rates modified by a species that's neither a reactant nor a product. A homogeneous reactor built from such a mechanism is integrated with both RK4 and SDIRK2 and cross-checked against Cantera.
+
 ## Advanced Examples
 
 Coming with ChemGen V2.
